@@ -11,7 +11,7 @@ _Goal: Define the system architecture and data models before writing code._
 
 - [ ] **System Analysis**
   - [x] Create `analysis/01_system_specification.md`.
-  - [ ] Create `analysis/02_use_case_diagram.md`.
+  - [x] Create `analysis/02_use_case_diagram.md`.
   - [ ] Create `analysis/03_analytical_class_diagram.md`.
   - [ ] Create `analysis/04_design_class_diagram.md`.
   - [ ] Create `analysis/05_api_contract.md`.
@@ -36,8 +36,8 @@ _Goal: Get the "Hello World" stack running with containers._
   - [ ] Specific `appsettings.json` for Docker environment variables.
   - [ ] Configure Swagger/OpenAPI for API documentation.
 - [ ] **Frontend Initialization (React)**
-  - [ ] Initialize React project (Vite recommended).
-  - [ ] Configure Tailwind CSS (or chosen UI library).
+  - [ ] Initialize React project with Vite.
+  - [ ] Configure Tailwind CSS.
   - [ ] Setup folder structure (`/components`, `/pages`, `/hooks`, `/services`).
 
 ---
@@ -50,7 +50,7 @@ _Goal: Users can log in, and the database schema exists._
   - [ ] Define User Entities (`ApplicationUser` extending Identity).
   - [ ] Define Core Hierarchy (`ClassGroup`, `Subject`, `ClassSubject`).
   - [ ] Define Quiz Entities (`Quiz`, `Question`, `Answer`, `Attempt`).
-  - [ ] Setup Relationships (One-to-Many, Many-to-Many for Subject Leaders).
+  - [ ] Setup Relationships.
   - [ ] Run Initial Migration & Seed Data (Default Admin User).
 - [ ] **Authentication & Security**
   - [ ] Implement ASP.NET Identity.

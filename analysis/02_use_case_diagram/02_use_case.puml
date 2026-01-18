@@ -1,8 +1,3 @@
-# 02 - Use Case Diagram
-
-This diagram outlines the primary interactions between the system actors and the Qop platform.
-
-```plantuml
 @startuml
 !theme plain
 left to right direction
@@ -16,17 +11,22 @@ actor "Time" as time << Service >>
 student <|-- teacher
 teacher <|-- admin
 
-rectangle "Qop Learning System" {
+rectangle "Qop System" {
 
   ' --- Common / Student Level ---
   usecase "Login / Logout" as UC_Login
   usecase "View Profile & Badges" as UC_Profile
   usecase "Toggle Dark Mode" as UC_Theme
-  usecase "Take Quiz" as UC_TakeQuiz
-  usecase "Answer Question" as UC_AnswerQuestion
   usecase "View Leaderboard" as UC_ViewLeaderboard
   usecase "View Subject Dashboard" as UC_ViewSubject
   usecase "View Class Dashboard" as UC_ClassStats
+  
+  ' --- Quiz & Gamification ---
+  usecase "Take Quiz" as UC_TakeQuiz
+  usecase UC_AwardPoints as "Award Points\n--\n**extension point**\nOn Badge Condition" 
+  usecase "Answer Question" as UC_AnswerQuestion
+  usecase "Evaluate Quiz" as UC_EvalQuiz
+  usecase "Award Badge" as UC_AwardBadge
 
   ' --- Teacher Level (Subject Context) ---
   usecase "Create / Edit Quiz" as UC_ManageQuiz
@@ -54,7 +54,12 @@ student --> UC_TakeQuiz
 student --> UC_ViewLeaderboard
 student --> UC_ViewSubject
 student --> UC_ClassStats
+
+' Quiz Logic
 UC_TakeQuiz ..> UC_AnswerQuestion : << include >>
+UC_TakeQuiz ..> UC_EvalQuiz : << include >>
+UC_EvalQuiz ..> UC_AwardPoints : << include >> 
+UC_AwardBadge .> UC_AwardPoints : << extend >> 
 
 ' Teacher Specific Connections
 teacher --> UC_ManageQuiz
@@ -73,4 +78,3 @@ admin --> UC_CloseSubject
 time --> UC_CloseSubject
 
 @enduml
-```

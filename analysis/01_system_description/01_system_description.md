@@ -70,6 +70,7 @@ The end-user focused on consumption and progression.
 - **Time Limits:** Quizzes may optionally include a countdown timer per attempt or per question.
 - **Retry policy:** Student can retake the quiz based on the defined number of retakes (defaultly infinite)
 - **Options:** Support for 2 to 6 answer options with one to many correct answers.
+- **Teacher:** Must be able to take quizzes, but his results must be excluded from academic metrics but shown in subject leaderboard.
 - **Validation:** Support for Single-Choice and Multi-Choice answer validation.
 - **Asset Management:** Efficient handling of local media files via Docker volumes.
 
@@ -116,7 +117,7 @@ The application must support a comprehensive **Dark Theme**.
 ### 5.1. Performance & Scalability
 
 - **Concurrency:** The backend must handle a "Classroom Burst" scenario, where 30-50 users submit answers within the same 1-second window without API latency exceeding 200ms.
-- **Database Optimization:** All read-heavy operations (Leaderboards, Dashboards) must utilize Redis caching to prevent PostgreSQL bottlenecks during peak usage.
+- **Database Optimization:** All read-heavy operations (Leaderboards) must utilize Redis caching to prevent PostgreSQL bottlenecks during peak usage.
 - **Asset Delivery:** Media files (Images) must be served via optimized static file handlers with proper browser caching headers to minimize bandwidth usage on school networks.
 
 ### 5.2. Usability & Accessibility

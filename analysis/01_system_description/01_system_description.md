@@ -8,7 +8,7 @@
 
 ## 1. Project Abstract
 
-**Qop** is an open-source, self-hosted web application designed to to support the educational processes. The platform combines the structural hierarchy of a Learning Management System (LMS) with the immediate engagement of a modern gamified quiz application.
+**Qop** is an open-source, self-hosted web application designed to support the educational processes. The platform combines the structural hierarchy of a Learning Management System (LMS) with the immediate engagement of a modern gamified quiz application.
 
 It is designed for institutions requiring **full data ownership** (self-hosted), ensuring that student data, quiz content, and media assets remain within the local infrastructure rather than relying on commercial cloud providers.
 
@@ -60,13 +60,14 @@ The end-user focused on consumption and progression.
 
 ### 3.1. Institutional Management
 
-- **Granular Hierarchy:** Strict separation of concerns between Class administration and Subject instruction.
+- **Granular Access Control:** Enables strict separation of concerns between Admins, Class and Subject Teachers and Students.
 - **Subject Integration:** Ability to map a subject (e.g., "Math") to multiple classes with different leaders for each instance.
 - **Bulk import:** The system shall allow the Admin to upload a CSV/Excel file to batch-create Student accounts and assign them to Class Groups.
 
 ### 3.2. The Quiz Core
 
 - **Rich Media Support:** Questions and Answers must support **Text** and **Images**.
+- **Time Limits:** Quizzes may optionally include a countdown timer per attempt or per question.
 - **Retry policy:** Student can retake the quiz based on the defined number of retakes (defaultly infinite)
 - **Options:** Support for 2 to 6 answer options with one to many correct answers.
 - **Validation:** Support for Single-Choice and Multi-Choice answer validation.
@@ -148,5 +149,4 @@ The application must support a comprehensive **Dark Theme**.
 ## 7. Open Issues
 
 - **Grading Logic and :** Currently grading is **Auto-Graded Only**. Manual review for free-text answers is not in the MVP scope as the free-text is out of scope for now.
-- **Time Limits:** Quizzes may optionally include a countdown timer per attempt or per question.
 - **Multiplayer:** The current scope is **Singleplayer**. Real-time multiplayer "lobbies" can be added in the future.

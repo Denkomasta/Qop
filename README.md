@@ -1,12 +1,12 @@
 # Qop
 
-> **An open-source, self-hosted educational assessment platform.**
+> **An open source, self-hosted platform for educational quizzes.**
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg) ![Self Hosted](https://img.shields.io/badge/deployment-self--hosted-success) ![Status](https://img.shields.io/badge/status-development-orange)
 
 ## About Qop
 
-**Qop** is a robust web application designed for educational institutions that require full data ownership and a distraction-free environment for student assessment. Unlike commercial cloud-based alternatives, Qop is built to be easily self-hosted, ensuring that student data, quiz content, and media assets remain within the school's local infrastructure.
+**Qop** is a robust web application designed for educational institutions that require full data ownership and a distraction-free environment. Unlike commercial cloud-based alternatives, Qop is built to be easily self-hosted, ensuring that student data, quiz content, and media assets remain within the school's local infrastructure.
 
 The platform combines the structural hierarchy of a Learning Management System (LMS) with the immediate engagement of a modern gamified quiz application.
 
@@ -26,7 +26,7 @@ The platform combines the structural hierarchy of a Learning Management System (
 
 ### Gamification & Progression
 
-- **Badges:** Achievement system for streaks, perfect scores, and speed.
+- **Badges:** Achievement system for levels, streaks, perfect scores, and speed.
 - **Leaderboards:** Two-tier ranking system: Global (School), Subject-level and Class-level.
 
 ### Analytics Dashboards

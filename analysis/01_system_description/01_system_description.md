@@ -1,14 +1,14 @@
 # System Description of Qop
 
-**Version:** 1.1
-**Status:** Analysis Phase
-**Scope:** Core Logic, Data Structure, and Functional Requirements
+- **Version:** 1.1
+- **Status:** Analysis Phase
+- **Scope:** Core Logic, Data Structure, and Functional Requirements
 
 ---
 
 ## 1. Project Abstract
 
-**Qop** is an open-source, self-hosted web application designed to digitize the assessment lifecycle in educational institutions. The platform combines the structural hierarchy of a Learning Management System (LMS) with the immediate engagement of a modern gamified quiz application.
+**Qop** is an open-source, self-hosted web application designed to to support the educational processes. The platform combines the structural hierarchy of a Learning Management System (LMS) with the immediate engagement of a modern gamified quiz application.
 
 It is designed for institutions requiring **full data ownership** (self-hosted), ensuring that student data, quiz content, and media assets remain within the local infrastructure rather than relying on commercial cloud providers.
 
@@ -24,7 +24,7 @@ The system architect responsible for institutional configuration.
 - **Curriculum Structure:** Define Global Subjects (e.g., "Biology", "History").
 - **Class Management:** Create Class Groups (e.g., "Grade 5B") and assign **Class Leaders**.
 - **Subject Assignment:** Map Subjects to Classes and assign **Subject Leaders** for those specific instances.
-- **Global Analytics:** View high-level school performance metrics.
+- **Global Analytics:** View school performance metrics.
 
 ### 2.2. Teacher (Leader)
 
@@ -61,21 +61,24 @@ The end-user focused on consumption and progression.
 ### 3.1. Institutional Management
 
 - **Granular Hierarchy:** Strict separation of concerns between Class administration and Subject instruction.
-- **Subject Integration:** Ability to map a global subject (e.g., "Math") to multiple classes with different leaders for each instance.
+- **Subject Integration:** Ability to map a subject (e.g., "Math") to multiple classes with different leaders for each instance.
+- **Bulk import:** The system shall allow the Admin to upload a CSV/Excel file to batch-create Student accounts and assign them to Class Groups.
 
-### 3.2. The Assessment Engine (Quiz Core)
+### 3.2. The Quiz Core
 
 - **Rich Media Support:** Questions and Answers must support **Text** and **Images**.
-- **Logic:** Support for 2 to 6 answer options.
+- **Retry policy:** Student can retake the quiz based on the defined number of retakes (defaultly infinite)
+- **Options:** Support for 2 to 6 answer options with one to many correct answers.
 - **Validation:** Support for Single-Choice and Multi-Choice answer validation.
-- **Asset Management:** Efficient handling of local media files via Docker volumes (no external S3 dependency).
+- **Asset Management:** Efficient handling of local media files via Docker volumes.
 
 ### 3.3. Gamification & Progression
 
 To drive engagement, the system prioritizes "Game" mechanics over "Grade" mechanics.
 
-- **XP (Experience Points):** Awarded for correct answers to drive leveling.
-- **Badges:** Achievement system tracking streaks, perfect scores, and speed.
+- **Immediate feedback:** Student is informed about quiz progress after every question.
+- **XP (Experience Points):** Awarded for correct answers to drive leveling. The points are awarded only from the single best attempt.
+- **Badges:** Achievement system tracking levels, perfect scores, and speed.
 - **Leaderboards:** A three-tier ranking system:
   1.  **Global:** School-wide ranking.
   2.  **Class-level:** Ranking within the specific Class Group.
@@ -118,7 +121,7 @@ The application must support a comprehensive **Dark Theme**.
 ### 5.2. Usability & Accessibility
 
 - **Mobile Responsiveness:** The application must be fully functional on devices with screen widths as small as 320px.
-- **Offline Tolerance:** The React frontend must gracefully handle momentary network interruptions (e.g., switching from Wi-Fi to 4G) without losing the user's current quiz input.
+- **Offline Tolerance:** The React frontend must gracefully handle momentary network interruptions without losing the user's current quiz input.
 
 ### 5.3. Security & Privacy
 
@@ -146,5 +149,4 @@ The application must support a comprehensive **Dark Theme**.
 
 - **Grading Logic and :** Currently grading is **Auto-Graded Only**. Manual review for free-text answers is not in the MVP scope as the free-text is out of scope for now.
 - **Time Limits:** Quizzes may optionally include a countdown timer per attempt or per question.
-- **Retry Policy:** Logic needs to be defined for retakes
 - **Multiplayer:** The current scope is **Singleplayer**. Real-time multiplayer "lobbies" can be added in the future.

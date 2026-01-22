@@ -64,7 +64,7 @@ _Goal: Users can log in, and the database schema exists._
 
 ---
 
-## Phase 3: The Assessment Engine (Backend)
+## Phase 3: The Quiz Engine (Backend)
 
 _Goal: Teachers can create quizzes with media, and data structures support it._
 
@@ -147,11 +147,11 @@ _Goal: Prepare for production usage._
   - [ ] Load Test: Simulate 50 concurrent quiz submissions.
   - [ ] Optimize Database Indexes (Index on `SubjectId`, `ClassId`, `StudentId`).
 - [ ] **Error Handling**
-  - [ ] Implement Global Exception Handler (RFC 7807 Problem Details).
+  - [ ] Implement Global Exception Handler.
   - [ ] Create "Friendly" Error Pages in React (404, 500).
 - [ ] **Documentation**
-  - [ ] Write `CONTRIBUTING.md`.
+  - [ ] Update and finalize system documentation.
   - [ ] Finalize `README.md` with deployment instructions.
 - [ ] **Final Deployment Check**
-  - [ ] Verify `docker-compose up` works on a clean Linux VM.
-  - [ ] Verify Data persistence (Restart containers, check if data remains).
+  - [ ] Verify `docker-compose up` works.
+  - [ ] Verify Data persistence.

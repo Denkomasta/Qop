@@ -1,12 +1,12 @@
 # Qop
 
-> **An open-source, self-hosted educational assessment platform.**
+> **An open source, self-hosted platform for educational quizzes.**
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg) ![Self Hosted](https://img.shields.io/badge/deployment-self--hosted-success) ![Status](https://img.shields.io/badge/status-development-orange)
 
 ## About Qop
 
-**Qop** is a robust web application designed for educational institutions that require full data ownership and a distraction-free environment for student assessment. Unlike commercial cloud-based alternatives, Qop is built to be easily self-hosted, ensuring that student data, quiz content, and media assets remain within the school's local infrastructure.
+**Qop** is a robust web application designed for educational institutions that require full data ownership and a distraction-free environment. Unlike commercial cloud-based alternatives, Qop is built to be easily self-hosted, ensuring that student data, quiz content, and media assets remain within the school's local infrastructure.
 
 The platform combines the structural hierarchy of a Learning Management System (LMS) with the immediate engagement of a modern gamified quiz application.
 
@@ -26,9 +26,8 @@ The platform combines the structural hierarchy of a Learning Management System (
 
 ### Gamification & Progression
 
-- **XP & Leveling:** Students earn experience points for correct answers, unlocking new levels.
-- **Badges:** Achievement system for streaks, perfect scores, and speed.
-- **Leaderboards:** Three-tier ranking system: Global (School), Class-level, and Subject-level.
+- **Badges:** Achievement system for levels, streaks, perfect scores, and speed.
+- **Leaderboards:** Two-tier ranking system: Global (School), Subject-level and Class-level.
 
 ### Analytics Dashboards
 
@@ -40,7 +39,7 @@ The platform combines the structural hierarchy of a Learning Management System (
 
 ## User Roles & Workflow
 
-Qop utilizes a cumulative inheritance model (`Student` ⊂ `Teacher` ⊂ `Admin`).
+Qop utilizes an user inheritance model (`Student` ⊂ `Teacher` ⊂ `Admin`).
 
 ### 1. Admin (Principal / Tech Admin)
 
@@ -81,12 +80,4 @@ Qop is designed for performance and easy containerization.
 
 ## Deployment (Self-Hosting)
 
-## Open issues
-
-- **Grading Logic:** Should quizzes be auto-graded only, or do we need manual teacher review for free-text answers? (Currently assuming Auto-Graded Only).
-
-- **Time Limits:** Do quizzes have a countdown timer? (Assumption: Yes, optional per quiz).
-
-- **Retry Policy:** Can a student retake a quiz? Does it overwrite the previous score or average it?
-
-- **Multiplayer aspects:** Currently the system will be made as a singleplayer, future can include multiplayer 'games'
+- **TODO**

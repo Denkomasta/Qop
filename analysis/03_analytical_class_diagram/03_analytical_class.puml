@@ -1,0 +1,200 @@
+@startuml Qop System
+
+!pragma ratio 0.50
+
+skinparam linetype ortho
+hide circles
+hide empty methods
+
+' ' --- Enums ---
+' enum UserRole {
+'     STUDENT
+'     TEACHER
+'     ADMIN
+' }
+
+' enum AttemptStatus {
+'     CREATED
+'     STARTED
+'     COMPLETED
+'     ABANDONED
+' }
+
+' --- User Management ---
+class Student {
+    - studentId
+    - username
+    - email
+    - passwordHash
+    - currentXP
+    - role
+    - lastSeen
+    - isArchived
+    + register()
+    + login()
+    + changeUsername()
+    + calculateLevel()
+    + checkPermissions()
+    + isArchived()
+    + archive()
+}
+
+class Teacher extends Student {
+    - department
+    + assignClass()
+    + assignSubject()
+    + changeDepartment()
+}
+
+class Admin extends Teacher {
+    - phoneNumber
+    + changePhoneNumber()
+    + getSupportContact()
+}
+
+' --- Academic Structure ---
+class SchoolClass {
+    - name
+    - academicYear
+    - section
+    + addStudents()
+}
+
+class Subject {
+    - name
+    - code
+    - description
+    - startDate
+    - endDate
+    + cancel()
+}
+
+class Enrollment {
+    - mark
+    + isActive()
+    + grade()
+    + cancel()
+}
+
+' class SubjectContract {
+'     - role
+'     + revoke()
+' }
+
+' --- Quiz Domain ---
+class Quiz {
+    - title
+    - description
+    - maxRetries
+    - createdAt
+    - endDate
+    + edit()
+    + close()
+    + isActive()
+}
+
+class Question {
+    - difficulty
+    - timeLimitSeconds
+    + changeDifficulty()
+}
+
+class Option {
+    - isFreeText
+    - isCorrect
+}
+
+class MediaAsset {
+    - description
+    - location
+    - mimeType
+    - isPrivate
+    + changeVisibility()
+}
+
+class QuizAttempt {
+    - startTime
+    - endTime
+    - status
+    + start()
+    + end()
+    + checkStatus()
+    + calculateScore()
+}
+
+class QuestionResponse {
+    - responseTime
+    - freeText
+    - isLiked
+    + calculateScore()
+    + like()
+}
+
+' --- Gamification ---
+class Badge {
+    - name
+    - description
+    - icon
+    - xpBonus
+    - condition
+    + changeBonus()
+    + evaluateCondition()
+}
+
+class StudentBadge {
+    - earnedAt
+}
+
+class Level {
+    - level
+    - xpThreshold
+    - title
+    + rename()
+    + changeThreshold()
+}
+
+' --- Settings ---
+class SystemConfig <<Singleton>> {
+    - schoolName
+    - currentAcademicYear
+    - allowPublicRegistration
+    - defaultLanguage
+    - maxFileUploadSizeMB
+    + updateSettings()
+    + getConfig()
+}
+
+' --- Relationships ---
+Student "0..*" -- "0..1" SchoolClass : has <
+Teacher "1" -- "0..1" SchoolClass : teaches >
+SchoolClass "1" --> "0..*" Subject : includes >
+
+Subject "1" --> "0..*" Quiz : contains >
+Quiz "1" --> "1..*" Question : contains >
+Question "1" --> "1..8" Option : has >
+
+Question "1..*" --> "1" MediaAsset : includes >
+Option "1..*" --> "1" MediaAsset : includes >
+Teacher "1" -- "0..*" MediaAsset : uploads >
+
+Student "0..*" - "0..*" Subject : enrolls >
+(Student, Subject) . Enrollment
+
+Teacher "1" -- "0..*" Subject : teaches >
+
+Student "0..*" -> "0..*" Badge : earns >
+(Student, Badge) . StudentBadge
+
+Enrollment "1" -- "0..*" QuizAttempt
+QuizAttempt "0..*" --> "1" Quiz
+QuizAttempt "1" --> "0..*" QuestionResponse : contains >
+QuestionResponse "0..*" --> "0..8" Option : has >
+QuestionResponse "0..*" --> "1" Question
+
+Admin "1" --> "0..*" Level : defines >
+Student ..> Level : <<use>>
+
+Admin "1" --> "1" SystemConfig : manages >
+SchoolClass ..> Enrollment : <<create>>
+
+@enduml

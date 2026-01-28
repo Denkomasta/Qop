@@ -30,8 +30,10 @@ class Student {
     - role
     - lastSeen
     - isArchived
+    - isOnline
     + register()
     + login()
+    + logout()
     + changeUsername()
     + calculateLevel()
     + checkPermissions()
@@ -58,6 +60,7 @@ class SchoolClass {
     - academicYear
     - section
     + addStudents()
+    + assignTeacher()
 }
 
 class Subject {
@@ -67,12 +70,14 @@ class Subject {
     - startDate
     - endDate
     + cancel()
+    + assignTeacher()
 }
 
 class Enrollment {
     - mark
     + isActive()
     + grade()
+    + generateGrade()
     + cancel()
 }
 

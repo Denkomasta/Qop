@@ -93,13 +93,13 @@ class Quiz {
     + isActive()
 }
 
-class Question {
+class QuizQuestion {
     - difficulty
     - timeLimitSeconds
     + changeDifficulty()
 }
 
-class Option {
+class QuizOption {
     - isFreeText
     - isCorrect
 }
@@ -122,7 +122,7 @@ class QuizAttempt {
     + calculateScore()
 }
 
-class QuestionResponse {
+class QuizQuestionResponse {
     - responseTime
     - freeText
     - isLiked
@@ -167,17 +167,17 @@ class SystemConfig <<Singleton>> {
 ' --- Relationships ---
 Student "0..*" -- "0..1" SchoolClass : has <
 Teacher "1" -- "0..1" SchoolClass : teaches >
-SchoolClass "1" --> "0..*" Subject : includes >
+SchoolClass "0..1" -- "0..*" Subject : includes >
 
 Subject "1" --> "0..*" Quiz : contains >
-Quiz "1" --> "1..*" Question : contains >
-Question "1" --> "1..8" Option : has >
+Quiz "1" --> "1..*" QuizQuestion : contains >
+QuizQuestion "1" --> "1..8" QuizOption : has >
 
-Question "1..*" --> "1" MediaAsset : includes >
-Option "1..*" --> "1" MediaAsset : includes >
+QuizQuestion "1..*" --> "1" MediaAsset : includes >
+QuizOption "1..*" --> "1" MediaAsset : includes >
 Teacher "1" -- "0..*" MediaAsset : uploads >
 
-Student "0..*" - "0..*" Subject : enrolls >
+Student "0..*" -> "0..*" Subject : enrolls >
 (Student, Subject) . Enrollment
 
 Teacher "1" -- "0..*" Subject : teaches >
@@ -187,9 +187,9 @@ Student "0..*" -> "0..*" Badge : earns >
 
 Enrollment "1" -- "0..*" QuizAttempt
 QuizAttempt "0..*" --> "1" Quiz
-QuizAttempt "1" --> "0..*" QuestionResponse : contains >
-QuestionResponse "0..*" --> "0..8" Option : has >
-QuestionResponse "0..*" --> "1" Question
+QuizAttempt "1" --> "0..*" QuizQuestionResponse : contains >
+QuizQuestionResponse "0..*" --> "0..8" QuizOption : has >
+QuizQuestionResponse "0..*" --> "1" QuizQuestion
 
 Admin "1" --> "0..*" Level : defines >
 Student ..> Level : <<use>>

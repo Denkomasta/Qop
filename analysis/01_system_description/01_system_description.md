@@ -18,10 +18,10 @@ The system utilizes a cumulative permission model where roles inherit capabiliti
 
 ### 2.1. Administrator (Principal / Tech Admin)
 
-The system architect responsible for institutional configuration.
+The system architect and central authority responsible for institutional configuration.
 
 - **User Management:** Create, edit, and archive Users (Students, Teachers).
-- **Curriculum Structure:** Define Global Subjects (e.g., "Biology", "History").
+- **Curriculum Structure:** Create Subjects and appoint Teachers
 - **Class Management:** Create Class Groups (e.g., "Grade 5B") and assign **Class Leaders**.
 - **Subject Assignment:** Map Subjects to Classes and assign **Subject Leaders** for those specific instances.
 - **Global Analytics:** View school performance metrics.

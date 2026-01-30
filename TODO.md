@@ -12,7 +12,7 @@ _Goal: Define the system architecture and data models before writing code._
 - [ ] **System Analysis**
   - [x] Create `analysis/01_system_specification.md`.
   - [x] Create `analysis/02_use_case_diagram.md`.
-  - [ ] Create `analysis/03_analytical_class_diagram.md`.
+  - [x] Create `analysis/03_analytical_class_diagram.md`.
   - [ ] Create `analysis/04_design_class_diagram.md`.
   - [ ] Create `analysis/05_api_contract.md`.
   - [ ] Create `analysis/06_ui_wireframes.md`.

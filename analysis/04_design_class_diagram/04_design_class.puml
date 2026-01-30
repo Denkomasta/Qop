@@ -1,0 +1,531 @@
+@startuml Qop System
+
+!theme plain
+hide empty methods
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+' --- Enums ---
+enum UserRole {
+    Student
+    Teacher
+    Admin
+}
+
+enum AttemptStatus {
+    Created
+    Started
+    Completed
+    Abandoned
+}
+
+enum MediaType {
+    Image
+    Video
+    Audio
+    Document
+}
+
+' --- Settings ---
+class SystemConfig <<Singleton>> {
+    - {static} _instance : SystemConfig
+    - _schoolName : string
+    - _currentAcademicYear : int
+    - _allowPublicRegistration : bool
+    - _defaultLanguage : string
+    - _maxFileUploadSizeMB : int
+    - SystemConfig()
+    + {static} GetInstance() : SystemConfig
+    + GetSchoolName() : string
+    + SetSchoolName(name : string) : void
+    + GetCurrentAcademicYear() : int
+    + SetCurrentAcademicYear(year : int) : void
+    + IsAllowedPublicRegistration() : bool
+    + AllowPublicRegistration(value: bool) : void
+    + GetDefaultLanguage() : string
+    + SetDefaultLanguage(lang: string) : void
+    + GetMaxLoadSize() : int
+    + SetMaxLoadSize(size: int) : void
+    + UpdateSettings(config : Dictionary<string, object>) : void
+}
+
+' --- User Management ---
+class Student {
+    - _studentId : long
+    - _username : string
+    - _email : string
+    - _passwordHash : string
+    - _currentXP : int
+    - _role : UserRole
+    - _lastSeen : DateTime
+    - _isArchived : bool
+    - _isOnline : bool
+    + Student(name: string, email: string, password: string, role: UserRole) : Student
+    + GetStudentId() : long
+    - CheckPassword(password: string) : bool
+    + GetUsername() : string
+    + SetUsername(name: string) : void
+    + GetEmail() : string
+    + SetEmail(email: string) : void
+    + GetXP() : int
+    + SetXP(points: int) : void
+    + GetRole() : UserRole
+    + GetLastSeen() : DateTime
+    - SetLastTime(time: DateTime) : void
+    + IsOnline() : bool
+    - SetIsOnline(value: bool) : void  
+    + Register(name: string, email: string, password: string, role: UserRole) : Student
+    + Login(email: string, password: string) : string
+    + Logout() : void
+    + ChangePassword(password: string) : bool
+    + IsArchived() : bool
+    + Archive() : bool
+    + CalculateLevel() : Level
+    + GetStudentBadges() : ICollection<StudentBadge>
+    + AddBadge(badge: StudentBadge) : void
+    + RemoveBadge(badgeId: long) : StudentBadge
+    + GetEnrollments() : ICollection<Enrollment>
+    + AddEnrollment(enrollment: Enrollment) : void
+    + RemoveEnrollent(subjectId: long) : Enrollment
+    + GetSchoolClass() : SchoolClass
+    + SetSchoolClass(schoolClass: SchoolClass) : void
+}
+
+class Teacher {
+    - _department : string?
+    + Teacher(name: string, email: string, password: string, role: UserRole, department: string) : Teacher
+    + GetDepartment() : string
+    + SetDepartment(dept : string) : void
+    + GetClass() : SchoolClass
+    + SetClass(schoolClass : SchoolClass) : void
+    + GetSubjects() : ICollection<Subject>
+    + AssignSubject(subject : Subject) : void
+    + RemoveSubject(subjectId: long) : Subject
+    + GetMediaAssets() : ICollection<MediaAsset>
+    + AddMediaAsset(asset: MediaAsset) : void
+    + RemoveMediaAsset(assetId: long) : MediaAsset
+}
+
+class Admin {
+    - _phoneNumber : string
+    + Admin(name: string, email: string, password: string, role: UserRole, phoneNumber: string) : Admin
+    + GetPhoneNumber() : string
+    + SetPhoneNumber(num : string) : void
+    + GetSupportContact() : string
+}
+
+' --- Academic Structure ---
+class SchoolClass {
+    - _classId : long
+    - _name : string
+    - _academicYear : string
+    - _section : string
+    + SchoolClass(name: string, year: string, section: string) : SchoolClass
+    + GetClassId() : long
+    + GetName() : string
+    + SetName(name : string) : void
+    + GetYear() : string
+    + SetYear(year: string) : void
+    + GetSection() : string
+    + SetSection(section: string) : void
+    + GetStudents() : ICollection<Student>
+    + AddStudent(student : Student) : void
+    + RemoveStudent(studentId: long) : Student
+    + GetTeacher() : Teacher
+    + SetTeacher(teacher : Teacher) : void
+}
+
+class Subject {
+    - _subjectId : long
+    - _name : string
+    - _code : string
+    - _description : string
+    - _startDate : DateTime
+    - _endDate : DateTime?
+    + Subject(name: string, code: string, description: string, startDate: DateTime) : Subject
+    + GetSubjectId() : long
+    + GetName() : string
+    + SetName(name : string) : void
+    + GetCode() : string
+    + SetCode(code: string) : void
+    + GetDescription() : string
+    + SetDescription(description: string) : void
+    + GetStartDate() : DateTime
+    + SetStartDate(date: DateTime) : void
+    + GetEndDate() : DateTime?
+    + SetEndDate(date: DateTime?) : void
+    + GetIsActive() : bool
+    + GetTeacher() : Teacher
+    + SetTeacher(teacher : Teacher) : void
+    + GetSchoolClass() : SchoolClass
+    + SetSchoolClass(schoolClass: SchoolClass) : void
+    + GetQuizes() : ICollection<Quiz>
+    + AddQuiz(quiz: Quiz) : void
+    + RemoveQuiz(quizId: long) : Quiz
+}
+
+class Enrollment {
+    - _enrollmentId : long
+    - _Mark : int
+    - _enrolledAt : DateTime
+    - _isActive : bool
+    + Enrollment(student: Student, subject: Subject) : Enrollment
+    + GetEnrollmentId() : long
+    + GetStudentId() : long
+    + GetSubjectId() : long
+    + GetMark() : int
+    + SetMark(mark : int) : void
+    + Drop() : bool
+    + GetQuizAttempts() : ICollection<QuizAttempt>
+    + AddQuizAttempt(quizAttempt: QuizAttempt) : void
+    + RemoveQuizAttempt(attemptId: long) : void
+}
+
+' --- Gamification ---
+class Level {
+    - _levelId : int
+    - _xpThreshold : int
+    - _title : string
+    + Level(threshold: int, title: string) : Level
+    + GetLevelNumber() : int
+    + GetXpThreshold() : int
+    + SetXpThreshold(xp : int) : void
+    + GetTitle() : string
+    + SetTitle(title: string) : void
+}
+
+class Badge {
+    - _badgeId : long
+    - _name : string
+    - _description : string
+    - _iconUrl : string
+    - _xpBonus : int
+    - _condition : string
+    + Badge(name: string, description: string, iconUrl: string, xpBonus: int, condition: string) : Badge
+    + GetName() : string
+    + SetName(name : string) : void
+    + GetDescription() : string
+    + SetDescriprion(desc: string) : void
+    + GetUrl() : string
+    + SetUrl(url: string) : void
+    + GetXpBonus() : int
+    + SetXpBonus(bonus : int) : void
+    + GetCondition() : string
+    + SetCondition(condition: string) : void
+    + Evaluate(student : Student) : bool
+}
+
+class StudentBadge {
+    - _earnedAt : DateTime
+    + StudentBadge(studentId: long, badgeId: long) : StudentBadge
+    + GetStudentId() : long
+    + GetBadgeId() : long
+    + GetEarnedAt() : DateTime
+}
+
+' --- Quiz Domain ---
+class Quiz {
+    - _quizId : long
+    - _title : string
+    - _description : string
+    - _maxRetries : int
+    - _createdAt : DateTime
+    - _publishDate : DateTime?
+    - _closingDate : DateTime?
+    + Quiz(title: string, description: string, maxRetries: int, publishDate: DateTime?) : Quiz
+    + GetQuizId() : long
+    + GetTitle() : string
+    + SetTitle(title : string) : void
+    + GetDescription() : string
+    + SetDescription(text: string) : void
+    + GetMaxRetries() : int
+    + SetMaxRetries(value: int) : bool
+    + GetCreatedAt() : DateTime
+    + GetClosingDate() : DateTime?
+    + SetClosingDate(date : DateTime?) : void
+    + Publish(date: DateTime?) : void
+    + Hide(publishDate: DateTime?) : void
+    + IsAvailable() : bool
+    + GetQuizQuestions() : ICollection<QuizQuestion>
+    + AddQuizQuestion(question: QuizQuestion) : void
+    + RemoveQuizQuestion(questionId: long) : QuizQuestion
+}
+
+class QuizQuestion {
+    - _questionId : long
+    - _title : string?
+    - _difficulty : int
+    - _timeLimit : int
+    + QuizQuestion(title: string?, difficulty: int, timeLimit: int) : QuizQuestion
+    + GetQuestionId() : long
+    + GetTitle() : string
+    + SetTitle(text : string) : void
+    + GetDifficulty() : int
+    + SetDifficulty(level : int) : void
+    + GetTimeLimit() : int
+    + SetTimeLimit(value: int) : void
+    + GetOptions() : ICollection<QuizQuestion>
+    + AddOption(opt : QuizOption) : void
+    + RemoveOption(optionId: long) : QuizOption
+    + getMedia() : MediaAsset
+    + SetMedia(asset : MediaAsset) : void
+}
+
+class QuizOption {
+    - _optionId : long
+    - _text : string?
+    - _isFreeText : bool
+    - _isCorrect : bool
+    + QuizOption(text: string?, isFreeText: bool, isCorrect: bool) : QuizOption
+    + GetOptionId() : long
+    + GetText() : string?
+    + SetText(text : string?) : void
+    + GetIsFreeText() : bool
+    + SetIsFreeText(val: bool) : void
+    + GetIsCorrect() : bool
+    + SetIsCorrect(correct : bool) : void
+    + GetMedia() : MediaAsset
+    + SetMedia(media: MediaAsset) : void
+}
+
+class MediaAsset {
+    - _assetId : long
+    - _locationUrl : string
+    - _mimeType : MimeType
+    - _isPrivate : bool
+    - _description : string
+    + MediaAsset(location: string, type: MimeType, description: string, owner: Teacher) : MediaAsset
+    + GetAssetId() : long
+    + GetLocationUrl() : string
+    + SetLocationUrl(url : string) : void
+    + GetType() : MimeType
+    + IsPrivate(): bool
+    + Publish(): void
+    + Hide(): void
+    + GetDescription(): string
+    + SetDescription(text: string) : void
+    + GetOwner() : Teacher
+    + SetOwner(owner: Teacher) : void
+}
+
+class QuizAttempt {
+    - _attemptId : long
+    - _startTime : DateTime?
+    - _endTime : DateTime?
+    - _status : AttemptStatus
+    - _totalScore : int
+    - _mark : int?
+    + QuizAttempt(quiz: Quiz) : QuizAttempt
+    + GetAttemptId() : long
+    + GetStatus() : AttemptStatus
+    + SetStatus(status : AttemptStatus) : void
+    + GetScore() : int
+    + SetScore(value: int) : void
+    + GetMark() : int?
+    + SetMark(mark: int?) : void
+    + Start() : void
+    + Submit() : void
+    + Cancel() : void
+    + GetQuiz() : Quiz
+    + GetResponses() : ICollection<QuizQuestionResponse>
+    + AddResponse(response: QuizQuestionResponse) : void
+    + RemoveResponse(responseId: long) : QuizQuestionResponse
+}
+
+class QuizQuestionResponse {
+    - _questionResponseId: long
+    - _responseTimeMs : long
+    - _freeTextAnswer : string?
+    - _isLiked : bool
+    - _score : int
+    + QuizQuestionResponse(question: QuizQuestion, responseTime: long, freeText: string?, options: ICollection<QuizOption>)
+    + GetId() : long
+    + GetResponseTimeMs() : long
+    + GetFreeTextAnswer() : string?
+    + IsLiked() : bool
+    + SetIsLiked(val: bool) : void
+    + GetOptions() : ICollection<QuizOption>
+    + GetScore() : int 
+    + SetScore(value: int) : void
+}
+
+' --- Manager Layer (Service/Controller/Repo Abstraction) ---
+package "Managers" {
+    class UserManager {
+        + Authenticate(email: string, pass: string) : Student
+        + Logout(userId: long) : Student
+        + RegisterUser(data: UserRegisterDTO) : Student
+        + GetUserById(id: long) : Student
+        + GetAllUsers(filter: UserFilter) : ICollection<Student>
+        + EditUser(id: long, data: UserEditDTO) : Student
+        + DeleteUser(id: long) : void
+    }
+
+    class SubjectManager {
+        + CreateSubject(data: SubjectCreationDTO) : Subject
+        + EditSubject(data: SubjectEditDTO) : Subject
+        + GetSubjectById(subjectId: long) : Subject
+        + GetSubjects(filter: SubjectFilter) : ICollection<Subject>
+        + EnrollStudent(studentId: long, subjectId: long) : Enrollment
+        + DropStudent(studentId: long, subjectId: long) : Student
+        + GetStudentSubjects(studentId: long) : ICollection<Subject>
+        + AssingTeacherToSubject(teacherId: long?, subjectId: long) : void
+        + GenerateMarkProposal(enrollmentId: long) : string
+        + Close(subjectId: long, startDate: DateTime?, endDate: DateTime?) : void
+        + AddQuiz(subjectId: long, quiz: Quiz) : void
+        + RemoveQuiz(subjectId, quizId) : void  
+        + CreateAndAddQuiz(subjectId: long, data: QuizCreationDTO) : void
+        + GetSubjectCompletionPercentage(enrollmentId: long) : double
+        + CalculateAndAwardXP(enrollmentId: long) : int
+    }
+
+    class SchoolClassManager {
+        + CreateSchoolClass(adminId: long, data: SchoolClassCreationDTO) : SchoolClass
+        + GetSchoolClassById(id: long) : SchoolClass
+        + GetSchoolClasses(filter: SchoolClassFilter) : ICollection<SchoolClass>
+        + EditSchoolClass(data: SchoolClassEditDTO) : SchoolClass
+        + AssignStudentToClass(classId: long, studentId: long) : void
+        + RemoveStudentFromClass(classId: long, studentId: long) : bool
+        + AssignTeacherToClass(classId: long, teacherId: long?) : void
+    }
+
+    class QuizManager {
+        + CreateQuiz(data: QuizCreationDTO) : Quiz
+        + EditQuiz(quizId: long, data: QuizEditDTO) : Quiz
+        + GetQuiz(quizId): Quiz
+        + GetQuizzes(filter: QuizFilter) : ICollection<Quiz>
+        + PublishQuiz(quizId: long, publishDate: DateTime, closingDate: DateTime?) : void
+        + CloseQuiz(publishDate: DateTime?, closingDate: DateTime)
+        + IsQuizActive(quizId: long): bool
+        + CreateQuestion(quizId: long, data: QuestionCreationDTO) : Question
+        + EditQuestion(questionId: long, data:  QuestionEditDTO) : Question
+        + GetQuizQuestion(quizId: long) : ICollection<Question>
+        + GetQuestions(filter: QuestionFilter) : ICollection<Question>
+        + RemoveQuestion(quizId: long, questionId: long) : void
+        + CreateOption(questionId: long, data: OptionCreationDTO) : QuizOption
+        + EditOption(optionId: long, data: OptionEditDTO) : QuizOption
+        + RemoveOption(questionId: long, optionId: long) : void
+        + GetQuestionOptions(questionId: long) : ICollection<QuizOption>
+        + GetQuestions(filter: QuestionFilter) : ICollection<QuizOption>
+    }
+    
+    class QuizAttemptManager {
+        + CreateAttempt(quizId: long, enrollmentId: long) : QuizAttempt
+        + StartAttempt(quizAttemptId: long) : void
+        + UpdateAttempt(attemptId: long, response: ICollection<QuizQuestionResponse>) : void
+        + FinishAttempt(attemptId: long, responses: ICollection<QuizQuestionResponse>) : QuizAttempt
+        + CalculateScore(attemptId: long) : int
+        + GradeAttempt(attemptId: long) : int
+        + GetQuizAttempts(attemptFilter: AttemptFilter) : ICollection<QuizAttempt>
+        + RemoveAttempt(attemptId: long) : void
+        + CreateResponse(attemptId: long, data: ReponseCreationDTO) : QuizQuestionResponse
+        + GetAttemptResponses(attemptId: long) : ICollection<QuizQuestionResponse>
+        + SetQuestionLike(val: bool, responseId: long) : QuizQuestionResponse
+        + CalculateQuestionPopularity(questionId: long) : int
+        + CalculateResponseScore(responseId: long) : int
+        + GradeResponse(responseId: long, value: int) : void
+    }
+
+    class SystemManager {
+        + UpdateSystemSettings(config: SystemConfigEditDTO) : void
+        + GetSystemConfig() : SystemConfig
+    }
+
+    class GamificationRuleManager {
+        + CreateBadge(data: BadgeCreationDTO) : Badge
+        + EditBadge(badgeId: long, data: BadgeEditDTO) : Badge
+        + RemoveBadge(badgeId: long) : void
+        + GetBadges(badgeFilter: BadgeFilter) : ICollection<Badge>
+        + CreateLevel(data: LevelCreationDTO) : Level
+        + EditLevel(levelId: int, data: LevelEditDTO) : Level
+        + RemoveLevel(levelId: int) : void
+        + GetLevels(levelFilter: LevelFilter) : ICollection<Level>
+    }
+
+    class GamificationManager {
+        + CalculateXP(enrollmentId: long) : int
+        + CheckAndAwardBadges(studentId: long) : ICollection<Badge>
+        + GetLeaderboard(leaderboardFilter: LeaderboardFilter) : ICollection<Student>
+    }
+
+    class MediaManager {
+        + UploadMedia(fileStream: byte[], ownerId: long) : MediaAsset
+        + EditMedia(assetId: long, data: MediaEditDTO) : MediaAsset
+        + GetMediaStream(assetId: long) : byte[]
+        + DeleteMedia(assetId: long) : void
+    }
+}
+
+note top of Managers : Manager is an abstraction of controller/service/repository.
+
+' --- Relationships ---
+
+' User Hierarchy
+Teacher --|> Student
+Admin --|> Teacher
+
+' Academic
+Teacher "1" --> "0..1" SchoolClass : teaches >
+Teacher "1" <--o "0..1" SchoolClass : is taught by <
+SchoolClass "0..1" o--> "0..*" Student : includes >
+SchoolClass "0..1" <-- "0..*" Student : has <
+SchoolClass "0..1" o--> "0..*" Subject : contains >
+SchoolClass "0..1" <-- "0..*" Subject : is part of <
+
+' Enrollment
+Student "1" *--> "0..*" Enrollment
+Student "1" <-- "0..*" Enrollment
+Enrollment "0..*" o--> "1" Subject
+
+' Teacher to Subject
+Teacher "1" <--o "0..*" Subject : is taught by <
+Teacher "1" --> "0..*" Subject : teaches >
+
+' Gamification
+Student "1" *--> "0..*" StudentBadge : earns >
+StudentBadge "0..*" o--> "1" Badge
+
+' Quiz Composition
+Subject "1" *--> "0..*" Quiz : includes >
+Quiz "1" *--> "1..*" QuizQuestion : contains >
+QuizQuestion "1" *--> "1..8" QuizOption : contains >
+
+' Media Assets
+Teacher "1" o--> "0..*" MediaAsset : manages >
+Teacher "1" <-- "0..*" MediaAsset : is owned by <
+QuizQuestion "0..*" o--> "0..1" MediaAsset : includes >
+QuizOption "0..*" o--> "0..1" MediaAsset : includes >
+
+' Quiz Execution
+Enrollment "1" *--> "0..*" QuizAttempt : has >
+Enrollment "1" <-- "0..*" QuizAttempt
+QuizAttempt "0..*" o--> "1" Quiz
+QuizAttempt "1" *--> "0..*" QuizQuestionResponse
+QuizQuestionResponse "0..*" o--> "1" QuizQuestion
+QuizQuestionResponse "0..*" o--> "0..*" QuizOption
+
+' Manager Relationships
+UserManager o--> Student : manages >
+SchoolClassManager o--> SchoolClass : manages >
+SubjectManager o--> Subject : manages >
+SubjectManager o--> Enrollment : manages >
+QuizManager o--> Quiz : manages >
+QuizManager o--> QuizAttempt : processes >
+MediaManager o--> MediaAsset : stores >
+SystemManager o--> SystemConfig : manages >
+GamificationRuleManager o--> Badge : manages >
+GamificationRuleManager o--> Level : manages >
+GamificationManager o--> StudentBadge : manages >
+GamificationManager o--> Student : awards >
+
+GamificationManager ..> GamificationRuleManager : <<use>>
+SchoolClassManager ..> UserManager : <<use>>
+SchoolClassManager ..> SubjectManager : <<use>>
+MediaManager ..> UserManager : <<use>>
+GamificationManager ..> UserManager : <<use>>
+QuizAttemptManager ..> QuizManager : <<use>>
+SubjectManager ..> UserManager : <<use>>
+SubjectManager ..> QuizManager : <<use>>
+QuizManager ..> MediaManager : <<use>>
+
+@enduml

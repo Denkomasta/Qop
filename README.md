@@ -43,7 +43,7 @@ Qop utilizes an user inheritance model (`Student` ⊂ `Teacher` ⊂ `Admin`).
 
 ### 1. Admin (Principal / Tech Admin)
 
-The system architect.
+The system manager.
 
 - Creates Students, Teachers, and Subjects.
 - Assigns **Class Leaders** to groups.

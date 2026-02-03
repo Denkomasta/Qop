@@ -1,12 +1,12 @@
-# Qop
+# Sqeez
 
 > **An open source, self-hosted platform for educational quizzes.**
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg) ![Self Hosted](https://img.shields.io/badge/deployment-self--hosted-success) ![Status](https://img.shields.io/badge/status-development-orange)
 
-## About Qop
+## About Sqeez
 
-**Qop** is a robust web application designed for educational institutions that require full data ownership and a distraction-free environment. Unlike commercial cloud-based alternatives, Qop is built to be easily self-hosted, ensuring that student data, quiz content, and media assets remain within the school's local infrastructure.
+**Sqeez** is a robust web application designed for educational institutions that require full data ownership and a distraction-free environment. Unlike commercial cloud-based alternatives, Sqeez is built to be easily self-hosted, ensuring that student data, quiz content, and media assets remain within the school's local infrastructure.
 
 The platform combines the structural hierarchy of a Learning Management System (LMS) with the immediate engagement of a modern gamified quiz application.
 
@@ -39,7 +39,7 @@ The platform combines the structural hierarchy of a Learning Management System (
 
 ## User Roles & Workflow
 
-Qop utilizes an user inheritance model (`Student` ⊂ `Teacher` ⊂ `Admin`).
+Sqeez utilizes an user inheritance model (`Student` ⊂ `Teacher` ⊂ `Admin`).
 
 ### 1. Admin (Principal / Tech Admin)
 
@@ -68,7 +68,7 @@ The end-user.
 
 ## 🛠 Technology Stack
 
-Qop is designed for performance and easy containerization.
+Sqeez is designed for performance and easy containerization.
 
 - **Backend:** C# / ASP.NET Core
 - **Frontend:** React.js

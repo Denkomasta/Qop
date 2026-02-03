@@ -11,7 +11,7 @@ actor "Time" as time << Service >>
 student <|-- teacher
 teacher <|-- admin
 
-rectangle "Qop System" {
+rectangle "Sqeez System" {
 
   ' --- Common / Student Level ---
   usecase "Login / Logout" as UC_Login

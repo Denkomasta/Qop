@@ -1,4 +1,4 @@
-@startuml
+@startuml Sqeez System
 !theme plain
 left to right direction
 skinparam packageStyle rectangle

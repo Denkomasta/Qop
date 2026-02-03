@@ -1,4 +1,4 @@
-# System Description of Qop
+# System Description of Sqeez
 
 - **Version:** 1.1
 - **Status:** Analysis Phase
@@ -8,7 +8,7 @@
 
 ## 1. Project Abstract
 
-**Qop** is an open-source, self-hosted web application designed to support the educational processes. The platform combines the structural hierarchy of a Learning Management System (LMS) with the immediate engagement of a modern gamified quiz application.
+**Sqeez** is an open-source, self-hosted web application designed to support the educational processes. The platform combines the structural hierarchy of a Learning Management System (LMS) with the immediate engagement of a modern gamified quiz application.
 
 It is designed for institutions requiring **full data ownership** (self-hosted), ensuring that student data, quiz content, and media assets remain within the local infrastructure rather than relying on commercial cloud providers.
 

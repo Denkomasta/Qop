@@ -1,6 +1,6 @@
 # Project Roadmap & TODO
 
-**Project:** Qop (Open Source School Quiz Platform)
+**Project:** Sqeez (Open Source School Quiz Platform)
 **Tech Stack:** C# .NET 8/9, React, PostgreSQL, Redis, Docker
 
 ---
@@ -12,7 +12,7 @@ _Goal: Define the system architecture and data models before writing code._
 - [ ] **System Analysis**
   - [x] Create `analysis/01_system_specification.md`.
   - [x] Create `analysis/02_use_case_diagram.md`.
-  - [ ] Create `analysis/03_analytical_class_diagram.md`.
+  - [x] Create `analysis/03_analytical_class_diagram.md`.
   - [ ] Create `analysis/04_design_class_diagram.md`.
   - [ ] Create `analysis/05_api_contract.md`.
   - [ ] Create `analysis/06_ui_wireframes.md`.
@@ -30,7 +30,7 @@ _Goal: Get the "Hello World" stack running with containers._
 - [ ] **Docker Orchestration**
   - [ ] Write `docker-compose.yml` (Services: Backend, Frontend, Postgres, Redis).
   - [ ] Configure Docker Volumes for DB persistence (`pgdata`).
-  - [ ] Configure Docker Volumes for Local Media Storage (`./qop_media:/app/wwwroot/media`).
+  - [ ] Configure Docker Volumes for Local Media Storage (`./sqeez_media:/app/wwwroot/media`).
 - [ ] **Backend Initialization (.NET)**
   - [ ] Create Solution (`sln`) and Web API Project.
   - [ ] Specific `appsettings.json` for Docker environment variables.

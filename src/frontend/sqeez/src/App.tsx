@@ -15,13 +15,21 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-        <h1 className='text-blue-800 text-4xl font-bold'>Vite + React</h1>
-        <div className="card w-96 bg-base-100 card-xs shadow-sm">
+      <h1 className="text-4xl font-bold text-blue-800">Vite + React</h1>
+      <div className="card w-96 bg-base-100 shadow-sm card-xs">
         <div className="card-body">
-          <h2 className="card-title">Xsmall Card</h2>
-          <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
-          <div className="justify-end card-actions">
-            <button onClick={() => setCount((count) => count + 1)} className="btn btn-primary">count is {count}</button>
+          <h2 className="card-title text-black">Xsmall Card</h2>
+          <p>
+            A card component has a figure, a body part, and inside body there
+            are title and actions parts
+          </p>
+          <div className="card-actions justify-end">
+            <button
+              onClick={() => setCount((count) => count + 1)}
+              className="btn btn-primary"
+            >
+              count is {count}
+            </button>
           </div>
         </div>
       </div>

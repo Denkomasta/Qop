@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
+import { Button } from './components/ui'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -24,12 +25,13 @@ function App() {
             are title and actions parts
           </p>
           <div className="card-actions justify-end">
-            <button
+            <Button
               onClick={() => setCount((count) => count + 1)}
               className="btn btn-primary"
+              variant={'ghost'}
             >
               count is {count}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
       tailwindcss(),
     ],
     server: {
-      port: parseInt(env.VITE_PORT) || 5173,
+      port: parseInt(env.VITE_PORT) || 3000,
     },
     resolve: {
       alias: {

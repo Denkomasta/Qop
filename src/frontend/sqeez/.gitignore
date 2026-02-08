@@ -14,6 +14,7 @@ dist-ssr
 .pnp
 .pnp.js
 coverage/
+.tanstack
 
 # Editor directories and files
 .vscode/*

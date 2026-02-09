@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Menu } from 'lucide-react' // Using Lucide for simplicity
+import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import {
   Sheet,
@@ -9,14 +9,26 @@ import {
   SheetTrigger,
 } from '@/components/ui/Sheet'
 
-const navLinks = [
-  { to: '/', label: 'Home' },
-  { to: '/features', label: 'Features' },
-  { to: '/pricing', label: 'Pricing' },
-  { to: '/about', label: 'About' },
-]
+interface LinkProps {
+  to: string
+  label: string
+}
 
-export function Navbar() {
+interface NavbarProps {
+  navLinks?: LinkProps[]
+  title?: string
+  loginButtonText?: string
+  registerButtonText?: string
+  navigationText?: string
+}
+
+export function Navbar({
+  navLinks,
+  title,
+  loginButtonText,
+  registerButtonText,
+  navigationText,
+}: NavbarProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
@@ -26,11 +38,11 @@ export function Navbar() {
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
               S
             </div>
-            <span>shadcn.io</span>
+            <span>{title}</span>
           </Link>
 
           <nav className="hidden gap-6 md:flex">
-            {navLinks.map((link) => (
+            {navLinks?.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
@@ -47,10 +59,10 @@ export function Navbar() {
         <div className="flex items-center gap-3">
           <div className="hidden gap-2 sm:flex">
             <Button variant="ghost" size="sm" asChild>
-              <Link to="/login">Sign In</Link>
+              <Link to="/login">{loginButtonText}</Link>
             </Button>
             <Button size="sm" asChild>
-              <Link to="/signup">Get Started</Link>
+              <Link to="/register">{registerButtonText}</Link>
             </Button>
           </div>
 
@@ -61,12 +73,12 @@ export function Navbar() {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+            <SheetContent side="left" className="w-75 sm:w-100">
               <SheetHeader>
-                <SheetTitle className="text-left">Navigation</SheetTitle>
+                <SheetTitle className="text-left">{navigationText}</SheetTitle>
               </SheetHeader>
               <nav className="mt-8 flex flex-col gap-4">
-                {navLinks.map((link) => (
+                {navLinks?.map((link) => (
                   <Link
                     key={link.to}
                     to={link.to}
@@ -78,10 +90,10 @@ export function Navbar() {
                 ))}
                 <hr className="my-2" />
                 <Button variant="outline" className="w-full" asChild>
-                  <Link to="/login">Sign In</Link>
+                  <Link to="/login">{loginButtonText}</Link>
                 </Button>
                 <Button className="w-full" asChild>
-                  <Link to="/signup">Get Started</Link>
+                  <Link to="/register">{registerButtonText}</Link>
                 </Button>
               </nav>
             </SheetContent>

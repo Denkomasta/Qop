@@ -1,0 +1,11 @@
+{
+  "common": {
+    "signIn": "Sign In",
+    "login": "Login",
+    "register": "Register"
+  },
+  "navbar": {
+    "navigation": "Navigation",
+    "getStarted": "Get Started"
+  }
+}

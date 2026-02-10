@@ -6,10 +6,10 @@ import viteLogo from '/vite.svg'
 import { Button } from '@/components/ui'
 
 export const Route = createFileRoute('/')({
-  component: Index,
+  component: Landing,
 })
 
-function Index() {
+function Landing() {
   const [count, setCount] = useState(0)
 
   return (

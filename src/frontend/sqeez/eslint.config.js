@@ -41,5 +41,14 @@ export default defineConfig([
     },
   },
 
+  {
+    files: ['src/scripts/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+
   eslintPluginPrettierRecommended,
 ])

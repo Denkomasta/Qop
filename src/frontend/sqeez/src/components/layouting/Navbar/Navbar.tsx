@@ -8,6 +8,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/Sheet'
+import { LanguageSwitcher } from '@/components/settings/LanguageSwitcher/LanguageSwitcher'
 
 interface LinkProps {
   to: string
@@ -64,6 +65,7 @@ export function Navbar({
             <Button size="sm" asChild>
               <Link to="/register">{registerButtonText}</Link>
             </Button>
+            <LanguageSwitcher />
           </div>
 
           {/* Mobile Menu Trigger */}
@@ -95,6 +97,7 @@ export function Navbar({
                 <Button className="w-full" asChild>
                   <Link to="/register">{registerButtonText}</Link>
                 </Button>
+                <LanguageSwitcher />
               </nav>
             </SheetContent>
           </Sheet>

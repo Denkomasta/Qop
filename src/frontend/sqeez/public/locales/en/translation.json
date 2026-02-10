@@ -1,8 +1,14 @@
 {
+  "_metadata": {
+    "label": "English",
+    "flag": "🇺🇸"
+  },
   "common": {
     "signIn": "Sign In",
     "login": "Login",
-    "register": "Register"
+    "register": "Register",
+    "home": "Home"
+
   },
   "navbar": {
     "navigation": "Navigation",

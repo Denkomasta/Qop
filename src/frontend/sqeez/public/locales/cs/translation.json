@@ -1,0 +1,16 @@
+{
+  "_metadata": {
+    "label": "Čeština",
+    "flag": "🇨🇿"
+  },
+  "common": {
+    "signIn": "Přihlásit se",
+    "login": "Přihlášení",
+    "register": "Registrace",
+    "home": "Domů"
+  },
+  "navbar": {
+    "navigation": "Navigace",
+    "getStarted": "Začínáme"
+  }
+}

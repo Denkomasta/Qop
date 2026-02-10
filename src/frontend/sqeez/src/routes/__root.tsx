@@ -3,15 +3,10 @@ import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { useTranslation } from 'react-i18next'
 
-const navLinks = [
-  { to: '/', label: 'Home' },
-  { to: '/features', label: 'Features' },
-  { to: '/pricing', label: 'Pricing' },
-  { to: '/about', label: 'About' },
-]
-
 const RootLayout = () => {
   const { t } = useTranslation()
+
+  const navLinks = [{ to: '/', label: t('common.home') }]
 
   return (
     <>

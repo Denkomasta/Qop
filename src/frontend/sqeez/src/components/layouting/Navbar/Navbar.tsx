@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/Sheet'
 import { LanguageSwitcher } from '@/components/settings/LanguageSwitcher/LanguageSwitcher'
+import { ThemeSwitcher } from '@/components/settings/ThemeSwitcher/ThemeSwitcher'
 
 interface LinkProps {
   to: string
@@ -66,6 +67,7 @@ export function Navbar({
               <Link to="/register">{registerButtonText}</Link>
             </Button>
             <LanguageSwitcher />
+            <ThemeSwitcher />
           </div>
 
           {/* Mobile Menu Trigger */}
@@ -91,13 +93,14 @@ export function Navbar({
                   </Link>
                 ))}
                 <hr className="my-2" />
-                <Button variant="outline" className="w-full" asChild>
+                <Button variant={'outline'} className="w-full" asChild>
                   <Link to="/login">{loginButtonText}</Link>
                 </Button>
                 <Button className="w-full" asChild>
                   <Link to="/register">{registerButtonText}</Link>
                 </Button>
                 <LanguageSwitcher />
+                <ThemeSwitcher />
               </nav>
             </SheetContent>
           </Sheet>

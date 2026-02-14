@@ -4,6 +4,7 @@ import { useState } from 'react'
 import reactLogo from '@/assets/react.svg'
 import viteLogo from '/vite.svg'
 import { Button } from '@/components/ui'
+import { ThemeSwitcher } from '@/components/settings/ThemeSwitcher/ThemeSwitcher'
 
 export const Route = createFileRoute('/')({
   component: Landing,
@@ -38,6 +39,10 @@ function Landing() {
             >
               count is {count}
             </Button>
+          </div>
+          <div className="mt-2">
+            <Button variant={'outline'}>{'vejceeee'}</Button>
+            <ThemeSwitcher />
           </div>
         </div>
       </div>

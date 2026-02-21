@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { type Theme } from '@/types/theme'
-import { DAISY_THEMES } from '@/constants/themes'
+import { DAISY_DARK_THEMES, DAISY_THEMES } from '@/constants/themes'
 
 const ThemeContext = createContext<
   | {
@@ -22,19 +22,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     root.setAttribute('data-theme', theme)
 
-    const darkThemes = [
-      'dark',
-      'synthwave',
-      'halloween',
-      'forest',
-      'black',
-      'luxury',
-      'dracula',
-      'business',
-      'night',
-      'coffee',
-    ]
-    if (darkThemes.includes(theme)) {
+    if (DAISY_DARK_THEMES.includes(theme)) {
       root.classList.add('dark')
     }
 

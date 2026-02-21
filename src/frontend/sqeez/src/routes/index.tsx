@@ -1,8 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { useState } from 'react'
-import reactLogo from '@/assets/react.svg'
-import viteLogo from '/vite.svg'
 import { Button } from '@/components/ui'
 import { ThemeSwitcher } from '@/components/settings/ThemeSwitcher/ThemeSwitcher'
 
@@ -15,14 +13,6 @@ function Landing() {
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
       <h1 className="text-4xl font-bold text-blue-800">Vite + React</h1>
       <div className="card w-96 bg-base-100 shadow-sm card-xs">
         <div className="card-body">

@@ -13,7 +13,7 @@ const RootLayout = () => {
     <ThemeProvider>
       <Navbar
         navLinks={navLinks}
-        title="Sqeez"
+        title={t('system.name')}
         loginButtonText={t('common.signIn')}
         registerButtonText={t('common.register')}
         navigationText={t('navbar.navigation')}

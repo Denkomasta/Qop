@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/Sheet'
 import { LanguageSwitcher } from '@/components/settings/LanguageSwitcher/LanguageSwitcher'
 import { ThemeSwitcher } from '@/components/settings/ThemeSwitcher/ThemeSwitcher'
+import SqeezLogo from '@/components/icons/logos/SqeezLogo'
 
 interface LinkProps {
   to: string
@@ -37,9 +38,7 @@ export function Navbar({
         {/* Left: Logo & Desktop Nav */}
         <div className="flex items-center gap-8">
           <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
-              S
-            </div>
+            <SqeezLogo size={64} backgroundColor="var(--background)" />
             <span>{title}</span>
           </Link>
 

@@ -1,4 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { RegisterForm } from './-/RegisterForm'
+import { BrandingPanel } from '@/components/layouting/BrandingPanel'
 
 export const Route = createFileRoute('/register/')({
   component: Register,
@@ -7,7 +9,15 @@ export const Route = createFileRoute('/register/')({
 function Register() {
   return (
     <>
-      <div>{'Register'}</div>
+      <main className="flex min-h-screen">
+        <div className="hidden lg:flex lg:w-1/2">
+          <BrandingPanel />
+        </div>
+
+        <div className="flex w-full flex-col items-center justify-center bg-background px-6 py-12 lg:w-1/2 lg:px-16">
+          <RegisterForm />
+        </div>
+      </main>
     </>
   )
 }

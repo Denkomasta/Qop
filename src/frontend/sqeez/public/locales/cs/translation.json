@@ -3,14 +3,42 @@
     "label": "Čeština",
     "flag": "🇨🇿"
   },
+  "brandingPanel": {
+    "title": "Učte se zábavně, soutěžte s přáteli",
+    "welcomeTo": "Vítejte v",
+    "description": "Proměňte každý kvíz v pokrok. Stoupejte v žebříčcích, odemykejte úspěchy a udržujte svoji sérii přihlášení."
+  },
   "common": {
     "signIn": "Přihlásit se",
     "login": "Přihlášení",
     "register": "Registrace",
     "home": "Domů"
   },
+  "login": {
+    "welcomeBack": "Vítejte zpět!",
+    "signInToYourAccount": "Přihlaste se ke svému účtu",
+    "email": "E-mail",
+    "password": "Heslo",
+    "rememberMe": "Zapamatovat si mě",
+    "forgotPassword": "Zapomněli jste heslo?",
+    "enterPassword": "Zadejte své heslo",
+    "enterEmail": "Zadejte svůj e-mail",
+    "areYouNew": "Jste tu poprvé?",
+    "createAccount": "Vytvořte si účet!",
+    "hidePassword": "Skrýt heslo",
+    "showPassword": "Zobrazit heslo"
+  },
   "navbar": {
     "navigation": "Navigace",
     "getStarted": "Začínáme"
+  },
+  "register": {
+    "title": "Vytvořte si účet",
+    "subtitle": "Připojte se a zahajte svůj rozvoj!",
+    "alreadyHaveAccount": "Máte již účet?",
+    "signIn": "Přihlaste se!"
+  },
+  "system": {
+    "name": "Sqeez"
   }
 }

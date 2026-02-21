@@ -1,5 +1,18 @@
 import type { Theme } from '@/types/theme'
 
+export const DAISY_DARK_THEMES: Theme[] = [
+  'dark',
+  'synthwave',
+  'halloween',
+  'forest',
+  'black',
+  'luxury',
+  'dracula',
+  'business',
+  'night',
+  'coffee',
+]
+
 export const DAISY_THEMES: Theme[] = [
   'light',
   'dark',

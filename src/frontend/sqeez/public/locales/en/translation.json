@@ -3,15 +3,42 @@
     "label": "English",
     "flag": "🇺🇸"
   },
+  "brandingPanel": {
+    "title": "Learn with fun, compete with friends",
+    "welcomeTo": "Welcome to",
+    "description": "Turn every quiz into progress. Climb leaderboards, unlock achievements, and build your knowledge streak."
+  },
   "common": {
     "signIn": "Sign In",
     "login": "Login",
     "register": "Register",
     "home": "Home"
-
+  },
+  "login": {
+    "welcomeBack": "Welcome back!",
+    "signInToYourAccount": "Sign in to your account",
+    "email": "Email",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot your password?",
+    "enterPassword": "Enter your password",
+    "enterEmail": "Enter your email",
+    "areYouNew": "Are you new?",
+    "createAccount": "Create an account!",
+    "hidePassword": "Hide password",
+    "showPassword": "Show password"
   },
   "navbar": {
     "navigation": "Navigation",
     "getStarted": "Get Started"
+  },
+  "register": {
+    "title": "Create your account",
+    "subtitle": "Join Sqeez and start your learning journey today!",
+    "alreadyHaveAccount": "Already have an account?",
+    "signIn": "Sign in!"
+  },
+  "system": {
+    "name": "Sqeez"
   }
 }

@@ -85,6 +85,21 @@ namespace Sqeez.Api.Data
                 .HasMany(qo => qo.Responses)
                 .WithMany(qqr => qqr.Options)
                 .UsingEntity(j => j.ToTable("QuizOptionResponses"));
+        
+            // 5. Explicitly configure SchoolClass relationships    
+            // Relationship A: A SchoolClass has many Students
+            modelBuilder.Entity<SchoolClass>()
+                .HasMany(sc => sc.Students)
+                .WithOne(s => s.SchoolClass)
+                .HasForeignKey(s => s.SchoolClassId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // Relationship B: A SchoolClass has one Teacher
+            modelBuilder.Entity<SchoolClass>()
+                .HasOne(sc => sc.Teacher)
+                .WithOne(t => t.ManagedClass)
+                .HasForeignKey<SchoolClass>(sc => sc.TeacherId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

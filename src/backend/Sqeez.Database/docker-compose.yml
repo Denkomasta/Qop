@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  sqeez-postgres:
+    image: postgres:latest
+    container_name: sqeez_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: TodoSecurePassword
+      POSTGRES_DB: SqeezDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+
+volumes:
+  pgdata:

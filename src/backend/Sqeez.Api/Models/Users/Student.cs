@@ -16,7 +16,6 @@ namespace Sqeez.Api.Models.Users
         public bool IsArchived { get; set; }
         public bool IsOnline { get; set; }
 
-        // Navigation Properties
         public long? SchoolClassId { get; set; }
         public SchoolClass? SchoolClass { get; set; }
 

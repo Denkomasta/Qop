@@ -19,6 +19,13 @@ namespace Sqeez.Api.Controllers
             _authService = authService;
         }
 
+        [HttpPost("register")]
+        public async Task<ActionResult<AuthResponseDTO>> Register(RegisterDTO registerDto)
+        {
+            if (!await _authService.RegisterAsync(registerDto)) return BadRequest("Email already in use.");
+            return Ok(new { message = "Registration was successful." });
+        }
+
         [HttpPost("login")]
         public async Task<ActionResult<AuthResponseDTO>> Login(LoginDTO loginDto)
         {

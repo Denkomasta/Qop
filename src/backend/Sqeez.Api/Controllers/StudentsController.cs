@@ -35,35 +35,5 @@ namespace Sqeez.Api.Controllers
 
             return Ok(students);
         }
-
-        [HttpPost]
-        public async Task<ActionResult<StudentResponseDTO>> CreateStudent(StudentCreateDTO dto)
-        {
-            var newStudent = new Student
-            {
-                Username = dto.Username,
-                Email = dto.Email,
-                PasswordHash = dto.Password,    // TODO: Hash the password before saving
-                Role = UserRole.Student,
-                LastSeen = DateTime.UtcNow,
-                IsOnline = true,
-                IsArchived = false
-            };
-
-            _context.Students.Add(newStudent);
-            await _context.SaveChangesAsync();
-
-            var responseDto = new StudentResponseDTO
-            {
-                Id = newStudent.Id,
-                Username = newStudent.Username,
-                Email = newStudent.Email,
-                CurrentXP = newStudent.CurrentXP,
-                Role = newStudent.Role,
-                LastSeen = newStudent.LastSeen
-            };
-
-            return CreatedAtAction(nameof(GetStudents), new { id = newStudent.Id }, responseDto);
-        }
     }
 }

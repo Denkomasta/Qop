@@ -25,7 +25,7 @@ namespace Sqeez.Api.Services.AuthService
 
             if (user == null) return null;
 
-            bool isValid = BC.Verify(loginDto.Password, user.PasswordHash);
+            bool isValid = BC.Verify(loginDto.Password.Trim(), user.PasswordHash);
 
             if (!isValid) return null;
 
@@ -36,18 +36,20 @@ namespace Sqeez.Api.Services.AuthService
             return _tokenService.CreateToken(user);
         }
 
-        public async Task<bool> RegisterAsync(StudentCreateDTO dto)
+        public async Task<bool> RegisterAsync(RegisterDTO dto)
         {
             if (await _context.Students.AnyAsync(x => x.Email == dto.Email.ToLower()))
                 return false;
 
             string salt = BC.GenerateSalt(12);
-            string hashedPassword = BC.HashPassword(dto.Password, salt);
+            string hashedPassword = BC.HashPassword(dto.Password.Trim(), salt);
+            string email = dto.Email.ToLower();
+            string username = string.IsNullOrWhiteSpace(dto.Username) ? email.Split('@')[0] : dto.Username;
 
             var user = new Student
             {
-                Username = dto.Username,
-                Email = dto.Email.ToLower(),
+                Username = username,
+                Email = email,
                 PasswordHash = hashedPassword,
                 Role = Enums.UserRole.Student
             };

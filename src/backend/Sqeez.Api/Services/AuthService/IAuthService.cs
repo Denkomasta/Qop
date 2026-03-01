@@ -4,7 +4,7 @@ namespace Sqeez.Api.Services.AuthService
 {
     public interface IAuthService
     {
-        Task<bool> RegisterAsync(StudentCreateDTO dto);
+        Task<bool> RegisterAsync(RegisterDTO dto);
         Task<string?> LoginAsync(LoginDTO loginDto);
         Task<bool> LogoutAsync(long userId);
     }

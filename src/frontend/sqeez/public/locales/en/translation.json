@@ -12,7 +12,8 @@
     "signIn": "Sign In",
     "login": "Login",
     "register": "Register",
-    "home": "Home"
+    "home": "Home",
+    "goBack": "Go Back"
   },
   "login": {
     "welcomeBack": "Welcome back!",
@@ -28,9 +29,18 @@
     "hidePassword": "Hide password",
     "showPassword": "Show password"
   },
+  "logout": {
+    "title": "Confirm Logout",
+    "description": "Are you sure you want to sign out?",
+    "signingOut": "Signing out...",
+    "confirm": "Yes, Log out"
+  },
   "navbar": {
     "navigation": "Navigation",
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
   },
   "register": {
     "title": "Create your account",

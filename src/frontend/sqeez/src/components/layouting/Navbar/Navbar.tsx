@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Menu } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui'
 import {
   Sheet,
   SheetContent,
@@ -11,6 +11,7 @@ import {
 import { LanguageSwitcher } from '@/components/settings/LanguageSwitcher/LanguageSwitcher'
 import { ThemeSwitcher } from '@/components/settings/ThemeSwitcher/ThemeSwitcher'
 import SqeezLogo from '@/components/icons/logos/SqeezLogo'
+import { Avatar, AvatarFallback } from '@/components/ui/Avatar'
 
 interface LinkProps {
   to: string
@@ -22,7 +23,10 @@ interface NavbarProps {
   title?: string
   loginButtonText?: string
   registerButtonText?: string
+  logoutButtonText?: string
+  username?: string
   navigationText?: string
+  isAuthenticated?: boolean
 }
 
 export function Navbar({
@@ -31,6 +35,9 @@ export function Navbar({
   loginButtonText,
   registerButtonText,
   navigationText,
+  logoutButtonText,
+  isAuthenticated,
+  username,
 }: NavbarProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -59,12 +66,28 @@ export function Navbar({
         {/* Right: Actions & Mobile Menu */}
         <div className="flex items-center gap-3">
           <div className="hidden gap-2 sm:flex">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/login">{loginButtonText}</Link>
-            </Button>
-            <Button size="sm" asChild>
-              <Link to="/register">{registerButtonText}</Link>
-            </Button>
+            {isAuthenticated ? (
+              <>
+                <Avatar className="h-9 w-9">
+                  {/* <AvatarImage src={user?.avatarUrl} /> TODO: add avatar url to user */}
+                  <AvatarFallback>
+                    {username?.substring(0, 2).toUpperCase() || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/logout">{logoutButtonText}</Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/login">{loginButtonText}</Link>
+                </Button>
+                <Button size="sm" asChild>
+                  <Link to="/register">{registerButtonText}</Link>
+                </Button>
+              </>
+            )}
             <LanguageSwitcher />
             <ThemeSwitcher />
           </div>
@@ -92,12 +115,28 @@ export function Navbar({
                   </Link>
                 ))}
                 <hr className="my-2" />
-                <Button variant={'outline'} className="w-full" asChild>
-                  <Link to="/login">{loginButtonText}</Link>
-                </Button>
-                <Button className="w-full" asChild>
-                  <Link to="/register">{registerButtonText}</Link>
-                </Button>
+                {isAuthenticated ? (
+                  <>
+                    <Avatar className="h-9 w-9">
+                      {/* <AvatarImage src={user?.avatarUrl} /> TODO: add avatar url to user */}
+                      <AvatarFallback>
+                        {username?.substring(0, 2).toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <Button variant={'outline'} className="w-full" asChild>
+                      <Link to="/logout">{logoutButtonText}</Link>
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant={'outline'} className="w-full" asChild>
+                      <Link to="/login">{loginButtonText}</Link>
+                    </Button>
+                    <Button className="w-full" asChild>
+                      <Link to="/register">{registerButtonText}</Link>
+                    </Button>
+                  </>
+                )}
                 <LanguageSwitcher />
                 <ThemeSwitcher />
               </nav>

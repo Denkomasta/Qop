@@ -12,7 +12,8 @@
     "signIn": "Přihlásit se",
     "login": "Přihlášení",
     "register": "Registrace",
-    "home": "Domů"
+    "home": "Domů",
+    "goBack": "Zpět"
   },
   "login": {
     "welcomeBack": "Vítejte zpět!",
@@ -28,9 +29,18 @@
     "hidePassword": "Skrýt heslo",
     "showPassword": "Zobrazit heslo"
   },
+  "logout": {
+    "title": "Potvrzení odhlášení",
+    "description": "Jste si jisti, že se chcete odhlásit?",
+    "signingOut": "Odhlašuji...",
+    "confirm": "Ano, odhlásit se"
+  },
   "navbar": {
     "navigation": "Navigace",
-    "getStarted": "Začínáme"
+    "getStarted": "Začínáme",
+    "profile": "Profil",
+    "settings": "Nastavení",
+    "logout": "Odhlásit se"
   },
   "register": {
     "title": "Vytvořte si účet",

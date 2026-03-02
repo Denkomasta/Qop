@@ -12,7 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RegisterIndexRouteImport } from './routes/register/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
-import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as AppAuthenticatedRouteImport } from './routes/app/_authenticated'
+import { Route as AppAuthenticatedIndexRouteImport } from './routes/app/_authenticated/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -29,42 +30,55 @@ const LoginIndexRoute = LoginIndexRouteImport.update({
   path: '/login/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardIndexRoute = DashboardIndexRouteImport.update({
-  id: '/dashboard/',
-  path: '/dashboard/',
+const AppAuthenticatedRoute = AppAuthenticatedRouteImport.update({
+  id: '/app/_authenticated',
+  path: '/app',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppAuthenticatedIndexRoute = AppAuthenticatedIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppAuthenticatedRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard/': typeof DashboardIndexRoute
+  '/app': typeof AppAuthenticatedRouteWithChildren
   '/login/': typeof LoginIndexRoute
   '/register/': typeof RegisterIndexRoute
+  '/app/': typeof AppAuthenticatedIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardIndexRoute
   '/login': typeof LoginIndexRoute
   '/register': typeof RegisterIndexRoute
+  '/app': typeof AppAuthenticatedIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard/': typeof DashboardIndexRoute
+  '/app/_authenticated': typeof AppAuthenticatedRouteWithChildren
   '/login/': typeof LoginIndexRoute
   '/register/': typeof RegisterIndexRoute
+  '/app/_authenticated/': typeof AppAuthenticatedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard/' | '/login/' | '/register/'
+  fullPaths: '/' | '/app' | '/login/' | '/register/' | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login' | '/register'
-  id: '__root__' | '/' | '/dashboard/' | '/login/' | '/register/'
+  to: '/' | '/login' | '/register' | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/app/_authenticated'
+    | '/login/'
+    | '/register/'
+    | '/app/_authenticated/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardIndexRoute: typeof DashboardIndexRoute
+  AppAuthenticatedRoute: typeof AppAuthenticatedRouteWithChildren
   LoginIndexRoute: typeof LoginIndexRoute
   RegisterIndexRoute: typeof RegisterIndexRoute
 }
@@ -92,19 +106,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard/': {
-      id: '/dashboard/'
-      path: '/dashboard'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexRouteImport
+    '/app/_authenticated': {
+      id: '/app/_authenticated'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppAuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/app/_authenticated/': {
+      id: '/app/_authenticated/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppAuthenticatedIndexRouteImport
+      parentRoute: typeof AppAuthenticatedRoute
     }
   }
 }
 
+interface AppAuthenticatedRouteChildren {
+  AppAuthenticatedIndexRoute: typeof AppAuthenticatedIndexRoute
+}
+
+const AppAuthenticatedRouteChildren: AppAuthenticatedRouteChildren = {
+  AppAuthenticatedIndexRoute: AppAuthenticatedIndexRoute,
+}
+
+const AppAuthenticatedRouteWithChildren =
+  AppAuthenticatedRoute._addFileChildren(AppAuthenticatedRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardIndexRoute: DashboardIndexRoute,
+  AppAuthenticatedRoute: AppAuthenticatedRouteWithChildren,
   LoginIndexRoute: LoginIndexRoute,
   RegisterIndexRoute: RegisterIndexRoute,
 }

@@ -1,0 +1,186 @@
+openapi: 3.1.1
+info:
+  title: Sqeez.Api | v1
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/
+paths:
+  /api/auth/register:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterDTO"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/RegisterDTO"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/RegisterDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginDTO"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/LoginDTO"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/LoginDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/auth/logout:
+    post:
+      tags:
+        - Auth
+      responses:
+        "200":
+          description: OK
+  /api/auth/me:
+    post:
+      tags:
+        - Auth
+      parameters:
+        - name: role
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+  /api/students:
+    get:
+      tags:
+        - Students
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StudentResponseDTO"
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StudentResponseDTO"
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StudentResponseDTO"
+components:
+  schemas:
+    LoginDTO:
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    RegisterDTO:
+      required:
+        - username
+        - email
+        - password
+      type: object
+      properties:
+        username:
+          type:
+            - "null"
+            - string
+        email:
+          type: string
+        password:
+          type: string
+    StudentResponseDTO:
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        username:
+          type: string
+        email:
+          type: string
+        currentXP:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        role:
+          $ref: "#/components/schemas/UserRole"
+        lastSeen:
+          type: string
+          format: date-time
+    UserDTO:
+      required:
+        - id
+        - username
+        - email
+        - currentXP
+        - role
+        - department
+        - phoneNumber
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        username:
+          type: string
+        email:
+          type: string
+        currentXP:
+          type: string
+        role:
+          type: string
+        department:
+          type:
+            - "null"
+            - string
+        phoneNumber:
+          type:
+            - "null"
+            - string
+    UserRole:
+      type: integer
+tags:
+  - name: Auth
+  - name: Students

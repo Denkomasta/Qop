@@ -1,23 +1,57 @@
 import { useState } from 'react'
-import { Eye, EyeOff, Mail, Lock, BookOpen } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, BookOpen, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { usePostApiAuthLogin as useLogin } from '@/api/generated/endpoints/auth/auth'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { useForm } from 'react-hook-form'
+
+const loginSchema = z.object({
+  email: z.email({ message: 'Invalid email address' }),
+  password: z
+    .string()
+    .min(4, { message: 'Password must be at least 4 characters' }),
+})
+
+type LoginFormValues = z.infer<typeof loginSchema>
 
 export function LoginForm() {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // TODO: Implement login logic
-    navigate({ to: '/dashboard' })
+  const { mutate, isPending } = useLogin({
+    mutation: {
+      onSuccess: () => {
+        navigate({ to: '/app' })
+      },
+    },
+  })
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  })
+
+  const onSubmit = (values: LoginFormValues) => {
+    mutate({
+      data: {
+        email: values.email,
+        password: values.password,
+      },
+    })
   }
 
   return (
@@ -43,7 +77,7 @@ export function LoginForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
           <Label
             htmlFor="email"
@@ -57,16 +91,19 @@ export function LoginForm() {
               aria-hidden="true"
             />
             <Input
+              {...register('email')}
               id="email"
               type="email"
               placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               className="h-11 rounded-xl border-border bg-card pl-10 text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
-              required
-              autoComplete="email"
+              disabled={isPending}
             />
           </div>
+          {errors.email && (
+            <span className="text-xs text-destructive">
+              {errors.email.message}
+            </span>
+          )}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -90,16 +127,12 @@ export function LoginForm() {
               aria-hidden="true"
             />
             <Input
+              {...register('password')}
               id="password"
               type={showPassword ? 'text' : 'password'}
               placeholder={t('login.password')}
-              value={password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setPassword(e.target.value)
-              }
               className="h-11 rounded-xl border-border bg-card pr-10 pl-10 text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
-              required
-              autoComplete="current-password"
+              disabled={isPending}
             />
             <button
               type="button"
@@ -116,6 +149,11 @@ export function LoginForm() {
               )}
             </button>
           </div>
+          {errors.password && (
+            <span className="text-xs text-destructive">
+              {errors.password.message}
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -131,7 +169,9 @@ export function LoginForm() {
         <Button
           type="submit"
           className="h-11 w-full rounded-xl bg-primary font-semibold text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
+          disabled={isPending}
         >
+          {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {t('common.signIn')}
         </Button>
       </form>

@@ -70,5 +70,27 @@ namespace Sqeez.Api.Services.AuthService
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<UserDTO?> GetCurrentUserAsync(long userId, string? role)
+        {
+            var user = role switch
+            {
+                "Teacher" => await _context.Teachers.FindAsync(userId),
+                "Admin" => await _context.Admins.FindAsync(userId),
+                _ => await _context.Students.FindAsync(userId),
+            };
+
+            if (user == null) return null;
+            
+            return new UserDTO(
+                Id: user.Id,
+                Username: user.Username,
+                Email: user.Email,
+                CurrentXP: user.CurrentXP.ToString(),
+                Role: user.Role.ToString(),
+                Department: user is Teacher t ? t.Department : null,
+                PhoneNumber: user is Admin a ? a.PhoneNumber : null
+            );
+        }
     }
 }

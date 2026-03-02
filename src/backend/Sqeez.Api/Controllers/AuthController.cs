@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
@@ -19,15 +20,20 @@ namespace Sqeez.Api.Controllers
             _authService = authService;
         }
 
+        private string? GetUserIdFromClaims()
+        {
+            return User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        }
+
         [HttpPost("register")]
-        public async Task<ActionResult<AuthResponseDTO>> Register(RegisterDTO registerDto)
+        public async Task<IActionResult> Register(RegisterDTO registerDto)
         {
             if (!await _authService.RegisterAsync(registerDto)) return BadRequest("Email already in use.");
             return Ok(new { message = "Registration was successful." });
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<AuthResponseDTO>> Login(LoginDTO loginDto)
+        public async Task<IActionResult> Login(LoginDTO loginDto)
         {
             var token = await _authService.LoginAsync(loginDto);
 
@@ -50,7 +56,7 @@ namespace Sqeez.Api.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userIdClaim = GetUserIdFromClaims();
 
             if (string.IsNullOrEmpty(userIdClaim))
             {
@@ -71,6 +77,25 @@ namespace Sqeez.Api.Controllers
             });
 
             return Ok(new { message = "Logged out successfully" });
+        }
+
+        [Authorize]
+        [HttpPost("me")]
+        public async Task<ActionResult<UserDTO>> GetCurrentUser(string? role)
+        {
+            var userIdClaim = GetUserIdFromClaims();
+
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _authService.GetCurrentUserAsync(long.Parse(userIdClaim), role);
+
+            if (user == null)
+                return NotFound("User record not found.");
+
+            return Ok(user);
         }
     }
 }

@@ -13,7 +13,14 @@
     "login": "Login",
     "register": "Register",
     "home": "Home",
-    "goBack": "Go Back"
+    "goBack": "Go Back",
+    "username": "Username",
+    "email": "Email",
+    "role": "Role",
+    "department": "Department",
+    "phoneNumber": "Phone Number",
+    "xp": "XP",
+    "level": "Level"
   },
   "login": {
     "welcomeBack": "Welcome back!",
@@ -41,6 +48,11 @@
     "profile": "Profile",
     "settings": "Settings",
     "logout": "Logout"
+  },
+  "profile": {
+    "title": "My Profile",
+    "accountDetails": "Account Details",
+    "description": "Your personal and organizational information."
   },
   "register": {
     "title": "Create your account",

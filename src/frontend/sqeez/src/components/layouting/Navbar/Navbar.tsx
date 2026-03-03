@@ -41,7 +41,7 @@ export function Navbar({
 }: NavbarProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+      <div className="flex h-16 items-center justify-between">
         {/* Left: Logo & Desktop Nav */}
         <div className="flex items-center gap-8">
           <Link to="/" className="flex items-center gap-2 text-xl font-bold">
@@ -68,12 +68,17 @@ export function Navbar({
           <div className="hidden gap-2 sm:flex">
             {isAuthenticated ? (
               <>
-                <Avatar className="h-9 w-9">
-                  {/* <AvatarImage src={user?.avatarUrl} /> TODO: add avatar url to user */}
-                  <AvatarFallback>
-                    {username?.substring(0, 2).toUpperCase() || 'U'}
-                  </AvatarFallback>
-                </Avatar>
+                <Link
+                  to="/app/profile"
+                  className="text-lg font-semibold text-muted-foreground"
+                >
+                  <Avatar className="h-9 w-9">
+                    {/* <AvatarImage src={user?.avatarUrl} /> TODO: add avatar url to user */}
+                    <AvatarFallback>
+                      {username?.substring(0, 2).toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                </Link>{' '}
                 <Button variant="ghost" size="sm" asChild>
                   <Link to="/logout">{logoutButtonText}</Link>
                 </Button>
@@ -117,12 +122,17 @@ export function Navbar({
                 <hr className="my-2" />
                 {isAuthenticated ? (
                   <>
-                    <Avatar className="h-9 w-9">
-                      {/* <AvatarImage src={user?.avatarUrl} /> TODO: add avatar url to user */}
-                      <AvatarFallback>
-                        {username?.substring(0, 2).toUpperCase() || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
+                    <Link
+                      to="/app/profile"
+                      className="text-lg font-semibold text-muted-foreground"
+                    >
+                      <Avatar className="h-9 w-9">
+                        {/* <AvatarImage src={user?.avatarUrl} /> TODO: add avatar url to user */}
+                        <AvatarFallback>
+                          {username?.substring(0, 2).toUpperCase() || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>{' '}
                     <Button variant={'outline'} className="w-full" asChild>
                       <Link to="/logout">{logoutButtonText}</Link>
                     </Button>

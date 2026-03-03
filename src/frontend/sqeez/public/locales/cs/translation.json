@@ -13,7 +13,14 @@
     "login": "Přihlášení",
     "register": "Registrace",
     "home": "Domů",
-    "goBack": "Zpět"
+    "goBack": "Zpět",
+    "username": "Uživatelské jméno",
+    "email": "E-mail",
+    "role": "Role",
+    "department": "Oddělení",
+    "phoneNumber": "Telefonní číslo",
+    "xp": "XP",
+    "level": "Level"
   },
   "login": {
     "welcomeBack": "Vítejte zpět!",
@@ -41,6 +48,11 @@
     "profile": "Profil",
     "settings": "Nastavení",
     "logout": "Odhlásit se"
+  },
+  "profile": {
+    "title": "Můj profil",
+    "accountDetails": "Detaily účtu",
+    "description": "Vaše osobní a organizační informace."
   },
   "register": {
     "title": "Vytvořte si účet",

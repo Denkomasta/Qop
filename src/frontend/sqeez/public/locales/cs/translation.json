@@ -22,6 +22,12 @@
     "xp": "XP",
     "level": "Level"
   },
+  "footer": {
+    "rights": "Všechna práva vyhrazena.",
+    "help": "Nápověda",
+    "privacy": "Soukromí",
+    "terms": "Podmínky"
+  },
   "login": {
     "welcomeBack": "Vítejte zpět!",
     "signInToYourAccount": "Přihlaste se ke svému účtu",

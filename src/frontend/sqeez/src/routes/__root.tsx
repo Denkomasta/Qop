@@ -1,3 +1,4 @@
+import { Footer } from '@/components/layouting/Footer/Footer'
 import { Navbar } from '@/components/layouting/Navbar/Navbar'
 import { ThemeProvider } from '@/context/ThemeContext'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -13,17 +14,24 @@ const RootLayout = () => {
 
   return (
     <ThemeProvider>
-      <Navbar
-        navLinks={navLinks}
-        title={t('system.name')}
-        loginButtonText={t('common.signIn')}
-        registerButtonText={t('common.register')}
-        navigationText={t('navbar.navigation')}
-        logoutButtonText={t('navbar.logout')}
-        isAuthenticated={isAuthenticated}
-        username={user?.username || ''}
-      />
-      <Outlet />
+      <div className="flex min-h-screen flex-col bg-background">
+        <Navbar
+          navLinks={navLinks}
+          title={t('system.name')}
+          loginButtonText={t('common.signIn')}
+          registerButtonText={t('common.register')}
+          navigationText={t('navbar.navigation')}
+          logoutButtonText={t('navbar.logout')}
+          isAuthenticated={isAuthenticated}
+          username={user?.username || ''}
+        />
+
+        <main className="flex-1">
+          <Outlet />
+        </main>
+
+        <Footer />
+      </div>
       <TanStackRouterDevtools />
     </ThemeProvider>
   )

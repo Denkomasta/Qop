@@ -22,6 +22,12 @@
     "xp": "XP",
     "level": "Level"
   },
+  "footer": {
+    "rights": "All rights reserved.",
+    "help": "Help",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
   "login": {
     "welcomeBack": "Welcome back!",
     "signInToYourAccount": "Sign in to your account",

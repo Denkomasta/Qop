@@ -25,10 +25,43 @@ namespace Sqeez.Api.Controllers
             return User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         }
 
+        private string? GetUserRoleFromClaims()
+        {
+            return User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+        }
+
+        private void SetCookie(string token)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+
+            Response.Cookies.Append("sqeez_token", token, cookieOptions);
+        }
+
+        private void ClearCookie()
+        {
+            Response.Cookies.Delete("sqeez_token", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict
+            });
+        }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDTO registerDto)
         {
-            if (!await _authService.RegisterAsync(registerDto)) return BadRequest("Email already in use.");
+            var token = await _authService.RegisterAsync(registerDto);
+
+            if (token == null) return BadRequest("Email already in use.");
+
+            SetCookie(token);
+
             return Ok(new { message = "Registration was successful." });
         }
 
@@ -39,15 +72,7 @@ namespace Sqeez.Api.Controllers
 
             if (token == null) return Unauthorized("Invalid credentials.");
 
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddDays(7)
-            };
-
-            Response.Cookies.Append("sqeez_token", token, cookieOptions);
+            SetCookie(token);
 
             return Ok(new { message = "Login successful" });
         }
@@ -65,27 +90,22 @@ namespace Sqeez.Api.Controllers
 
             var success = await _authService.LogoutAsync(long.Parse(userIdClaim));
 
-            Response.Cookies.Delete("sqeez_token");
             if (!success)
                 return NotFound("User record not found.");
 
-            Response.Cookies.Delete("sqeez_token", new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict
-            });
+            ClearCookie();
 
             return Ok(new { message = "Logged out successfully" });
         }
 
         [Authorize]
         [HttpPost("me")]
-        public async Task<ActionResult<UserDTO>> GetCurrentUser(string? role)
+        public async Task<ActionResult<UserDTO>> GetCurrentUser()
         {
             var userIdClaim = GetUserIdFromClaims();
+            var role = GetUserRoleFromClaims();
 
-            if (string.IsNullOrEmpty(userIdClaim))
+            if (string.IsNullOrEmpty(userIdClaim) || string.IsNullOrEmpty(role))
             {
                 return Unauthorized();
             }

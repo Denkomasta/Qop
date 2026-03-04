@@ -17,7 +17,7 @@ export function RegisterForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     // TODO: Implement login logic
-    navigate({ to: '/app' })
+    // navigate({ to: '/app' })
   }
 
   return (

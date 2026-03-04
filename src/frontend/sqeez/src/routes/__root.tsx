@@ -9,8 +9,14 @@ import { useTranslation } from 'react-i18next'
 const RootLayout = () => {
   const { t } = useTranslation()
   const { isAuthenticated, user } = useAuthStore()
+  const currentYear = new Date().getFullYear()
 
   const navLinks = [{ to: '/', label: t('common.home') }]
+  const footerLinks = [
+    { to: '/help', label: t('footer.help') },
+    { to: '/privacy', label: t('footer.privacy') },
+    { to: '/terms', label: t('footer.terms') },
+  ]
 
   return (
     <ThemeProvider>
@@ -30,7 +36,10 @@ const RootLayout = () => {
           <Outlet />
         </main>
 
-        <Footer />
+        <Footer
+          links={footerLinks}
+          rightsText={`© ${currentYear} ${t('system.name')}. ${t('footer.rights')}`}
+        />
       </div>
       <TanStackRouterDevtools />
     </ThemeProvider>

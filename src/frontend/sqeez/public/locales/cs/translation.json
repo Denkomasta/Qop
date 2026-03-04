@@ -22,6 +22,11 @@
     "xp": "XP",
     "level": "Level"
   },
+  "error": {
+    "generic": "Nastala chyba. Prosím zkuste to později.",
+    "invalidCredentials": "Neplatný e-mail nebo heslo. Prosím zkuste to znovu.",
+    "serverError": "Na serveru nastal problém. Prosím zkuste to později."
+  },
   "footer": {
     "rights": "Všechna práva vyhrazena.",
     "help": "Nápověda",

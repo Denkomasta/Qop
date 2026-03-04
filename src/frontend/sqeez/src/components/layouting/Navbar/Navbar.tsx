@@ -13,7 +13,7 @@ import { ThemeSwitcher } from '@/components/settings/ThemeSwitcher/ThemeSwitcher
 import SqeezLogo from '@/components/icons/logos/SqeezLogo'
 import { Avatar, AvatarFallback } from '@/components/ui/Avatar'
 
-interface LinkProps {
+export interface LinkProps {
   to: string
   label: string
 }
@@ -41,7 +41,7 @@ export function Navbar({
 }: NavbarProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-16 items-center justify-between">
+      <div className="flex h-16 items-center justify-between pr-4">
         {/* Left: Logo & Desktop Nav */}
         <div className="flex items-center gap-8">
           <Link to="/" className="flex items-center gap-2 text-xl font-bold">

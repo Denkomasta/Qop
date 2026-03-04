@@ -10,6 +10,8 @@ import { usePostApiAuthLogin as useLogin } from '@/api/generated/endpoints/auth/
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
+import type { TranslationKey } from '@/i18next'
+import { AxiosError } from 'axios'
 
 const loginSchema = z.object({
   email: z.email({ message: 'Invalid email address' }),
@@ -18,6 +20,11 @@ const loginSchema = z.object({
     .min(4, { message: 'Password must be at least 4 characters' }),
 })
 
+const errorMapping: Record<number, TranslationKey> = {
+  401: 'error.invalidCredentials',
+  500: 'error.serverError',
+}
+
 type LoginFormValues = z.infer<typeof loginSchema>
 
 export function LoginForm() {
@@ -25,23 +32,34 @@ export function LoginForm() {
   const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
 
-  const { mutate, isPending } = useLogin({
-    mutation: {
-      onSuccess: () => {
-        navigate({ to: '/app' })
-      },
-    },
-  })
-
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
+    },
+  })
+
+  const { mutate, isPending } = useLogin({
+    mutation: {
+      onSuccess: () => {
+        navigate({ to: '/app' })
+      },
+      onError: (error: AxiosError) => {
+        setError('root', {
+          type: 'manual',
+          message: t(
+            error.response?.status
+              ? errorMapping[error.response.status]
+              : 'error.generic',
+          ),
+        })
+      },
     },
   })
 
@@ -165,6 +183,12 @@ export function LoginForm() {
             {t('login.rememberMe')}
           </Label>
         </div>
+
+        {errors.root && (
+          <div className="animate-in rounded-lg bg-destructive/15 p-3 text-[0.8rem] font-medium text-destructive ring-1 ring-destructive/20 transition-all zoom-in-95 fade-in">
+            {errors.root.message}
+          </div>
+        )}
 
         <Button
           type="submit"

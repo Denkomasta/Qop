@@ -1,27 +1,29 @@
 import { Link } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
+import type { LinkProps } from '../Navbar/Navbar'
 
-export function Footer() {
-  const { t } = useTranslation()
-  const currentYear = new Date().getFullYear()
+interface FooterProps {
+  links?: LinkProps[]
+  rightsText?: string
+}
 
+export function Footer({ links, rightsText }: FooterProps) {
   return (
     <footer className="w-full border-t bg-background">
       <div className="flex flex-col items-center justify-center gap-4 py-4 text-sm text-muted-foreground">
         <div className="flex flex-row gap-4">
-          <Link to="/" className="transition-colors hover:text-foreground">
-            {t('footer.help')}
-          </Link>
-          <Link to="/" className="transition-colors hover:text-foreground">
-            {t('footer.privacy')}
-          </Link>
-          <Link to="/" className="transition-colors hover:text-foreground">
-            {t('footer.terms')}
-          </Link>
+          {links?.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className="transition-colors hover:text-foreground"
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
 
         <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
-          &copy; {currentYear} {t('system.name')}. {t('footer.rights')}
+          {rightsText}
         </p>
       </div>
     </footer>

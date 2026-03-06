@@ -45,7 +45,8 @@
     "areYouNew": "Jste tu poprvé?",
     "createAccount": "Vytvořte si účet!",
     "hidePassword": "Skrýt heslo",
-    "showPassword": "Zobrazit heslo"
+    "showPassword": "Zobrazit heslo",
+    "emailPlaceholder": "name@example.com"
   },
   "logout": {
     "title": "Potvrzení odhlášení",
@@ -69,7 +70,8 @@
     "title": "Vytvořte si účet",
     "subtitle": "Připojte se a zahajte svůj rozvoj!",
     "alreadyHaveAccount": "Máte již účet?",
-    "signIn": "Přihlaste se!"
+    "signIn": "Přihlaste se!",
+    "username": "Uživatelské jméno"
   },
   "system": {
     "name": "Sqeez"

@@ -45,7 +45,8 @@
     "areYouNew": "Are you new?",
     "createAccount": "Create an account!",
     "hidePassword": "Hide password",
-    "showPassword": "Show password"
+    "showPassword": "Show password",
+    "emailPlaceholder": "name@example.com"
   },
   "logout": {
     "title": "Confirm Logout",
@@ -69,7 +70,8 @@
     "title": "Create your account",
     "subtitle": "Join Sqeez and start your learning journey today!",
     "alreadyHaveAccount": "Already have an account?",
-    "signIn": "Sign in!"
+    "signIn": "Sign in!",
+    "username": "Username"
   },
   "system": {
     "name": "Sqeez"

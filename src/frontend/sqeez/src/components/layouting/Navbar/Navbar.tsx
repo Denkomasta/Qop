@@ -44,7 +44,10 @@ export function Navbar({
       <div className="flex h-16 items-center justify-between pr-4">
         {/* Left: Logo & Desktop Nav */}
         <div className="flex items-center gap-8">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold">
+          <Link
+            to={isAuthenticated ? '/app' : '/'}
+            className="flex items-center gap-2 text-xl font-bold"
+          >
             <SqeezLogo size={64} backgroundColor="var(--background)" />
             <span>{title}</span>
           </Link>

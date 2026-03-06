@@ -36,7 +36,6 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
-          cache: true 
 
       - name: Restore
         run: dotnet restore src/backend/Sqeez.Api/Sqeez.Api.csproj
@@ -74,13 +73,20 @@ jobs:
       - name: Build Vite App
         run: yarn build
   
-  ci-complete:
+  # --- The Gatekeeper ---
+  ci-success:
     needs: [backend-ci, frontend-ci]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Check Status
+      - name: Check Statuses
         run: |
-          if [[ "${{ needs.backend-ci.result }}" == "failure" || "${{ needs.frontend-ci.result }}" == "failure" ]]; then
+          BACKEND="${{ needs.backend-ci.result }}"
+          FRONTEND="${{ needs.frontend-ci.result }}"
+          
+          if [[ "$BACKEND" == "failure" || "$FRONTEND" == "failure" || "$BACKEND" == "cancelled" || "$FRONTEND" == "cancelled" ]]; then
+            echo "One or more CI jobs failed."
             exit 1
           fi
+          
+          echo "CI checks passed or were appropriately skipped."

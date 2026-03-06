@@ -1,23 +1,68 @@
-import { useState } from 'react'
-import { Eye, EyeOff, Mail, Lock, BookOpen } from 'lucide-react'
+import { Mail, Lock, BookOpen } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { usePostApiAuthRegister as useRegister } from '@/api/generated/endpoints/auth/auth'
+
+const registerSchema = z.object({
+  username: z
+    .string()
+    .min(2, { message: 'Username must be at least 2 characters' })
+    .nullable(),
+  email: z.email({ message: 'Invalid email address' }),
+  password: z
+    .string()
+    .min(4, { message: 'Password must be at least 4 characters' }),
+})
+
+type RegisterFormValues = z.infer<typeof registerSchema>
 
 export function RegisterForm() {
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // TODO: Implement login logic
-    // navigate({ to: '/app' })
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      username: null,
+      email: '',
+      password: '',
+    },
+  })
+
+  const { mutate, isPending } = useRegister({
+    mutation: {
+      onSuccess: () => {
+        navigate({ to: '/app' })
+      },
+      onError: () => {
+        setError('root', {
+          type: 'manual',
+          message: t('error.generic'),
+        })
+      },
+    },
+  })
+
+  const onSubmit = (values: RegisterFormValues) => {
+    mutate({
+      data: {
+        username: values.username,
+        email: values.email,
+        password: values.password,
+      },
+    })
   }
 
   return (
@@ -43,80 +88,36 @@ export function RegisterForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
-          <Label
-            htmlFor="email"
-            className="text-sm font-medium text-foreground"
-          >
-            {t('login.email')}
-          </Label>
-          <div className="relative">
-            <Mail
-              className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground"
-              aria-hidden="true"
-            />
-            <Input
-              id="email"
-              type="email"
-              placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="h-11 rounded-xl border-border bg-card pl-10 text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
-              required
-              autoComplete="email"
-            />
-          </div>
-        </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+        <Input
+          {...register('username')}
+          id="username"
+          label={t('register.username')}
+          placeholder={t('register.username')}
+          disabled={isPending}
+        />
 
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <Label
-              htmlFor="password"
-              className="text-sm font-medium text-foreground"
-            >
-              {t('login.password')}
-            </Label>
-            <a // TODO: Link to forgot password page
-              href=""
-              className="text-xs font-medium text-primary transition-colors hover:text-primary/80"
-            >
-              {t('login.forgotPassword')}
-            </a>
-          </div>
-          <div className="relative">
-            <Lock
-              className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground"
-              aria-hidden="true"
-            />
-            <Input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder={t('login.password')}
-              value={password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setPassword(e.target.value)
-              }
-              className="h-11 rounded-xl border-border bg-card pr-10 pl-10 text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
-              required
-              autoComplete="current-password"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
-              aria-label={
-                showPassword ? t('login.hidePassword') : t('login.showPassword')
-              }
-            >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4" />
-              ) : (
-                <Eye className="h-4 w-4" />
-              )}
-            </button>
-          </div>
-        </div>
+        <Input
+          {...register('email')}
+          id="email"
+          type="email"
+          label={t('login.email')}
+          placeholder={t('login.emailPlaceholder')}
+          error={errors.email?.message}
+          disabled={isPending}
+          icon={<Mail className="h-4 w-4" />}
+        />
+
+        <Input
+          {...register('password')}
+          id="password"
+          type="password"
+          label={t('login.password')}
+          placeholder={t('login.password')}
+          error={errors.password?.message}
+          disabled={isPending}
+          icon={<Lock className="h-4 w-4" />}
+        />
 
         <div className="flex items-center gap-2">
           <Checkbox id="remember" aria-label="Remember me for 30 days" />
@@ -131,20 +132,21 @@ export function RegisterForm() {
         <Button
           type="submit"
           className="h-11 w-full rounded-xl bg-primary font-semibold text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
+          disabled={isPending}
         >
           {t('common.signIn')}
         </Button>
-      </form>
 
-      <p className="text-center text-sm text-muted-foreground">
-        {t('register.alreadyHaveAccount')}{' '}
-        <Link
-          to="/login"
-          className="font-semibold text-primary transition-colors hover:text-primary/80"
-        >
-          {t('register.signIn')}
-        </Link>
-      </p>
+        <p className="text-center text-sm text-muted-foreground">
+          {t('register.alreadyHaveAccount')}{' '}
+          <Link
+            to="/login"
+            className="font-semibold text-primary transition-colors hover:text-primary/80"
+          >
+            {t('register.signIn')}
+          </Link>
+        </p>
+      </form>
     </div>
   )
 }

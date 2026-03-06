@@ -56,7 +56,8 @@ namespace Sqeez.Api.Services.AuthService
                 Username = username,
                 Email = email,
                 PasswordHash = hashedPassword,
-                Role = Enums.UserRole.Student
+                Role = Enums.UserRole.Student,
+                LastSeen = DateTime.UtcNow,
             };
 
             _context.Students.Add(user);

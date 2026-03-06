@@ -1,6 +1,6 @@
 import { Check, Palette } from 'lucide-react'
 import { useTheme } from '@/context/ThemeContext'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui'
 import {
   DropdownMenu,
   DropdownMenuContent,

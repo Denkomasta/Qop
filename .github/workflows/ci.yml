@@ -1,0 +1,92 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main, development ]
+  pull_request:
+    branches: [ main, development ]
+
+jobs:
+  # --- CHANGE DETECTION ---
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'src/backend/**'
+            frontend:
+              - 'src/frontend/**'
+
+  # --- Backend CI ---
+  backend-ci:
+    needs: changes
+    if: ${{ needs.changes.outputs.backend == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore src/backend/Sqeez.Api/Sqeez.Api.csproj
+
+      - name: Build
+        run: dotnet build src/backend/Sqeez.Api/Sqeez.Api.csproj -c Release --no-restore
+
+      # - name: Test
+      #   run: dotnet test src/backend/Sqeez.Api/Sqeez.Api.csproj -c Release --no-build
+
+  # --- Frontend CI (Yarn / Build Only) ---
+  frontend-ci:
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/frontend/sqeez
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'yarn'
+          cache-dependency-path: src/frontend/sqeez/yarn.lock
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Lint Code
+        run: yarn lint 
+
+      - name: Build Vite App
+        run: yarn build
+  
+  # --- The Gatekeeper ---
+  ci-success:
+    needs: [backend-ci, frontend-ci]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Statuses
+        run: |
+          BACKEND="${{ needs.backend-ci.result }}"
+          FRONTEND="${{ needs.frontend-ci.result }}"
+          
+          if [[ "$BACKEND" == "failure" || "$FRONTEND" == "failure" || "$BACKEND" == "cancelled" || "$FRONTEND" == "cancelled" ]]; then
+            echo "One or more CI jobs failed."
+            exit 1
+          fi
+          
+          echo "CI checks passed or were appropriately skipped."

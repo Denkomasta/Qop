@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using Sqeez.Api.DTOs;
 using Sqeez.Api.Models.Users;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -17,7 +18,7 @@ namespace Sqeez.Api.Services.TokenService
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]!));
         }
 
-        public string CreateToken(Student user)
+        public ServiceResult<string> CreateToken(Student user)
         {
             var claims = new List<Claim>
             {
@@ -35,10 +36,16 @@ namespace Sqeez.Api.Services.TokenService
                 SigningCredentials = creds
             };
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return tokenHandler.WriteToken(token);
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var result = tokenHandler.WriteToken(token);
+                return ServiceResult<string>.Ok(result);
+            }
+            catch (Exception ex) {
+                return ServiceResult<string>.Failure(ex.Message, Enums.ServiceError.InternalError);
+            }
         }
     }
 }

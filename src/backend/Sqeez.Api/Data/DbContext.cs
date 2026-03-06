@@ -38,12 +38,23 @@ namespace Sqeez.Api.Data
 
             // 1. Configure Table-Per-Hierarchy (TPH) for Users
             // This maps Student, Teacher, and Admin to a single "Users" table using the Role enum as a discriminator.
-            modelBuilder.Entity<Student>()
-                .ToTable("Users")
-                .HasDiscriminator(s => s.Role)
-                .HasValue<Student>(UserRole.Student)
-                .HasValue<Teacher>(UserRole.Teacher)
-                .HasValue<Admin>(UserRole.Admin);
+            modelBuilder.Entity<Student>(entity =>
+            {
+                entity.ToTable("Users");
+
+                // Enforce unique Email
+                entity.HasIndex(u => u.Email)
+                      .IsUnique();
+
+                // Enforce unique Username
+                entity.HasIndex(u => u.Username)
+                      .IsUnique();
+
+                entity.HasDiscriminator(s => s.Role)
+                      .HasValue<Student>(UserRole.Student)
+                      .HasValue<Teacher>(UserRole.Teacher)
+                      .HasValue<Admin>(UserRole.Admin);
+            });
 
             // 2. Configure Composite Primary Key for Many-to-Many (StudentBadge)
             modelBuilder.Entity<StudentBadge>()

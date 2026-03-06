@@ -11,23 +11,13 @@ namespace Sqeez.Api.Controllers
 {
     [Route("api/auth")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController : ApiBaseController
     {
         private readonly IAuthService _authService;
 
         public AuthController(IAuthService authService)
         {
             _authService = authService;
-        }
-
-        private string? GetUserIdFromClaims()
-        {
-            return User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        }
-
-        private string? GetUserRoleFromClaims()
-        {
-            return User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
         }
 
         private void SetCookie(string token)
@@ -56,9 +46,10 @@ namespace Sqeez.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDTO registerDto)
         {
-            var token = await _authService.RegisterAsync(registerDto);
+            var result = await _authService.RegisterAsync(registerDto);
+            var token = result.Data;
 
-            if (token == null) return BadRequest("Email already in use.");
+            if (!result.Success || token == null) return HandleServiceResult(result);
 
             SetCookie(token);
 
@@ -68,9 +59,10 @@ namespace Sqeez.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDTO loginDto)
         {
-            var token = await _authService.LoginAsync(loginDto);
+            var result = await _authService.LoginAsync(loginDto);
+            var token = result.Data;
 
-            if (token == null) return Unauthorized("Invalid credentials.");
+            if (!result.Success || token == null) return HandleServiceResult(result);
 
             SetCookie(token);
 
@@ -88,10 +80,10 @@ namespace Sqeez.Api.Controllers
                 return Unauthorized();
             }
 
-            var success = await _authService.LogoutAsync(long.Parse(userIdClaim));
+            var result = await _authService.LogoutAsync(long.Parse(userIdClaim));
 
-            if (!success)
-                return NotFound("User record not found.");
+            if (!result.Success)
+                return HandleServiceResult(result);
 
             ClearCookie();
 
@@ -110,12 +102,29 @@ namespace Sqeez.Api.Controllers
                 return Unauthorized();
             }
 
-            var user = await _authService.GetCurrentUserAsync(long.Parse(userIdClaim), role);
+            var result = await _authService.GetCurrentUserAsync(long.Parse(userIdClaim), role);
 
-            if (user == null)
-                return NotFound("User record not found.");
+            return HandleServiceResult<UserDTO>(result);
+        }
 
-            return Ok(user);
+        [Authorize(Roles = "Admin")]
+        [HttpPatch("elevate")]
+        public async Task<IActionResult> ElevateUser(UpdateRoleDTO dto)
+        {
+            var adminIdClaim = GetUserIdFromClaims();
+            if (string.IsNullOrEmpty(adminIdClaim))
+            {
+                return Unauthorized();
+            }
+
+            var result = await _authService.UpdateUserRoleAsync(long.Parse(adminIdClaim), dto);
+
+            if (!result.Success)
+            {
+                return HandleServiceResult(result);
+            }
+
+            return Ok(new { message = $"User rights updated to {dto.Role} successfully." });
         }
     }
 }

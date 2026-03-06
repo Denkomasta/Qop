@@ -1,9 +1,10 @@
-﻿using Sqeez.Api.Models.Users;
+﻿using Sqeez.Api.DTOs;
+using Sqeez.Api.Models.Users;
 
 namespace Sqeez.Api.Services.TokenService
 {
     public interface ITokenService
     {
-        string CreateToken(Student user);
+        ServiceResult<string> CreateToken(Student user);
     }
 }

@@ -22,6 +22,7 @@ namespace Sqeez.Api.Controllers
         public async Task<ActionResult<IEnumerable<StudentResponseDTO>>> GetStudents()
         {
             var students = await _context.Students
+                .OrderBy(s => s.Id)
                 .Select(s => new StudentResponseDTO
                 {
                     Id = s.Id,

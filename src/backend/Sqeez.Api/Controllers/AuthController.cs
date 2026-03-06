@@ -91,7 +91,7 @@ namespace Sqeez.Api.Controllers
         }
 
         [Authorize]
-        [HttpPost("me")]
+        [HttpGet("me")]
         public async Task<ActionResult<UserDTO>> GetCurrentUser()
         {
             var userIdClaim = GetUserIdFromClaims();

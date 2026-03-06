@@ -1,15 +1,37 @@
+import { useGetApiAuthMe } from '@/api/generated/endpoints/auth/auth'
 import { Footer } from '@/components/layouting/Footer/Footer'
 import { Navbar } from '@/components/layouting/Navbar/Navbar'
 import { ThemeProvider } from '@/context/ThemeContext'
 import { useAuthStore } from '@/store/useAuthStore'
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const RootLayout = () => {
   const { t } = useTranslation()
-  const { isAuthenticated, user } = useAuthStore()
+  const { isAuthenticated, setUser, logout } = useAuthStore()
   const currentYear = new Date().getFullYear()
+
+  const {
+    data: user,
+    isError,
+    // isLoading,
+  } = useGetApiAuthMe({
+    query: {
+      retry: false,
+      staleTime: 1000 * 60 * 5,
+      refetchOnWindowFocus: false,
+    },
+  })
+
+  useEffect(() => {
+    if (user) {
+      setUser(user)
+    } else if (isError) {
+      logout()
+    }
+  }, [user, isError, setUser, logout])
 
   const navLinks = [{ to: '/', label: t('common.home') }]
   const footerLinks = [
@@ -17,6 +39,14 @@ const RootLayout = () => {
     { to: '/privacy', label: t('footer.privacy') },
     { to: '/terms', label: t('footer.terms') },
   ]
+
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex h-screen items-center justify-center">
+  //       Loading...
+  //     </div>
+  //   )
+  // }
 
   return (
     <ThemeProvider>

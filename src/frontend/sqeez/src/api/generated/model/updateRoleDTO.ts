@@ -4,14 +4,12 @@
  * Sqeez.Api | v1
  * OpenAPI spec version: 1.0.2
  */
+import type { UserRole } from './userRole'
 
-export interface UserDTO {
+export interface UpdateRoleDTO {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id: number | string
-  username: string
-  email: string
-  currentXP: string
-  role: string
+  role: UserRole
   /** @nullable */
   department: string | null
   /** @nullable */

@@ -71,7 +71,8 @@
     "subtitle": "Join Sqeez and start your learning journey today!",
     "alreadyHaveAccount": "Already have an account?",
     "signIn": "Sign in!",
-    "username": "Username"
+    "username": "Username",
+    "register": "Register"
   },
   "system": {
     "name": "Sqeez"

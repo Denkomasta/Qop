@@ -1,20 +1,24 @@
-import { Mail, Lock, BookOpen } from 'lucide-react'
+import { Mail, Lock, BookOpen, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { useTranslation } from 'react-i18next'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate, useRouter } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { usePostApiAuthRegister as useRegister } from '@/api/generated/endpoints/auth/auth'
+import {
+  usePostApiAuthRegister as useRegister,
+  getGetApiAuthMeQueryOptions,
+} from '@/api/generated/endpoints/auth/auth'
+import { useAuthStore } from '@/store/useAuthStore'
+import { queryClient } from '@/main'
 
 const registerSchema = z.object({
   username: z
     .string()
-    .min(2, { message: 'Username must be at least 2 characters' })
-    .nullable(),
+    .min(2, { message: 'Username must be at least 2 characters' }),
   email: z.email({ message: 'Invalid email address' }),
   password: z
     .string()
@@ -25,7 +29,9 @@ type RegisterFormValues = z.infer<typeof registerSchema>
 
 export function RegisterForm() {
   const navigate = useNavigate()
+  const router = useRouter()
   const { t } = useTranslation()
+  const setUser = useAuthStore((state) => state.setUser)
 
   const {
     register,
@@ -35,7 +41,7 @@ export function RegisterForm() {
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      username: null,
+      username: '',
       email: '',
       password: '',
     },
@@ -43,8 +49,24 @@ export function RegisterForm() {
 
   const { mutate, isPending } = useRegister({
     mutation: {
-      onSuccess: () => {
-        navigate({ to: '/app' })
+      onSuccess: async () => {
+        try {
+          const user = await queryClient.fetchQuery({
+            ...getGetApiAuthMeQueryOptions(),
+            staleTime: 0,
+          })
+
+          setUser(user)
+
+          await router.invalidate()
+
+          navigate({ to: '/app', replace: true })
+        } catch {
+          setError('root', {
+            type: 'manual',
+            message: t('error.serverError'),
+          })
+        }
       },
       onError: () => {
         setError('root', {
@@ -92,8 +114,10 @@ export function RegisterForm() {
         <Input
           {...register('username')}
           id="username"
+          type="text"
           label={t('register.username')}
           placeholder={t('register.username')}
+          error={errors.username?.message}
           disabled={isPending}
         />
 
@@ -119,6 +143,7 @@ export function RegisterForm() {
           icon={<Lock className="h-4 w-4" />}
         />
 
+        {/* TODO add remember */}
         <div className="flex items-center gap-2">
           <Checkbox id="remember" aria-label="Remember me for 30 days" />
           <Label
@@ -129,12 +154,19 @@ export function RegisterForm() {
           </Label>
         </div>
 
+        {errors.root && (
+          <div className="animate-in rounded-lg bg-destructive/15 p-3 text-[0.8rem] font-medium text-destructive ring-1 ring-destructive/20 transition-all zoom-in-95 fade-in">
+            {errors.root.message}
+          </div>
+        )}
+
         <Button
           type="submit"
           className="h-11 w-full rounded-xl bg-primary font-semibold text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
           disabled={isPending}
         >
-          {t('common.signIn')}
+          {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {t('register.register')}
         </Button>
 
         <p className="text-center text-sm text-muted-foreground">

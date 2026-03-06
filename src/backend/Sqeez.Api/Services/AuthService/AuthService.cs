@@ -9,18 +9,14 @@ using BC = BCrypt.Net.BCrypt;
 
 namespace Sqeez.Api.Services.AuthService
 {
-    public class AuthService : IAuthService
+    public class AuthService : BaseService<AuthService>, IAuthService
     {
-        private readonly SqeezDbContext _context;
         private readonly ITokenService _tokenService;
-        private readonly ILogger<AuthService> _logger;
         private readonly string _superUserEmail;
 
-        public AuthService(SqeezDbContext context, IConfiguration config, ITokenService tokenService, ILogger<AuthService> logger)
+        public AuthService(SqeezDbContext context, IConfiguration config, ITokenService tokenService, ILogger<AuthService> logger) : base(context, logger)
         {
-            _context = context;
             _tokenService = tokenService;
-            _logger = logger;
             _superUserEmail = config["SUPER_USER_EMAIL"]?.Trim().ToLower() ?? string.Empty;
         }
 

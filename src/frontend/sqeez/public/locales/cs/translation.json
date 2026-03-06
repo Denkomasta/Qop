@@ -71,7 +71,8 @@
     "subtitle": "Připojte se a zahajte svůj rozvoj!",
     "alreadyHaveAccount": "Máte již účet?",
     "signIn": "Přihlaste se!",
-    "username": "Uživatelské jméno"
+    "username": "Uživatelské jméno",
+    "register": "Zaregistrovat se"
   },
   "system": {
     "name": "Sqeez"

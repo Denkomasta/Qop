@@ -1,7 +1,7 @@
 openapi: 3.1.1
 info:
   title: Sqeez.Api | v1
-  version: 1.0.1
+  version: 1.0.2
 servers:
   - url: http://localhost:5000/
 paths:
@@ -51,7 +51,7 @@ paths:
         "200":
           description: OK
   /api/auth/me:
-    post:
+    get:
       tags:
         - Auth
       responses:
@@ -67,6 +67,25 @@ paths:
             text/json:
               schema:
                 $ref: "#/components/schemas/UserDTO"
+  /api/auth/elevate:
+    patch:
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRoleDTO"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRoleDTO"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/UpdateRoleDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
   /api/students:
     get:
       tags:
@@ -110,9 +129,7 @@ components:
       type: object
       properties:
         username:
-          type:
-            - "null"
-            - string
+          type: string
         email:
           type: string
         password:
@@ -141,6 +158,30 @@ components:
         lastSeen:
           type: string
           format: date-time
+    UpdateRoleDTO:
+      required:
+        - id
+        - role
+        - department
+        - phoneNumber
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        role:
+          $ref: "#/components/schemas/UserRole"
+        department:
+          type:
+            - "null"
+            - string
+        phoneNumber:
+          type:
+            - "null"
+            - string
     UserDTO:
       required:
         - id

@@ -4,13 +4,18 @@ import { Input } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { useTranslation } from 'react-i18next'
-import { Link, useNavigate } from '@tanstack/react-router'
-import { usePostApiAuthLogin as useLogin } from '@/api/generated/endpoints/auth/auth'
+import { Link, useNavigate, useRouter, useSearch } from '@tanstack/react-router'
+import {
+  getGetApiAuthMeQueryOptions,
+  usePostApiAuthLogin as useLogin,
+} from '@/api/generated/endpoints/auth/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import type { TranslationKey } from '@/i18next'
 import { AxiosError } from 'axios'
+import { queryClient } from '@/main'
+import { useAuthStore } from '@/store/useAuthStore'
 
 const loginSchema = z.object({
   email: z.email({ message: 'Invalid email address' }),
@@ -28,7 +33,10 @@ type LoginFormValues = z.infer<typeof loginSchema>
 
 export function LoginForm() {
   const navigate = useNavigate()
+  const router = useRouter()
   const { t } = useTranslation()
+  const setUser = useAuthStore((state) => state.setUser)
+  const search = useSearch({ strict: false })
 
   const {
     register,
@@ -45,8 +53,20 @@ export function LoginForm() {
 
   const { mutate, isPending } = useLogin({
     mutation: {
-      onSuccess: () => {
-        navigate({ to: '/app' })
+      onSuccess: async () => {
+        const user = await queryClient.fetchQuery({
+          ...getGetApiAuthMeQueryOptions(),
+          staleTime: 0,
+        })
+
+        setUser(user)
+
+        await router.invalidate()
+
+        navigate({
+          to: search?.redirect || '/app',
+          replace: true,
+        })
       },
       onError: (error: AxiosError) => {
         setError('root', {

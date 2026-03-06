@@ -3,6 +3,11 @@ import { LoginForm } from './-/LoginForm'
 import { BrandingPanel } from '@/components/layouting/BrandingPanel'
 
 export const Route = createFileRoute('/login/')({
+  validateSearch: (search: Record<string, unknown>): { redirect?: string } => {
+    return {
+      redirect: search.redirect as string | undefined,
+    }
+  },
   component: Login,
 })
 

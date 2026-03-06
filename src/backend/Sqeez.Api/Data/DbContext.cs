@@ -36,7 +36,7 @@ namespace Sqeez.Api.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // 1. Configure Table-Per-Hierarchy (TPH) for Users
+            // 1. Configure Table-Per-Hierarchy (TPH) for Users.
             // This maps Student, Teacher, and Admin to a single "Users" table using the Role enum as a discriminator.
             modelBuilder.Entity<Student>(entity =>
             {

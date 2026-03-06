@@ -1,11 +1,16 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
-import { useAuthStore } from '@/store/useAuthStore'
+import { queryClient } from '@/main'
+import { getGetApiAuthMeQueryOptions } from '@/api/generated/endpoints/auth/auth'
 
 export const Route = createFileRoute('/app/_authenticated')({
-  beforeLoad: ({ location }) => {
-    const { isAuthenticated } = useAuthStore.getState()
-
-    if (!isAuthenticated) {
+  beforeLoad: async ({ location }) => {
+    try {
+      await queryClient.ensureQueryData({
+        ...getGetApiAuthMeQueryOptions(),
+        staleTime: 1000 * 60 * 5,
+        retry: false,
+      })
+    } catch {
       throw redirect({
         to: '/login',
         search: { redirect: location.href },

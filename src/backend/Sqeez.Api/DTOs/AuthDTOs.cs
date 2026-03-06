@@ -1,3 +1,5 @@
+using Sqeez.Api.Enums;
+
 namespace Sqeez.Api.DTOs
 {
     public record LoginDTO(string Email, string Password);
@@ -12,5 +14,6 @@ namespace Sqeez.Api.DTOs
         string? PhoneNumber // For admins
     );
 
-    public record RegisterDTO(string? Username, string Email, string Password);
+    public record RegisterDTO(string Username, string Email, string Password);
+    public record UpdateRoleDTO(long Id, UserRole Role, string? Department, string? PhoneNumber);
 }

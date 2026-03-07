@@ -62,5 +62,21 @@ namespace Sqeez.Api.Controllers
             var result = await _schoolClassService.DeleteClassAsync(id);
             return HandleServiceResult(result);
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("{id}/students")]
+        public async Task<IActionResult> AssignStudents(long id, [FromBody] AssignStudentsDto dto)
+        {
+            var result = await _schoolClassService.AssignStudentsToClassAsync(id, dto);
+            return HandleServiceResult(result);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("{id}/students/remove")]
+        public async Task<IActionResult> RemoveStudents(long id, [FromBody] RemoveStudentsDto dto)
+        {
+            var result = await _schoolClassService.RemoveStudentsFromClassAsync(id, dto);
+            return HandleServiceResult(result);
+        }
     }
 }

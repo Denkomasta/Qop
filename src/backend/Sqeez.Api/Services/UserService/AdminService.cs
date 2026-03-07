@@ -103,16 +103,21 @@ namespace Sqeez.Api.Services
             return ServiceResult<AdminDto>.Ok(resultDto);
         }
 
-        public async Task<ServiceResult<bool>> UpdateAdminAsync(long id, UpdateAdminDto dto)
+        public async Task<ServiceResult<bool>> PatchAdminAsync(long id, PatchAdminDto dto)
         {
             var admin = await _context.Admins.FirstOrDefaultAsync(a => a.Id == id && a.Role == UserRole.Admin);
             if (admin == null) return ServiceResult<bool>.Failure("Admin not found.", ServiceError.NotFound);
 
-            admin.Username = dto.Username;
-            admin.Email = dto.Email.Trim().ToLower();
-            admin.SchoolClassId = dto.SchoolClassId;
-            admin.Department = dto.Department;
-            admin.PhoneNumber = string.IsNullOrWhiteSpace(dto.PhoneNumber) ? "-" : dto.PhoneNumber;
+            if (!string.IsNullOrWhiteSpace(dto.Username)) admin.Username = dto.Username;
+            if (!string.IsNullOrWhiteSpace(dto.Email)) admin.Email = dto.Email.Trim().ToLower();
+
+            if (dto.SchoolClassId.HasValue)
+                admin.SchoolClassId = dto.SchoolClassId.Value == 0 ? null : dto.SchoolClassId.Value;
+
+            if (dto.Department != null) admin.Department = dto.Department;
+
+            if (dto.PhoneNumber != null)
+                admin.PhoneNumber = string.IsNullOrWhiteSpace(dto.PhoneNumber) ? "-" : dto.PhoneNumber;
 
             await _context.SaveChangesAsync();
             return ServiceResult<bool>.Ok(true);

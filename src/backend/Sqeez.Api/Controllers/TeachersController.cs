@@ -17,32 +17,55 @@ namespace Sqeez.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             return HandleServiceResult(await _teacherService.GetAllTeachersAsync(pageNumber, pageSize));
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetById(long id)
         {
             return HandleServiceResult(await _teacherService.GetTeacherByIdAsync(id));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateTeacherDto dto)
-        {
-            return HandleServiceResult(await _teacherService.CreateTeacherAsync(dto));
-        }
+        //[HttpPost]
+        //[Authorize(Roles = "Admin")]
+        //public async Task<IActionResult> Create([FromBody] CreateTeacherDto dto)
+        //{
+        //    return HandleServiceResult(await _teacherService.CreateTeacherAsync(dto));
+        //}
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(long id, [FromBody] UpdateTeacherDto dto)
+        [HttpPatch("{id}")]
+        [Authorize(Roles = "Admin,Teacher")]
+        public async Task<IActionResult> Patch(long id, [FromBody] PatchTeacherDto dto)
         {
-            return HandleServiceResult(await _teacherService.UpdateTeacherAsync(id, dto));
+            var role = GetUserRoleFromClaims();
+            if (role == "Teacher" && !IsIdLoggedUser(id))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new
+                {
+                    error = "Forbidden",
+                    message = "You do not have permission to modify teacher's profile."
+                });
+            }
+            return HandleServiceResult(await _teacherService.PatchTeacherAsync(id, dto));
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin,Teacher")]
         public async Task<IActionResult> Delete(long id)
         {
+            var role = GetUserRoleFromClaims();
+            if (role == "Teacher" && !IsIdLoggedUser(id))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new
+                {
+                    error = "Forbidden",
+                    message = "You do not have permission to delete teacher's profile."
+                });
+            }
             return HandleServiceResult(await _teacherService.DeleteTeacherAsync(id));
         }
     }

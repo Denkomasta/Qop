@@ -94,14 +94,19 @@ namespace Sqeez.Api.Services.UserService
             return ServiceResult<StudentDto>.Ok(resultDto);
         }
 
-        public async Task<ServiceResult<bool>> UpdateStudentAsync(long id, UpdateStudentDto dto)
+        public async Task<ServiceResult<bool>> PatchStudentAsync(long id, PatchStudentDto dto)
         {
             var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id && s.Role == UserRole.Student);
             if (student == null) return ServiceResult<bool>.Failure("Student not found.", ServiceError.NotFound);
 
-            student.Username = dto.Username;
-            student.Email = dto.Email.Trim().ToLower();
-            student.SchoolClassId = dto.SchoolClassId;
+            if (!string.IsNullOrWhiteSpace(dto.Username))
+                student.Username = dto.Username;
+
+            if (!string.IsNullOrWhiteSpace(dto.Email))
+                student.Email = dto.Email.Trim().ToLower();
+
+            if (dto.SchoolClassId.HasValue)
+                student.SchoolClassId = dto.SchoolClassId.Value == 0 ? null : dto.SchoolClassId.Value;
 
             await _context.SaveChangesAsync();
             return ServiceResult<bool>.Ok(true);

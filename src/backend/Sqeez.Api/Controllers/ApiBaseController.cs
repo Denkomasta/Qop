@@ -17,6 +17,23 @@ namespace Sqeez.Api.Controllers
             return User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
         }
 
+        protected bool IsIdLoggedUser(long userId, long? claimedId = null)
+        {
+            if (claimedId.HasValue)
+            {
+                return userId == claimedId.Value;
+            }
+
+            var idString = GetUserIdFromClaims();
+
+            if (long.TryParse(idString, out long parsedClaimedId))
+            {
+                return parsedClaimedId == userId;
+            }
+
+            return false;
+        }
+
         protected ActionResult HandleServiceResult<T>(ServiceResult<T> result)
         {
             if (result.Success)

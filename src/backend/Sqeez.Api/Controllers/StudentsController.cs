@@ -17,32 +17,54 @@ namespace Sqeez.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             return HandleServiceResult(await _studentService.GetAllStudentsAsync(pageNumber, pageSize));
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetById(long id)
         {
             return HandleServiceResult(await _studentService.GetStudentByIdAsync(id));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateStudentDto dto)
-        {
-            return HandleServiceResult(await _studentService.CreateStudentAsync(dto));
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> Create([FromBody] CreateStudentDto dto)
+        //{
+        //    return HandleServiceResult(await _studentService.CreateStudentAsync(dto));
+        //}
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(long id, [FromBody] UpdateStudentDto dto)
+        [HttpPatch("{id}")]
+        [Authorize]
+        public async Task<IActionResult> Patch(long id, [FromBody] PatchStudentDto dto)
         {
-            return HandleServiceResult(await _studentService.UpdateStudentAsync(id, dto));
+            var role = GetUserRoleFromClaims();
+            if (role != "Admin" && !IsIdLoggedUser(id))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new
+                {
+                    error = "Forbidden",
+                    message = "You do not have permission to modify another student's profile."
+                });
+            }
+            return HandleServiceResult(await _studentService.PatchStudentAsync(id, dto));
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> Delete(long id)
         {
+            var role = GetUserRoleFromClaims();
+            if (role != "Admin" && !IsIdLoggedUser(id))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new
+                {
+                    error = "Forbidden",
+                    message = "You do not have permission to modify another student's profile."
+                });
+            }
             return HandleServiceResult(await _studentService.DeleteStudentAsync(id));
         }
     }

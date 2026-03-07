@@ -19,10 +19,10 @@
         public long? SchoolClassId { get; init; }
     }
 
-    public record UpdateStudentDto
+    public record PatchStudentDto
     {
-        public string Username { get; init; } = string.Empty;
-        public string Email { get; init; } = string.Empty;
+        public string? Username { get; init; }
+        public string? Email { get; init; }
         public long? SchoolClassId { get; init; }
     }
 
@@ -36,7 +36,7 @@
         public string? Department { get; init; }
     }
 
-    public record UpdateTeacherDto : UpdateStudentDto
+    public record PatchTeacherDto : PatchStudentDto
     {
         public string? Department { get; init; }
     }
@@ -51,7 +51,7 @@
         public string? PhoneNumber { get; init; }
     }
 
-    public record UpdateAdminDto : UpdateTeacherDto
+    public record PatchAdminDto : PatchTeacherDto
     {
         public string? PhoneNumber { get; init; }
     }

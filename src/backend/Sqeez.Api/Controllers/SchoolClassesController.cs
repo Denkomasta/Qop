@@ -48,10 +48,10 @@ namespace Sqeez.Api.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(long id, [FromBody] UpdateSchoolClassDto dto)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch(long id, [FromBody] PatchSchoolClassDto dto)
         {
-            var result = await _schoolClassService.UpdateClassAsync(id, dto);
+            var result = await _schoolClassService.PatchClassAsync(id, dto);
             return HandleServiceResult(result);
         }
 

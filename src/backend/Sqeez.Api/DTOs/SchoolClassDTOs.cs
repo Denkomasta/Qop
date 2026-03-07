@@ -29,11 +29,11 @@
         public long? TeacherId { get; set; }
     }
 
-    public class UpdateSchoolClassDto
+    public class PatchSchoolClassDto
     {
-        public string Name { get; set; } = string.Empty;
-        public string AcademicYear { get; set; } = string.Empty;
-        public string Section { get; set; } = string.Empty;
+        public string? Name { get; set; }
+        public string? AcademicYear { get; set; }
+        public string? Section { get; set; }
         public long? TeacherId { get; set; }
     }
 }

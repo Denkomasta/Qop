@@ -8,7 +8,7 @@ namespace Sqeez.Api.Services.Interfaces
 
         Task<ServiceResult<SchoolClassDto>> GetClassByIdAsync(long id);
         Task<ServiceResult<SchoolClassDto>> CreateClassAsync(CreateSchoolClassDto dto);
-        Task<ServiceResult<bool>> UpdateClassAsync(long id, UpdateSchoolClassDto dto);
+        Task<ServiceResult<SchoolClassDto>> PatchClassAsync(long id, PatchSchoolClassDto dto);
         Task<ServiceResult<bool>> DeleteClassAsync(long id);
     }
 }

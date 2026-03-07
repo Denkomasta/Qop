@@ -47,16 +47,15 @@ namespace Sqeez.Api.Services
                     .OrderBy(c => c.Name)
                     .Skip((filter.PageNumber - 1) * filter.PageSize)
                     .Take(filter.PageSize)
-                    .Select(c => new SchoolClassDto
-                    {
-                        Id = c.Id,
-                        Name = c.Name,
-                        AcademicYear = c.AcademicYear,
-                        Section = c.Section,
-                        TeacherId = c.TeacherId,
-                        TeacherName = c.Teacher != null ? c.Teacher.Username : null,
-                        StudentCount = c.Students.Count
-                    })
+                    .Select(c => new SchoolClassDto(
+                        c.Id,
+                        c.Name,
+                        c.AcademicYear,
+                        c.Section,
+                        c.TeacherId,
+                        c.Teacher != null ? c.Teacher.Username : null,
+                        c.Students.Count
+                    ))
                     .ToListAsync();
 
                 var pagedResponse = new PagedResponse<SchoolClassDto>
@@ -84,16 +83,15 @@ namespace Sqeez.Api.Services
                 .Include(c => c.Teacher)
                 .Include(c => c.Students)
                 .Where(c => c.Id == id)
-                .Select(c => new SchoolClassDto
-                {
-                    Id = c.Id,
-                    Name = c.Name,
-                    AcademicYear = c.AcademicYear,
-                    Section = c.Section,
-                    TeacherId = c.TeacherId,
-                    TeacherName = c.Teacher != null ? c.Teacher.Username : null,
-                    StudentCount = c.Students.Count
-                })
+                .Select(c => new SchoolClassDto(
+                    c.Id,
+                    c.Name,
+                    c.AcademicYear,
+                    c.Section,
+                    c.TeacherId,
+                    c.Teacher != null ? c.Teacher.Username : null,
+                    c.Students.Count
+                ))
                 .FirstOrDefaultAsync();
 
             if (schoolClass == null)
@@ -122,15 +120,15 @@ namespace Sqeez.Api.Services
                 _context.SchoolClasses.Add(schoolClass);
                 await _context.SaveChangesAsync();
 
-                var createdDto = new SchoolClassDto
-                {
-                    Id = schoolClass.Id,
-                    Name = schoolClass.Name,
-                    AcademicYear = schoolClass.AcademicYear,
-                    Section = schoolClass.Section,
-                    TeacherId = schoolClass.TeacherId,
-                    StudentCount = 0 // New class has no students yet
-                };
+                var createdDto = new SchoolClassDto(
+                    schoolClass.Id,
+                    schoolClass.Name,
+                    schoolClass.AcademicYear,
+                    schoolClass.Section,
+                    schoolClass.TeacherId,
+                    schoolClass.Teacher?.Username,
+                    0
+                );
 
                 _logger.LogInformation("Successfully created school class {Id}", schoolClass.Id);
                 return ServiceResult<SchoolClassDto>.Ok(createdDto);
@@ -190,16 +188,15 @@ namespace Sqeez.Api.Services
                 await _context.SaveChangesAsync();
                 _logger.LogInformation("Successfully patched school class {Id}", id);
 
-                var updatedDto = new SchoolClassDto
-                {
-                    Id = schoolClass.Id,
-                    Name = schoolClass.Name,
-                    AcademicYear = schoolClass.AcademicYear,
-                    Section = schoolClass.Section,
-                    TeacherId = schoolClass.TeacherId,
-                    TeacherName = schoolClass.Teacher?.Username,
-                    StudentCount = schoolClass.Students.Count
-                };
+                var updatedDto = new SchoolClassDto(
+                    schoolClass.Id,
+                    schoolClass.Name,
+                    schoolClass.AcademicYear,
+                    schoolClass.Section,
+                    schoolClass.TeacherId,
+                    schoolClass.Teacher?.Username,
+                    schoolClass.Students.Count
+                );
 
                 return ServiceResult<SchoolClassDto>.Ok(updatedDto);
             }
@@ -233,6 +230,82 @@ namespace Sqeez.Api.Services
             {
                 _logger.LogError(ex, "Error deleting school class {Id}", id);
                 return ServiceResult<bool>.Failure("Internal error occurred while deleting class.", ServiceError.InternalError);
+            }
+        }
+
+        public async Task<ServiceResult<bool>> AssignStudentsToClassAsync(long classId, AssignStudentsDto dto)
+        {
+            _logger.LogInformation("Assigning {Count} students to class {ClassId}", dto.StudentIds.Count, classId);
+
+            var classExists = await _context.SchoolClasses.AnyAsync(c => c.Id == classId);
+            if (!classExists)
+            {
+                return ServiceResult<bool>.Failure("School class not found.", ServiceError.NotFound);
+            }
+
+            if (!dto.StudentIds.Any())
+            {
+                return ServiceResult<bool>.Ok(true);
+            }
+
+            try
+            {
+                var students = await _context.Students
+                    .Where(s => dto.StudentIds.Contains(s.Id))
+                    .ToListAsync();
+
+                foreach (var student in students)
+                {
+                    student.SchoolClassId = classId;
+                }
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Successfully assigned students to class {ClassId}", classId);
+                return ServiceResult<bool>.Ok(true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error assigning students to class {ClassId}", classId);
+                return ServiceResult<bool>.Failure("Internal error occurred.", ServiceError.InternalError);
+            }
+        }
+
+        public async Task<ServiceResult<bool>> RemoveStudentsFromClassAsync(long classId, RemoveStudentsDto dto)
+        {
+            _logger.LogInformation("Attempting to remove {Count} students from class {ClassId}", dto.StudentIds.Count, classId);
+
+            var classExists = await _context.SchoolClasses.AnyAsync(c => c.Id == classId);
+            if (!classExists)
+            {
+                return ServiceResult<bool>.Failure("School class not found.", ServiceError.NotFound);
+            }
+
+            if (!dto.StudentIds.Any())
+            {
+                return ServiceResult<bool>.Ok(true);
+            }
+
+            try
+            {
+                var studentsToRemove = await _context.Students
+                    .Where(s => dto.StudentIds.Contains(s.Id) && s.SchoolClassId == classId)
+                    .ToListAsync();
+
+                foreach (var student in studentsToRemove)
+                {
+                    student.SchoolClassId = null;
+                }
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Successfully removed {RemovedCount} students from class {ClassId}", studentsToRemove.Count, classId);
+                return ServiceResult<bool>.Ok(true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error removing students from class {ClassId}", classId);
+                return ServiceResult<bool>.Failure("Internal error occurred while removing students.", ServiceError.InternalError);
             }
         }
     }

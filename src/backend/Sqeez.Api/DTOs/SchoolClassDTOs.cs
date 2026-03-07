@@ -1,39 +1,33 @@
 ﻿namespace Sqeez.Api.DTOs
 {
-    public class SchoolClassDto
-    {
-        public long Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string AcademicYear { get; set; } = string.Empty;
-        public string Section { get; set; } = string.Empty;
-        public long? TeacherId { get; set; }
-        public string? TeacherName { get; set; }
-        public int StudentCount { get; set; }
-    }
+    public record SchoolClassDto(
+        long Id,
+        string Name,
+        string AcademicYear,
+        string Section,
+        long? TeacherId,
+        string? TeacherName,
+        int StudentCount);
 
-    public class SchoolClassFilterDto
-    {
-        public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; } = 10;
+    public record SchoolClassFilterDto(
+        int PageNumber = 1,
+        int PageSize = 10,
+        string? SearchTerm = null,  // Search against Name or Section
+        string? AcademicYear = null,
+        long? TeacherId = null);
 
-        public string? SearchTerm { get; set; } // Search against Name or Section
-        public string? AcademicYear { get; set; }
-        public long? TeacherId { get; set; }
-    }
+    public record CreateSchoolClassDto(
+        string Name,
+        string AcademicYear,
+        string Section,
+        long? TeacherId);
 
-    public class CreateSchoolClassDto
-    {
-        public string Name { get; set; } = string.Empty;
-        public string AcademicYear { get; set; } = string.Empty;
-        public string Section { get; set; } = string.Empty;
-        public long? TeacherId { get; set; }
-    }
+    public record PatchSchoolClassDto(
+        string? Name,
+        string? AcademicYear,
+        string? Section,
+        long? TeacherId);
 
-    public class PatchSchoolClassDto
-    {
-        public string? Name { get; set; }
-        public string? AcademicYear { get; set; }
-        public string? Section { get; set; }
-        public long? TeacherId { get; set; }
-    }
+    public record AssignStudentsDto(List<long> StudentIds);
+    public record RemoveStudentsDto(List<long> StudentIds);
 }

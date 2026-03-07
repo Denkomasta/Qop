@@ -9,6 +9,8 @@ using System.Text;
 using DotNetEnv;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using Sqeez.Api.Services.Interfaces;
+using Sqeez.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +48,7 @@ builder.Services.AddDbContext<SqeezDbContext>(options =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ISchoolClassService, SchoolClassService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

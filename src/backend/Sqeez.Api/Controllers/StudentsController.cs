@@ -1,40 +1,49 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Sqeez.Api.Data;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Sqeez.Api.DTOs;
-using Sqeez.Api.Enums;
-using Sqeez.Api.Models.Users;
+using Sqeez.Api.Services.UserService;
 
 namespace Sqeez.Api.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
-    public class StudentsController : ControllerBase
+    [Authorize(Roles = "Admin")]
+    public class StudentsController : ApiBaseController
     {
-        private readonly SqeezDbContext _context;
+        private readonly IStudentService _studentService;
 
-        public StudentsController(SqeezDbContext context)
+        public StudentsController(IStudentService studentService)
         {
-            _context = context;
+            _studentService = studentService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StudentResponseDTO>>> GetStudents()
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var students = await _context.Students
-                .OrderBy(s => s.Id)
-                .Select(s => new StudentResponseDTO
-                {
-                    Id = s.Id,
-                    Username = s.Username,
-                    Email = s.Email,
-                    CurrentXP = s.CurrentXP,
-                    Role = s.Role,
-                    LastSeen = s.LastSeen
-                })
-                .ToListAsync();
+            return HandleServiceResult(await _studentService.GetAllStudentsAsync(pageNumber, pageSize));
+        }
 
-            return Ok(students);
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(long id)
+        {
+            return HandleServiceResult(await _studentService.GetStudentByIdAsync(id));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateStudentDto dto)
+        {
+            return HandleServiceResult(await _studentService.CreateStudentAsync(dto));
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(long id, [FromBody] UpdateStudentDto dto)
+        {
+            return HandleServiceResult(await _studentService.UpdateStudentAsync(id, dto));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(long id)
+        {
+            return HandleServiceResult(await _studentService.DeleteStudentAsync(id));
         }
     }
 }

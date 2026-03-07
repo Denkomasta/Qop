@@ -1,16 +1,17 @@
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using Sqeez.Api.Data;
-using Sqeez.Api.Services.AuthService;
-using Sqeez.Api.Services.TokenService;
-using System.Text;
-using DotNetEnv;
-using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
-using Sqeez.Api.Services.Interfaces;
 using Sqeez.Api.Services;
+using Sqeez.Api.Services.AuthService;
+using Sqeez.Api.Services.Interfaces;
+using Sqeez.Api.Services.TokenService;
+using Sqeez.Api.Services.UserService;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +50,9 @@ builder.Services.AddDbContext<SqeezDbContext>(options =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ISchoolClassService, SchoolClassService>();
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<ITeacherService, TeacherService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

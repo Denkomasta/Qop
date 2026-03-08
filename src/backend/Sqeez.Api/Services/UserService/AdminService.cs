@@ -12,16 +12,52 @@ namespace Sqeez.Api.Services
     {
         public AdminService(SqeezDbContext context, ILogger<AdminService> logger) : base(context, logger) { }
 
-        public async Task<ServiceResult<PagedResponse<AdminDto>>> GetAllAdminsAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<ServiceResult<PagedResponse<AdminDto>>> GetAllAdminsAsync(AdminFilterDto filter)
         {
             var query = _context.Admins.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
+            {
+                var searchTerm = filter.SearchTerm.Trim().ToLower();
+                query = query.Where(a => a.Username.ToLower().Contains(searchTerm) ||
+                                         a.Email.ToLower().Contains(searchTerm));
+            }
+
+            if (filter.IsOnline.HasValue)
+            {
+                query = query.Where(a => a.IsOnline == filter.IsOnline.Value);
+            }
+
+            if (filter.SchoolClassId.HasValue)
+            {
+                query = query.Where(a => a.SchoolClassId == filter.SchoolClassId.Value);
+            }
+
+            if (filter.IsArchived.HasValue)
+            {
+                query = query.Where(a => a.IsArchived == filter.IsArchived.Value);
+            }
+            else
+            {
+                query = query.Where(a => !a.IsArchived);
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter.Department))
+            {
+                query = query.Where(a => a.Department == filter.Department);
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter.PhoneNumber))
+            {
+                query = query.Where(a => a.PhoneNumber == filter.PhoneNumber);
+            }
 
             int totalCount = await query.CountAsync();
 
             var admins = await query
                 .OrderBy(a => a.Username)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
                 .Select(a => new AdminDto
                 {
                     Id = a.Id,
@@ -32,7 +68,7 @@ namespace Sqeez.Api.Services
                     IsOnline = a.IsOnline,
                     SchoolClassId = a.SchoolClassId,
                     Department = a.Department,
-                    PhoneNumber = a.PhoneNumber
+                    PhoneNumber = a.PhoneNumber,
                 })
                 .ToListAsync();
 
@@ -40,8 +76,8 @@ namespace Sqeez.Api.Services
             {
                 Data = admins,
                 TotalCount = totalCount,
-                PageNumber = pageNumber,
-                PageSize = pageSize
+                PageNumber = filter.PageNumber,
+                PageSize = filter.PageSize
             };
 
             return ServiceResult<PagedResponse<AdminDto>>.Ok(response);

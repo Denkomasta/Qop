@@ -3,7 +3,6 @@ using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Users;
-using BC = BCrypt.Net.BCrypt;
 
 namespace Sqeez.Api.Services.UserService
 {
@@ -11,16 +10,42 @@ namespace Sqeez.Api.Services.UserService
     {
         public StudentService(SqeezDbContext context, ILogger<StudentService> logger) : base(context, logger) { }
 
-        public async Task<ServiceResult<PagedResponse<StudentDto>>> GetAllStudentsAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<ServiceResult<PagedResponse<StudentDto>>> GetAllStudentsAsync(StudentFilterDto filter)
         {
             var query = _context.Students.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
+            {
+                var searchTerm = filter.SearchTerm.Trim().ToLower();
+                query = query.Where(s => s.Username.ToLower().Contains(searchTerm) ||
+                                         s.Email.ToLower().Contains(searchTerm));
+            }
+
+            if (filter.IsOnline.HasValue)
+            {
+                query = query.Where(s => s.IsOnline == filter.IsOnline.Value);
+            }
+
+            if (filter.SchoolClassId.HasValue)
+            {
+                query = query.Where(s => s.SchoolClassId == filter.SchoolClassId.Value);
+            }
+
+            if (filter.IsArchived.HasValue)
+            {
+                query = query.Where(s => s.IsArchived == filter.IsArchived.Value);
+            }
+            else
+            {
+                query = query.Where(s => !s.IsArchived);
+            }
 
             int totalCount = await query.CountAsync();
 
             var students = await query
                 .OrderBy(s => s.Username)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
                 .Select(s => new StudentDto
                 {
                     Id = s.Id,
@@ -37,8 +62,8 @@ namespace Sqeez.Api.Services.UserService
             {
                 Data = students,
                 TotalCount = totalCount,
-                PageNumber = pageNumber,
-                PageSize = pageSize
+                PageNumber = filter.PageNumber,
+                PageSize = filter.PageSize
             };
 
             return ServiceResult<PagedResponse<StudentDto>>.Ok(response);
@@ -71,7 +96,7 @@ namespace Sqeez.Api.Services.UserService
 
             var student = new Student
             {
-                Username = dto.Username,
+                Username = dto.Username.Trim(),
                 Email = dto.Email.Trim().ToLower(),
                 PasswordHash = dto.Password,    // should be already hashed!
                 Role = UserRole.Student,

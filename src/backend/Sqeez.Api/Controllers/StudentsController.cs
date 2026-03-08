@@ -18,9 +18,9 @@ namespace Sqeez.Api.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetAll([FromQuery] StudentFilterDto filter)
         {
-            return HandleServiceResult(await _studentService.GetAllStudentsAsync(pageNumber, pageSize));
+            return HandleServiceResult(await _studentService.GetAllStudentsAsync(filter));
         }
 
         [HttpGet("{id}")]

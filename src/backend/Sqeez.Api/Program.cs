@@ -90,6 +90,36 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// --- SEED SCRIPT ---
+if (args.Length > 0 && args[0].ToLower() == "seed")
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        try
+        {
+            var context = services.GetRequiredService<SqeezDbContext>();
+            var config = services.GetRequiredService<IConfiguration>();
+
+            Console.WriteLine("Applying migrations...");
+            await context.Database.MigrateAsync();
+
+            Console.WriteLine("Seeding database...");
+            await DatabaseSeeder.SeedAsync(context, config);
+
+            Console.WriteLine("Database migration and seeding complete!");
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+        }
+    }
+
+    return;
+}
+// ---------------------------------
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

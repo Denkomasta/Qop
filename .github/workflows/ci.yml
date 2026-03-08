@@ -43,8 +43,8 @@ jobs:
       - name: Build
         run: dotnet build src/backend/Sqeez.Api/Sqeez.Api.csproj -c Release --no-restore
 
-      # - name: Test
-      #   run: dotnet test src/backend/Sqeez.Api/Sqeez.Api.csproj -c Release --no-build
+      - name: Test
+        run: dotnet test src/backend/Sqeez.Api/Sqeez.Api.Tests/Sqeez.Api.Tests.csproj -c Release --verbosity normal
 
   # --- Frontend CI (Yarn / Build Only) ---
   frontend-ci:
@@ -68,7 +68,11 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Lint Code
-        run: yarn lint 
+        run: yarn lint
+      
+      # unit tests before build, e2e after
+      - name: Run Tests
+        run: yarn test --run
 
       - name: Build Vite App
         run: yarn build

@@ -20,7 +20,8 @@
         public bool? IsOnline { get; init; }
         public long? SchoolClassId { get; init; }
         
-        public bool? IsArchived { get; init; } 
+        public bool? IsArchived { get; init; }
+        public bool StrictRoleOnly { get; init; } = false;
     }
 
     public record CreateStudentDto

@@ -4,7 +4,6 @@ using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services.UserService;
-using BC = BCrypt.Net.BCrypt;
 
 namespace Sqeez.Api.Services
 {
@@ -15,6 +14,11 @@ namespace Sqeez.Api.Services
         public async Task<ServiceResult<PagedResponse<TeacherDto>>> GetAllTeachersAsync(TeacherFilterDto filter)
         {
             var query = _context.Teachers.AsNoTracking();
+
+            if (filter.StrictRoleOnly)
+            {
+                query = query.Where(t => t.Role == UserRole.Teacher);
+            }
 
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             {

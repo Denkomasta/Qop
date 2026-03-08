@@ -7,6 +7,7 @@
     "src/**/*.spec.tsx",
     "src/setupTests.ts"
   ],
+  "exclude": [],
   "compilerOptions": {
     "types": ["vitest/globals", "@testing-library/jest-dom"]
   }

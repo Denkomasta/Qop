@@ -12,16 +12,47 @@ namespace Sqeez.Api.Services
     {
         public TeacherService(SqeezDbContext context, ILogger<TeacherService> logger) : base(context, logger) { }
 
-        public async Task<ServiceResult<PagedResponse<TeacherDto>>> GetAllTeachersAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<ServiceResult<PagedResponse<TeacherDto>>> GetAllTeachersAsync(TeacherFilterDto filter)
         {
             var query = _context.Teachers.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
+            {
+                var searchTerm = filter.SearchTerm.Trim().ToLower();
+                query = query.Where(t => t.Username.ToLower().Contains(searchTerm) ||
+                                         t.Email.ToLower().Contains(searchTerm));
+            }
+
+            if (filter.IsOnline.HasValue)
+            {
+                query = query.Where(t => t.IsOnline == filter.IsOnline.Value);
+            }
+
+            if (filter.SchoolClassId.HasValue)
+            {
+                query = query.Where(t => t.SchoolClassId == filter.SchoolClassId.Value);
+            }
+
+            if (filter.IsArchived.HasValue)
+            {
+                query = query.Where(t => t.IsArchived == filter.IsArchived.Value);
+            }
+            else
+            {
+                query = query.Where(t => !t.IsArchived);
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter.Department))
+            {
+                query = query.Where(t => t.Department == filter.Department);
+            }
 
             int totalCount = await query.CountAsync();
 
             var teachers = await query
                 .OrderBy(t => t.Username)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
                 .Select(t => new TeacherDto
                 {
                     Id = t.Id,
@@ -31,7 +62,7 @@ namespace Sqeez.Api.Services
                     Role = t.Role.ToString(),
                     IsOnline = t.IsOnline,
                     SchoolClassId = t.SchoolClassId,
-                    Department = t.Department // Teacher specific
+                    Department = t.Department,
                 })
                 .ToListAsync();
 
@@ -39,8 +70,8 @@ namespace Sqeez.Api.Services
             {
                 Data = teachers,
                 TotalCount = totalCount,
-                PageNumber = pageNumber,
-                PageSize = pageSize
+                PageNumber = filter.PageNumber,
+                PageSize = filter.PageSize
             };
 
             return ServiceResult<PagedResponse<TeacherDto>>.Ok(response);

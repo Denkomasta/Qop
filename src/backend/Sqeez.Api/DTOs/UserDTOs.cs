@@ -11,6 +11,18 @@
         public long? SchoolClassId { get; init; }
     }
 
+    public record StudentFilterDto
+    {
+        public int PageNumber { get; init; } = 1;
+        public int PageSize { get; init; } = 10;
+        
+        public string? SearchTerm { get; init; } // To search by Username or Email
+        public bool? IsOnline { get; init; }
+        public long? SchoolClassId { get; init; }
+        
+        public bool? IsArchived { get; init; } 
+    }
+
     public record CreateStudentDto
     {
         public string Username { get; init; } = string.Empty;
@@ -31,6 +43,11 @@
         public string? Department { get; init; }
     }
 
+    public record TeacherFilterDto : StudentFilterDto
+    {
+        public string? Department { get; init; }
+    }
+
     public record CreateTeacherDto : CreateStudentDto
     {
         public string? Department { get; init; }
@@ -44,6 +61,11 @@
     public record AdminDto : TeacherDto
     {
         public string PhoneNumber { get; init; } = string.Empty;
+    }
+
+    public record AdminFilterDto : TeacherFilterDto
+    {
+        public string? PhoneNumber { get; init; }
     }
 
     public record CreateAdminDto : CreateTeacherDto

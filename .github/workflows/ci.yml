@@ -68,7 +68,11 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Lint Code
-        run: yarn lint 
+        run: yarn lint
+      
+      # unit tests before build, e2e after
+      - name: Run Tests
+        run: yarn test --run
 
       - name: Build Vite App
         run: yarn build

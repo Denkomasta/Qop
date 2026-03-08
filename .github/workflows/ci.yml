@@ -44,7 +44,7 @@ jobs:
         run: dotnet build src/backend/Sqeez.Api/Sqeez.Api.csproj -c Release --no-restore
 
       - name: Test
-        run: dotnet test src/backend/Sqeez.Api/Sqeez.Api.csproj -c Release --no-build --verbosity normal
+        run: dotnet test src/backend/Sqeez.Api/Sqeez.Api.sln -c Release --no-build --verbosity normal
 
   # --- Frontend CI (Yarn / Build Only) ---
   frontend-ci:

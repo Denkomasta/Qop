@@ -33,13 +33,13 @@ namespace Sqeez.Api.Services
                 query = query.Where(t => t.SchoolClassId == filter.SchoolClassId.Value);
             }
 
-            if (filter.IsArchived.HasValue)
+            if (filter.IsArchived == true)
             {
-                query = query.Where(t => t.IsArchived == filter.IsArchived.Value);
+                query = query.Where(t => t.ArchivedAt != null);
             }
             else
             {
-                query = query.Where(t => !t.IsArchived);
+                query = query.Where(t => t.ArchivedAt == null);
             }
 
             if (!string.IsNullOrWhiteSpace(filter.Department))
@@ -107,7 +107,7 @@ namespace Sqeez.Api.Services
             {
                 Username = dto.Username,
                 Email = dto.Email.Trim().ToLower(),
-                PasswordHash = BC.HashPassword(dto.Password),
+                PasswordHash = dto.Password,    // Password should be already hashed!
                 Role = UserRole.Teacher,
                 LastSeen = DateTime.UtcNow,
                 SchoolClassId = dto.SchoolClassId,
@@ -153,7 +153,7 @@ namespace Sqeez.Api.Services
             var teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.Id == id && t.Role == UserRole.Teacher);
             if (teacher == null) return ServiceResult<bool>.Failure("Teacher not found.", ServiceError.NotFound);
 
-            teacher.IsArchived = true;
+            teacher.ArchivedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
             return ServiceResult<bool>.Ok(true);

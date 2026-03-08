@@ -25,4 +25,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Sqeez.Api.Tests\**" />
+    <Content Remove="Sqeez.Api.Tests\**" />
+    <EmbeddedResource Remove="Sqeez.Api.Tests\**" />
+    <None Remove="Sqeez.Api.Tests\**" />
+  </ItemGroup>
+
 </Project>

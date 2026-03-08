@@ -4,7 +4,6 @@ using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services.UserService;
-using BC = BCrypt.Net.BCrypt;
 
 namespace Sqeez.Api.Services
 {
@@ -33,13 +32,13 @@ namespace Sqeez.Api.Services
                 query = query.Where(a => a.SchoolClassId == filter.SchoolClassId.Value);
             }
 
-            if (filter.IsArchived.HasValue)
+            if (filter.IsArchived == true)
             {
-                query = query.Where(a => a.IsArchived == filter.IsArchived.Value);
+                query = query.Where(a => a.ArchivedAt != null);
             }
             else
             {
-                query = query.Where(a => !a.IsArchived);
+                query = query.Where(a => a.ArchivedAt == null);
             }
 
             if (!string.IsNullOrWhiteSpace(filter.Department))
@@ -114,7 +113,7 @@ namespace Sqeez.Api.Services
             {
                 Username = dto.Username,
                 Email = dto.Email.Trim().ToLower(),
-                PasswordHash = BC.HashPassword(dto.Password),
+                PasswordHash = dto.Password,    // Password should be already hashed!
                 Role = UserRole.Admin,
                 LastSeen = DateTime.UtcNow,
                 SchoolClassId = dto.SchoolClassId,
@@ -164,7 +163,7 @@ namespace Sqeez.Api.Services
             var admin = await _context.Admins.FirstOrDefaultAsync(a => a.Id == id && a.Role == UserRole.Admin);
             if (admin == null) return ServiceResult<bool>.Failure("Admin not found.", ServiceError.NotFound);
 
-            admin.IsArchived = true;
+            admin.ArchivedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
             return ServiceResult<bool>.Ok(true);

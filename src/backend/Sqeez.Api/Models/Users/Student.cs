@@ -13,7 +13,7 @@ namespace Sqeez.Api.Models.Users
         public int CurrentXP { get; set; }
         public UserRole Role { get; set; }
         public DateTime LastSeen { get; set; }
-        public bool IsArchived { get; set; }
+        public DateTime? ArchivedAt { get; set; }
         public bool IsOnline { get; set; }
 
         public long? SchoolClassId { get; set; }

@@ -31,13 +31,13 @@ namespace Sqeez.Api.Services.UserService
                 query = query.Where(s => s.SchoolClassId == filter.SchoolClassId.Value);
             }
 
-            if (filter.IsArchived.HasValue)
+            if (filter.IsArchived == true)
             {
-                query = query.Where(s => s.IsArchived == filter.IsArchived.Value);
+                query = query.Where(s => s.ArchivedAt != null);
             }
             else
             {
-                query = query.Where(s => !s.IsArchived);
+                query = query.Where(s => s.ArchivedAt == null);
             }
 
             int totalCount = await query.CountAsync();
@@ -143,7 +143,7 @@ namespace Sqeez.Api.Services.UserService
             if (student == null) return ServiceResult<bool>.Failure("Student not found.", ServiceError.NotFound);
 
             // TODO for now only archive
-            student.IsArchived = true;
+            student.ArchivedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
             return ServiceResult<bool>.Ok(true);

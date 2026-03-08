@@ -246,7 +246,7 @@ namespace Sqeez.Api.Migrations
                     CurrentXP = table.Column<int>(type: "integer", nullable: false),
                     Role = table.Column<int>(type: "integer", nullable: false),
                     LastSeen = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    IsArchived = table.Column<bool>(type: "boolean", nullable: false),
+                    ArchivedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsOnline = table.Column<bool>(type: "boolean", nullable: false),
                     SchoolClassId = table.Column<long>(type: "bigint", nullable: true),
                     Department = table.Column<string>(type: "text", nullable: true),
@@ -405,9 +405,21 @@ namespace Sqeez.Api.Migrations
                 column: "TeacherId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_SchoolClassId",
                 table: "Users",
                 column: "SchoolClassId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Username",
+                table: "Users",
+                column: "Username",
+                unique: true);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Enrollments_Subjects_SubjectId",

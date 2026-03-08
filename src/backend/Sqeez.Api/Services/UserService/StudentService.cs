@@ -14,6 +14,11 @@ namespace Sqeez.Api.Services.UserService
         {
             var query = _context.Students.AsNoTracking();
 
+            if (filter.StrictRoleOnly)
+            {
+                query = query.Where(t => t.Role == UserRole.Student);
+            }
+
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             {
                 var searchTerm = filter.SearchTerm.Trim().ToLower();

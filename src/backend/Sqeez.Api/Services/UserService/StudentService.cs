@@ -77,7 +77,7 @@ namespace Sqeez.Api.Services.UserService
         public async Task<ServiceResult<StudentDto>> GetStudentByIdAsync(long id)
         {
             var student = await _context.Students
-                .Where(s => s.Id == id && s.Role == UserRole.Student)
+                .Where(s => s.Id == id)
                 .Select(s => new StudentDto
                 {
                     Id = s.Id,

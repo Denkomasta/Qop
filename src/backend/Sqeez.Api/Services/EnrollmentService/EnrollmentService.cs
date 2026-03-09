@@ -135,7 +135,19 @@ namespace Sqeez.Api.Services
 
             if (!newStudentIds.Any()) return ServiceResult<bool>.Ok(true);
 
-            var newEnrollments = newStudentIds.Select(studentId => new Enrollment
+            var validStudentIds = await _context.Students
+                .Where(s => newStudentIds.Contains(s.Id))
+                .Select(s => s.Id)
+                .ToListAsync();
+
+            if (validStudentIds.Count != newStudentIds.Count)
+            {
+                return ServiceResult<bool>.Failure(
+                    "One or more provided IDs do not exist.",
+                    ServiceError.ValidationFailed);
+            }
+
+            var newEnrollments = validStudentIds.Select(studentId => new Enrollment
             {
                 StudentId = studentId,
                 SubjectId = subjectId,
@@ -143,9 +155,17 @@ namespace Sqeez.Api.Services
             });
 
             _context.Enrollments.AddRange(newEnrollments);
-            await _context.SaveChangesAsync();
 
-            return ServiceResult<bool>.Ok(true);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return ServiceResult<bool>.Ok(true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error bulk enrolling students in subject {SubjectId}", subjectId);
+                return ServiceResult<bool>.Failure("Internal database error.", ServiceError.InternalError);
+            }
         }
 
         public async Task<ServiceResult<bool>> UnenrollStudentsFromSubjectAsync(long subjectId, RemoveStudentsDto dto)

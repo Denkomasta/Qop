@@ -32,19 +32,19 @@
     public record CreateSubjectDto(
         string Name,
         string Code,
-        string? Description,
-        DateTime? StartDate,
-        DateTime? EndDate,
-        long? TeacherId,
-        long? SchoolClassId);
+        string? Description = null,
+        DateTime? StartDate = null,
+        DateTime? EndDate = null,
+        long? TeacherId = null,
+        long? SchoolClassId = null);
 
     public record PatchSubjectDto(
-        string? Name,
-        string? Code,
-        string? Description,
-        DateTime? StartDate,
-        DateTime? EndDate,
-        long? TeacherId,     // Pass 0 to remove the teacher
-        long? SchoolClassId  // Pass 0 to remove the class
+        string? Name = null,
+        string? Code = null,
+        string? Description = null,
+        DateTime? StartDate = null,
+        DateTime? EndDate = null,
+        long? TeacherId = null,     // Pass 0 to remove the teacher
+        long? SchoolClassId = null  // Pass 0 to remove the class
     );
 }

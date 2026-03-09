@@ -155,6 +155,7 @@ namespace Sqeez.Api.Services
             if (!dto.StudentIds.Any()) return ServiceResult<bool>.Ok(true);
 
             var enrollmentsToDeactivate = await _context.Enrollments
+                .Include(e => e.QuizAttempts)
                 .Where(e => e.SubjectId == subjectId && dto.StudentIds.Contains(e.StudentId) && e.ArchivedAt == null)
                 .ToListAsync();
 

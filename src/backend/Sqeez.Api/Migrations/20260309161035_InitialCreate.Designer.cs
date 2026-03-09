@@ -12,7 +12,7 @@ using Sqeez.Api.Data;
 namespace Sqeez.Api.Migrations
 {
     [DbContext(typeof(SqeezDbContext))]
-    [Migration("20260308065517_InitialCreate")]
+    [Migration("20260309161035_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -48,13 +48,13 @@ namespace Sqeez.Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<DateTime?>("ArchivedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("EnrolledAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Mark")
+                    b.Property<int?>("Mark")
                         .HasColumnType("integer");
 
                     b.Property<long>("StudentId")
@@ -120,9 +120,6 @@ namespace Sqeez.Api.Migrations
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()

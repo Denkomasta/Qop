@@ -6,9 +6,9 @@ namespace Sqeez.Api.Models.Academics
     public class Enrollment
     {
         public long Id { get; set; }
-        public int Mark { get; set; }
+        public int? Mark { get; set; }
         public DateTime EnrolledAt { get; set; }
-        public bool IsActive { get; set; }
+        public DateTime? ArchivedAt { get; set; }
 
         // Foreign Keys
         public long StudentId { get; set; }

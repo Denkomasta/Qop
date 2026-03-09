@@ -11,7 +11,7 @@
         public long? SchoolClassId { get; init; }
     }
 
-    public record StudentFilterDto : PagedFilterDto
+    public class StudentFilterDto : PagedFilterDto
     {   
         public string? SearchTerm { get; init; } // To search by Username or Email
         public bool? IsOnline { get; init; }
@@ -41,7 +41,7 @@
         public string? Department { get; init; }
     }
 
-    public record TeacherFilterDto : StudentFilterDto
+    public class TeacherFilterDto : StudentFilterDto
     {
         public string? Department { get; init; }
     }
@@ -61,7 +61,7 @@
         public string PhoneNumber { get; init; } = string.Empty;
     }
 
-    public record AdminFilterDto : TeacherFilterDto
+    public class AdminFilterDto : TeacherFilterDto
     {
         public string? PhoneNumber { get; init; }
     }

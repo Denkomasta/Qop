@@ -11,7 +11,6 @@ namespace Sqeez.Api.Models.Academics
         public string? Description { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public bool IsActive { get; set; }
 
         // Foreign Keys
         public long? TeacherId { get; set; }

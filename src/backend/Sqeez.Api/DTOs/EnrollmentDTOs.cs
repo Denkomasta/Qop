@@ -22,7 +22,7 @@
     // Create handled by Task<ServiceResult<bool>> EnrollStudentsInSubjectAsync(long subjectId, AssignStudentsDto dto) in EnrollmentService
 
     public record PatchEnrollmentDto(
-        int? Mark,
-        bool? RemoveMark
+        int? Mark = null,
+        bool? RemoveMark = null
     );
 }

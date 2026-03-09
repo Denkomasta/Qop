@@ -24,4 +24,10 @@ namespace Sqeez.Api.DTOs
 
         public int TotalPages => (int)Math.Ceiling(TotalCount / (double)PageSize);
     }
+
+    public record PagedFilterDto
+    {
+        public int PageNumber { get; init; } = 1;
+        public int PageSize { get; init; } = 10;
+    }
 }

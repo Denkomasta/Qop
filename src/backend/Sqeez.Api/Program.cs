@@ -7,6 +7,7 @@ using Sqeez.Api.Data;
 using Sqeez.Api.Services;
 using Sqeez.Api.Services.AuthService;
 using Sqeez.Api.Services.Interfaces;
+using Sqeez.Api.Services.SubjectService;
 using Sqeez.Api.Services.TokenService;
 using Sqeez.Api.Services.UserService;
 using System.IdentityModel.Tokens.Jwt;
@@ -53,6 +54,7 @@ builder.Services.AddScoped<ISchoolClassService, SchoolClassService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<ITeacherService, TeacherService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<ISubjectService, SubjectService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

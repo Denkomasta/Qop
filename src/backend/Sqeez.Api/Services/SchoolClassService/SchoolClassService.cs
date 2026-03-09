@@ -107,6 +107,19 @@ namespace Sqeez.Api.Services
         {
             _logger.LogInformation("Attempting to create a new school class: {Name} - {Section}", dto.Name, dto.Section);
 
+            string? teacherName = null;
+
+            if (dto.TeacherId.HasValue)
+            {
+                var teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.Id == dto.TeacherId.Value);
+                if (teacher == null)
+                {
+                    _logger.LogWarning("Failed to create class {Name}: Invalid TeacherId {TeacherId}", dto.Name, dto.TeacherId);
+                    return ServiceResult<SchoolClassDto>.Failure("Provided Teacher ID does not exist or belongs to a non-teacher user.", ServiceError.ValidationFailed);
+                }
+                teacherName = teacher.Username;
+            }
+
             var schoolClass = new SchoolClass
             {
                 Name = dto.Name,
@@ -126,7 +139,7 @@ namespace Sqeez.Api.Services
                     schoolClass.AcademicYear,
                     schoolClass.Section,
                     schoolClass.TeacherId,
-                    schoolClass.Teacher?.Username,
+                    teacherName,
                     0
                 );
 
@@ -253,6 +266,13 @@ namespace Sqeez.Api.Services
                 var students = await _context.Students
                     .Where(s => dto.StudentIds.Contains(s.Id))
                     .ToListAsync();
+
+                if (students.Count != dto.StudentIds.Count)
+                {
+                    return ServiceResult<bool>.Failure(
+                    "One or more provided IDs do not exist.",
+                    ServiceError.ValidationFailed);
+                }
 
                 foreach (var student in students)
                 {

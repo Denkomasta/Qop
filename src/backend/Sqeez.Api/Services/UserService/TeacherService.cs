@@ -84,7 +84,7 @@ namespace Sqeez.Api.Services
         public async Task<ServiceResult<TeacherDto>> GetTeacherByIdAsync(long id)
         {
             var teacher = await _context.Teachers
-                .Where(t => t.Id == id && t.Role == UserRole.Teacher)
+                .Where(t => t.Id == id)
                 .Select(t => new TeacherDto
                 {
                     Id = t.Id,

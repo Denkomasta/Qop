@@ -118,6 +118,29 @@ namespace Sqeez.Api.Services.SubjectService
 
         public async Task<ServiceResult<SubjectDto>> CreateSubjectAsync(CreateSubjectDto dto)
         {
+            string? teacherName = null;
+            string? className = null;
+
+            if (dto.TeacherId.HasValue)
+            {
+                var teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.Id == dto.TeacherId.Value);
+                if (teacher == null)
+                {
+                    return ServiceResult<SubjectDto>.Failure("Provided Teacher ID does not exist or belongs to a non-teacher user.", ServiceError.ValidationFailed);
+                }
+                teacherName = teacher.Username;
+            }
+
+            if (dto.SchoolClassId.HasValue)
+            {
+                var schoolClass = await _context.SchoolClasses.FirstOrDefaultAsync(c => c.Id == dto.SchoolClassId.Value);
+                if (schoolClass == null)
+                {
+                    return ServiceResult<SubjectDto>.Failure("Provided School Class ID does not exist.", ServiceError.ValidationFailed);
+                }
+                className = schoolClass.Name;
+            }
+
             var subject = new Subject
             {
                 Name = dto.Name,
@@ -140,9 +163,9 @@ namespace Sqeez.Api.Services.SubjectService
                 subject.StartDate,
                 subject.EndDate,
                 subject.TeacherId,
-                subject.Teacher?.Username ?? "",
+                teacherName ?? "",
                 subject.SchoolClassId,
-                subject.SchoolClass?.Name ?? "",
+                className ?? "",
                 0,
                 0));
         }

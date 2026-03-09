@@ -85,7 +85,7 @@ namespace Sqeez.Api.Services
         public async Task<ServiceResult<AdminDto>> GetAdminByIdAsync(long id)
         {
             var admin = await _context.Admins
-                .Where(a => a.Id == id && a.Role == UserRole.Admin)
+                .Where(a => a.Id == id)
                 .Select(a => new AdminDto
                 {
                     Id = a.Id,

@@ -10,23 +10,19 @@ namespace Sqeez.Api.Controllers
     public class SubjectsController : ApiBaseController
     {
         private readonly ISubjectService _subjectService;
-        //private readonly IEnrollmentService _enrollmentService;
-        // private readonly IQuizService _quizService; // Assuming you have this!
+        private readonly IEnrollmentService _enrollmentService;
+        // private readonly IQuizService _quizService;
 
         public SubjectsController(
-            ISubjectService subjectService
-            //IEnrollmentService enrollmentService
+            ISubjectService subjectService,
+            IEnrollmentService enrollmentService
             // IQuizService quizService
             )
         {
             _subjectService = subjectService;
-            //_enrollmentService = enrollmentService;
+            _enrollmentService = enrollmentService;
             // _quizService = quizService;
         }
-
-        // ==========================================
-        // 1. CORE SUBJECT CRUD
-        // ==========================================
 
         /// <summary>
         /// GET /api/subjects
@@ -82,33 +78,39 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
-        // ==========================================
-        // 2. ENROLLMENTS (SUB-RESOURCES)
-        // ==========================================
+        /// <summary>
+        /// GET /api/subjects/5/enrollments
+        /// </summary>
+        [HttpGet("{subjectId}/enrollments")]
+        public async Task<ActionResult> GetEnrollmentsForSubject(long subjectId, [FromQuery] EnrollmentFilterDto filter)
+        {
+            // Force the filter to only look at this specific subject
+            filter.SubjectId = subjectId;
+            var result = await _enrollmentService.GetAllEnrollmentsAsync(filter);
+            return HandleServiceResult(result);
+        }
 
         /// <summary>
         /// POST /api/subjects/5/enrollments
-        /// Assigns a list of students to the subject.
         /// </summary>
-        //[Authorize(Roles = "Admin,Teacher")]
-        //[HttpPost("{subjectId}/enrollments")]
-        //public async Task<ActionResult> EnrollStudents(long subjectId, [FromBody] EnrollStudentsDto dto)
-        //{
-        //    var result = await _enrollmentService.EnrollStudentsInSubjectAsync(subjectId, dto);
-        //    return HandleResult(result);
-        //}
+        [Authorize(Roles = "Admin,Teacher")]
+        [HttpPost("{subjectId}/enrollments")]
+        public async Task<ActionResult> EnrollStudents(long subjectId, [FromBody] AssignStudentsDto dto)
+        {
+            var result = await _enrollmentService.EnrollStudentsInSubjectAsync(subjectId, dto);
+            return HandleServiceResult(result);
+        }
 
         /// <summary>
         /// DELETE /api/subjects/5/enrollments
-        /// Removes a list of students from the subject.
         /// </summary>
-        //[Authorize(Roles = "Admin,Teacher")]
-        //[HttpDelete("{subjectId}/enrollments")]
-        //public async Task<ActionResult> UnenrollStudents(long subjectId, [FromBody] UnenrollStudentsDto dto)
-        //{
-        //    var result = await _enrollmentService.UnenrollStudentsFromSubjectAsync(subjectId, dto);
-        //    return HandleResult(result);
-        //}
+        [Authorize(Roles = "Admin,Teacher")]
+        [HttpDelete("{subjectId}/enrollments")]
+        public async Task<ActionResult> UnenrollStudents(long subjectId, [FromBody] RemoveStudentsDto dto)
+        {
+            var result = await _enrollmentService.UnenrollStudentsFromSubjectAsync(subjectId, dto);
+            return HandleServiceResult(result);
+        }
 
         // ==========================================
         // 3. QUIZZES (SUB-RESOURCES)

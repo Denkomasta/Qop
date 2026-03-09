@@ -11,11 +11,8 @@
         public long? SchoolClassId { get; init; }
     }
 
-    public record StudentFilterDto
-    {
-        public int PageNumber { get; init; } = 1;
-        public int PageSize { get; init; } = 10;
-        
+    public record StudentFilterDto : PagedFilterDto
+    {   
         public string? SearchTerm { get; init; } // To search by Username or Email
         public bool? IsOnline { get; init; }
         public long? SchoolClassId { get; init; }

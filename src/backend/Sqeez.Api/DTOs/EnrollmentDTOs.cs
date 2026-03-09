@@ -19,12 +19,10 @@
         public bool IsDescending { get; set; } = false;
     }
 
-    public record CreateEnrollmentDto(
-        DateTime? EnrolledAt,
-        long StudentId,
-        long SubjectId);
+    // Create handled by Task<ServiceResult<bool>> EnrollStudentsInSubjectAsync(long subjectId, AssignStudentsDto dto) in EnrollmentService
 
     public record PatchEnrollmentDto(
-        int? Mark
+        int? Mark,
+        bool? RemoveMark
     );
 }

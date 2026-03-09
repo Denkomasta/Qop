@@ -20,7 +20,24 @@ namespace Sqeez.Api.Services.SubjectService
                 var query = _context.Subjects.AsNoTracking();
 
                 if (filter.IsActive.HasValue)
-                    query = query.Where(s => s.IsActive == filter.IsActive.Value);
+                {
+                    var now = DateTime.UtcNow;
+
+                    if (filter.IsActive.Value)
+                    {
+                        // ACTIVE: Started, and hasn't ended.
+                        query = query.Where(s =>
+                            s.StartDate <= now &&
+                            (s.EndDate == null || s.EndDate > now));
+                    }
+                    else
+                    {
+                        // INACTIVE: Hasn't started yet, or already ended.
+                        query = query.Where(s =>
+                            s.StartDate > now ||
+                            (s.EndDate != null && s.EndDate <= now));
+                    }
+                }
 
                 if (filter.TeacherId.HasValue)
                     query = query.Where(s => s.TeacherId == filter.TeacherId.Value);
@@ -49,7 +66,6 @@ namespace Sqeez.Api.Services.SubjectService
                         s.Description,
                         s.StartDate,
                         s.EndDate,
-                        s.IsActive,
                         s.TeacherId,
                         s.Teacher != null ? s.Teacher.Username : null,
                         s.SchoolClassId,
@@ -84,7 +100,6 @@ namespace Sqeez.Api.Services.SubjectService
                     s.Description,
                     s.StartDate,
                     s.EndDate,
-                    s.IsActive,
                     s.TeacherId,
                     s.Teacher != null ? s.Teacher.Username : null,
                     s.SchoolClassId,
@@ -111,8 +126,7 @@ namespace Sqeez.Api.Services.SubjectService
                 StartDate = dto.StartDate ?? DateTime.UtcNow,
                 EndDate = dto.EndDate,
                 TeacherId = dto.TeacherId,
-                SchoolClassId = dto.SchoolClassId,
-                IsActive = true // TODO remove, easily computable as I have start and end
+                SchoolClassId = dto.SchoolClassId
             };
 
             _context.Subjects.Add(subject);
@@ -125,7 +139,6 @@ namespace Sqeez.Api.Services.SubjectService
                 subject.Description,
                 subject.StartDate,
                 subject.EndDate,
-                subject.IsActive,
                 subject.TeacherId,
                 subject.Teacher?.Username ?? "",
                 subject.SchoolClassId,
@@ -163,7 +176,6 @@ namespace Sqeez.Api.Services.SubjectService
 
             if (dto.StartDate.HasValue) subject.StartDate = dto.StartDate.Value;
             if (dto.EndDate.HasValue) subject.EndDate = dto.EndDate.Value;
-            if (dto.IsActive.HasValue) subject.IsActive = dto.IsActive.Value;
 
             if (dto.TeacherId.HasValue)
             {
@@ -211,7 +223,6 @@ namespace Sqeez.Api.Services.SubjectService
                     subject.Description,
                     subject.StartDate,
                     subject.EndDate,
-                    subject.IsActive,
                     subject.TeacherId,
                     subject.Teacher?.Username,
                     subject.SchoolClassId,
@@ -254,7 +265,6 @@ namespace Sqeez.Api.Services.SubjectService
                 // SOFT DELETE: If there is historical data, we just archive it.
                 else
                 {
-                    subject.IsActive = false;
                     subject.EndDate = DateTime.UtcNow;
                     _logger.LogInformation("Soft deleted (archived) subject {Id} to preserve records.", id);
                 }

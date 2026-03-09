@@ -66,9 +66,9 @@ namespace Sqeez.Api.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Mark = table.Column<int>(type: "integer", nullable: false),
+                    Mark = table.Column<int>(type: "integer", nullable: true),
                     EnrolledAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    ArchivedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     StudentId = table.Column<long>(type: "bigint", nullable: false),
                     SubjectId = table.Column<long>(type: "bigint", nullable: false)
                 },
@@ -299,7 +299,6 @@ namespace Sqeez.Api.Migrations
                     Description = table.Column<string>(type: "text", nullable: true),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     TeacherId = table.Column<long>(type: "bigint", nullable: true),
                     SchoolClassId = table.Column<long>(type: "bigint", nullable: true)
                 },

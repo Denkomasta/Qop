@@ -9,10 +9,12 @@
         string? TeacherName,
         int StudentCount);
 
-    public record SchoolClassFilterDto(
-        string? SearchTerm = null,  // Search against Name or Section
-        string? AcademicYear = null,
-        long? TeacherId = null) : PagedFilterDto;
+    public class SchoolClassFilterDto : PagedFilterDto
+    {
+        public string? SearchTerm { get; set; }  // Search against Name or Section
+        public string? AcademicYear { get; set; }
+        public long? TeacherId { get; set; }
+    }
 
     public record CreateSchoolClassDto(
         string Name,

@@ -51,7 +51,7 @@ namespace Sqeez.Api.Controllers
         /// <summary>
         /// POST /api/subjects
         /// </summary>
-        [Authorize(Roles = "Admin,Teacher")] // Only staff can create subjects
+        [Authorize(Roles = "Admin")] // Only staff can create subjects
         [HttpPost]
         public async Task<ActionResult> CreateSubject([FromBody] CreateSubjectDto dto)
         {
@@ -62,7 +62,7 @@ namespace Sqeez.Api.Controllers
         /// <summary>
         /// PATCH /api/subjects/5
         /// </summary>
-        [Authorize(Roles = "Admin,Teacher")]
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{id}")]
         public async Task<ActionResult> PatchSubject(long id, [FromBody] PatchSubjectDto dto)
         {
@@ -74,7 +74,7 @@ namespace Sqeez.Api.Controllers
         /// DELETE /api/subjects/5
         /// Performs a Smart Delete (Hard delete if empty, Soft delete if active)
         /// </summary>
-        [Authorize(Roles = "Admin,Teacher")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteSubject(long id)
         {

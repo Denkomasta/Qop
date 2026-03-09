@@ -7,7 +7,6 @@
         string? Description,
         DateTime StartDate,
         DateTime? EndDate,
-        bool IsActive,
         long? TeacherId,
         string? TeacherName,
         long? SchoolClassId,
@@ -16,7 +15,7 @@
         int QuizCount           // Quizzes are added in Quiz service
         );
 
-    public record SubjectFilterDto : PagedFilterDto
+    public class SubjectFilterDto : PagedFilterDto
     {
         public string? SearchTerm { get; set; }
         public string? Code { get; set; }
@@ -45,7 +44,6 @@
         string? Description,
         DateTime? StartDate,
         DateTime? EndDate,
-        bool? IsActive,
         long? TeacherId,     // Pass 0 to remove the teacher
         long? SchoolClassId  // Pass 0 to remove the class
     );

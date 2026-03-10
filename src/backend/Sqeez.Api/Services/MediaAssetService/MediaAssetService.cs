@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
@@ -101,13 +102,12 @@ namespace Sqeez.Api.Services
                 }
             }
 
-            string mimeTypeStr = asset.MimeType switch
+            var provider = new FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(asset.LocationUrl, out string? mimeTypeStr))
             {
-                MediaType.Image => "image/jpeg",
-                MediaType.Video => "video/mp4",
-                MediaType.Audio => "audio/mpeg",
-                _ => "application/octet-stream"
-            };
+                // If it's a super weird file type it doesn't recognize, fall back to binary
+                mimeTypeStr = "application/octet-stream";
+            }
 
             return ServiceResult<MediaDownloadDto>.Ok(new MediaDownloadDto(asset.LocationUrl, mimeTypeStr));
         }

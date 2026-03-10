@@ -159,7 +159,9 @@ namespace Sqeez.Api.Controllers
                 return HandleServiceResult(pathResult);
             }
 
-            return PhysicalFile(pathResult.Data!, metadataResult.Data.MimeType, enableRangeProcessing: true);
+            var fileName = Path.GetFileName(metadataResult.Data!.LocationUrl);
+
+            return PhysicalFile(pathResult.Data!, metadataResult.Data.MimeType, fileName, enableRangeProcessing: true);
         }
     }
 }

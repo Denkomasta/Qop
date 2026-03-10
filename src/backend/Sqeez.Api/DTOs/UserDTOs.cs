@@ -39,6 +39,7 @@
     public record TeacherDto : StudentDto
     {
         public string? Department { get; init; }
+        public long? ManagedClassId { get; init; }
     }
 
     public class TeacherFilterDto : StudentFilterDto
@@ -49,11 +50,13 @@
     public record CreateTeacherDto : CreateStudentDto
     {
         public string? Department { get; init; }
+        public long? ManagedClassId { get; init; }
     }
 
     public record PatchTeacherDto : PatchStudentDto
     {
         public string? Department { get; init; }
+        public long? ManagedClassId { get; init; }
     }
 
     public record AdminDto : TeacherDto

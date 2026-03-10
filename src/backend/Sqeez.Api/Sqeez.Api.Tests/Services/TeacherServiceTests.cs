@@ -118,9 +118,7 @@ namespace Sqeez.Api.Tests.Services
             var result = await service.PatchTeacherAsync(teacher.Id, patchDto);
 
             Assert.Null(result.ErrorMessage);
-            Assert.True(result.Data);
-
-            var updatedTeacher = await context.Teachers.FindAsync(teacher.Id);
+            var updatedTeacher = result.Data;
             Assert.Equal("UpdatedName", updatedTeacher!.Username);
             Assert.Equal("Science", updatedTeacher.Department);
             Assert.Equal("old@sqeez.com", updatedTeacher.Email);

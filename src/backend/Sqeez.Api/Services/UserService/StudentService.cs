@@ -99,6 +99,12 @@ namespace Sqeez.Api.Services.UserService
             if (await _context.Students.AnyAsync(u => u.Email == dto.Email.Trim().ToLower()))
                 return ServiceResult<StudentDto>.Failure("Email already in use.", ServiceError.Conflict);
 
+            if (dto.SchoolClassId.HasValue && dto.SchoolClassId.Value != 0)
+            {
+                var classExists = await _context.SchoolClasses.AnyAsync(c => c.Id == dto.SchoolClassId.Value);
+                if (!classExists) return ServiceResult<StudentDto>.Failure("The specified School Class does not exist.", ServiceError.NotFound);
+            }
+
             var student = new Student
             {
                 Username = dto.Username.Trim(),
@@ -124,10 +130,22 @@ namespace Sqeez.Api.Services.UserService
             return ServiceResult<StudentDto>.Ok(resultDto);
         }
 
-        public async Task<ServiceResult<bool>> PatchStudentAsync(long id, PatchStudentDto dto)
+        public async Task<ServiceResult<StudentDto>> PatchStudentAsync(long id, PatchStudentDto dto)
         {
             var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id && s.Role == UserRole.Student);
-            if (student == null) return ServiceResult<bool>.Failure("Student not found.", ServiceError.NotFound);
+            if (student == null) return ServiceResult<StudentDto>.Failure("Student not found.", ServiceError.NotFound);
+
+            if (dto.SchoolClassId.HasValue && dto.SchoolClassId.Value != 0)
+            {
+                var classExists = await _context.SchoolClasses.AnyAsync(c => c.Id == dto.SchoolClassId.Value);
+                if (!classExists) return ServiceResult<StudentDto>.Failure("The specified School Class does not exist.", ServiceError.NotFound);
+
+                student.SchoolClassId = dto.SchoolClassId.Value;
+            }
+            else if (dto.SchoolClassId == 0)
+            {
+                student.SchoolClassId = null;
+            }
 
             if (!string.IsNullOrWhiteSpace(dto.Username))
                 student.Username = dto.Username;
@@ -139,7 +157,17 @@ namespace Sqeez.Api.Services.UserService
                 student.SchoolClassId = dto.SchoolClassId.Value == 0 ? null : dto.SchoolClassId.Value;
 
             await _context.SaveChangesAsync();
-            return ServiceResult<bool>.Ok(true);
+
+            var resultDto = new StudentDto
+            {
+                Id = student.Id,
+                Username = student.Username,
+                Email = student.Email,
+                Role = student.Role.ToString(),
+                SchoolClassId = student.SchoolClassId
+            };
+
+            return ServiceResult<StudentDto>.Ok(resultDto);
         }
 
         public async Task<ServiceResult<bool>> DeleteStudentAsync(long id)

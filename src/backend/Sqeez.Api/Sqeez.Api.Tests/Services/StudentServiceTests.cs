@@ -5,6 +5,7 @@ using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Users;
+using Sqeez.Api.Models.Academics;
 using Sqeez.Api.Services.UserService;
 using Xunit;
 
@@ -65,13 +66,16 @@ namespace Sqeez.Api.Tests.Services
         public async Task CreateStudentAsync_WhenEmailIsUnique_CreatesAndReturnsStudent()
         {
             var context = await GetInMemoryDbContext();
+            var schoolClass = new SchoolClass { Name = "Tondove", AcademicYear = "2025-2026" };
+            context.SchoolClasses.Add(schoolClass);
+            await context.SaveChangesAsync();
             var service = CreateService(context);
             var createDto = new CreateStudentDto
             {
                 Username = "NewStudent",
                 Email = "newstudent@sqeez.com",
                 Password = "hashedpassword123",
-                SchoolClassId = 1
+                SchoolClassId = schoolClass.Id,
             };
 
             var result = await service.CreateStudentAsync(createDto);
@@ -82,7 +86,7 @@ namespace Sqeez.Api.Tests.Services
 
             var savedStudent = await context.Students.FirstOrDefaultAsync(s => s.Email == "newstudent@sqeez.com");
             Assert.NotNull(savedStudent);
-            Assert.Equal(1, savedStudent.SchoolClassId);
+            Assert.Equal(schoolClass.Id, savedStudent.SchoolClassId);
             Assert.Equal(UserRole.Student, savedStudent.Role);
         }
 
@@ -107,21 +111,21 @@ namespace Sqeez.Api.Tests.Services
         public async Task PatchStudentAsync_WhenStudentExists_UpdatesProperties()
         {
             var context = await GetInMemoryDbContext();
-            var student = new Student { Username = "OldName", Email = "old@sqeez.com", Role = UserRole.Student, SchoolClassId = 1 };
+            var student = new Student { Username = "OldName", Email = "old@sqeez.com", Role = UserRole.Student };
+            var schoolClass = new SchoolClass { Name = "Tondove", AcademicYear = "2025-2026" };
             context.Students.Add(student);
+            context.SchoolClasses.Add(schoolClass);
             await context.SaveChangesAsync();
 
             var service = CreateService(context);
-            var patchDto = new PatchStudentDto { Username = "UpdatedName", SchoolClassId = 2 };
+            var patchDto = new PatchStudentDto { Username = "UpdatedName", SchoolClassId = schoolClass.Id };
 
             var result = await service.PatchStudentAsync(student.Id, patchDto);
 
             Assert.Null(result.ErrorMessage);
-            Assert.True(result.Data);
-
-            var updatedStudent = await context.Students.FindAsync(student.Id);
+            var updatedStudent = result.Data;
             Assert.Equal("UpdatedName", updatedStudent!.Username);
-            Assert.Equal(2, updatedStudent.SchoolClassId);
+            Assert.Equal(schoolClass.Id, updatedStudent.SchoolClassId);
             Assert.Equal("old@sqeez.com", updatedStudent.Email);
         }
 

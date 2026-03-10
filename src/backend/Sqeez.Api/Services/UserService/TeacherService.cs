@@ -67,6 +67,7 @@ namespace Sqeez.Api.Services
                     IsOnline = t.IsOnline,
                     SchoolClassId = t.SchoolClassId,
                     Department = t.Department,
+                    ManagedClassId = t.ManagedClassId,
                 })
                 .ToListAsync();
 
@@ -94,7 +95,8 @@ namespace Sqeez.Api.Services
                     Role = t.Role.ToString(),
                     IsOnline = t.IsOnline,
                     SchoolClassId = t.SchoolClassId,
-                    Department = t.Department
+                    Department = t.Department,
+                    ManagedClassId= t.ManagedClassId,
                 })
                 .FirstOrDefaultAsync();
 
@@ -107,6 +109,18 @@ namespace Sqeez.Api.Services
             if (await _context.Students.AnyAsync(u => u.Email == dto.Email.Trim().ToLower()))
                 return ServiceResult<TeacherDto>.Failure("Email already in use.", ServiceError.Conflict);
 
+            if (dto.SchoolClassId.HasValue && dto.SchoolClassId.Value != 0)
+            {
+                var classExists = await _context.SchoolClasses.AnyAsync(c => c.Id == dto.SchoolClassId.Value);
+                if (!classExists) return ServiceResult<TeacherDto>.Failure("The specified School Class does not exist.", ServiceError.NotFound);
+            }
+
+            if (dto.ManagedClassId.HasValue && dto.ManagedClassId.Value != 0)
+            {
+                var classExists = await _context.SchoolClasses.AnyAsync(c => c.Id == dto.ManagedClassId.Value);
+                if (!classExists) return ServiceResult<TeacherDto>.Failure("The specified Managed Class does not exist.", ServiceError.NotFound);
+            }
+
             var teacher = new Teacher
             {
                 Username = dto.Username,
@@ -115,7 +129,8 @@ namespace Sqeez.Api.Services
                 Role = UserRole.Teacher,
                 LastSeen = DateTime.UtcNow,
                 SchoolClassId = dto.SchoolClassId,
-                Department = dto.Department
+                Department = dto.Department,
+                ManagedClassId = dto.ManagedClassId,
             };
 
             _context.Teachers.Add(teacher);
@@ -128,16 +143,41 @@ namespace Sqeez.Api.Services
                 Email = teacher.Email,
                 Role = teacher.Role.ToString(),
                 SchoolClassId = teacher.SchoolClassId,
-                Department = teacher.Department
+                Department = teacher.Department,
+                ManagedClassId= teacher.ManagedClassId,
             };
 
             return ServiceResult<TeacherDto>.Ok(resultDto);
         }
 
-        public async Task<ServiceResult<bool>> PatchTeacherAsync(long id, PatchTeacherDto dto)
+        public async Task<ServiceResult<TeacherDto>> PatchTeacherAsync(long id, PatchTeacherDto dto)
         {
             var teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.Id == id && t.Role == UserRole.Teacher);
-            if (teacher == null) return ServiceResult<bool>.Failure("Teacher not found.", ServiceError.NotFound);
+            if (teacher == null) return ServiceResult<TeacherDto>.Failure("Teacher not found.", ServiceError.NotFound);
+
+            if (dto.SchoolClassId.HasValue && dto.SchoolClassId.Value != 0)
+            {
+                var classExists = await _context.SchoolClasses.AnyAsync(c => c.Id == dto.SchoolClassId.Value);
+                if (!classExists) return ServiceResult<TeacherDto>.Failure("The specified School Class does not exist.", ServiceError.NotFound);
+
+                teacher.SchoolClassId = dto.SchoolClassId.Value;
+            }
+            else if (dto.SchoolClassId == 0)
+            {
+                teacher.SchoolClassId = null;
+            }
+
+            if (dto.ManagedClassId.HasValue && dto.ManagedClassId.Value != 0)
+            {
+                var classExists = await _context.SchoolClasses.AnyAsync(c => c.Id == dto.ManagedClassId.Value);
+                if (!classExists) return ServiceResult<TeacherDto>.Failure("The specified Managed Class does not exist.", ServiceError.NotFound);
+
+                teacher.ManagedClassId = dto.ManagedClassId.Value;
+            }
+            else if (dto.ManagedClassId == 0)
+            {
+                teacher.ManagedClassId = null;
+            }
 
             if (!string.IsNullOrWhiteSpace(dto.Username)) teacher.Username = dto.Username;
             if (!string.IsNullOrWhiteSpace(dto.Email)) teacher.Email = dto.Email.Trim().ToLower();
@@ -149,7 +189,19 @@ namespace Sqeez.Api.Services
                 teacher.Department = dto.Department;
 
             await _context.SaveChangesAsync();
-            return ServiceResult<bool>.Ok(true);
+
+            var resultDto = new TeacherDto
+            {
+                Id = teacher.Id,
+                Username = teacher.Username,
+                Email = teacher.Email,
+                Role = teacher.Role.ToString(),
+                SchoolClassId = teacher.SchoolClassId,
+                Department = teacher.Department,
+                ManagedClassId = teacher.ManagedClassId,
+            };
+
+            return ServiceResult<TeacherDto>.Ok(resultDto);
         }
 
         public async Task<ServiceResult<bool>> DeleteTeacherAsync(long id)

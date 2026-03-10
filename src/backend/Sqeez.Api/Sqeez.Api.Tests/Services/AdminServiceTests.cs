@@ -115,9 +115,7 @@ namespace Sqeez.Api.Tests.Services
             var result = await service.PatchAdminAsync(admin.Id, patchDto);
 
             Assert.Null(result.ErrorMessage);
-            Assert.True(result.Data);
-
-            var updatedAdmin = await context.Admins.FindAsync(admin.Id);
+            var updatedAdmin = result.Data;
             Assert.Equal("UpdatedName", updatedAdmin!.Username);
             Assert.Equal("HR", updatedAdmin.Department);
             Assert.Equal("old@sqeez.com", updatedAdmin.Email);

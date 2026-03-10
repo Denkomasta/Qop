@@ -7,7 +7,7 @@ namespace Sqeez.Api.Services.UserService
         Task<ServiceResult<PagedResponse<AdminDto>>> GetAllAdminsAsync(AdminFilterDto filter);
         Task<ServiceResult<AdminDto>> GetAdminByIdAsync(long id);
         Task<ServiceResult<AdminDto>> CreateAdminAsync(CreateAdminDto dto);
-        Task<ServiceResult<bool>> PatchAdminAsync(long id, PatchAdminDto dto);
+        Task<ServiceResult<AdminDto>> PatchAdminAsync(long id, PatchAdminDto dto);
         Task<ServiceResult<bool>> DeleteAdminAsync(long id);
     }
 }

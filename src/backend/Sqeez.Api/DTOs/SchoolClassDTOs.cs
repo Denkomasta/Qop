@@ -7,7 +7,8 @@
         string Section,
         long? TeacherId,
         string? TeacherName,
-        int StudentCount);
+        int StudentCount,
+        int SubjectCount);
 
     public class SchoolClassFilterDto : PagedFilterDto
     {

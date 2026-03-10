@@ -19,7 +19,7 @@ namespace Sqeez.Api.Models.Users
         public long? SchoolClassId { get; set; }
         public SchoolClass? SchoolClass { get; set; }
 
-        public ICollection<StudentBadge> StudentBadges { get; set; } = new List<StudentBadge>();    // TODO remove
-        public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();  // TODO remove
+        public ICollection<StudentBadge> StudentBadges { get; set; } = new List<StudentBadge>();
+        public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
     }
 }

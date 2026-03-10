@@ -1,4 +1,6 @@
-﻿namespace Sqeez.Api.DTOs
+﻿using System.Text.Json.Serialization;
+
+namespace Sqeez.Api.DTOs
 {
     public record StudentDto
     {
@@ -67,6 +69,8 @@
     public class AdminFilterDto : TeacherFilterDto
     {
         public string? PhoneNumber { get; init; }
+        [JsonIgnore]
+        public new bool StrictRoleOnly { get; init; } = false;
     }
 
     public record CreateAdminDto : CreateTeacherDto

@@ -12,7 +12,7 @@ using Sqeez.Api.Data;
 namespace Sqeez.Api.Migrations
 {
     [DbContext(typeof(SqeezDbContext))]
-    [Migration("20260309161035_InitialCreate")]
+    [Migration("20260310110103_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -92,13 +92,7 @@ namespace Sqeez.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long?>("TeacherId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("TeacherId")
-                        .IsUnique();
 
                     b.ToTable("SchoolClasses");
                 });
@@ -511,6 +505,12 @@ namespace Sqeez.Api.Migrations
                     b.Property<string>("Department")
                         .HasColumnType("text");
 
+                    b.Property<long?>("ManagedClassId")
+                        .HasColumnType("bigint");
+
+                    b.HasIndex("ManagedClassId")
+                        .IsUnique();
+
                     b.HasDiscriminator().HasValue(1);
                 });
 
@@ -557,16 +557,6 @@ namespace Sqeez.Api.Migrations
                     b.Navigation("Student");
 
                     b.Navigation("Subject");
-                });
-
-            modelBuilder.Entity("Sqeez.Api.Models.Academics.SchoolClass", b =>
-                {
-                    b.HasOne("Sqeez.Api.Models.Users.Teacher", "Teacher")
-                        .WithOne("ManagedClass")
-                        .HasForeignKey("Sqeez.Api.Models.Academics.SchoolClass", "TeacherId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("Sqeez.Api.Models.Academics.Subject", b =>
@@ -707,6 +697,16 @@ namespace Sqeez.Api.Migrations
                     b.Navigation("SchoolClass");
                 });
 
+            modelBuilder.Entity("Sqeez.Api.Models.Users.Teacher", b =>
+                {
+                    b.HasOne("Sqeez.Api.Models.Academics.SchoolClass", "ManagedClass")
+                        .WithOne("Teacher")
+                        .HasForeignKey("Sqeez.Api.Models.Users.Teacher", "ManagedClassId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ManagedClass");
+                });
+
             modelBuilder.Entity("Sqeez.Api.Models.Academics.Enrollment", b =>
                 {
                     b.Navigation("QuizAttempts");
@@ -717,6 +717,8 @@ namespace Sqeez.Api.Migrations
                     b.Navigation("Students");
 
                     b.Navigation("Subjects");
+
+                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("Sqeez.Api.Models.Academics.Subject", b =>
@@ -757,8 +759,6 @@ namespace Sqeez.Api.Migrations
 
             modelBuilder.Entity("Sqeez.Api.Models.Users.Teacher", b =>
                 {
-                    b.Navigation("ManagedClass");
-
                     b.Navigation("MediaAssets");
 
                     b.Navigation("Subjects");

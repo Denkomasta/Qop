@@ -17,7 +17,8 @@ namespace Sqeez.Api.Services
 
             if (filter.StrictRoleOnly)
             {
-                query = query.Where(t => t.Role == UserRole.Teacher);
+                // query = query.Where(t => t.Role == UserRole.Teacher); Confuses EF Core because it's a derived class
+                query = query.Where(t => t.GetType() == typeof(Teacher));
             }
 
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))

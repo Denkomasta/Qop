@@ -107,9 +107,9 @@ namespace Sqeez.Api.Data
 
             // Relationship B: A SchoolClass has one Teacher
             modelBuilder.Entity<SchoolClass>()
-                .HasOne(sc => sc.Teacher)
-                .WithOne(t => t.ManagedClass)
-                .HasForeignKey<SchoolClass>(sc => sc.TeacherId)
+                .HasOne(sc => sc.Teacher)             // A SchoolClass has one Manager/Teacher
+                .WithOne(t => t.ManagedClass)         // That Teacher manages this one SchoolClass
+                .HasForeignKey<Teacher>(t => t.ManagedClassId) // The actual DB column lives in the Teacher (Users) table
                 .OnDelete(DeleteBehavior.SetNull);
         }
     }

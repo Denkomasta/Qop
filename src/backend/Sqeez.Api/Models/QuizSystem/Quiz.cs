@@ -7,7 +7,7 @@ namespace Sqeez.Api.Models.QuizSystem
         public long Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public int MaxRetries { get; set; }
+        public int MaxRetries { get; set; } = 0;
         public DateTime CreatedAt { get; set; }
         public DateTime? PublishDate { get; set; }
         public DateTime? ClosingDate { get; set; }

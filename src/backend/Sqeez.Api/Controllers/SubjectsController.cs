@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sqeez.Api.DTOs;
+using Sqeez.Api.Services;
 using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
@@ -11,17 +12,17 @@ namespace Sqeez.Api.Controllers
     {
         private readonly ISubjectService _subjectService;
         private readonly IEnrollmentService _enrollmentService;
-        // private readonly IQuizService _quizService;
+        private readonly IQuizService _quizService;
 
         public SubjectsController(
             ISubjectService subjectService,
-            IEnrollmentService enrollmentService
-            // IQuizService quizService
+            IEnrollmentService enrollmentService,
+             IQuizService quizService
             )
         {
             _subjectService = subjectService;
             _enrollmentService = enrollmentService;
-            // _quizService = quizService;
+            _quizService = quizService;
         }
 
         /// <summary>
@@ -112,37 +113,29 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
-        // ==========================================
-        // 3. QUIZZES (SUB-RESOURCES)
-        // ==========================================
+        /// <summary>
+        /// GET /api/subjects/5/quizzes
+        /// </summary>
+        [HttpGet("{subjectId}/quizzes")]
+        public async Task<ActionResult> GetQuizzesForSubject(long subjectId, [FromQuery] QuizFilterDto filter)
+        {
+            filter.SubjectId = subjectId; // Force the filter to this subject
+            var result = await _quizService.GetAllQuizzesAsync(filter);
+            return HandleServiceResult(result);
+        }
 
         /// <summary>
         /// POST /api/subjects/5/quizzes
         /// Creates a new quiz attached to this subject.
         /// </summary>
-        //[Authorize(Roles = "Admin,Teacher")]
-        //[HttpPost("{subjectId}/quizzes")]
-        //public async Task<ActionResult> AddQuizToSubject(long subjectId, [FromBody] CreateQuizDto dto)
-        //{
-        //    // Assuming your QuizService takes the subjectId and the quiz details
-        //    // var result = await _quizService.CreateQuizAsync(subjectId, dto);
-        //    // return HandleResult(result);
-
-        //    return StatusCode(501, new { message = "Quiz service not implemented yet." });
-        //}
-
-        /// <summary>
-        /// DELETE /api/subjects/5/quizzes/12
-        /// Deletes a specific quiz from this subject.
-        /// </summary>
-        //[Authorize(Roles = "Admin,Teacher")]
-        //[HttpDelete("{subjectId}/quizzes/{quizId}")]
-        //public async Task<ActionResult> RemoveQuizFromSubject(long subjectId, long quizId)
-        //{
-        //    // var result = await _quizService.DeleteQuizAsync(subjectId, quizId);
-        //    // return HandleResult(result);
-
-        //    return StatusCode(501, new { message = "Quiz service not implemented yet." });
-        //}
+        [Authorize(Roles = "Admin,Teacher")]
+        [HttpPost("{subjectId}/quizzes")]
+        public async Task<ActionResult> AddQuizToSubject(long subjectId, [FromBody] CreateQuizDto dto)
+        {
+            // Force the subjectId from the route into the DTO
+            var safeDto = dto with { SubjectId = subjectId };
+            var result = await _quizService.CreateQuizAsync(safeDto);
+            return HandleServiceResult(result);
+        }
     }
 }

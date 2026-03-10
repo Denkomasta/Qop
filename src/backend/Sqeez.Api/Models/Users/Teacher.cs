@@ -6,6 +6,7 @@ namespace Sqeez.Api.Models.Users
     public class Teacher : Student
     {
         public string? Department { get; set; }
+        public long? ManagedClassId { get; set; }
 
         public SchoolClass? ManagedClass { get; set; }
         public ICollection<Subject> Subjects { get; set; } = new List<Subject>();

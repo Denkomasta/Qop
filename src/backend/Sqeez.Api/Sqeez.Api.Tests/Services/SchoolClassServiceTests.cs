@@ -99,7 +99,7 @@ namespace Sqeez.Api.Tests.Services
 
             var dbClass = await context.SchoolClasses.FindAsync(result.Data.Id);
             Assert.NotNull(dbClass);
-            Assert.Equal(teacher.Id, dbClass.TeacherId);
+            Assert.Equal(teacher.Id, dbClass.Teacher?.Id);
         }
 
         [Fact]
@@ -135,7 +135,7 @@ namespace Sqeez.Api.Tests.Services
             Assert.Null(result.Data.TeacherName);
 
             var dbClass = await context.SchoolClasses.FindAsync(schoolClass.Id);
-            Assert.Null(dbClass!.TeacherId);
+            Assert.Null(dbClass!.Teacher?.Id);
         }
 
         [Fact]

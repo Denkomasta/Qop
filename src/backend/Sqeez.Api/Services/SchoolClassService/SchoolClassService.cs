@@ -3,6 +3,7 @@ using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Academics;
+using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services
@@ -36,14 +37,12 @@ namespace Sqeez.Api.Services
 
                 if (filter.TeacherId.HasValue)
                 {
-                    query = query.Where(c => c.TeacherId == filter.TeacherId.Value);
+                    query = query.Where(c => c.Teacher != null && c.Teacher.Id == filter.TeacherId.Value);
                 }
 
                 int totalCount = await query.CountAsync();
 
                 var classes = await query
-                    .Include(c => c.Teacher)
-                    .Include(c => c.Students)
                     .OrderBy(c => c.Name)
                     .Skip((filter.PageNumber - 1) * filter.PageSize)
                     .Take(filter.PageSize)
@@ -52,9 +51,10 @@ namespace Sqeez.Api.Services
                         c.Name,
                         c.AcademicYear,
                         c.Section,
-                        c.TeacherId,
+                        c.Teacher != null ? c.Teacher.Id : null,
                         c.Teacher != null ? c.Teacher.Username : null,
-                        c.Students.Count
+                        c.Students.Count,
+                        c.Subjects.Count
                     ))
                     .ToListAsync();
 
@@ -80,17 +80,16 @@ namespace Sqeez.Api.Services
             _logger.LogInformation("Fetching school class with ID: {Id}", id);
 
             var schoolClass = await _context.SchoolClasses
-                .Include(c => c.Teacher)
-                .Include(c => c.Students)
                 .Where(c => c.Id == id)
                 .Select(c => new SchoolClassDto(
                     c.Id,
                     c.Name,
                     c.AcademicYear,
                     c.Section,
-                    c.TeacherId,
+                    c.Teacher != null ? c.Teacher.Id : null,
                     c.Teacher != null ? c.Teacher.Username : null,
-                    c.Students.Count
+                    c.Students.Count,
+                    c.Subjects.Count
                 ))
                 .FirstOrDefaultAsync();
 
@@ -107,17 +106,16 @@ namespace Sqeez.Api.Services
         {
             _logger.LogInformation("Attempting to create a new school class: {Name} - {Section}", dto.Name, dto.Section);
 
-            string? teacherName = null;
+            Teacher? teacher = null;
 
             if (dto.TeacherId.HasValue)
             {
-                var teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.Id == dto.TeacherId.Value);
+                teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.Id == dto.TeacherId.Value);
                 if (teacher == null)
                 {
                     _logger.LogWarning("Failed to create class {Name}: Invalid TeacherId {TeacherId}", dto.Name, dto.TeacherId);
                     return ServiceResult<SchoolClassDto>.Failure("Provided Teacher ID does not exist or belongs to a non-teacher user.", ServiceError.ValidationFailed);
                 }
-                teacherName = teacher.Username;
             }
 
             var schoolClass = new SchoolClass
@@ -125,7 +123,7 @@ namespace Sqeez.Api.Services
                 Name = dto.Name,
                 AcademicYear = dto.AcademicYear,
                 Section = dto.Section,
-                TeacherId = dto.TeacherId
+                Teacher = teacher
             };
 
             try
@@ -138,8 +136,9 @@ namespace Sqeez.Api.Services
                     schoolClass.Name,
                     schoolClass.AcademicYear,
                     schoolClass.Section,
-                    schoolClass.TeacherId,
-                    teacherName,
+                    schoolClass.Teacher?.Id,
+                    schoolClass.Teacher?.Username,
+                    0,
                     0
                 );
 
@@ -160,6 +159,7 @@ namespace Sqeez.Api.Services
             var schoolClass = await _context.SchoolClasses
                 .Include(c => c.Students)
                 .Include(c => c.Teacher)
+                .Include(c => c.Subjects)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (schoolClass == null)
@@ -181,10 +181,9 @@ namespace Sqeez.Api.Services
                 // TeacherId = 0 means "Remove the teacher"
                 if (dto.TeacherId.Value == 0)
                 {
-                    schoolClass.TeacherId = null;
                     schoolClass.Teacher = null;
                 }
-                else if (dto.TeacherId.Value != schoolClass.TeacherId)
+                else if (dto.TeacherId.Value != schoolClass.Teacher?.Id)
                 {
                     var newTeacher = await _context.Teachers.FindAsync(dto.TeacherId.Value);
                     if (newTeacher == null)
@@ -192,7 +191,6 @@ namespace Sqeez.Api.Services
                         return ServiceResult<SchoolClassDto>.Failure("Provided Teacher ID is invalid.", ServiceError.ValidationFailed);
                     }
                     schoolClass.Teacher = newTeacher;
-                    schoolClass.TeacherId = dto.TeacherId.Value;
                 }
             }
 
@@ -206,9 +204,10 @@ namespace Sqeez.Api.Services
                     schoolClass.Name,
                     schoolClass.AcademicYear,
                     schoolClass.Section,
-                    schoolClass.TeacherId,
+                    schoolClass.Teacher?.Id,
                     schoolClass.Teacher?.Username,
-                    schoolClass.Students.Count
+                    schoolClass.Students.Count,
+                    schoolClass.Subjects.Count
                 );
 
                 return ServiceResult<SchoolClassDto>.Ok(updatedDto);

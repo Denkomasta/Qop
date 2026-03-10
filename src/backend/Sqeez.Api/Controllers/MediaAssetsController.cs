@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Services.Interfaces;
+using System.Security.Claims;
 
 namespace Sqeez.Api.Controllers
 {
@@ -81,7 +82,12 @@ namespace Sqeez.Api.Controllers
                 else if (mimeTypeStr.StartsWith("video/")) mediaType = MediaType.Video;
                 else if (mimeTypeStr.StartsWith("audio/")) mediaType = MediaType.Audio;
 
-                var fileUrl = await _fileStorageService.UploadFileAsync(dto.File);
+                var response = await _fileStorageService.UploadFileAsync(dto.File);
+                if (!response.Success)
+                {
+                    return HandleServiceResult(response);
+                }
+                string fileUrl = response.Data!;
 
                 var createDto = new CreateMediaAssetDto(
                     LocationUrl: fileUrl,
@@ -131,6 +137,29 @@ namespace Sqeez.Api.Controllers
             }
 
             return HandleServiceResult(dbDeleteResult);
+        }
+
+        [Authorize]
+        [HttpGet("{id}/file")]
+        public async Task<IActionResult> GetFile(long id)
+        {
+            var userIdStr = GetUserIdFromClaims();
+            var role = GetUserRoleFromClaims() ?? string.Empty;
+            long.TryParse(userIdStr, out long currentUserId);
+
+            var metadataResult = await _mediaAssetService.GetDownloadMetadataAsync(id, currentUserId, role);
+            if (!metadataResult.Success)
+            {
+                return HandleServiceResult(metadataResult);
+            }
+
+            var pathResult = await _fileStorageService.GetPhysicalFilePathAsync(metadataResult.Data!.LocationUrl);
+            if (!pathResult.Success)
+            {
+                return HandleServiceResult(pathResult);
+            }
+
+            return PhysicalFile(pathResult.Data!, metadataResult.Data.MimeType, enableRangeProcessing: true);
         }
     }
 }

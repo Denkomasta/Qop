@@ -140,7 +140,6 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
 app.UseAuthorization();
-app.UseStaticFiles();
 app.MapControllers();
 
 app.Run();

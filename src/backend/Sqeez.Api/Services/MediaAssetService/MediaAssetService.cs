@@ -85,6 +85,33 @@ namespace Sqeez.Api.Services
             return ServiceResult<MediaAssetDto>.Ok(asset);
         }
 
+        public async Task<ServiceResult<MediaDownloadDto>> GetDownloadMetadataAsync(long mediaId, long currentUserId, string currentUserRole)
+        {
+            var asset = await _context.MediaAssets.FirstOrDefaultAsync(m => m.Id == mediaId);
+            if (asset == null)
+            {
+                return ServiceResult<MediaDownloadDto>.Failure("Media not found.", ServiceError.NotFound);
+            }
+
+            if (asset.IsPrivate)
+            {
+                if (asset.OwnerId != currentUserId && currentUserRole != "Admin")
+                {
+                    return ServiceResult<MediaDownloadDto>.Failure("You do not have permission to view this private file.", ServiceError.Forbidden);
+                }
+            }
+
+            string mimeTypeStr = asset.MimeType switch
+            {
+                MediaType.Image => "image/jpeg",
+                MediaType.Video => "video/mp4",
+                MediaType.Audio => "audio/mpeg",
+                _ => "application/octet-stream"
+            };
+
+            return ServiceResult<MediaDownloadDto>.Ok(new MediaDownloadDto(asset.LocationUrl, mimeTypeStr));
+        }
+
         public async Task<ServiceResult<MediaAssetDto>> CreateMediaAssetAsync(CreateMediaAssetDto dto)
         {
             var ownerExists = await _context.Teachers.AnyAsync(t => t.Id == dto.OwnerId);

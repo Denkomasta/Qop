@@ -39,4 +39,6 @@ namespace Sqeez.Api.DTOs
         public bool IsPrivate { get; set; } = false;
         public string? Description { get; set; }
     }
+
+    public record MediaDownloadDto(string LocationUrl, string MimeType);
 }

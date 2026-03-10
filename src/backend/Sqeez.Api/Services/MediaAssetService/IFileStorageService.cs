@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Sqeez.Api.DTOs;
 
 namespace Sqeez.Api.Services.Interfaces
 {
@@ -7,11 +8,12 @@ namespace Sqeez.Api.Services.Interfaces
         /// <summary>
         /// Saves the file to storage and returns the public URL.
         /// </summary>
-        Task<string> UploadFileAsync(IFormFile file, string subDirectory = "media");
+        Task<ServiceResult<string>> UploadFileAsync(IFormFile file, string subDirectory = "media");
 
         /// <summary>
         /// Deletes the physical file from storage.
         /// </summary>
-        Task<bool> DeleteFileAsync(string fileUrl);
+        Task<ServiceResult<bool>> DeleteFileAsync(string fileUrl);
+        Task<ServiceResult<string>> GetPhysicalFilePathAsync(string fileUrl);
     }
 }

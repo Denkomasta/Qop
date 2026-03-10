@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Academics;
+using Sqeez.Api.Models.QuizSystem; // <-- Added this!
 using Sqeez.Api.Models.Users;
 using BC = BCrypt.Net.BCrypt;
 
@@ -157,22 +158,78 @@ namespace Sqeez.Api.Data
             // --- 6. Enrollments ---
             var enrollments = new List<Enrollment>
             {
-                // Tonda takes Math and Physics
                 new Enrollment { Student = studentTonda, Subject = mathSubject, EnrolledAt = DateTime.UtcNow },
                 new Enrollment { Student = studentTonda, Subject = physicsSubject, EnrolledAt = DateTime.UtcNow },
-                
-                // Pepa takes Math
                 new Enrollment { Student = studentPepa, Subject = mathSubject, EnrolledAt = DateTime.UtcNow },
-                
-                // Karel takes English
                 new Enrollment { Student = studentKarel, Subject = englishSubject, EnrolledAt = DateTime.UtcNow },
-                
-                // Eva takes English, but also an elective Math from 3.B
                 new Enrollment { Student = studentEva, Subject = englishSubject, EnrolledAt = DateTime.UtcNow },
                 new Enrollment { Student = studentEva, Subject = mathSubject, EnrolledAt = DateTime.UtcNow }
             };
 
             context.Enrollments.AddRange(enrollments);
+
+            // --- 7. Quizzes, Questions, and Options ---
+            var mathQuiz = new Quiz
+            {
+                Title = "Algebra Midterm",
+                Description = "Testing your basic algebra skills.",
+                MaxRetries = 2,
+                CreatedAt = DateTime.UtcNow,
+                PublishDate = DateTime.UtcNow, // Published immediately
+                Subject = mathSubject,
+                QuizQuestions = new List<QuizQuestion>
+                {
+                    new QuizQuestion
+                    {
+                        Title = "What is the value of x if 2x = 10?",
+                        Difficulty = 1,
+                        TimeLimit = 30, // seconds
+                        Options = new List<QuizOption>
+                        {
+                            new QuizOption { Text = "4", IsCorrect = false, IsFreeText = false },
+                            new QuizOption { Text = "5", IsCorrect = true, IsFreeText = false },
+                            new QuizOption { Text = "10", IsCorrect = false, IsFreeText = false }
+                        }
+                    },
+                    new QuizQuestion
+                    {
+                        Title = "Type the formula for the area of a circle:",
+                        Difficulty = 2,
+                        TimeLimit = 60,
+                        Options = new List<QuizOption>
+                        {
+                            new QuizOption { Text = "pi*r^2", IsCorrect = true, IsFreeText = true } // Free text example
+                        }
+                    }
+                }
+            };
+
+            var englishQuiz = new Quiz
+            {
+                Title = "Shakespeare Pop Quiz",
+                Description = "A quick check on our recent reading.",
+                MaxRetries = 1,
+                CreatedAt = DateTime.UtcNow,
+                PublishDate = DateTime.UtcNow.AddDays(1), // Scheduled for tomorrow
+                Subject = englishSubject,
+                QuizQuestions = new List<QuizQuestion>
+                {
+                    new QuizQuestion
+                    {
+                        Title = "Which of the following is a tragedy by William Shakespeare?",
+                        Difficulty = 1,
+                        TimeLimit = 45,
+                        Options = new List<QuizOption>
+                        {
+                            new QuizOption { Text = "A Midsummer Night's Dream", IsCorrect = false, IsFreeText = false },
+                            new QuizOption { Text = "Hamlet", IsCorrect = true, IsFreeText = false },
+                            new QuizOption { Text = "The Comedy of Errors", IsCorrect = false, IsFreeText = false }
+                        }
+                    }
+                }
+            };
+
+            context.Quizzes.AddRange(mathQuiz, englishQuiz);
 
             // Save everything to the database
             await context.SaveChangesAsync();

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Sqeez.Api.DTOs;
+using Sqeez.Api.Enums;
 using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services
@@ -8,6 +10,8 @@ namespace Sqeez.Api.Services
     {
         private readonly IWebHostEnvironment _env;
         private readonly ILogger<LocalFileStorageService> _logger;
+        private const long MaxFileSize = 5 * 1024 * 1024;   // Currently 5 MB, TODO change to modular solution
+        private readonly string[] _allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".mp4", ".mp3", ".pdf" };
 
         public LocalFileStorageService(IWebHostEnvironment env, ILogger<LocalFileStorageService> logger)
         {
@@ -15,46 +19,107 @@ namespace Sqeez.Api.Services
             _logger = logger;
         }
 
-        public async Task<string> UploadFileAsync(IFormFile file, string subDirectory = "media")
+        public async Task<ServiceResult<string>> UploadFileAsync(IFormFile file, string subDirectory = "media")
         {
             if (file == null || file.Length == 0)
-                throw new ArgumentException("File is empty or null.");
+                return ServiceResult<string>.Failure("No file was uploaded.", ServiceError.ValidationFailed);
 
-            var uploadsFolder = Path.Combine(_env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"), "uploads", subDirectory);
-            if (!Directory.Exists(uploadsFolder))
+            if (file.Length > MaxFileSize)
+                return ServiceResult<string>.Failure("File is too large. Maximum allowed size is 5 MB.", ServiceError.ValidationFailed);
+
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (string.IsNullOrEmpty(extension) || !_allowedExtensions.Contains(extension))
             {
-                Directory.CreateDirectory(uploadsFolder);
+                var allowed = string.Join(", ", _allowedExtensions);
+                return ServiceResult<string>.Failure($"Invalid file type '{extension}'. Allowed types are: {allowed}", ServiceError.ValidationFailed);
             }
 
-            var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            try
             {
-                await file.CopyToAsync(fileStream);
-            }
+                var rootPath = Path.Combine(_env.ContentRootPath ?? Directory.GetCurrentDirectory(), "SecureStorage");
+                var uploadsFolder = Path.Combine(rootPath, "uploads", subDirectory);
+                if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
 
-            return $"/uploads/{subDirectory}/{uniqueFileName}";
+                var uniqueFileName = $"{Guid.NewGuid()}{extension}";
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+
+                return ServiceResult<string>.Ok($"/uploads/{subDirectory}/{uniqueFileName}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving physical file.");
+                return ServiceResult<string>.Failure("An unexpected error occurred while saving the file.", ServiceError.InternalError);
+            }
         }
 
-        public Task<bool> DeleteFileAsync(string fileUrl)
+        public Task<ServiceResult<string>> GetPhysicalFilePathAsync(string fileUrl)
+        {
+            // Task.FromResult to satisfy the Task method signature
+            if (string.IsNullOrWhiteSpace(fileUrl) || fileUrl.Contains(".."))
+            {
+                return Task.FromResult(ServiceResult<string>.Failure("Invalid file path.", ServiceError.ValidationFailed));
+            }
+
+            var relativePath = fileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+            var rootPath = Path.Combine(_env.ContentRootPath ?? Directory.GetCurrentDirectory(), "SecureStorage");
+            var physicalPath = Path.Combine(rootPath, relativePath);
+
+            var fullRootPath = Path.GetFullPath(rootPath);
+            var fullPhysicalPath = Path.GetFullPath(physicalPath);
+
+            if (!fullPhysicalPath.StartsWith(fullRootPath))
+            {
+                return Task.FromResult(ServiceResult<string>.Failure("Access denied.", ServiceError.Forbidden));
+            }
+
+            if (!File.Exists(fullPhysicalPath))
+            {
+                return Task.FromResult(ServiceResult<string>.Failure("The physical file is missing from the server.", ServiceError.NotFound));
+            }
+
+            return Task.FromResult(ServiceResult<string>.Ok(fullPhysicalPath));
+        }
+
+        public Task<ServiceResult<bool>> DeleteFileAsync(string fileUrl)
         {
             try
             {
-                var relativePath = fileUrl.TrimStart('/');
-                var physicalPath = Path.Combine(_env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"), relativePath);
-
-                if (File.Exists(physicalPath))
+                if (string.IsNullOrWhiteSpace(fileUrl) || fileUrl.Contains(".."))
                 {
-                    File.Delete(physicalPath);
-                    return Task.FromResult(true);
+                    _logger.LogWarning("Blocked attempt to delete invalid or unsafe file path: {FileUrl}", fileUrl);
+                    return Task.FromResult(ServiceResult<bool>.Failure("Invalid file path.", ServiceError.ValidationFailed));
                 }
-                return Task.FromResult(false);
+
+                var relativePath = fileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+                var rootPath = Path.Combine(_env.ContentRootPath ?? Directory.GetCurrentDirectory(), "SecureStorage");
+                var physicalPath = Path.Combine(rootPath, relativePath);
+
+                var fullRootPath = Path.GetFullPath(rootPath);
+                var fullPhysicalPath = Path.GetFullPath(physicalPath);
+
+                if (!fullPhysicalPath.StartsWith(fullRootPath))
+                {
+                    _logger.LogWarning("Blocked attempt to delete file outside of WebRoot: {FileUrl}", fileUrl);
+                    return Task.FromResult(ServiceResult<bool>.Failure("Access denied.", ServiceError.Forbidden));
+                }
+
+                if (File.Exists(fullPhysicalPath))
+                {
+                    File.Delete(fullPhysicalPath);
+                    return Task.FromResult(ServiceResult<bool>.Ok(true));
+                }
+
+                return Task.FromResult(ServiceResult<bool>.Ok(true));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting physical file at {FileUrl}", fileUrl);
-                return Task.FromResult(false);
+                return Task.FromResult(ServiceResult<bool>.Failure("An unexpected error occurred while deleting the file.", ServiceError.InternalError));
             }
         }
     }

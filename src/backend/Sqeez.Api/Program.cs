@@ -61,6 +61,7 @@ builder.Services.AddScoped<IQuizQuestionService, QuizQuestionService>();
 builder.Services.AddScoped<IQuizOptionService, QuizOptionService>();
 builder.Services.AddScoped<IMediaAssetService, MediaAssetService>();
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+builder.Services.AddScoped<IQuizAttemptService, QuizAttemptService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

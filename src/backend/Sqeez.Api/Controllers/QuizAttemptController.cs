@@ -1,0 +1,115 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Sqeez.Api.DTOs;
+using Sqeez.Api.Services.Interfaces;
+
+namespace Sqeez.Api.Controllers
+{
+    [Authorize]
+    [Route("api/quiz-attempts")]
+    public class QuizAttemptsController : ApiBaseController
+    {
+        private readonly IQuizAttemptService _quizAttemptService;
+
+        public QuizAttemptsController(IQuizAttemptService quizAttemptService)
+        {
+            _quizAttemptService = quizAttemptService;
+        }
+
+        /// <summary>
+        /// POST /api/quiz-attempts/start
+        /// Starts a new attempt for the currently authenticated student.
+        /// </summary>
+        [Authorize(Roles = "Student")]
+        [HttpPost("start")]
+        public async Task<ActionResult> StartAttempt([FromBody] StartQuizAttemptDto dto)
+        {
+            var studentIdStr = GetUserIdFromClaims();
+            if (!long.TryParse(studentIdStr, out long studentId))
+                return Unauthorized("Invalid student ID token.");
+
+            var result = await _quizAttemptService.StartAttemptAsync(studentId, dto);
+            return HandleServiceResult(result);
+        }
+
+        /// <summary>
+        /// PUT /api/quiz-attempts/{id}/answers
+        /// Submits or updates an answer for a specific question.
+        /// </summary>
+        [Authorize(Roles = "Student")]
+        [HttpPut("{id}/answer")]
+        public async Task<ActionResult> SubmitAnswer(long id, [FromBody] SubmitQuestionResponseDto dto)
+        {
+            var studentIdStr = GetUserIdFromClaims();
+            if (!long.TryParse(studentIdStr, out long studentId))
+                return Unauthorized("Invalid student ID token.");
+
+            var result = await _quizAttemptService.SubmitAnswerAsync(id, studentId, dto);
+            return HandleServiceResult(result);
+        }
+
+        /// <summary>
+        /// POST /api/quiz-attempts/{id}/complete
+        /// Locks the attempt and calculates the final score.
+        /// </summary>
+        [Authorize(Roles = "Student")]
+        [HttpPost("{id}/complete")]
+        public async Task<ActionResult> CompleteAttempt(long id)
+        {
+            var studentIdStr = GetUserIdFromClaims();
+            if (!long.TryParse(studentIdStr, out long studentId))
+                return Unauthorized("Invalid student ID token.");
+
+            var result = await _quizAttemptService.CompleteAttemptAsync(id, studentId);
+            return HandleServiceResult(result);
+        }
+
+        /// <summary>
+        /// GET /api/quiz-attempts/{id}
+        /// Gets the full details of an attempt. (Students see their own; Teachers/Admins see any).
+        /// </summary>
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetAttemptDetails(long id)
+        {
+            var userIdStr = GetUserIdFromClaims();
+            var role = GetUserRoleFromClaims() ?? string.Empty;
+            if (!long.TryParse(userIdStr, out long currentUserId))
+                return Unauthorized("Invalid user ID token.");
+
+            var result = await _quizAttemptService.GetAttemptDetailsAsync(id, currentUserId, role);
+            return HandleServiceResult(result);
+        }
+
+        /// <summary>
+        /// GET /api/quiz-attempts/quiz/{quizId}
+        /// Gets a paginated list of all attempts for a specific quiz.
+        /// </summary>
+        [Authorize(Roles = "Teacher,Admin")]
+        [HttpGet("quiz/{quizId}")]
+        public async Task<ActionResult> GetAttemptsForQuiz(long quizId, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20)
+        {
+            var teacherIdStr = GetUserIdFromClaims();
+            if (!long.TryParse(teacherIdStr, out long teacherId))
+                return Unauthorized("Invalid teacher ID token.");
+
+            var result = await _quizAttemptService.GetAttemptsForQuizAsync(quizId, teacherId, pageNumber, pageSize);
+            return HandleServiceResult(result);
+        }
+
+        /// <summary>
+        /// PATCH /api/quiz-attempts/responses/{responseId}/grade
+        /// Allows a teacher to manually grade a free-text answer and "Like" it.
+        /// </summary>
+        [Authorize(Roles = "Teacher,Admin")]
+        [HttpPatch("responses/{responseId}/grade")]
+        public async Task<ActionResult> GradeResponse(long responseId, [FromBody] GradeQuestionResponseDto dto)
+        {
+            var teacherIdStr = GetUserIdFromClaims();
+            if (!long.TryParse(teacherIdStr, out long teacherId))
+                return Unauthorized("Invalid teacher ID token.");
+
+            var result = await _quizAttemptService.GradeFreeTextResponseAsync(responseId, teacherId, dto);
+            return HandleServiceResult(result);
+        }
+    }
+}

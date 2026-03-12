@@ -12,6 +12,15 @@ namespace Sqeez.Api.Services
         public QuizAttemptService(SqeezDbContext context, ILogger<QuizAttemptService> logger)
             : base(context, logger) { }
 
+        private async Task<long?> GetNextQuestionId(long quizId, long quizQuestionId)
+        {
+            return await _context.QuizQuestions
+                .Where(q => q.QuizId == quizId && q.Id > quizQuestionId)
+                .OrderBy(q => q.Id)
+                .Select(q => (long?)q.Id)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<ServiceResult<QuizAttemptDto>> StartAttemptAsync(long studentId, StartQuizAttemptDto dto)
         {
             // Verify the student is actually enrolled in the subject this quiz belongs to
@@ -50,56 +59,51 @@ namespace Sqeez.Api.Services
             _context.QuizAttempts.Add(attempt);
             await _context.SaveChangesAsync();
 
+            long? nextQuestionId = await GetNextQuestionId(attempt.Id, 0);  // first question, biggest nonexisting id.
+
             return ServiceResult<QuizAttemptDto>.Ok(new QuizAttemptDto(
                 attempt.Id, attempt.QuizId, attempt.EnrollmentId, attempt.StartTime,
-                attempt.EndTime, attempt.Status, attempt.TotalScore, attempt.Mark));
+                attempt.EndTime, attempt.Status, attempt.TotalScore, attempt.Mark, nextQuestionId));
         }
 
-        public async Task<ServiceResult<QuestionResponseDto>> SubmitAnswerAsync(long attemptId, long studentId, SubmitQuestionResponseDto dto)
+        public async Task<ServiceResult<QuestionAnsweredDto>> SubmitAnswerAsync(long attemptId, long studentId, SubmitQuestionResponseDto dto)
         {
-            // Verify the Attempt is valid, belongs to the student, and is still InProgress
             var attempt = await _context.QuizAttempts
                 .Include(a => a.Enrollment)
                 .FirstOrDefaultAsync(a => a.Id == attemptId);
 
-            if (attempt == null) return ServiceResult<QuestionResponseDto>.Failure("Attempt not found.", ServiceError.NotFound);
-            if (attempt.Enrollment.StudentId != studentId) return ServiceResult<QuestionResponseDto>.Failure("Access denied.", ServiceError.Forbidden);
+            if (attempt == null) return ServiceResult<QuestionAnsweredDto>.Failure("Attempt not found.", ServiceError.NotFound);
+            if (attempt.Enrollment.StudentId != studentId) return ServiceResult<QuestionAnsweredDto>.Failure("Access denied.", ServiceError.Forbidden);
 
             if (attempt.Status == AttemptStatus.Created) attempt.Status = AttemptStatus.Started;
-            if (attempt.Status != AttemptStatus.Started) return ServiceResult<QuestionResponseDto>.Failure("This quiz attempt is no longer in progress.", ServiceError.Conflict);
+            if (attempt.Status != AttemptStatus.Started) return ServiceResult<QuestionAnsweredDto>.Failure("This quiz attempt is no longer in progress.", ServiceError.Conflict);
 
-            // Fetch the specific question and its correct options for Auto-Grading
             var question = await _context.QuizQuestions
                 .Include(q => q.Options)
                 .FirstOrDefaultAsync(q => q.Id == dto.QuizQuestionId && q.QuizId == attempt.QuizId);
 
-            if (question == null) return ServiceResult<QuestionResponseDto>.Failure("Question not found on this quiz.", ServiceError.NotFound);
+            if (question == null) return ServiceResult<QuestionAnsweredDto>.Failure("Question not found on this quiz.", ServiceError.NotFound);
 
-            // Fetch the existing response (if the student is changing their answer) or create a new one
             var response = await _context.QuizQuestionResponses
                 .Include(r => r.Options)
                 .FirstOrDefaultAsync(r => r.QuizAttemptId == attemptId && r.QuizQuestionId == dto.QuizQuestionId);
 
-            if (response == null)
+            if (response != null)
             {
-                response = new QuizQuestionResponse
-                {
-                    QuizAttemptId = attemptId,
-                    QuizQuestionId = dto.QuizQuestionId,
-                };
-                _context.QuizQuestionResponses.Add(response);
+                return ServiceResult<QuestionAnsweredDto>.Failure("You have already submitted an answer for this question and cannot change it.", ServiceError.Conflict);
             }
 
-            // Update basic fields
-            response.ResponseTimeMs = dto.ResponseTimeMs;
-            response.FreeTextAnswer = dto.FreeTextAnswer;
-
-            // Handle the Many-to-Many Options relationship securely
-            response.Options.Clear(); // Remove old answers from the join table
+            response = new QuizQuestionResponse
+            {
+                QuizAttemptId = attemptId,
+                QuizQuestionId = dto.QuizQuestionId,
+                ResponseTimeMs = dto.ResponseTimeMs,
+                FreeTextAnswer = dto.FreeTextAnswer
+            };
+            _context.QuizQuestionResponses.Add(response);
 
             if (dto.SelectedOptionIds != null && dto.SelectedOptionIds.Any())
             {
-                // Only allow them to select options that actually belong to THIS question!
                 var validOptions = question.Options.Where(o => dto.SelectedOptionIds.Contains(o.Id)).ToList();
                 foreach (var opt in validOptions)
                 {
@@ -107,25 +111,13 @@ namespace Sqeez.Api.Services
                 }
             }
 
-            // Auto-Grading Engine
             response.Score = 0;
 
-            // If it's a Free Text answer
-            if (!string.IsNullOrWhiteSpace(dto.FreeTextAnswer))
-            {
-                var correctTextOption = question.Options.FirstOrDefault(o => o.IsFreeText && o.IsCorrect);
-                if (correctTextOption?.Text != null && correctTextOption.Text.Equals(dto.FreeTextAnswer.Trim(), StringComparison.OrdinalIgnoreCase))
-                {
-                    response.Score = question.Difficulty;
-                }
-            }
-            // If it's a Multiple Choice answer
-            else if (response.Options.Any())
+            if (string.IsNullOrWhiteSpace(dto.FreeTextAnswer) && response.Options.Any())
             {
                 var correctOptionIds = question.Options.Where(o => o.IsCorrect).Select(o => o.Id).ToList();
                 var selectedIds = response.Options.Select(o => o.Id).ToList();
 
-                // They only get points if they selected EXACTLY the correct options (no extra wrong ones, no missing right ones)
                 bool isPerfectMatch = correctOptionIds.Count == selectedIds.Count && !correctOptionIds.Except(selectedIds).Any();
 
                 if (isPerfectMatch)
@@ -136,15 +128,23 @@ namespace Sqeez.Api.Services
 
             await _context.SaveChangesAsync();
 
-            return ServiceResult<QuestionResponseDto>.Ok(new QuestionResponseDto(
+            var actualCorrectOptionIds = question.Options.Where(o => o.IsCorrect && !o.IsFreeText).Select(o => o.Id).ToList();
+            var actualCorrectFreeText = question.Options.FirstOrDefault(o => o.IsCorrect && o.IsFreeText)?.Text;
+
+            long? nextQuestionId = await GetNextQuestionId(attemptId, dto.QuizQuestionId);
+
+            return ServiceResult<QuestionAnsweredDto>.Ok(new QuestionAnsweredDto(
                 response.Id, response.QuizQuestionId, response.ResponseTimeMs,
                 response.FreeTextAnswer, response.IsLiked, response.Score,
-                response.Options.Select(o => o.Id).ToList()));
+                response.Options.Select(o => o.Id).ToList(),
+                actualCorrectOptionIds, actualCorrectFreeText,
+                nextQuestionId
+            ));
         }
 
         public async Task<ServiceResult<QuizAttemptDto>> CompleteAttemptAsync(long attemptId, long studentId)
         {
-            // Fetch the attempt and responses so we can calculate the final score
+            // Fetch the attempt and responses so we can calculate the final score.
             var attempt = await _context.QuizAttempts
                 .Include(a => a.Enrollment)
                 .Include(a => a.Responses)

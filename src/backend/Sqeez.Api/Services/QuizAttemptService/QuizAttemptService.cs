@@ -59,7 +59,7 @@ namespace Sqeez.Api.Services
             _context.QuizAttempts.Add(attempt);
             await _context.SaveChangesAsync();
 
-            long? nextQuestionId = await GetNextQuestionId(attempt.Id, 0);  // first question, biggest nonexisting id.
+            long? nextQuestionId = await GetNextQuestionId(attempt.QuizId, 0);  // first question, biggest nonexisting id.
 
             return ServiceResult<QuizAttemptDto>.Ok(new QuizAttemptDto(
                 attempt.Id, attempt.QuizId, attempt.EnrollmentId, attempt.StartTime,
@@ -131,7 +131,7 @@ namespace Sqeez.Api.Services
             var actualCorrectOptionIds = question.Options.Where(o => o.IsCorrect && !o.IsFreeText).Select(o => o.Id).ToList();
             var actualCorrectFreeText = question.Options.FirstOrDefault(o => o.IsCorrect && o.IsFreeText)?.Text;
 
-            long? nextQuestionId = await GetNextQuestionId(attemptId, dto.QuizQuestionId);
+            long? nextQuestionId = await GetNextQuestionId(attempt.QuizId, dto.QuizQuestionId);
 
             return ServiceResult<QuestionAnsweredDto>.Ok(new QuestionAnsweredDto(
                 response.Id, response.QuizQuestionId, response.ResponseTimeMs,
@@ -140,6 +140,28 @@ namespace Sqeez.Api.Services
                 actualCorrectOptionIds, actualCorrectFreeText,
                 nextQuestionId
             ));
+        }
+
+        public async Task<ServiceResult<long?>> GetNextPendingQuestionIdAsync(long attemptId, long studentId)
+        {
+            var attempt = await _context.QuizAttempts
+                .Include(a => a.Enrollment)
+                .Include(a => a.Responses)
+                .FirstOrDefaultAsync(a => a.Id == attemptId);
+
+            if (attempt == null) return ServiceResult<long?>.Failure("Attempt not found.", ServiceError.NotFound);
+            if (attempt.Enrollment.StudentId != studentId) return ServiceResult<long?>.Failure("Access denied.", ServiceError.Forbidden);
+
+            if (attempt.Status != AttemptStatus.Started && attempt.Status != AttemptStatus.Created)
+                return ServiceResult<long?>.Failure("This attempt is no longer in progress.", ServiceError.Conflict);
+
+            long lastAnsweredQuestionId = attempt.Responses.Any()
+                ? attempt.Responses.Max(r => r.QuizQuestionId)
+                : 0;
+
+            long? nextQuestionId = await GetNextQuestionId(attempt.QuizId, lastAnsweredQuestionId);
+
+            return ServiceResult<long?>.Ok(nextQuestionId);
         }
 
         public async Task<ServiceResult<QuizAttemptDto>> CompleteAttemptAsync(long attemptId, long studentId)

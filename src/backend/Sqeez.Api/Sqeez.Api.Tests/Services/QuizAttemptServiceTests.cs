@@ -200,5 +200,99 @@ namespace Sqeez.Api.Tests.Services
             Assert.Equal(15, result.Data.TotalScore);
             Assert.NotNull(result.Data.EndTime);
         }
+
+        [Fact]
+        public async Task GetNextPendingQuestionIdAsync_WhenNoAnswers_ReturnsFirstQuestionId()
+        {
+            await using var context = await GetSeededContextAsync();
+
+            // Create a brand new attempt with NO responses yet
+            var attempt = new QuizAttempt { Id = 1, QuizId = 1, EnrollmentId = 1, Status = AttemptStatus.Started };
+            context.QuizAttempts.Add(attempt);
+            await context.SaveChangesAsync();
+
+            var service = new QuizAttemptService(context, _mockLogger.Object);
+
+            var result = await service.GetNextPendingQuestionIdAsync(attempt.Id, 1);
+
+            Assert.True(result.Success);
+            Assert.Equal(1, result.Data); // Should point to Question 1
+        }
+
+        [Fact]
+        public async Task GetNextPendingQuestionIdAsync_WhenPartiallyAnswered_ReturnsNextQuestionId()
+        {
+            await using var context = await GetSeededContextAsync();
+
+            // Create an attempt where the student has only answered Question 1
+            var attempt = new QuizAttempt
+            {
+                Id = 1,
+                QuizId = 1,
+                EnrollmentId = 1,
+                Status = AttemptStatus.Started,
+                Responses = new List<QuizQuestionResponse>
+                {
+                    new QuizQuestionResponse { QuizQuestionId = 1 }
+                }
+            };
+            context.QuizAttempts.Add(attempt);
+            await context.SaveChangesAsync();
+
+            var service = new QuizAttemptService(context, _mockLogger.Object);
+
+            var result = await service.GetNextPendingQuestionIdAsync(attempt.Id, 1);
+
+            Assert.True(result.Success);
+            Assert.Equal(2, result.Data); // Should perfectly resume at Question 2
+        }
+
+        [Fact]
+        public async Task GetNextPendingQuestionIdAsync_WhenFullyAnswered_ReturnsNull()
+        {
+            await using var context = await GetSeededContextAsync();
+
+            // Create an attempt where the student has answered BOTH questions
+            var attempt = new QuizAttempt
+            {
+                Id = 1,
+                QuizId = 1,
+                EnrollmentId = 1,
+                Status = AttemptStatus.Started,
+                Responses = new List<QuizQuestionResponse>
+                {
+                    new QuizQuestionResponse { QuizQuestionId = 1 },
+                    new QuizQuestionResponse { QuizQuestionId = 2 }
+                }
+            };
+            context.QuizAttempts.Add(attempt);
+            await context.SaveChangesAsync();
+
+            var service = new QuizAttemptService(context, _mockLogger.Object);
+
+            var result = await service.GetNextPendingQuestionIdAsync(attempt.Id, 1);
+
+            Assert.True(result.Success);
+            Assert.Null(result.Data); // No questions left!
+        }
+
+        [Fact]
+        public async Task GetNextPendingQuestionIdAsync_WhenAttemptIsCompleted_ReturnsConflict()
+        {
+            await using var context = await GetSeededContextAsync();
+
+            // Create an attempt that is already COMPLETED
+            var attempt = new QuizAttempt { Id = 1, QuizId = 1, EnrollmentId = 1, Status = AttemptStatus.Completed };
+            context.QuizAttempts.Add(attempt);
+            await context.SaveChangesAsync();
+
+            var service = new QuizAttemptService(context, _mockLogger.Object);
+
+            var result = await service.GetNextPendingQuestionIdAsync(attempt.Id, 1);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Conflict, result.ErrorCode);
+            Assert.Contains("no longer in progress", result.ErrorMessage);
+        }
     }
 }

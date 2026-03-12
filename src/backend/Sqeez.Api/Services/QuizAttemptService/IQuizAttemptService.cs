@@ -15,6 +15,11 @@ namespace Sqeez.Api.Services.Interfaces
         Task<ServiceResult<QuestionAnsweredDto>> SubmitAnswerAsync(long attemptId, long studentId, SubmitQuestionResponseDto dto);
 
         /// <summary>
+        /// Returns the next upcoming question that should be answered in started quiz.
+        /// </summary>
+        Task<ServiceResult<long?>> GetNextPendingQuestionIdAsync(long attemptId, long studentId);
+
+        /// <summary>
         /// Locks the attempt, calculates the final score, and sets the status to Completed.
         /// </summary>
         Task<ServiceResult<QuizAttemptDto>> CompleteAttemptAsync(long attemptId, long studentId);

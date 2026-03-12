@@ -33,11 +33,11 @@ namespace Sqeez.Api.Controllers
         }
 
         /// <summary>
-        /// PUT /api/quiz-attempts/{id}/answers
+        /// POST /api/quiz-attempts/{id}/answers
         /// Submits or updates an answer for a specific question.
         /// </summary>
         [Authorize(Roles = "Student")]
-        [HttpPut("{id}/answer")]
+        [HttpPost("{id}/answer")]
         public async Task<ActionResult> SubmitAnswer(long id, [FromBody] SubmitQuestionResponseDto dto)
         {
             var studentIdStr = GetUserIdFromClaims();

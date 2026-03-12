@@ -5,7 +5,7 @@ namespace Sqeez.Api.Models.QuizSystem
     public class QuizOption
     {
         public long Id { get; set; }
-        public string? Text { get; set; }
+        public string? Text { get; set; }   // if isFreeText => answer of question, else text of option.
         public bool IsFreeText { get; set; }
         public bool IsCorrect { get; set; }
 

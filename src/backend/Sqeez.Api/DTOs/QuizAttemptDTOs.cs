@@ -10,7 +10,8 @@ namespace Sqeez.Api.DTOs
         DateTime? EndTime,
         AttemptStatus Status,
         int TotalScore,
-        int? Mark
+        int? Mark,
+        long? NextQuestionId = null
     );
 
     public record QuestionResponseDto(
@@ -21,6 +22,19 @@ namespace Sqeez.Api.DTOs
         bool IsLiked,
         int Score,
         List<long> SelectedOptionIds
+    );
+
+    public record QuestionAnsweredDto(
+        long Id,
+        long QuizQuestionId,
+        long ResponseTimeMs,
+        string? FreeTextAnswer,
+        bool IsLiked,
+        int Score,
+        List<long> SelectedOptionIds,
+        List<long>? CorrectOptionIds = null,
+        string? CorrectFreeTextAnswer = null,
+        long? NextQuestionId = null
     );
 
     public record QuizAttemptDetailDto(

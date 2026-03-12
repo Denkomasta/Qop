@@ -56,7 +56,7 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
-        public async Task StartAttemptAsync_WhenValid_CreatesAttempt()
+        public async Task StartAttemptAsync_WhenValid_CreatesAttemptAndReturnsFirstQuestionId()
         {
             await using var context = await GetSeededContextAsync();
             var service = new QuizAttemptService(context, _mockLogger.Object);
@@ -68,6 +68,9 @@ namespace Sqeez.Api.Tests.Services
             Assert.Equal(AttemptStatus.Created, result.Data!.Status);
             Assert.Equal(0, result.Data.TotalScore);
             Assert.Equal(1, await context.QuizAttempts.CountAsync());
+
+            Assert.NotNull(result.Data.NextQuestionId);
+            Assert.Equal(1, result.Data.NextQuestionId.Value);
         }
 
         [Fact]
@@ -98,13 +101,14 @@ namespace Sqeez.Api.Tests.Services
 
             var service = new QuizAttemptService(context, _mockLogger.Object);
 
-            // Student selects Options 1 and 2 (which are the exact correct answers)
             var dto = new SubmitQuestionResponseDto(QuizQuestionId: 1, ResponseTimeMs: 5000, null, new List<long> { 1, 2 });
 
             var result = await service.SubmitAnswerAsync(1, 1, dto);
 
             Assert.True(result.Success);
             Assert.Equal(5, result.Data!.Score);
+
+            Assert.Equal(2, result.Data.NextQuestionId);
         }
 
         [Fact]
@@ -117,17 +121,16 @@ namespace Sqeez.Api.Tests.Services
 
             var service = new QuizAttemptService(context, _mockLogger.Object);
 
-            // Correct answers are 1 and 2. Student selects 1 and 3.
             var dto = new SubmitQuestionResponseDto(QuizQuestionId: 1, ResponseTimeMs: 5000, null, new List<long> { 1, 3 });
 
             var result = await service.SubmitAnswerAsync(1, 1, dto);
 
             Assert.True(result.Success);
-            Assert.Equal(0, result.Data!.Score); // Failed the strict isPerfectMatch check!
+            Assert.Equal(0, result.Data!.Score);
         }
 
         [Fact]
-        public async Task SubmitAnswerAsync_FreeText_ExactMatch_AwardsFullPoints()
+        public async Task SubmitAnswerAsync_FreeText_LeavesScoreAtZeroForManualGrading()
         {
             await using var context = await GetSeededContextAsync();
             var attempt = new QuizAttempt { Id = 1, QuizId = 1, EnrollmentId = 1, Status = AttemptStatus.Created };
@@ -136,13 +139,36 @@ namespace Sqeez.Api.Tests.Services
 
             var service = new QuizAttemptService(context, _mockLogger.Object);
 
-            // The correct text in the DB is "Earth"
             var dto = new SubmitQuestionResponseDto(QuizQuestionId: 2, ResponseTimeMs: 5000, "earth", new List<long>());
 
             var result = await service.SubmitAnswerAsync(1, 1, dto);
 
             Assert.True(result.Success);
-            Assert.Equal(10, result.Data!.Score); // Case-insensitive match awards 10 points!
+            Assert.Equal(0, result.Data!.Score);
+
+            Assert.Null(result.Data.NextQuestionId);
+        }
+
+        [Fact]
+        public async Task SubmitAnswerAsync_AlreadyAnswered_ReturnsConflict()
+        {
+            await using var context = await GetSeededContextAsync();
+            var attempt = new QuizAttempt { Id = 1, QuizId = 1, EnrollmentId = 1, Status = AttemptStatus.Started };
+
+            var existingResponse = new QuizQuestionResponse { QuizAttemptId = 1, QuizQuestionId = 1 };
+
+            context.QuizAttempts.Add(attempt);
+            context.QuizQuestionResponses.Add(existingResponse);
+            await context.SaveChangesAsync();
+
+            var service = new QuizAttemptService(context, _mockLogger.Object);
+            var dto = new SubmitQuestionResponseDto(QuizQuestionId: 1, ResponseTimeMs: 5000, null, new List<long> { 1, 2 });
+
+            var result = await service.SubmitAnswerAsync(1, 1, dto);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Conflict, result.ErrorCode);
+            Assert.Contains("already submitted", result.ErrorMessage);
         }
 
         [Fact]

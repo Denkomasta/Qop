@@ -12,7 +12,7 @@ namespace Sqeez.Api.Services.Interfaces
         /// <summary>
         /// Saves or updates a student's answer for a single question during an active attempt.
         /// </summary>
-        Task<ServiceResult<QuestionResponseDto>> SubmitAnswerAsync(long attemptId, long studentId, SubmitQuestionResponseDto dto);
+        Task<ServiceResult<QuestionAnsweredDto>> SubmitAnswerAsync(long attemptId, long studentId, SubmitQuestionResponseDto dto);
 
         /// <summary>
         /// Locks the attempt, calculates the final score, and sets the status to Completed.

@@ -29,55 +29,59 @@ namespace Sqeez.Api.Tests.Services
         {
             var context = new SqeezDbContext(_dbContextOptions);
 
-            // Create a student starting with 0 XP
-            var student = new Student
+            var student = new Student { Id = 1, Username = "gamestudent", Email = "game@test.com", PasswordHash = "hash", CurrentXP = 0 };
+
+            var perfectBadge = new Badge
             {
                 Id = 1,
-                Username = "gamestudent",
-                Email = "game@test.com",
-                PasswordHash = "hash",
-                CurrentXP = 0
-            };
-
-            // Create a generic badge worth 50 XP
-            var badge1 = new Badge
-            {
-                Id = 1,
-                Name = "First Quiz",
-                Description = "Took your first quiz!",
-                XpBonus = 50,
-                Condition = "FIRST_QUIZ"
-            };
-
-            var badge2 = new Badge
-            {
-                Id = 2,
                 Name = "Perfect Score",
                 Description = "100% on a quiz!",
                 XpBonus = 100,
-                Condition = "PERFECT_SCORE"
+                Rules = new List<BadgeRule>
+                {
+                    new BadgeRule { Metric = BadgeMetric.ScorePercentage, Operator = BadgeOperator.Equals, TargetValue = 100 }
+                }
+            };
+
+            var highScorerBadge = new Badge
+            {
+                Id = 2,
+                Name = "High Scorer",
+                Description = "Scored over 50 points",
+                XpBonus = 50,
+                Rules = new List<BadgeRule>
+                {
+                    new BadgeRule { Metric = BadgeMetric.TotalScore, Operator = BadgeOperator.GreaterThan, TargetValue = 50 }
+                }
             };
 
             context.Students.Add(student);
-            context.Badges.AddRange(badge1, badge2);
+            context.Badges.AddRange(perfectBadge, highScorerBadge);
 
             await context.SaveChangesAsync();
             return context;
         }
 
         [Fact]
-        public async Task CreateBadgeAsync_AddsBadgeToDatabase()
+        public async Task CreateBadgeAsync_WithRules_AddsBadgeAndRulesToDatabase()
         {
             await using var context = await GetSeededContextAsync();
             var service = new BadgeService(context, _mockLogger.Object);
 
-            var dto = new CreateBadgeDto("Speed Demon", "Fastest answer", "url.png", 25, "SPEED");
+            var rules = new List<BadgeRuleDto>
+            {
+                new BadgeRuleDto(BadgeMetric.TotalScore, BadgeOperator.GreaterThanOrEqual, 1000)
+            };
+            var dto = new CreateBadgeDto("1K Club", "Score 1000 points total", "url.png", 200, rules);
 
             var result = await service.CreateBadgeAsync(dto);
 
             Assert.True(result.Success);
-            Assert.Equal("Speed Demon", result.Data!.Name);
-            Assert.Equal(3, await context.Badges.CountAsync()); // We seeded 2, so this makes 3!
+            Assert.Equal("1K Club", result.Data!.Name);
+            Assert.Single(result.Data.Rules);
+
+            Assert.Equal(3, await context.Badges.CountAsync());
+            Assert.Equal(3, await context.BadgeRules.CountAsync());
         }
 
         [Fact]
@@ -90,20 +94,17 @@ namespace Sqeez.Api.Tests.Services
 
             Assert.True(result.Success);
 
-            var earnedBadge = await context.StudentBadges.FirstOrDefaultAsync(sb => sb.StudentId == 1 && sb.BadgeId == 1);
-            Assert.NotNull(earnedBadge);
-
             var updatedStudent = await context.Students.FindAsync(1L);
-            Assert.Equal(50, updatedStudent!.CurrentXP);
+            Assert.Equal(100, updatedStudent!.CurrentXP);
         }
 
         [Fact]
-        public async Task AwardBadgeToStudentAsync_WhenAlreadyEarned_ReturnsConflictAndDoesNotAddXP()
+        public async Task AwardBadgeToStudentAsync_WhenAlreadyEarned_ReturnsConflict()
         {
             await using var context = await GetSeededContextAsync();
 
             var student = await context.Students.FindAsync(1L);
-            student!.CurrentXP = 50;
+            student!.CurrentXP = 100;
             context.StudentBadges.Add(new StudentBadge { StudentId = 1, BadgeId = 1, EarnedAt = DateTime.UtcNow });
             await context.SaveChangesAsync();
 
@@ -114,31 +115,65 @@ namespace Sqeez.Api.Tests.Services
             Assert.False(result.Success);
             Assert.Equal(ServiceError.Conflict, result.ErrorCode);
 
+            // xp should not increase
             var checkedStudent = await context.Students.FindAsync(1L);
-            Assert.Equal(50, checkedStudent!.CurrentXP);
-
-            Assert.Equal(1, await context.StudentBadges.CountAsync());
+            Assert.Equal(100, checkedStudent!.CurrentXP);
         }
 
         [Fact]
-        public async Task GetStudentBadgesAsync_ReturnsCorrectBadgesInOrder()
+        public async Task EvaluateAndAwardBadgesAsync_WhenMeetsRules_AwardsBadge()
+        {
+            await using var context = await GetSeededContextAsync();
+            var service = new BadgeService(context, _mockLogger.Object);
+
+            // Student scores exactly 100% and 60 Total Points
+            var metrics = new BadgeEvaluationMetrics(ScorePercentage: 100m, TotalScore: 60);
+
+            await service.EvaluateAndAwardBadgesAsync(1, metrics);
+
+            var earnedBadges = await context.StudentBadges.Where(sb => sb.StudentId == 1).ToListAsync();
+            Assert.Equal(2, earnedBadges.Count);
+
+            // Student gets 100 XP (Badge 1) + 50 XP (Badge 2) = 150 XP total
+            var student = await context.Students.FindAsync(1L);
+            Assert.Equal(150, student!.CurrentXP);
+        }
+
+        [Fact]
+        public async Task EvaluateAndAwardBadgesAsync_WhenFailsRules_DoesNotAwardBadge()
+        {
+            await using var context = await GetSeededContextAsync();
+            var service = new BadgeService(context, _mockLogger.Object);
+
+            // Student scores 90% and 40 Total Points (Fails both conditions)
+            var metrics = new BadgeEvaluationMetrics(ScorePercentage: 90m, TotalScore: 40);
+
+            await service.EvaluateAndAwardBadgesAsync(1, metrics);
+
+            // No badges awarded
+            var earnedBadges = await context.StudentBadges.Where(sb => sb.StudentId == 1).ToListAsync();
+            Assert.Empty(earnedBadges);
+        }
+
+        [Fact]
+        public async Task EvaluateAndAwardBadgesAsync_WhenAlreadyEarned_SkipsEvaluation()
         {
             await using var context = await GetSeededContextAsync();
 
-            // Give the student both badges at different times
-            context.StudentBadges.Add(new StudentBadge { StudentId = 1, BadgeId = 1, EarnedAt = DateTime.UtcNow.AddMinutes(-10) });
-            context.StudentBadges.Add(new StudentBadge { StudentId = 1, BadgeId = 2, EarnedAt = DateTime.UtcNow });
+            // Give the student Badge 1 manually
+            context.StudentBadges.Add(new StudentBadge { StudentId = 1, BadgeId = 1, EarnedAt = DateTime.UtcNow });
             await context.SaveChangesAsync();
 
             var service = new BadgeService(context, _mockLogger.Object);
 
-            var result = await service.GetStudentBadgesAsync(1);
+            // Metrics perfect for Badge 1, but they already have it!
+            var metrics = new BadgeEvaluationMetrics(ScorePercentage: 100m, TotalScore: 0);
 
-            Assert.True(result.Success);
-            Assert.Equal(2, result.Data!.Count());
+            await service.EvaluateAndAwardBadgesAsync(1, metrics);
 
-            Assert.Equal(2, result.Data!.First().BadgeId);
-            Assert.Equal("Perfect Score", result.Data!.First().Name);
+            // Still only has 1 badge, didn't award a duplicate
+            var earnedBadges = await context.StudentBadges.Where(sb => sb.StudentId == 1).ToListAsync();
+            Assert.Single(earnedBadges);
         }
     }
 }

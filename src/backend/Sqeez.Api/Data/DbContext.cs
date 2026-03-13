@@ -30,6 +30,7 @@ namespace Sqeez.Api.Data
         public DbSet<QuizAttempt> QuizAttempts { get; set; } = null!;
         public DbSet<QuizQuestionResponse> QuizQuestionResponses { get; set; } = null!;
         public DbSet<MediaAsset> MediaAssets { get; set; } = null!;
+        public DbSet<BadgeRule> BadgeRules { get; set; } = null!;
 
         // --- Fluent API Configuration ---
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -111,6 +112,13 @@ namespace Sqeez.Api.Data
                 .WithOne(t => t.ManagedClass)         // That Teacher manages this one SchoolClass
                 .HasForeignKey<Teacher>(t => t.ManagedClassId) // The actual DB column lives in the Teacher (Users) table
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Badge>()
+                .HasMany(b => b.Rules)          // A Badge has many Rules
+                .WithOne(r => r.Badge)          // A Rule belongs to one Badge
+                .HasForeignKey(r => r.BadgeId)
+                .IsRequired()                   // Enforces the 1..*
+                .OnDelete(DeleteBehavior.Cascade); // Deleting the Badge deletes all its rules.
         }
     }
 }

@@ -10,6 +10,7 @@
         public string Condition { get; set; } = string.Empty;
 
         // Navigation Property
+        public ICollection<BadgeRule> Rules { get; set; } = new List<BadgeRule>();
         public ICollection<StudentBadge> StudentBadges { get; set; } = new List<StudentBadge>();
     }
 }

@@ -12,7 +12,7 @@ using Sqeez.Api.Data;
 namespace Sqeez.Api.Migrations
 {
     [DbContext(typeof(SqeezDbContext))]
-    [Migration("20260313200629_InitialCreate")]
+    [Migration("20260313212436_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -451,23 +451,53 @@ namespace Sqeez.Api.Migrations
                     b.Property<bool>("AllowPublicRegistration")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("CurrentAcademicYear")
-                        .HasColumnType("integer");
+                    b.Property<string>("CurrentAcademicYear")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("DefaultLanguage")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("LogoUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("MaxActiveSessionsPerUser")
+                        .HasColumnType("integer");
+
                     b.Property<int>("MaxFileUploadSizeMB")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("RequireEmailVerification")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("SchoolName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SupportEmail")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("SystemConfigs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AllowPublicRegistration = false,
+                            CurrentAcademicYear = "2025/2026",
+                            DefaultLanguage = "en",
+                            LogoUrl = "",
+                            MaxActiveSessionsPerUser = 3,
+                            MaxFileUploadSizeMB = 10,
+                            RequireEmailVerification = true,
+                            SchoolName = "Sqeez",
+                            SupportEmail = "support@sqeez.com"
+                        });
                 });
 
             modelBuilder.Entity("Sqeez.Api.Models.Users.Student", b =>

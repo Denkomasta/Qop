@@ -294,5 +294,71 @@ namespace Sqeez.Api.Tests.Services
             Assert.Equal(ServiceError.Conflict, result.ErrorCode);
             Assert.Contains("no longer in progress", result.ErrorMessage);
         }
+
+        [Fact]
+        public async Task DeleteAttemptAsync_WhenValid_DeletesAttemptAndResponses()
+        {
+            await using var context = await GetSeededContextAsync();
+
+            var subject = await context.Subjects.FirstAsync();
+            subject.TeacherId = 99;
+
+            var attempt = new QuizAttempt
+            {
+                Id = 1,
+                QuizId = 1,
+                EnrollmentId = 1,
+                Status = AttemptStatus.Started,
+                Responses = new List<QuizQuestionResponse>
+                {
+                    new QuizQuestionResponse { QuizQuestionId = 1, Score = 5 }
+                }
+            };
+            context.QuizAttempts.Add(attempt);
+            await context.SaveChangesAsync();
+
+            var service = new QuizAttemptService(context, _mockLogger.Object);
+
+            var result = await service.DeleteAttemptAsync(attempt.Id, 99);
+
+            Assert.True(result.Success);
+            Assert.Equal(0, await context.QuizAttempts.CountAsync());
+            Assert.Equal(0, await context.QuizQuestionResponses.CountAsync()); // Proves Cascade Delete works
+        }
+
+        [Fact]
+        public async Task DeleteAttemptAsync_WhenAttemptNotFound_ReturnsNotFound()
+        {
+            await using var context = await GetSeededContextAsync();
+            var service = new QuizAttemptService(context, _mockLogger.Object);
+
+            var result = await service.DeleteAttemptAsync(9999, 1);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.NotFound, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task DeleteAttemptAsync_WhenWrongTeacher_ReturnsForbidden()
+        {
+            await using var context = await GetSeededContextAsync();
+
+            var subject = await context.Subjects.FirstAsync();
+            subject.TeacherId = 99;
+
+            var attempt = new QuizAttempt { Id = 1, QuizId = 1, EnrollmentId = 1, Status = AttemptStatus.Completed };
+            context.QuizAttempts.Add(attempt);
+            await context.SaveChangesAsync();
+
+            var service = new QuizAttemptService(context, _mockLogger.Object);
+
+            var result = await service.DeleteAttemptAsync(attempt.Id, 42);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+            Assert.Contains("permission", result.ErrorMessage);
+
+            Assert.Equal(1, await context.QuizAttempts.CountAsync());
+        }
     }
 }

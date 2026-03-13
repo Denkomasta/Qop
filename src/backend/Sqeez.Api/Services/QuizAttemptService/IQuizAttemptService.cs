@@ -5,7 +5,7 @@ namespace Sqeez.Api.Services.Interfaces
     public interface IQuizAttemptService
     {
         /// <summary>
-        /// Creates a new QuizAttempt record and sets the status to InProgress.
+        /// Creates a new QuizAttempt record and sets the status to Started.
         /// </summary>
         Task<ServiceResult<QuizAttemptDto>> StartAttemptAsync(long studentId, StartQuizAttemptDto dto);
 
@@ -42,5 +42,10 @@ namespace Sqeez.Api.Services.Interfaces
         /// Allows a teacher to manually grade a free-text question, update the score, and optionally "Like" the answer.
         /// </summary>
         Task<ServiceResult<QuestionResponseDto>> GradeFreeTextResponseAsync(long responseId, long teacherId, GradeQuestionResponseDto dto);
+
+        /// <summary>
+        /// Allows a teacher to manually reset (delete) student's attempt.
+        /// </summary>
+        Task<ServiceResult<bool>> DeleteAttemptAsync(long attemptId, long teacherId);
     }
 }

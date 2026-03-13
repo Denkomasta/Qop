@@ -5,7 +5,6 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
 {
-    [Authorize]
     [Route("api/quiz-attempts")]
     public class QuizAttemptsController : ApiBaseController
     {
@@ -20,7 +19,7 @@ namespace Sqeez.Api.Controllers
         /// POST /api/quiz-attempts/start
         /// Starts a new attempt for the currently authenticated student.
         /// </summary>
-        [Authorize(Roles = "Student")]
+        [Authorize]
         [HttpPost("start")]
         public async Task<ActionResult> StartAttempt([FromBody] StartQuizAttemptDto dto)
         {
@@ -36,7 +35,7 @@ namespace Sqeez.Api.Controllers
         /// POST /api/quiz-attempts/{id}/answers
         /// Submits or updates an answer for a specific question.
         /// </summary>
-        [Authorize(Roles = "Student")]
+        [Authorize]
         [HttpPost("{id}/answer")]
         public async Task<ActionResult> SubmitAnswer(long id, [FromBody] SubmitQuestionResponseDto dto)
         {
@@ -52,7 +51,7 @@ namespace Sqeez.Api.Controllers
         /// GET /api/quiz-attempts/{id}/next-question
         /// Recovers the ID of the next unanswered question if the frontend loses context.
         /// </summary>
-        [Authorize(Roles = "Student")]
+        [Authorize]
         [HttpGet("{id}/next-question")]
         public async Task<ActionResult> GetNextPendingQuestionId(long id)
         {
@@ -69,7 +68,7 @@ namespace Sqeez.Api.Controllers
         /// POST /api/quiz-attempts/{id}/complete
         /// Locks the attempt and calculates the final score.
         /// </summary>
-        [Authorize(Roles = "Student")]
+        [Authorize]
         [HttpPost("{id}/complete")]
         public async Task<ActionResult> CompleteAttempt(long id)
         {
@@ -85,6 +84,7 @@ namespace Sqeez.Api.Controllers
         /// GET /api/quiz-attempts/{id}
         /// Gets the full details of an attempt. (Students see their own; Teachers/Admins see any).
         /// </summary>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult> GetAttemptDetails(long id)
         {
@@ -126,6 +126,22 @@ namespace Sqeez.Api.Controllers
                 return Unauthorized("Invalid teacher ID token.");
 
             var result = await _quizAttemptService.GradeFreeTextResponseAsync(responseId, teacherId, dto);
+            return HandleServiceResult(result);
+        }
+
+        /// <summary>
+        /// DELETE /api/quiz-attempts/{id}
+        /// Deletes a specific quiz attempt (Allows a teacher to reset a student's try).
+        /// </summary>
+        [Authorize(Roles = "Teacher,Admin")]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAttempt(long id)
+        {
+            var teacherIdStr = GetUserIdFromClaims();
+            if (!long.TryParse(teacherIdStr, out long teacherId))
+                return Unauthorized("Invalid teacher ID token.");
+
+            var result = await _quizAttemptService.DeleteAttemptAsync(id, teacherId);
             return HandleServiceResult(result);
         }
     }

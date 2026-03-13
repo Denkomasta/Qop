@@ -16,7 +16,7 @@ namespace Sqeez.Api.Controllers
             _badgeService = badgeService;
         }
 
-        [Authorize(Roles = "Admin,Teacher")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> CreateBadge([FromBody] CreateBadgeDto dto)
         {
@@ -24,15 +24,15 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
-        [Authorize(Roles = "Admin,Teacher")]
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateBadge(long id, [FromBody] UpdateBadgeDto dto)
+        [Authorize(Roles = "Admin")]
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> PatchBadge(long id, [FromBody] UpdateBadgeDto dto)
         {
             var result = await _badgeService.UpdateBadgeAsync(id, dto);
             return HandleServiceResult(result);
         }
 
-        [Authorize(Roles = "Admin,Teacher")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteBadge(long id)
         {
@@ -40,7 +40,7 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
-        [Authorize(Roles = "Admin,Teacher")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("{badgeId}/award/{studentId}")]
         public async Task<ActionResult> AwardBadge(long badgeId, long studentId)
         {

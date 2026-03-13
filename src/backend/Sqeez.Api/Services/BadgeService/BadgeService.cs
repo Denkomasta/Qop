@@ -31,7 +31,7 @@ namespace Sqeez.Api.Services
             _context.Badges.Add(badge);
             await _context.SaveChangesAsync();
 
-            var ruleDtos = badge.Rules.Select(r => new BadgeRuleDto(r.Metric, r.Operator, r.TargetValue)).ToList();
+            var ruleDtos = badge.Rules.Select(r => new BadgeRuleDto(r.Id, r.Metric, r.Operator, r.TargetValue)).ToList();
 
             return ServiceResult<BadgeDto>.Ok(new BadgeDto(
                 badge.Id, badge.Name, badge.Description, badge.IconUrl, badge.XpBonus, ruleDtos));
@@ -45,22 +45,48 @@ namespace Sqeez.Api.Services
 
             if (badge == null) return ServiceResult<BadgeDto>.Failure("Badge not found.", ServiceError.NotFound);
 
-            badge.Name = dto.Name;
-            badge.Description = dto.Description;
-            badge.IconUrl = dto.IconUrl;
-            badge.XpBonus = dto.XpBonus;
+            if (dto.Name != null) badge.Name = dto.Name;
+            if (dto.Description != null) badge.Description = dto.Description;
+            if (dto.IconUrl != null) badge.IconUrl = dto.IconUrl;
+            if (dto.XpBonus.HasValue) badge.XpBonus = dto.XpBonus.Value;
 
-            _context.BadgeRules.RemoveRange(badge.Rules);
-            badge.Rules = dto.Rules.Select(r => new BadgeRule
+            if (dto.Rules != null)
             {
-                Metric = r.Metric,
-                Operator = r.Operator,
-                TargetValue = r.TargetValue
-            }).ToList();
+                var incomingIds = dto.Rules
+                    .Where(r => r.Id.HasValue && r.Id > 0)
+                    .Select(r => r.Id!.Value)
+                    .ToList();
+
+                var rulesToRemove = badge.Rules.Where(r => !incomingIds.Contains(r.Id)).ToList();
+                _context.BadgeRules.RemoveRange(rulesToRemove);
+
+                foreach (var ruleDto in dto.Rules)
+                {
+                    if (!ruleDto.Id.HasValue || ruleDto.Id == 0)
+                    {
+                        badge.Rules.Add(new BadgeRule
+                        {
+                            Metric = ruleDto.Metric,
+                            Operator = ruleDto.Operator,
+                            TargetValue = ruleDto.TargetValue
+                        });
+                    }
+                    else
+                    {
+                        var existingRule = badge.Rules.FirstOrDefault(r => r.Id == ruleDto.Id);
+                        if (existingRule != null)
+                        {
+                            existingRule.Metric = ruleDto.Metric;
+                            existingRule.Operator = ruleDto.Operator;
+                            existingRule.TargetValue = ruleDto.TargetValue;
+                        }
+                    }
+                }
+            }
 
             await _context.SaveChangesAsync();
 
-            var ruleDtos = badge.Rules.Select(r => new BadgeRuleDto(r.Metric, r.Operator, r.TargetValue)).ToList();
+            var ruleDtos = badge.Rules.Select(r => new BadgeRuleDto(r.Id, r.Metric, r.Operator, r.TargetValue)).ToList();
 
             return ServiceResult<BadgeDto>.Ok(new BadgeDto(
                 badge.Id, badge.Name, badge.Description, badge.IconUrl, badge.XpBonus, ruleDtos));
@@ -87,7 +113,7 @@ namespace Sqeez.Api.Services
                     b.Description,
                     b.IconUrl,
                     b.XpBonus,
-                    b.Rules.Select(r => new BadgeRuleDto(r.Metric, r.Operator, r.TargetValue)).ToList()
+                    b.Rules.Select(r => new BadgeRuleDto(r.Id, r.Metric, r.Operator, r.TargetValue)).ToList()
                 ))
                 .ToListAsync();
 

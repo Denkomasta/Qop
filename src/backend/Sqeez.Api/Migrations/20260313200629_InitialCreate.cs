@@ -76,6 +76,28 @@ namespace Sqeez.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BadgeRules",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    BadgeId = table.Column<long>(type: "bigint", nullable: false),
+                    Metric = table.Column<int>(type: "integer", nullable: false),
+                    Operator = table.Column<int>(type: "integer", nullable: false),
+                    TargetValue = table.Column<decimal>(type: "numeric", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BadgeRules", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BadgeRules_Badges_BadgeId",
+                        column: x => x.BadgeId,
+                        principalTable: "Badges",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -384,6 +406,11 @@ namespace Sqeez.Api.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_BadgeRules_BadgeId",
+                table: "BadgeRules",
+                column: "BadgeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Enrollments_StudentId",
                 table: "Enrollments",
                 column: "StudentId");
@@ -490,6 +517,9 @@ namespace Sqeez.Api.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "BadgeRules");
+
             migrationBuilder.DropTable(
                 name: "Levels");
 

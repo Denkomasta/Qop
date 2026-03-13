@@ -12,7 +12,7 @@ using Sqeez.Api.Data;
 namespace Sqeez.Api.Migrations
 {
     [DbContext(typeof(SqeezDbContext))]
-    [Migration("20260310110103_InitialCreate")]
+    [Migration("20260313200629_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -167,6 +167,33 @@ namespace Sqeez.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Badges");
+                });
+
+            modelBuilder.Entity("Sqeez.Api.Models.Gamification.BadgeRule", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("BadgeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Metric")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Operator")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("TargetValue")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BadgeId");
+
+                    b.ToTable("BadgeRules");
                 });
 
             modelBuilder.Entity("Sqeez.Api.Models.Gamification.Level", b =>
@@ -574,6 +601,17 @@ namespace Sqeez.Api.Migrations
                     b.Navigation("Teacher");
                 });
 
+            modelBuilder.Entity("Sqeez.Api.Models.Gamification.BadgeRule", b =>
+                {
+                    b.HasOne("Sqeez.Api.Models.Gamification.Badge", "Badge")
+                        .WithMany("Rules")
+                        .HasForeignKey("BadgeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Badge");
+                });
+
             modelBuilder.Entity("Sqeez.Api.Models.Gamification.StudentBadge", b =>
                 {
                     b.HasOne("Sqeez.Api.Models.Gamification.Badge", "Badge")
@@ -730,6 +768,8 @@ namespace Sqeez.Api.Migrations
 
             modelBuilder.Entity("Sqeez.Api.Models.Gamification.Badge", b =>
                 {
+                    b.Navigation("Rules");
+
                     b.Navigation("StudentBadges");
                 });
 

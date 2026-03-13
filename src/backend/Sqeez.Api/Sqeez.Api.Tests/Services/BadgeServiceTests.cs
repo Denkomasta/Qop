@@ -39,7 +39,7 @@ namespace Sqeez.Api.Tests.Services
                 XpBonus = 100,
                 Rules = new List<BadgeRule>
                 {
-                    new BadgeRule { Metric = BadgeMetric.ScorePercentage, Operator = BadgeOperator.Equals, TargetValue = 100 }
+                    new BadgeRule { Id = 1, BadgeId = 1, Metric = BadgeMetric.ScorePercentage, Operator = BadgeOperator.Equals, TargetValue = 100 }
                 }
             };
 
@@ -51,7 +51,7 @@ namespace Sqeez.Api.Tests.Services
                 XpBonus = 50,
                 Rules = new List<BadgeRule>
                 {
-                    new BadgeRule { Metric = BadgeMetric.TotalScore, Operator = BadgeOperator.GreaterThan, TargetValue = 50 }
+                    new BadgeRule { Id = 2, BadgeId = 2, Metric = BadgeMetric.TotalScore, Operator = BadgeOperator.GreaterThan, TargetValue = 50 }
                 }
             };
 
@@ -70,7 +70,7 @@ namespace Sqeez.Api.Tests.Services
 
             var rules = new List<BadgeRuleDto>
             {
-                new BadgeRuleDto(BadgeMetric.TotalScore, BadgeOperator.GreaterThanOrEqual, 1000)
+                new BadgeRuleDto(0, BadgeMetric.TotalScore, BadgeOperator.GreaterThanOrEqual, 1000)
             };
             var dto = new CreateBadgeDto("1K Club", "Score 1000 points total", "url.png", 200, rules);
 
@@ -82,6 +82,40 @@ namespace Sqeez.Api.Tests.Services
 
             Assert.Equal(3, await context.Badges.CountAsync());
             Assert.Equal(3, await context.BadgeRules.CountAsync());
+        }
+
+        [Fact]
+        public async Task UpdateBadgeAsync_WithUpsertRules_SyncsDatabasePerfectly()
+        {
+            await using var context = await GetSeededContextAsync();
+            var service = new BadgeService(context, _mockLogger.Object);
+
+            var upsertRules = new List<UpdateBadgeRuleDto>
+            {
+                new UpdateBadgeRuleDto(1, BadgeMetric.ScorePercentage, BadgeOperator.Equals, 90),
+                
+                new UpdateBadgeRuleDto(null, BadgeMetric.TotalScore, BadgeOperator.GreaterThanOrEqual, 500)
+            };
+
+            var dto = new UpdateBadgeDto("Updated Name", null, null, null, upsertRules);
+
+            var result = await service.UpdateBadgeAsync(1, dto);
+
+            Assert.True(result.Success);
+            Assert.Equal("Updated Name", result.Data!.Name);
+            Assert.Equal("100% on a quiz!", result.Data.Description);
+            Assert.Equal(100, result.Data.XpBonus);
+
+            Assert.Equal(2, result.Data.Rules.Count);
+
+            var dbBadge = await context.Badges.Include(b => b.Rules).FirstAsync(b => b.Id == 1);
+            Assert.Equal(2, dbBadge.Rules.Count);
+
+            var updatedRule = dbBadge.Rules.First(r => r.Id == 1);
+            Assert.Equal(90, updatedRule.TargetValue);
+
+            var newRule = dbBadge.Rules.First(r => r.Id != 1);
+            Assert.Equal(500, newRule.TargetValue);
         }
 
         [Fact]

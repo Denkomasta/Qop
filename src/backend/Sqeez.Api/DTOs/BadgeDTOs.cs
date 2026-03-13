@@ -3,6 +3,7 @@
 namespace Sqeez.Api.DTOs
 {
     public record BadgeRuleDto(
+        long Id,
         BadgeMetric Metric,
         BadgeOperator Operator,
         decimal TargetValue
@@ -16,12 +17,19 @@ namespace Sqeez.Api.DTOs
         List<BadgeRuleDto> Rules
     );
 
+    public record UpdateBadgeRuleDto(
+        long? Id,
+        BadgeMetric Metric,
+        BadgeOperator Operator,
+        decimal TargetValue
+    );
+
     public record UpdateBadgeDto(
-        string Name,
-        string Description,
-        string IconUrl,
-        int XpBonus,
-        List<BadgeRuleDto> Rules
+        string? Name,
+        string? Description,
+        string? IconUrl,
+        int? XpBonus,
+        List<UpdateBadgeRuleDto>? Rules
     );
 
     public record BadgeDto(

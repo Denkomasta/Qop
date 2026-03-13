@@ -2,8 +2,9 @@
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Academics;
 using Sqeez.Api.Models.Media;
-using Sqeez.Api.Models.QuizSystem; // <-- Added this!
+using Sqeez.Api.Models.QuizSystem;
 using Sqeez.Api.Models.Users;
+using Sqeez.Api.Models.Gamification; // <-- Added the Gamification namespace!
 using BC = BCrypt.Net.BCrypt;
 
 namespace Sqeez.Api.Data
@@ -213,7 +214,7 @@ namespace Sqeez.Api.Data
                         Title = "What is the value of x if 2x = 10? (See attached diagram)",
                         Difficulty = 1,
                         TimeLimit = 30,
-                        Media = sampleMedia, // <--- WE ATTACHED THE MEDIA FILE HERE!
+                        Media = sampleMedia,
                         Options = new List<QuizOption>
                         {
                             new QuizOption { Text = "4", IsCorrect = false, IsFreeText = false },
@@ -260,6 +261,45 @@ namespace Sqeez.Api.Data
             };
 
             context.Quizzes.AddRange(mathQuiz, englishQuiz);
+
+            // --- 9. Gamification Badges ---
+            var perfectScoreBadge = new Badge
+            {
+                Name = "Perfect Score",
+                Description = "You scored 100% on a quiz! Outstanding!",
+                IconUrl = "/assets/badges/perfect-score.png",
+                XpBonus = 100,
+                Rules = new List<BadgeRule>
+                {
+                    new BadgeRule { Metric = BadgeMetric.ScorePercentage, Operator = BadgeOperator.Equals, TargetValue = 100 }
+                }
+            };
+
+            var highScorerBadge = new Badge
+            {
+                Name = "High Scorer",
+                Description = "You scored at least 80% on a quiz. Great job!",
+                IconUrl = "/assets/badges/high-scorer.png",
+                XpBonus = 50,
+                Rules = new List<BadgeRule>
+                {
+                    new BadgeRule { Metric = BadgeMetric.ScorePercentage, Operator = BadgeOperator.GreaterThanOrEqual, TargetValue = 80 }
+                }
+            };
+
+            var participantBadge = new Badge
+            {
+                Name = "First Steps",
+                Description = "You completed a quiz and earned your first points!",
+                IconUrl = "/assets/badges/participant.png",
+                XpBonus = 25,
+                Rules = new List<BadgeRule>
+                {
+                    new BadgeRule { Metric = BadgeMetric.TotalScore, Operator = BadgeOperator.GreaterThan, TargetValue = 0 }
+                }
+            };
+
+            context.Badges.AddRange(perfectScoreBadge, highScorerBadge, participantBadge);
 
             await context.SaveChangesAsync();
         }

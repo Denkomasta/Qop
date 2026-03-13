@@ -9,8 +9,13 @@ namespace Sqeez.Api.Services
 {
     public class QuizAttemptService : BaseService<QuizAttemptService>, IQuizAttemptService
     {
-        public QuizAttemptService(SqeezDbContext context, ILogger<QuizAttemptService> logger)
-            : base(context, logger) { }
+        private readonly IBadgeService _badgeService;
+
+        public QuizAttemptService(SqeezDbContext context, ILogger<QuizAttemptService> logger, IBadgeService badgeService)
+            : base(context, logger)
+        { 
+            _badgeService = badgeService;
+        }
 
         private async Task<long?> GetNextQuestionId(long quizId, long quizQuestionId)
         {
@@ -176,14 +181,42 @@ namespace Sqeez.Api.Services
             if (attempt.Enrollment.StudentId != studentId) return ServiceResult<QuizAttemptDto>.Failure("Access denied.", ServiceError.Forbidden);
             if (attempt.Status != AttemptStatus.Started) return ServiceResult<QuizAttemptDto>.Failure("This attempt is already completed.", ServiceError.Conflict);
 
-            // Lock it down
             attempt.Status = AttemptStatus.Completed;
             attempt.EndTime = DateTime.UtcNow;
-
-            // Calculate Final Score based on the auto-graded answers
             attempt.TotalScore = attempt.Responses.Sum(r => r.Score);
 
+            // Find their highest score from previous completed attempts of this quiz
+            int previousHighScore = await _context.QuizAttempts
+                .Where(a => a.QuizId == attempt.QuizId &&
+                            a.Enrollment.StudentId == studentId &&
+                            a.Status == AttemptStatus.Completed &&
+                            a.Id != attemptId)
+                .Select(a => (int?)a.TotalScore)
+                .MaxAsync() ?? 0;
+
+            // Calculate the difference. If they scored lower than their best, this results in 0.
+            int xpToAward = Math.Max(0, attempt.TotalScore - previousHighScore);
+
+            // Only hit the database to update the student if they actually earned new XP
+            if (xpToAward > 0)
+            {
+                var student = await _context.Students.FindAsync(studentId);
+                if (student != null)
+                {
+                    student.CurrentXP += xpToAward;
+                }
+            }
+
             await _context.SaveChangesAsync();
+
+            int maxPossibleScore = await _context.QuizQuestions
+                .Where(q => q.QuizId == attempt.QuizId)
+                .SumAsync(q => q.Difficulty);
+
+            decimal scorePercentage = maxPossibleScore > 0 ? ((decimal)attempt.TotalScore / maxPossibleScore) * 100 : 0;
+            var metrics = new BadgeEvaluationMetrics(scorePercentage, attempt.TotalScore);
+
+            _ = _badgeService.EvaluateAndAwardBadgesAsync(studentId, metrics);
 
             return ServiceResult<QuizAttemptDto>.Ok(new QuizAttemptDto(
                 attempt.Id, attempt.QuizId, attempt.EnrollmentId, attempt.StartTime,

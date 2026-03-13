@@ -20,31 +20,50 @@ namespace Sqeez.Api.Services
                 Description = dto.Description,
                 IconUrl = dto.IconUrl,
                 XpBonus = dto.XpBonus,
-                Condition = dto.Condition
+                Rules = dto.Rules.Select(r => new BadgeRule
+                {
+                    Metric = r.Metric,
+                    Operator = r.Operator,
+                    TargetValue = r.TargetValue
+                }).ToList()
             };
 
             _context.Badges.Add(badge);
             await _context.SaveChangesAsync();
 
+            var ruleDtos = badge.Rules.Select(r => new BadgeRuleDto(r.Metric, r.Operator, r.TargetValue)).ToList();
+
             return ServiceResult<BadgeDto>.Ok(new BadgeDto(
-                badge.Id, badge.Name, badge.Description, badge.IconUrl, badge.XpBonus, badge.Condition));
+                badge.Id, badge.Name, badge.Description, badge.IconUrl, badge.XpBonus, ruleDtos));
         }
 
         public async Task<ServiceResult<BadgeDto>> UpdateBadgeAsync(long id, UpdateBadgeDto dto)
         {
-            var badge = await _context.Badges.FindAsync(id);
+            var badge = await _context.Badges
+                .Include(b => b.Rules)
+                .FirstOrDefaultAsync(b => b.Id == id);
+
             if (badge == null) return ServiceResult<BadgeDto>.Failure("Badge not found.", ServiceError.NotFound);
 
             badge.Name = dto.Name;
             badge.Description = dto.Description;
             badge.IconUrl = dto.IconUrl;
             badge.XpBonus = dto.XpBonus;
-            badge.Condition = dto.Condition;
+
+            _context.BadgeRules.RemoveRange(badge.Rules);
+            badge.Rules = dto.Rules.Select(r => new BadgeRule
+            {
+                Metric = r.Metric,
+                Operator = r.Operator,
+                TargetValue = r.TargetValue
+            }).ToList();
 
             await _context.SaveChangesAsync();
 
+            var ruleDtos = badge.Rules.Select(r => new BadgeRuleDto(r.Metric, r.Operator, r.TargetValue)).ToList();
+
             return ServiceResult<BadgeDto>.Ok(new BadgeDto(
-                badge.Id, badge.Name, badge.Description, badge.IconUrl, badge.XpBonus, badge.Condition));
+                badge.Id, badge.Name, badge.Description, badge.IconUrl, badge.XpBonus, ruleDtos));
         }
 
         public async Task<ServiceResult<bool>> DeleteBadgeAsync(long id)
@@ -61,7 +80,15 @@ namespace Sqeez.Api.Services
         public async Task<ServiceResult<IEnumerable<BadgeDto>>> GetAllBadgesAsync()
         {
             var badges = await _context.Badges
-                .Select(b => new BadgeDto(b.Id, b.Name, b.Description, b.IconUrl, b.XpBonus, b.Condition))
+                .Include(b => b.Rules)
+                .Select(b => new BadgeDto(
+                    b.Id,
+                    b.Name,
+                    b.Description,
+                    b.IconUrl,
+                    b.XpBonus,
+                    b.Rules.Select(r => new BadgeRuleDto(r.Metric, r.Operator, r.TargetValue)).ToList()
+                ))
                 .ToListAsync();
 
             return ServiceResult<IEnumerable<BadgeDto>>.Ok(badges);
@@ -88,14 +115,12 @@ namespace Sqeez.Api.Services
             var badge = await _context.Badges.FindAsync(badgeId);
             if (badge == null) return ServiceResult<bool>.Failure("Badge not found.", ServiceError.NotFound);
 
-            // Check if they already have it!
             bool alreadyEarned = await _context.StudentBadges
                 .AnyAsync(sb => sb.StudentId == studentId && sb.BadgeId == badgeId);
 
             if (alreadyEarned)
                 return ServiceResult<bool>.Failure("Student has already earned this badge.", ServiceError.Conflict);
 
-            // Award the badge
             var studentBadge = new StudentBadge
             {
                 StudentId = studentId,
@@ -105,12 +130,71 @@ namespace Sqeez.Api.Services
 
             _context.StudentBadges.Add(studentBadge);
 
-            // Grant the XP Bonus to the student profile!
             student.CurrentXP += badge.XpBonus;
 
             await _context.SaveChangesAsync();
 
             return ServiceResult<bool>.Ok(true);
+        }
+
+        public async Task EvaluateAndAwardBadgesAsync(long studentId, BadgeEvaluationMetrics metrics)
+        {
+            // Find out which badges the student already owns
+            var earnedBadgeIds = await _context.StudentBadges
+                .Where(sb => sb.StudentId == studentId)
+                .Select(sb => sb.BadgeId)
+                .ToListAsync();
+
+            // Only fetch badges that the student does not have yet!
+            var availableBadges = await _context.Badges
+                .Include(b => b.Rules)
+                .Where(b => !earnedBadgeIds.Contains(b.Id))
+                .ToListAsync();
+
+            // Evaluate the remaining unearned badges
+            foreach (var badge in availableBadges)
+            {
+                if (!badge.Rules.Any()) continue;
+
+                bool meetsAllRules = true;
+
+                foreach (var rule in badge.Rules)
+                {
+                    decimal metricValue = rule.Metric switch
+                    {
+                        BadgeMetric.ScorePercentage => metrics.ScorePercentage,
+                        BadgeMetric.TotalScore => metrics.TotalScore,
+                        _ => -1
+                    };
+
+                    if (metricValue == -1)
+                    {
+                        meetsAllRules = false;
+                        break;
+                    }
+
+                    bool ruleMet = rule.Operator switch
+                    {
+                        BadgeOperator.Equals => metricValue == rule.TargetValue,
+                        BadgeOperator.GreaterThan => metricValue > rule.TargetValue,
+                        BadgeOperator.GreaterThanOrEqual => metricValue >= rule.TargetValue,
+                        BadgeOperator.LessThan => metricValue < rule.TargetValue,
+                        BadgeOperator.LessThanOrEqual => metricValue <= rule.TargetValue,
+                        _ => false
+                    };
+
+                    if (!ruleMet)
+                    {
+                        meetsAllRules = false;
+                        break;
+                    }
+                }
+
+                if (meetsAllRules)
+                {
+                    await AwardBadgeToStudentAsync(studentId, badge.Id);
+                }
+            }
         }
     }
 }

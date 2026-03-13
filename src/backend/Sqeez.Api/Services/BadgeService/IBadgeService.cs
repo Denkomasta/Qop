@@ -11,5 +11,6 @@ namespace Sqeez.Api.Services.Interfaces
 
         Task<ServiceResult<IEnumerable<StudentBadgeDto>>> GetStudentBadgesAsync(long studentId);
         Task<ServiceResult<bool>> AwardBadgeToStudentAsync(long studentId, long badgeId);
+        Task EvaluateAndAwardBadgesAsync(long studentId, BadgeEvaluationMetrics metrics);
     }
 }

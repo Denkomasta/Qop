@@ -1,11 +1,19 @@
-﻿namespace Sqeez.Api.DTOs
+﻿using Sqeez.Api.Enums;
+
+namespace Sqeez.Api.DTOs
 {
+    public record BadgeRuleDto(
+        BadgeMetric Metric,
+        BadgeOperator Operator,
+        decimal TargetValue
+    );
+
     public record CreateBadgeDto(
         string Name,
         string Description,
         string IconUrl,
         int XpBonus,
-        string Condition
+        List<BadgeRuleDto> Rules
     );
 
     public record UpdateBadgeDto(
@@ -13,7 +21,7 @@
         string Description,
         string IconUrl,
         int XpBonus,
-        string Condition
+        List<BadgeRuleDto> Rules
     );
 
     public record BadgeDto(
@@ -22,7 +30,7 @@
         string Description,
         string IconUrl,
         int XpBonus,
-        string Condition
+        List<BadgeRuleDto> Rules
     );
 
     public record StudentBadgeDto(
@@ -32,5 +40,10 @@
         string IconUrl,
         int XpBonus,
         DateTime EarnedAt
+    );
+
+    public record BadgeEvaluationMetrics(
+        decimal ScorePercentage,
+        int TotalScore
     );
 }

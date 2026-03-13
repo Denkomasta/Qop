@@ -15,4 +15,22 @@
         Forbidden = 5,
         InternalError = 6
     }
+
+    public enum BadgeMetric
+    {
+        ScorePercentage = 1,
+        TotalScore = 2,
+        PerfectAnswersCount = 3,
+        TotalAttempts = 4,
+    }
+
+    public enum BadgeOperator
+    {
+        Equals = 1,             // ==
+        GreaterThan = 2,        // >
+        GreaterThanOrEqual = 3, // >=
+        LessThan = 4,           // <
+        LessThanOrEqual = 5,    // <=
+        NotEquals = 6           // !=
+    }
 }

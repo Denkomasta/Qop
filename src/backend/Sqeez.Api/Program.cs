@@ -48,6 +48,8 @@ builder.Services.Configure<RouteOptions>(options =>
 builder.Services.AddDbContext<SqeezDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+builder.Services.AddMemoryCache();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ISchoolClassService, SchoolClassService>();
@@ -63,6 +65,7 @@ builder.Services.AddScoped<IMediaAssetService, MediaAssetService>();
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IQuizAttemptService, QuizAttemptService>();
 builder.Services.AddScoped<IBadgeService, BadgeService>();
+builder.Services.AddScoped<ISystemConfigService, SystemConfigService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

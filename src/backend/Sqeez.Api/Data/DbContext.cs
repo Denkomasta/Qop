@@ -119,6 +119,11 @@ namespace Sqeez.Api.Data
                 .HasForeignKey(r => r.BadgeId)
                 .IsRequired()                   // Enforces the 1..*
                 .OnDelete(DeleteBehavior.Cascade); // Deleting the Badge deletes all its rules.
+
+            // Seed the default configuration (always ID 1)
+            modelBuilder.Entity<SystemConfig>().HasData(
+                new SystemConfig { Id = 1 }
+            );
         }
     }
 }

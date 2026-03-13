@@ -65,10 +65,14 @@ namespace Sqeez.Api.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     SchoolName = table.Column<string>(type: "text", nullable: false),
-                    CurrentAcademicYear = table.Column<int>(type: "integer", nullable: false),
-                    AllowPublicRegistration = table.Column<bool>(type: "boolean", nullable: false),
+                    LogoUrl = table.Column<string>(type: "text", nullable: false),
+                    SupportEmail = table.Column<string>(type: "text", nullable: false),
                     DefaultLanguage = table.Column<string>(type: "text", nullable: false),
-                    MaxFileUploadSizeMB = table.Column<int>(type: "integer", nullable: false)
+                    CurrentAcademicYear = table.Column<string>(type: "text", nullable: false),
+                    AllowPublicRegistration = table.Column<bool>(type: "boolean", nullable: false),
+                    RequireEmailVerification = table.Column<bool>(type: "boolean", nullable: false),
+                    MaxFileUploadSizeMB = table.Column<int>(type: "integer", nullable: false),
+                    MaxActiveSessionsPerUser = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -404,6 +408,11 @@ namespace Sqeez.Api.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "SystemConfigs",
+                columns: new[] { "Id", "AllowPublicRegistration", "CurrentAcademicYear", "DefaultLanguage", "LogoUrl", "MaxActiveSessionsPerUser", "MaxFileUploadSizeMB", "RequireEmailVerification", "SchoolName", "SupportEmail" },
+                values: new object[] { 1, false, "2025/2026", "en", "", 3, 10, true, "Sqeez", "support@sqeez.com" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_BadgeRules_BadgeId",

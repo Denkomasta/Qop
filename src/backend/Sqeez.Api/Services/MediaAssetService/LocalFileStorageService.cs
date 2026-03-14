@@ -9,14 +9,16 @@ namespace Sqeez.Api.Services
     public class LocalFileStorageService : IFileStorageService
     {
         private readonly IWebHostEnvironment _env;
+        private readonly ISystemConfigService _configService;
         private readonly ILogger<LocalFileStorageService> _logger;
         private const long MaxFileSize = 5 * 1024 * 1024;   // Currently 5 MB, TODO change to modular solution
         private readonly string[] _allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".mp4", ".mp3", ".pdf" };
 
-        public LocalFileStorageService(IWebHostEnvironment env, ILogger<LocalFileStorageService> logger)
+        public LocalFileStorageService(IWebHostEnvironment env, ILogger<LocalFileStorageService> logger, ISystemConfigService configService)
         {
             _env = env;
             _logger = logger;
+            _configService = configService;
         }
 
         public async Task<ServiceResult<string>> UploadFileAsync(IFormFile file, string subDirectory = "media")
@@ -24,8 +26,16 @@ namespace Sqeez.Api.Services
             if (file == null || file.Length == 0)
                 return ServiceResult<string>.Failure("No file was uploaded.", ServiceError.ValidationFailed);
 
-            if (file.Length > MaxFileSize)
-                return ServiceResult<string>.Failure("File is too large. Maximum allowed size is 5 MB.", ServiceError.ValidationFailed);
+            var config = await _configService.GetConfigAsync();
+
+            long maxSizeBytes = config.Data!.MaxFileUploadSizeMB * 1024 * 1024;
+
+            if (file.Length > maxSizeBytes)
+            {
+                return ServiceResult<string>.Failure(
+                    $"File is too large. Maximum allowed size is {config.Data.MaxFileUploadSizeMB} MB.",
+                    ServiceError.ValidationFailed);
+            }
 
             var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
             if (string.IsNullOrEmpty(extension) || !_allowedExtensions.Contains(extension))

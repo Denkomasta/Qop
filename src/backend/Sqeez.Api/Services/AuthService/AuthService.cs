@@ -4,6 +4,7 @@ using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Users;
+using Sqeez.Api.Services.Interfaces;
 using Sqeez.Api.Services.TokenService;
 using BC = BCrypt.Net.BCrypt;
 
@@ -12,11 +13,13 @@ namespace Sqeez.Api.Services.AuthService
     public class AuthService : BaseService<AuthService>, IAuthService
     {
         private readonly ITokenService _tokenService;
+        private readonly ISystemConfigService _configService;
         private readonly string _superUserEmail;
 
-        public AuthService(SqeezDbContext context, IConfiguration config, ITokenService tokenService, ILogger<AuthService> logger) : base(context, logger)
+        public AuthService(SqeezDbContext context, IConfiguration config, ITokenService tokenService, ISystemConfigService configService, ILogger<AuthService> logger) : base(context, logger)
         {
             _tokenService = tokenService;
+            _configService = configService;
             _superUserEmail = config["SUPER_USER_EMAIL"]?.Trim().ToLower() ?? string.Empty;
         }
 
@@ -42,6 +45,14 @@ namespace Sqeez.Api.Services.AuthService
         public async Task<ServiceResult<string>> RegisterAsync(RegisterDTO dto)
         {
             _logger.LogInformation("Attempting to register user: {Email}", dto.Email);
+
+            var config = await _configService.GetConfigAsync();
+            if (!config.Data!.AllowPublicRegistration)
+            {
+                return ServiceResult<string>.Failure(
+                    "Public registration is currently closed. Please contact your administrator for an invite.",
+                    ServiceError.Forbidden);
+            }
 
             string email = dto.Email.Trim().ToLower();
             string salt = BC.GenerateSalt(12);

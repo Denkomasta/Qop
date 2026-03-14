@@ -183,7 +183,7 @@ namespace Sqeez.Api.Services.AuthService
                 Username: user.Username,
                 Email: user.Email,
                 CurrentXP: user.CurrentXP.ToString(),
-                Role: user.Role.ToString(),
+                Role: user.Role,
                 AvatarUrl: user.AvatarUrl
             );
             return ServiceResult<UserDTO>.Ok(result);

@@ -5,9 +5,6 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface RegisterDTO {
-  username: string
-  email: string
-  password: string
-  rememberMe?: boolean
+export interface AssignStudentsDto {
+  studentIds: (number | string)[]
 }

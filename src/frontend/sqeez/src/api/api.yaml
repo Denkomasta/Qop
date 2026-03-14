@@ -1,10 +1,127 @@
 openapi: 3.1.1
 info:
   title: Sqeez.Api | v1
-  version: 1.0.2
+  version: 1.0.0
 servers:
   - url: http://localhost:5000/
 paths:
+  /api/admins:
+    get:
+      tags:
+        - Admins
+      parameters:
+        - name: PhoneNumber
+          in: query
+          schema:
+            type: string
+        - name: StrictRoleOnly
+          in: query
+          schema:
+            type: boolean
+        - name: Department
+          in: query
+          schema:
+            type: string
+        - name: SearchTerm
+          in: query
+          schema:
+            type: string
+        - name: IsOnline
+          in: query
+          schema:
+            type: boolean
+        - name: SchoolClassId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: IsArchived
+          in: query
+          schema:
+            type: boolean
+        - name: PageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: PageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+      responses:
+        "200":
+          description: OK
+  /api/admins/{id}:
+    get:
+      tags:
+        - Admins
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+        - Admins
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchAdminDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/PatchAdminDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/PatchAdminDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags:
+        - Admins
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
   /api/auth/register:
     post:
       tags:
@@ -40,6 +157,13 @@ paths:
             schema:
               $ref: "#/components/schemas/LoginDTO"
         required: true
+      responses:
+        "200":
+          description: OK
+  /api/auth/refresh:
+    post:
+      tags:
+        - Auth
       responses:
         "200":
           description: OK
@@ -86,31 +210,2084 @@ paths:
       responses:
         "200":
           description: OK
+  /api/badges:
+    post:
+      tags:
+        - Badges
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                Name:
+                  type: string
+                Description:
+                  type: string
+                XpBonus:
+                  pattern: ^-?(?:0|[1-9]\d*)$
+                  type:
+                    - integer
+                    - string
+                  format: int32
+                IconFile:
+                  $ref: "#/components/schemas/IFormFile"
+                Rules:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/CreateBadgeRuleDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+    get:
+      tags:
+        - Badges
+      responses:
+        "200":
+          description: OK
+  /api/badges/{id}:
+    patch:
+      tags:
+        - Badges
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                Name:
+                  type: string
+                Description:
+                  type: string
+                XpBonus:
+                  pattern: ^-?(?:0|[1-9]\d*)$
+                  type:
+                    - integer
+                    - string
+                  format: int32
+                NewIconFile:
+                  $ref: "#/components/schemas/IFormFile"
+                Rules:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/UpdateBadgeRuleDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags:
+        - Badges
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/badges/{badgeId}/award/{studentId}:
+    post:
+      tags:
+        - Badges
+      parameters:
+        - name: badgeId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/badges/my-badges:
+    get:
+      tags:
+        - Badges
+      responses:
+        "200":
+          description: OK
+  /api/enrollments:
+    get:
+      tags:
+        - Enrollments
+      parameters:
+        - name: Mark
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: StudentId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: SubjectId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: IsActive
+          in: query
+          schema:
+            type: boolean
+        - name: IsDescending
+          in: query
+          schema:
+            type: boolean
+        - name: PageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: PageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+      responses:
+        "200":
+          description: OK
+  /api/enrollments/{id}:
+    get:
+      tags:
+        - Enrollments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+        - Enrollments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchEnrollmentDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/PatchEnrollmentDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/PatchEnrollmentDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags:
+        - Enrollments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/media-assets:
+    get:
+      tags:
+        - MediaAssets
+      parameters:
+        - name: SearchTerm
+          in: query
+          schema:
+            type: string
+        - name: MimeType
+          in: query
+          schema:
+            $ref: "#/components/schemas/MediaType"
+        - name: IsPrivate
+          in: query
+          schema:
+            type: boolean
+        - name: OwnerId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: PageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: PageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+      responses:
+        "200":
+          description: OK
+    post:
+      tags:
+        - MediaAssets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMediaAssetDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/CreateMediaAssetDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/CreateMediaAssetDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/media-assets/{id}:
+    get:
+      tags:
+        - MediaAssets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+        - MediaAssets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchMediaAssetDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/PatchMediaAssetDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/PatchMediaAssetDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags:
+        - MediaAssets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/media-assets/upload:
+    post:
+      tags:
+        - MediaAssets
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                File:
+                  $ref: "#/components/schemas/IFormFile"
+                OwnerId:
+                  pattern: ^-?(?:0|[1-9]\d*)$
+                  type:
+                    - integer
+                    - string
+                  format: int64
+                IsPrivate:
+                  type: boolean
+                Description:
+                  type: string
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/media-assets/{id}/file:
+    get:
+      tags:
+        - MediaAssets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/quiz-attempts/start:
+    post:
+      tags:
+        - QuizAttempts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StartQuizAttemptDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/StartQuizAttemptDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/StartQuizAttemptDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/quiz-attempts/{id}/answer:
+    post:
+      tags:
+        - QuizAttempts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitQuestionResponseDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/SubmitQuestionResponseDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/SubmitQuestionResponseDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/quiz-attempts/{id}/next-question:
+    get:
+      tags:
+        - QuizAttempts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/quiz-attempts/{id}/complete:
+    post:
+      tags:
+        - QuizAttempts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/quiz-attempts/{id}:
+    get:
+      tags:
+        - QuizAttempts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags:
+        - QuizAttempts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/quiz-attempts/quiz/{quizId}:
+    get:
+      tags:
+        - QuizAttempts
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: pageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 20
+      responses:
+        "200":
+          description: OK
+  /api/quiz-attempts/responses/{responseId}/grade:
+    patch:
+      tags:
+        - QuizAttempts
+      parameters:
+        - name: responseId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GradeQuestionResponseDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/GradeQuestionResponseDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/GradeQuestionResponseDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/quizzes/{quizId}:
+    get:
+      tags:
+        - Quizzes
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+        - Quizzes
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchQuizDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/PatchQuizDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/PatchQuizDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags:
+        - Quizzes
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/quizzes/{quizId}/questions:
+    get:
+      tags:
+        - Quizzes
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: SearchTerm
+          in: query
+          schema:
+            type: string
+        - name: Difficulty
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: QuizId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: MediaAssetId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: PageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: PageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+      responses:
+        "200":
+          description: OK
+    post:
+      tags:
+        - Quizzes
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateQuizQuestionDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/CreateQuizQuestionDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/CreateQuizQuestionDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/quizzes/{quizId}/questions/{questionId}:
+    get:
+      tags:
+        - Quizzes
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+        - Quizzes
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchQuizQuestionDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/PatchQuizQuestionDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/PatchQuizQuestionDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags:
+        - Quizzes
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/quizzes/{quizId}/questions/{questionId}/options:
+    get:
+      tags:
+        - Quizzes
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: SearchTerm
+          in: query
+          schema:
+            type: string
+        - name: IsFreeText
+          in: query
+          schema:
+            type: boolean
+        - name: IsCorrect
+          in: query
+          schema:
+            type: boolean
+        - name: QuizQuestionId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: MediaAssetId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: PageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: PageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+      responses:
+        "200":
+          description: OK
+    post:
+      tags:
+        - Quizzes
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateQuizOptionDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/CreateQuizOptionDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/CreateQuizOptionDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/quizzes/{quizId}/questions/{questionId}/options/{optionId}:
+    get:
+      tags:
+        - Quizzes
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: optionId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+        - Quizzes
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: optionId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchQuizOptionDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/PatchQuizOptionDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/PatchQuizOptionDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags:
+        - Quizzes
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: optionId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/classes:
+    get:
+      tags:
+        - SchoolClasses
+      parameters:
+        - name: SearchTerm
+          in: query
+          schema:
+            type: string
+        - name: AcademicYear
+          in: query
+          schema:
+            type: string
+        - name: TeacherId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: PageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: PageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+      responses:
+        "200":
+          description: OK
+    post:
+      tags:
+        - SchoolClasses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSchoolClassDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/CreateSchoolClassDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/CreateSchoolClassDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/classes/{id}:
+    get:
+      tags:
+        - SchoolClasses
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+        - SchoolClasses
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchSchoolClassDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/PatchSchoolClassDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/PatchSchoolClassDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags:
+        - SchoolClasses
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/classes/{id}/students:
+    post:
+      tags:
+        - SchoolClasses
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssignStudentsDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/AssignStudentsDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/AssignStudentsDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/classes/{id}/students/remove:
+    post:
+      tags:
+        - SchoolClasses
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemoveStudentsDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/RemoveStudentsDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/RemoveStudentsDto"
+        required: true
+      responses:
+        "200":
+          description: OK
   /api/students:
     get:
       tags:
         - Students
+      parameters:
+        - name: SearchTerm
+          in: query
+          schema:
+            type: string
+        - name: IsOnline
+          in: query
+          schema:
+            type: boolean
+        - name: SchoolClassId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: IsArchived
+          in: query
+          schema:
+            type: boolean
+        - name: StrictRoleOnly
+          in: query
+          schema:
+            type: boolean
+        - name: PageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: PageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
       responses:
         "200":
           description: OK
-          content:
-            text/plain:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/StudentResponseDTO"
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/StudentResponseDTO"
-            text/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/StudentResponseDTO"
+  /api/students/{id}:
+    get:
+      tags:
+        - Students
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+        - Students
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchStudentDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/PatchStudentDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/PatchStudentDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags:
+        - Students
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/subjects:
+    get:
+      tags:
+        - Subjects
+      parameters:
+        - name: SearchTerm
+          in: query
+          schema:
+            type: string
+        - name: Code
+          in: query
+          schema:
+            type: string
+        - name: TeacherId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: SchoolClassId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: IsActive
+          in: query
+          schema:
+            type: boolean
+        - name: StartingAfter
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: IsDescending
+          in: query
+          schema:
+            type: boolean
+        - name: PageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: PageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+      responses:
+        "200":
+          description: OK
+    post:
+      tags:
+        - Subjects
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSubjectDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/CreateSubjectDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/CreateSubjectDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/subjects/{id}:
+    get:
+      tags:
+        - Subjects
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+        - Subjects
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchSubjectDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/PatchSubjectDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/PatchSubjectDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags:
+        - Subjects
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/subjects/{subjectId}/enrollments:
+    get:
+      tags:
+        - Subjects
+      parameters:
+        - name: subjectId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: Mark
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: StudentId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: SubjectId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: IsActive
+          in: query
+          schema:
+            type: boolean
+        - name: IsDescending
+          in: query
+          schema:
+            type: boolean
+        - name: PageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: PageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+      responses:
+        "200":
+          description: OK
+    post:
+      tags:
+        - Subjects
+      parameters:
+        - name: subjectId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssignStudentsDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/AssignStudentsDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/AssignStudentsDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags:
+        - Subjects
+      parameters:
+        - name: subjectId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemoveStudentsDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/RemoveStudentsDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/RemoveStudentsDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/subjects/{subjectId}/quizzes:
+    get:
+      tags:
+        - Subjects
+      parameters:
+        - name: subjectId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: SearchTerm
+          in: query
+          schema:
+            type: string
+        - name: IsActive
+          in: query
+          schema:
+            type: boolean
+        - name: PublishDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: ClosingDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: SubjectId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: PageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: PageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+      responses:
+        "200":
+          description: OK
+    post:
+      tags:
+        - Subjects
+      parameters:
+        - name: subjectId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateQuizDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/CreateQuizDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/CreateQuizDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/system-config:
+    get:
+      tags:
+        - SystemConfig
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+        - SystemConfig
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSystemConfigDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSystemConfigDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/UpdateSystemConfigDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/teachers:
+    get:
+      tags:
+        - Teachers
+      parameters:
+        - name: Department
+          in: query
+          schema:
+            type: string
+        - name: SearchTerm
+          in: query
+          schema:
+            type: string
+        - name: IsOnline
+          in: query
+          schema:
+            type: boolean
+        - name: SchoolClassId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: IsArchived
+          in: query
+          schema:
+            type: boolean
+        - name: StrictRoleOnly
+          in: query
+          schema:
+            type: boolean
+        - name: PageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: PageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+      responses:
+        "200":
+          description: OK
+  /api/teachers/{id}:
+    get:
+      tags:
+        - Teachers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+        - Teachers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchTeacherDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/PatchTeacherDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/PatchTeacherDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags:
+        - Teachers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/users/me/avatar:
+    post:
+      tags:
+        - User
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  $ref: "#/components/schemas/IFormFile"
+        required: true
+      responses:
+        "200":
+          description: OK
 components:
   schemas:
+    AssignStudentsDto:
+      required:
+        - studentIds
+      type: object
+      properties:
+        studentIds:
+          type: array
+          items:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+    BadgeMetric:
+      enum:
+        - ScorePercentage
+        - TotalScore
+        - PerfectAnswersCount
+        - TotalAttempts
+    BadgeOperator:
+      enum:
+        - Equals
+        - GreaterThan
+        - GreaterThanOrEqual
+        - LessThan
+        - LessThanOrEqual
+        - NotEquals
+    CreateBadgeRuleDto:
+      required:
+        - metric
+        - operator
+        - targetValue
+      type: object
+      properties:
+        metric:
+          $ref: "#/components/schemas/BadgeMetric"
+        operator:
+          $ref: "#/components/schemas/BadgeOperator"
+        targetValue:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
+          type:
+            - number
+            - string
+          format: double
+    CreateMediaAssetDto:
+      required:
+        - locationUrl
+        - mimeType
+        - isPrivate
+        - ownerId
+      type: object
+      properties:
+        locationUrl:
+          type: string
+        mimeType:
+          $ref: "#/components/schemas/MediaType"
+        isPrivate:
+          type: boolean
+        ownerId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        description:
+          type:
+            - "null"
+            - string
+    CreateQuizDto:
+      required:
+        - title
+        - description
+        - subjectId
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        subjectId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        maxRetries:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+          default: 0
+        publishDate:
+          type:
+            - "null"
+            - string
+          format: date-time
+        closingDate:
+          type:
+            - "null"
+            - string
+          format: date-time
+    CreateQuizOptionDto:
+      required:
+        - isCorrect
+        - quizQuestionID
+      type: object
+      properties:
+        isCorrect:
+          type: boolean
+        quizQuestionID:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        text:
+          type:
+            - "null"
+            - string
+        isFreeText:
+          type: boolean
+          default: false
+        mediaAssetId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    CreateQuizQuestionDto:
+      required:
+        - title
+        - difficulty
+        - timeLimit
+        - quizId
+      type: object
+      properties:
+        title:
+          type: string
+        difficulty:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        timeLimit:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        quizId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        mediaAssetId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    CreateSchoolClassDto:
+      required:
+        - name
+        - academicYear
+        - section
+        - teacherId
+      type: object
+      properties:
+        name:
+          type: string
+        academicYear:
+          type: string
+        section:
+          type: string
+        teacherId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    CreateSubjectDto:
+      required:
+        - name
+        - code
+      type: object
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        description:
+          type:
+            - "null"
+            - string
+        startDate:
+          type:
+            - "null"
+            - string
+          format: date-time
+        endDate:
+          type:
+            - "null"
+            - string
+          format: date-time
+        teacherId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    GradeQuestionResponseDto:
+      required:
+        - score
+        - isLiked
+      type: object
+      properties:
+        score:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        isLiked:
+          type: boolean
+    IFormFile:
+      type: string
+      format: binary
     LoginDTO:
       required:
         - email
@@ -121,6 +2298,287 @@ components:
           type: string
         password:
           type: string
+        rememberMe:
+          type: boolean
+          default: false
+    MediaType:
+      enum:
+        - Image
+        - Video
+        - Audio
+        - Document
+        - null
+    PatchAdminDto:
+      type: object
+      properties:
+        phoneNumber:
+          type:
+            - "null"
+            - string
+        department:
+          type:
+            - "null"
+            - string
+        managedClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        username:
+          type:
+            - "null"
+            - string
+        email:
+          type:
+            - "null"
+            - string
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        avatarUrl:
+          type:
+            - "null"
+            - string
+    PatchEnrollmentDto:
+      type: object
+      properties:
+        mark:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int32
+        removeMark:
+          type:
+            - "null"
+            - boolean
+    PatchMediaAssetDto:
+      type: object
+      properties:
+        locationUrl:
+          type:
+            - "null"
+            - string
+        mimeType:
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/MediaType"
+        isPrivate:
+          type:
+            - "null"
+            - boolean
+        description:
+          type:
+            - "null"
+            - string
+    PatchQuizDto:
+      type: object
+      properties:
+        title:
+          type:
+            - "null"
+            - string
+        description:
+          type:
+            - "null"
+            - string
+        maxRetries:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int32
+        subjectId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        publishDate:
+          type:
+            - "null"
+            - string
+          format: date-time
+        closingDate:
+          type:
+            - "null"
+            - string
+          format: date-time
+    PatchQuizOptionDto:
+      type: object
+      properties:
+        text:
+          type:
+            - "null"
+            - string
+        isFreeText:
+          type:
+            - "null"
+            - boolean
+        isCorrect:
+          type:
+            - "null"
+            - boolean
+        mediaAssetId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    PatchQuizQuestionDto:
+      type: object
+      properties:
+        title:
+          type:
+            - "null"
+            - string
+        difficulty:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int32
+        timeLimit:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int32
+        mediaAssetId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    PatchSchoolClassDto:
+      type: object
+      properties:
+        name:
+          type:
+            - "null"
+            - string
+        academicYear:
+          type:
+            - "null"
+            - string
+        section:
+          type:
+            - "null"
+            - string
+        teacherId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    PatchStudentDto:
+      type: object
+      properties:
+        username:
+          type:
+            - "null"
+            - string
+        email:
+          type:
+            - "null"
+            - string
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        avatarUrl:
+          type:
+            - "null"
+            - string
+    PatchSubjectDto:
+      type: object
+      properties:
+        name:
+          type:
+            - "null"
+            - string
+        code:
+          type:
+            - "null"
+            - string
+        description:
+          type:
+            - "null"
+            - string
+        startDate:
+          type:
+            - "null"
+            - string
+          format: date-time
+        endDate:
+          type:
+            - "null"
+            - string
+          format: date-time
+        teacherId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    PatchTeacherDto:
+      type: object
+      properties:
+        department:
+          type:
+            - "null"
+            - string
+        managedClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        username:
+          type:
+            - "null"
+            - string
+        email:
+          type:
+            - "null"
+            - string
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        avatarUrl:
+          type:
+            - "null"
+            - string
     RegisterDTO:
       required:
         - username
@@ -134,36 +2592,101 @@ components:
           type: string
         password:
           type: string
-    StudentResponseDTO:
+        rememberMe:
+          type: boolean
+          default: false
+    RemoveStudentsDto:
+      required:
+        - studentIds
       type: object
       properties:
-        id:
+        studentIds:
+          type: array
+          items:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+    StartQuizAttemptDto:
+      required:
+        - quizId
+        - enrollmentId
+      type: object
+      properties:
+        quizId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
           format: int64
-        username:
-          type: string
-        email:
-          type: string
-        currentXP:
+        enrollmentId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
-          format: int32
-        role:
-          $ref: "#/components/schemas/UserRole"
-        lastSeen:
-          type: string
-          format: date-time
+          format: int64
+    SubmitQuestionResponseDto:
+      required:
+        - quizQuestionId
+        - responseTimeMs
+        - freeTextAnswer
+        - selectedOptionIds
+      type: object
+      properties:
+        quizQuestionId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        responseTimeMs:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        freeTextAnswer:
+          type:
+            - "null"
+            - string
+        selectedOptionIds:
+          type: array
+          items:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+    UpdateBadgeRuleDto:
+      required:
+        - id
+        - metric
+        - operator
+        - targetValue
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        metric:
+          $ref: "#/components/schemas/BadgeMetric"
+        operator:
+          $ref: "#/components/schemas/BadgeOperator"
+        targetValue:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
+          type:
+            - number
+            - string
+          format: double
     UpdateRoleDTO:
       required:
         - id
         - role
-        - department
-        - phoneNumber
       type: object
       properties:
         id:
@@ -182,6 +2705,61 @@ components:
           type:
             - "null"
             - string
+    UpdateSystemConfigDto:
+      required:
+        - schoolName
+        - logoUrl
+        - supportEmail
+        - defaultLanguage
+        - currentAcademicYear
+        - allowPublicRegistration
+        - requireEmailVerification
+        - maxFileUploadSizeMB
+        - maxActiveSessionsPerUser
+      type: object
+      properties:
+        schoolName:
+          type:
+            - "null"
+            - string
+        logoUrl:
+          type:
+            - "null"
+            - string
+        supportEmail:
+          type:
+            - "null"
+            - string
+        defaultLanguage:
+          type:
+            - "null"
+            - string
+        currentAcademicYear:
+          type:
+            - "null"
+            - string
+        allowPublicRegistration:
+          type:
+            - "null"
+            - boolean
+        requireEmailVerification:
+          type:
+            - "null"
+            - boolean
+        maxFileUploadSizeMB:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int32
+        maxActiveSessionsPerUser:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int32
     UserDTO:
       required:
         - id
@@ -189,8 +2767,7 @@ components:
         - email
         - currentXP
         - role
-        - department
-        - phoneNumber
+        - avatarUrl
       type: object
       properties:
         id:
@@ -206,17 +2783,27 @@ components:
         currentXP:
           type: string
         role:
-          type: string
-        department:
-          type:
-            - "null"
-            - string
-        phoneNumber:
+          $ref: "#/components/schemas/UserRole"
+        avatarUrl:
           type:
             - "null"
             - string
     UserRole:
-      type: integer
+      enum:
+        - Student
+        - Teacher
+        - Admin
 tags:
+  - name: Admins
   - name: Auth
+  - name: Badges
+  - name: Enrollments
+  - name: MediaAssets
+  - name: QuizAttempts
+  - name: Quizzes
+  - name: SchoolClasses
   - name: Students
+  - name: Subjects
+  - name: SystemConfig
+  - name: Teachers
+  - name: User

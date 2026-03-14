@@ -68,6 +68,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPost("upload")]
+        [Consumes("multipart/form-data")]
         public async Task<ActionResult> UploadFile([FromForm] UploadMediaAssetDto dto)
         {
             if (dto.File == null || dto.File.Length == 0)

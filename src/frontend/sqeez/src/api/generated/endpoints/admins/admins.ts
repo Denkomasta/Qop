@@ -20,74 +20,74 @@ import type {
   UseQueryResult,
 } from '@tanstack/react-query'
 
-import type { GetApiStudentsParams, PatchStudentDto } from '../../model'
+import type { GetApiAdminsParams, PatchAdminDto } from '../../model'
 
 import { customInstance } from '../../../custom-axios'
 import type { ErrorType } from '../../../custom-axios'
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
-export const getApiStudents = (
-  params?: GetApiStudentsParams,
+export const getApiAdmins = (
+  params?: GetApiAdminsParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   return customInstance<void>(
-    { url: `/api/students`, method: 'GET', params, signal },
+    { url: `/api/admins`, method: 'GET', params, signal },
     options,
   )
 }
 
-export const getGetApiStudentsQueryKey = (params?: GetApiStudentsParams) => {
-  return [`/api/students`, ...(params ? [params] : [])] as const
+export const getGetApiAdminsQueryKey = (params?: GetApiAdminsParams) => {
+  return [`/api/admins`, ...(params ? [params] : [])] as const
 }
 
-export const getGetApiStudentsQueryOptions = <
-  TData = Awaited<ReturnType<typeof getApiStudents>>,
+export const getGetApiAdminsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getApiAdmins>>,
   TError = ErrorType<unknown>,
 >(
-  params?: GetApiStudentsParams,
+  params?: GetApiAdminsParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getApiStudents>>, TError, TData>
+      UseQueryOptions<Awaited<ReturnType<typeof getApiAdmins>>, TError, TData>
     >
     request?: SecondParameter<typeof customInstance>
   },
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey = queryOptions?.queryKey ?? getGetApiStudentsQueryKey(params)
+  const queryKey = queryOptions?.queryKey ?? getGetApiAdminsQueryKey(params)
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiStudents>>> = ({
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiAdmins>>> = ({
     signal,
-  }) => getApiStudents(params, requestOptions, signal)
+  }) => getApiAdmins(params, requestOptions, signal)
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getApiStudents>>,
+    Awaited<ReturnType<typeof getApiAdmins>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetApiStudentsQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getApiStudents>>
+export type GetApiAdminsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getApiAdmins>>
 >
-export type GetApiStudentsQueryError = ErrorType<unknown>
+export type GetApiAdminsQueryError = ErrorType<unknown>
 
-export function useGetApiStudents<
-  TData = Awaited<ReturnType<typeof getApiStudents>>,
+export function useGetApiAdmins<
+  TData = Awaited<ReturnType<typeof getApiAdmins>>,
   TError = ErrorType<unknown>,
 >(
-  params: undefined | GetApiStudentsParams,
+  params: undefined | GetApiAdminsParams,
   options: {
     query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getApiStudents>>, TError, TData>
+      UseQueryOptions<Awaited<ReturnType<typeof getApiAdmins>>, TError, TData>
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiStudents>>,
+          Awaited<ReturnType<typeof getApiAdmins>>,
           TError,
-          Awaited<ReturnType<typeof getApiStudents>>
+          Awaited<ReturnType<typeof getApiAdmins>>
         >,
         'initialData'
       >
@@ -97,20 +97,20 @@ export function useGetApiStudents<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
-export function useGetApiStudents<
-  TData = Awaited<ReturnType<typeof getApiStudents>>,
+export function useGetApiAdmins<
+  TData = Awaited<ReturnType<typeof getApiAdmins>>,
   TError = ErrorType<unknown>,
 >(
-  params?: GetApiStudentsParams,
+  params?: GetApiAdminsParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getApiStudents>>, TError, TData>
+      UseQueryOptions<Awaited<ReturnType<typeof getApiAdmins>>, TError, TData>
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiStudents>>,
+          Awaited<ReturnType<typeof getApiAdmins>>,
           TError,
-          Awaited<ReturnType<typeof getApiStudents>>
+          Awaited<ReturnType<typeof getApiAdmins>>
         >,
         'initialData'
       >
@@ -120,14 +120,14 @@ export function useGetApiStudents<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
-export function useGetApiStudents<
-  TData = Awaited<ReturnType<typeof getApiStudents>>,
+export function useGetApiAdmins<
+  TData = Awaited<ReturnType<typeof getApiAdmins>>,
   TError = ErrorType<unknown>,
 >(
-  params?: GetApiStudentsParams,
+  params?: GetApiAdminsParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getApiStudents>>, TError, TData>
+      UseQueryOptions<Awaited<ReturnType<typeof getApiAdmins>>, TError, TData>
     >
     request?: SecondParameter<typeof customInstance>
   },
@@ -136,14 +136,14 @@ export function useGetApiStudents<
   queryKey: DataTag<QueryKey, TData, TError>
 }
 
-export function useGetApiStudents<
-  TData = Awaited<ReturnType<typeof getApiStudents>>,
+export function useGetApiAdmins<
+  TData = Awaited<ReturnType<typeof getApiAdmins>>,
   TError = ErrorType<unknown>,
 >(
-  params?: GetApiStudentsParams,
+  params?: GetApiAdminsParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getApiStudents>>, TError, TData>
+      UseQueryOptions<Awaited<ReturnType<typeof getApiAdmins>>, TError, TData>
     >
     request?: SecondParameter<typeof customInstance>
   },
@@ -151,7 +151,7 @@ export function useGetApiStudents<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 } {
-  const queryOptions = getGetApiStudentsQueryOptions(params, options)
+  const queryOptions = getGetApiAdminsQueryOptions(params, options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -161,44 +161,40 @@ export function useGetApiStudents<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
-export const getApiStudentsId = (
+export const getApiAdminsId = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   return customInstance<void>(
-    { url: `/api/students/${id}`, method: 'GET', signal },
+    { url: `/api/admins/${id}`, method: 'GET', signal },
     options,
   )
 }
 
-export const getGetApiStudentsIdQueryKey = (id: number | string) => {
-  return [`/api/students/${id}`] as const
+export const getGetApiAdminsIdQueryKey = (id: number | string) => {
+  return [`/api/admins/${id}`] as const
 }
 
-export const getGetApiStudentsIdQueryOptions = <
-  TData = Awaited<ReturnType<typeof getApiStudentsId>>,
+export const getGetApiAdminsIdQueryOptions = <
+  TData = Awaited<ReturnType<typeof getApiAdminsId>>,
   TError = ErrorType<unknown>,
 >(
   id: number | string,
   options?: {
     query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getApiStudentsId>>,
-        TError,
-        TData
-      >
+      UseQueryOptions<Awaited<ReturnType<typeof getApiAdminsId>>, TError, TData>
     >
     request?: SecondParameter<typeof customInstance>
   },
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey = queryOptions?.queryKey ?? getGetApiStudentsIdQueryKey(id)
+  const queryKey = queryOptions?.queryKey ?? getGetApiAdminsIdQueryKey(id)
 
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getApiStudentsId>>
-  > = ({ signal }) => getApiStudentsId(id, requestOptions, signal)
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiAdminsId>>> = ({
+    signal,
+  }) => getApiAdminsId(id, requestOptions, signal)
 
   return {
     queryKey,
@@ -206,35 +202,31 @@ export const getGetApiStudentsIdQueryOptions = <
     enabled: !!id,
     ...queryOptions,
   } as UseQueryOptions<
-    Awaited<ReturnType<typeof getApiStudentsId>>,
+    Awaited<ReturnType<typeof getApiAdminsId>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetApiStudentsIdQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getApiStudentsId>>
+export type GetApiAdminsIdQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getApiAdminsId>>
 >
-export type GetApiStudentsIdQueryError = ErrorType<unknown>
+export type GetApiAdminsIdQueryError = ErrorType<unknown>
 
-export function useGetApiStudentsId<
-  TData = Awaited<ReturnType<typeof getApiStudentsId>>,
+export function useGetApiAdminsId<
+  TData = Awaited<ReturnType<typeof getApiAdminsId>>,
   TError = ErrorType<unknown>,
 >(
   id: number | string,
   options: {
     query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getApiStudentsId>>,
-        TError,
-        TData
-      >
+      UseQueryOptions<Awaited<ReturnType<typeof getApiAdminsId>>, TError, TData>
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiStudentsId>>,
+          Awaited<ReturnType<typeof getApiAdminsId>>,
           TError,
-          Awaited<ReturnType<typeof getApiStudentsId>>
+          Awaited<ReturnType<typeof getApiAdminsId>>
         >,
         'initialData'
       >
@@ -244,24 +236,20 @@ export function useGetApiStudentsId<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
-export function useGetApiStudentsId<
-  TData = Awaited<ReturnType<typeof getApiStudentsId>>,
+export function useGetApiAdminsId<
+  TData = Awaited<ReturnType<typeof getApiAdminsId>>,
   TError = ErrorType<unknown>,
 >(
   id: number | string,
   options?: {
     query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getApiStudentsId>>,
-        TError,
-        TData
-      >
+      UseQueryOptions<Awaited<ReturnType<typeof getApiAdminsId>>, TError, TData>
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiStudentsId>>,
+          Awaited<ReturnType<typeof getApiAdminsId>>,
           TError,
-          Awaited<ReturnType<typeof getApiStudentsId>>
+          Awaited<ReturnType<typeof getApiAdminsId>>
         >,
         'initialData'
       >
@@ -271,18 +259,14 @@ export function useGetApiStudentsId<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
-export function useGetApiStudentsId<
-  TData = Awaited<ReturnType<typeof getApiStudentsId>>,
+export function useGetApiAdminsId<
+  TData = Awaited<ReturnType<typeof getApiAdminsId>>,
   TError = ErrorType<unknown>,
 >(
   id: number | string,
   options?: {
     query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getApiStudentsId>>,
-        TError,
-        TData
-      >
+      UseQueryOptions<Awaited<ReturnType<typeof getApiAdminsId>>, TError, TData>
     >
     request?: SecondParameter<typeof customInstance>
   },
@@ -291,18 +275,14 @@ export function useGetApiStudentsId<
   queryKey: DataTag<QueryKey, TData, TError>
 }
 
-export function useGetApiStudentsId<
-  TData = Awaited<ReturnType<typeof getApiStudentsId>>,
+export function useGetApiAdminsId<
+  TData = Awaited<ReturnType<typeof getApiAdminsId>>,
   TError = ErrorType<unknown>,
 >(
   id: number | string,
   options?: {
     query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getApiStudentsId>>,
-        TError,
-        TData
-      >
+      UseQueryOptions<Awaited<ReturnType<typeof getApiAdminsId>>, TError, TData>
     >
     request?: SecondParameter<typeof customInstance>
   },
@@ -310,7 +290,7 @@ export function useGetApiStudentsId<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 } {
-  const queryOptions = getGetApiStudentsIdQueryOptions(id, options)
+  const queryOptions = getGetApiAdminsIdQueryOptions(id, options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -320,42 +300,42 @@ export function useGetApiStudentsId<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
-export const patchApiStudentsId = (
+export const patchApiAdminsId = (
   id: number | string,
-  patchStudentDto: PatchStudentDto,
+  patchAdminDto: PatchAdminDto,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   return customInstance<void>(
     {
-      url: `/api/students/${id}`,
+      url: `/api/admins/${id}`,
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      data: patchStudentDto,
+      data: patchAdminDto,
       signal,
     },
     options,
   )
 }
 
-export const getPatchApiStudentsIdMutationOptions = <
+export const getPatchApiAdminsIdMutationOptions = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof patchApiStudentsId>>,
+    Awaited<ReturnType<typeof patchApiAdminsId>>,
     TError,
-    { id: number | string; data: PatchStudentDto },
+    { id: number | string; data: PatchAdminDto },
     TContext
   >
   request?: SecondParameter<typeof customInstance>
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof patchApiStudentsId>>,
+  Awaited<ReturnType<typeof patchApiAdminsId>>,
   TError,
-  { id: number | string; data: PatchStudentDto },
+  { id: number | string; data: PatchAdminDto },
   TContext
 > => {
-  const mutationKey = ['patchApiStudentsId']
+  const mutationKey = ['patchApiAdminsId']
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -365,74 +345,74 @@ export const getPatchApiStudentsIdMutationOptions = <
     : { mutation: { mutationKey }, request: undefined }
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof patchApiStudentsId>>,
-    { id: number | string; data: PatchStudentDto }
+    Awaited<ReturnType<typeof patchApiAdminsId>>,
+    { id: number | string; data: PatchAdminDto }
   > = (props) => {
     const { id, data } = props ?? {}
 
-    return patchApiStudentsId(id, data, requestOptions)
+    return patchApiAdminsId(id, data, requestOptions)
   }
 
   return { mutationFn, ...mutationOptions }
 }
 
-export type PatchApiStudentsIdMutationResult = NonNullable<
-  Awaited<ReturnType<typeof patchApiStudentsId>>
+export type PatchApiAdminsIdMutationResult = NonNullable<
+  Awaited<ReturnType<typeof patchApiAdminsId>>
 >
-export type PatchApiStudentsIdMutationBody = PatchStudentDto
-export type PatchApiStudentsIdMutationError = ErrorType<unknown>
+export type PatchApiAdminsIdMutationBody = PatchAdminDto
+export type PatchApiAdminsIdMutationError = ErrorType<unknown>
 
-export const usePatchApiStudentsId = <
+export const usePatchApiAdminsId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof patchApiStudentsId>>,
+      Awaited<ReturnType<typeof patchApiAdminsId>>,
       TError,
-      { id: number | string; data: PatchStudentDto },
+      { id: number | string; data: PatchAdminDto },
       TContext
     >
     request?: SecondParameter<typeof customInstance>
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof patchApiStudentsId>>,
+  Awaited<ReturnType<typeof patchApiAdminsId>>,
   TError,
-  { id: number | string; data: PatchStudentDto },
+  { id: number | string; data: PatchAdminDto },
   TContext
 > => {
-  return useMutation(getPatchApiStudentsIdMutationOptions(options), queryClient)
+  return useMutation(getPatchApiAdminsIdMutationOptions(options), queryClient)
 }
-export const deleteApiStudentsId = (
+export const deleteApiAdminsId = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   return customInstance<void>(
-    { url: `/api/students/${id}`, method: 'DELETE', signal },
+    { url: `/api/admins/${id}`, method: 'DELETE', signal },
     options,
   )
 }
 
-export const getDeleteApiStudentsIdMutationOptions = <
+export const getDeleteApiAdminsIdMutationOptions = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteApiStudentsId>>,
+    Awaited<ReturnType<typeof deleteApiAdminsId>>,
     TError,
     { id: number | string },
     TContext
   >
   request?: SecondParameter<typeof customInstance>
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteApiStudentsId>>,
+  Awaited<ReturnType<typeof deleteApiAdminsId>>,
   TError,
   { id: number | string },
   TContext
 > => {
-  const mutationKey = ['deleteApiStudentsId']
+  const mutationKey = ['deleteApiAdminsId']
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -442,30 +422,30 @@ export const getDeleteApiStudentsIdMutationOptions = <
     : { mutation: { mutationKey }, request: undefined }
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteApiStudentsId>>,
+    Awaited<ReturnType<typeof deleteApiAdminsId>>,
     { id: number | string }
   > = (props) => {
     const { id } = props ?? {}
 
-    return deleteApiStudentsId(id, requestOptions)
+    return deleteApiAdminsId(id, requestOptions)
   }
 
   return { mutationFn, ...mutationOptions }
 }
 
-export type DeleteApiStudentsIdMutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteApiStudentsId>>
+export type DeleteApiAdminsIdMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteApiAdminsId>>
 >
 
-export type DeleteApiStudentsIdMutationError = ErrorType<unknown>
+export type DeleteApiAdminsIdMutationError = ErrorType<unknown>
 
-export const useDeleteApiStudentsId = <
+export const useDeleteApiAdminsId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteApiStudentsId>>,
+      Awaited<ReturnType<typeof deleteApiAdminsId>>,
       TError,
       { id: number | string },
       TContext
@@ -474,13 +454,10 @@ export const useDeleteApiStudentsId = <
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof deleteApiStudentsId>>,
+  Awaited<ReturnType<typeof deleteApiAdminsId>>,
   TError,
   { id: number | string },
   TContext
 > => {
-  return useMutation(
-    getDeleteApiStudentsIdMutationOptions(options),
-    queryClient,
-  )
+  return useMutation(getDeleteApiAdminsIdMutationOptions(options), queryClient)
 }

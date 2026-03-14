@@ -58,7 +58,7 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
-        public async Task LoginAsync_WithValidCredentials_ReturnsTokensAndSetsOnline()
+        public async Task LoginAsync_WithValidCredentials_ReturnsTokensAndSetsLastSeen()
         {
             var context = await GetInMemoryDbContext();
             string password = "MySecretPassword123!";
@@ -67,7 +67,7 @@ namespace Sqeez.Api.Tests.Services
                 Username = "LoginUser",
                 Email = "login@sqeez.com",
                 PasswordHash = BC.HashPassword(password),
-                IsOnline = false
+                LastSeen = DateTime.UtcNow.AddMinutes(-2)
             };
             context.Students.Add(user);
             await context.SaveChangesAsync();
@@ -82,7 +82,7 @@ namespace Sqeez.Api.Tests.Services
             Assert.Equal("fake-refresh-token", result.Data.RefreshToken);
 
             var dbUser = await context.Students.FindAsync(user.Id);
-            Assert.True(dbUser!.IsOnline);
+            Assert.True(dbUser!.LastSeen >= DateTime.UtcNow.AddMinutes(-1));
 
             // Verify a session was saved
             var sessionCount = await context.UserSessions.CountAsync(s => s.UserId == user.Id);
@@ -160,7 +160,7 @@ namespace Sqeez.Api.Tests.Services
         public async Task RefreshTokenAsync_WhenValid_ReturnsNewTokensAndRevokesOld()
         {
             var context = await GetInMemoryDbContext();
-            var user = new Student { Username = "RefreshUser", Email = "refresh@sqeez.com" };
+            var user = new Student { Username = "RefreshUser", Email = "refresh@sqeez.com", LastSeen = DateTime.UtcNow.AddMinutes(-2) };
             context.Students.Add(user);
             await context.SaveChangesAsync();
 
@@ -188,10 +188,10 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
-        public async Task LogoutAsync_WhenUserExists_SetsOfflineAndRevokesSessions()
+        public async Task LogoutAsync_WhenUserExists_SetsLastSeenAndRevokesSessions()
         {
             var context = await GetInMemoryDbContext();
-            var user = new Student { Username = "OnlineUser", Email = "online@sqeez.com", IsOnline = true };
+            var user = new Student { Username = "OnlineUser", Email = "online@sqeez.com", LastSeen = DateTime.UtcNow.AddMinutes(-2) };
             context.Students.Add(user);
 
             var session = new UserSession { UserId = user.Id, RefreshToken = "my-token", IsRevoked = false };
@@ -206,7 +206,7 @@ namespace Sqeez.Api.Tests.Services
             Assert.True(result.Data);
 
             var dbUser = await context.Students.FindAsync(user.Id);
-            Assert.False(dbUser!.IsOnline);
+            Assert.True(dbUser!.LastSeen >= DateTime.UtcNow.AddMinutes(-1));
 
             var dbSession = await context.UserSessions.FindAsync(session.Id);
             Assert.True(dbSession!.IsRevoked);

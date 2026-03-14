@@ -151,7 +151,6 @@ namespace Sqeez.Api.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("IconUrl")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -508,15 +507,15 @@ namespace Sqeez.Api.Migrations
                     b.Property<DateTime?>("ArchivedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("AvatarUrl")
+                        .HasColumnType("text");
+
                     b.Property<int>("CurrentXP")
                         .HasColumnType("integer");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<bool>("IsOnline")
-                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("LastSeen")
                         .HasColumnType("timestamp with time zone");

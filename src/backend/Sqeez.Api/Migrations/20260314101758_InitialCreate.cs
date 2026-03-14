@@ -20,7 +20,7 @@ namespace Sqeez.Api.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    IconUrl = table.Column<string>(type: "text", nullable: false),
+                    IconUrl = table.Column<string>(type: "text", nullable: true),
                     XpBonus = table.Column<int>(type: "integer", nullable: false),
                     Condition = table.Column<string>(type: "text", nullable: false)
                 },
@@ -114,7 +114,7 @@ namespace Sqeez.Api.Migrations
                     Role = table.Column<int>(type: "integer", nullable: false),
                     LastSeen = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ArchivedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsOnline = table.Column<bool>(type: "boolean", nullable: false),
+                    AvatarUrl = table.Column<string>(type: "text", nullable: true),
                     SchoolClassId = table.Column<long>(type: "bigint", nullable: true),
                     Department = table.Column<string>(type: "text", nullable: true),
                     ManagedClassId = table.Column<long>(type: "bigint", nullable: true),

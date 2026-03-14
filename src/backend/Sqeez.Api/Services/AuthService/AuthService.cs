@@ -84,7 +84,6 @@ namespace Sqeez.Api.Services.AuthService
             bool isValid = BC.Verify(dto.Password.Trim(), user.PasswordHash);
             if (!isValid) return ServiceResult<AuthResponseDto>.Failure("Invalid email or password.", ServiceError.Unauthorized);
 
-            user.IsOnline = true;
             user.LastSeen = DateTime.UtcNow;
 
             var response = await GenerateAuthResponseAndSessionAsync(user, dto.RememberMe);
@@ -150,7 +149,6 @@ namespace Sqeez.Api.Services.AuthService
             var user = await _context.Students.FindAsync(userId);
             if (user == null) return ServiceResult<bool>.Failure("User not found.", ServiceError.NotFound);
 
-            user.IsOnline = false;
             user.LastSeen = DateTime.UtcNow;
 
             var activeSessions = await _context.UserSessions

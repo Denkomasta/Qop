@@ -6,5 +6,6 @@ namespace Sqeez.Api.Services.TokenService
     public interface ITokenService
     {
         ServiceResult<string> CreateToken(Student user);
+        string GenerateRefreshToken();
     }
 }

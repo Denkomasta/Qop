@@ -16,4 +16,13 @@ namespace Sqeez.Api.DTOs
 
     public record RegisterDTO(string Username, string Email, string Password);
     public record UpdateRoleDTO(long Id, UserRole Role, string? Department = null, string? PhoneNumber = null);
+
+    public record AuthResponseDto(
+        string AccessToken,
+        string RefreshToken
+    );
+
+    public record RefreshTokenDto(
+        string RefreshToken
+    );
 }

@@ -60,7 +60,7 @@ namespace Sqeez.Api.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterDTO registerDto)
+        public async Task<ActionResult> Register(RegisterDTO registerDto)
         {
             var result = await _authService.RegisterAsync(registerDto);
 
@@ -72,7 +72,7 @@ namespace Sqeez.Api.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDTO loginDto)
+        public async Task<ActionResult> Login(LoginDTO loginDto)
         {
             var result = await _authService.LoginAsync(loginDto);
 
@@ -84,7 +84,7 @@ namespace Sqeez.Api.Controllers
         }
 
         [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh()
+        public async Task<ActionResult> Refresh()
         {
             var refreshToken = Request.Cookies["sqeez_refresh_token"];
 
@@ -108,7 +108,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize]
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
+        public async Task<ActionResult> Logout()
         {
             var userIdClaim = GetUserIdFromClaims();
 
@@ -148,7 +148,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPatch("elevate")]
-        public async Task<IActionResult> ElevateUser(UpdateRoleDTO dto)
+        public async Task<ActionResult> ElevateUser(UpdateRoleDTO dto)
         {
             var adminIdClaim = GetUserIdFromClaims();
             if (string.IsNullOrEmpty(adminIdClaim))

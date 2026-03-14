@@ -61,6 +61,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfAdminDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfAdminDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfAdminDto"
   /api/admins/{id}:
     get:
       tags:
@@ -78,6 +88,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/AdminDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/AdminDto"
     patch:
       tags:
         - Admins
@@ -106,6 +126,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/AdminDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/AdminDto"
     delete:
       tags:
         - Admins
@@ -122,6 +152,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/auth/register:
     post:
       tags:
@@ -240,12 +280,38 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/BadgeDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadgeDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/BadgeDto"
     get:
       tags:
         - Badges
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BadgeDto"
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BadgeDto"
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BadgeDto"
   /api/badges/{id}:
     patch:
       tags:
@@ -286,6 +352,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/BadgeDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadgeDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/BadgeDto"
     delete:
       tags:
         - Badges
@@ -302,6 +378,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/badges/{badgeId}/award/{studentId}:
     post:
       tags:
@@ -328,6 +414,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/badges/my-badges:
     get:
       tags:
@@ -335,6 +431,22 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StudentBadgeDto"
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StudentBadgeDto"
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StudentBadgeDto"
   /api/enrollments:
     get:
       tags:
@@ -391,6 +503,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfEnrollmentDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfEnrollmentDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfEnrollmentDto"
   /api/enrollments/{id}:
     get:
       tags:
@@ -408,6 +530,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/EnrollmentDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnrollmentDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/EnrollmentDto"
     patch:
       tags:
         - Enrollments
@@ -436,6 +568,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/EnrollmentDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnrollmentDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/EnrollmentDto"
     delete:
       tags:
         - Enrollments
@@ -452,6 +594,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/media-assets:
     get:
       tags:
@@ -496,6 +648,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfMediaAssetDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfMediaAssetDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfMediaAssetDto"
     post:
       tags:
         - MediaAssets
@@ -514,6 +676,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/MediaAssetDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaAssetDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/MediaAssetDto"
   /api/media-assets/{id}:
     get:
       tags:
@@ -531,6 +703,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/MediaAssetDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaAssetDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/MediaAssetDto"
     patch:
       tags:
         - MediaAssets
@@ -559,6 +741,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/MediaAssetDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaAssetDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/MediaAssetDto"
     delete:
       tags:
         - MediaAssets
@@ -575,6 +767,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/media-assets/upload:
     post:
       tags:
@@ -601,6 +803,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/MediaAssetDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaAssetDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/MediaAssetDto"
   /api/media-assets/{id}/file:
     get:
       tags:
@@ -618,6 +830,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/PhysicalFileResult"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PhysicalFileResult"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/PhysicalFileResult"
   /api/quiz-attempts/start:
     post:
       tags:
@@ -637,6 +859,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/QuizAttemptDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizAttemptDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/QuizAttemptDto"
   /api/quiz-attempts/{id}/answer:
     post:
       tags:
@@ -666,6 +898,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/QuestionAnsweredDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionAnsweredDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/QuestionAnsweredDto"
   /api/quiz-attempts/{id}/next-question:
     get:
       tags:
@@ -683,6 +925,31 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                pattern: ^-?(?:0|[1-9]\d*)$
+                type:
+                  - "null"
+                  - integer
+                  - string
+                format: int64
+            application/json:
+              schema:
+                pattern: ^-?(?:0|[1-9]\d*)$
+                type:
+                  - "null"
+                  - integer
+                  - string
+                format: int64
+            text/json:
+              schema:
+                pattern: ^-?(?:0|[1-9]\d*)$
+                type:
+                  - "null"
+                  - integer
+                  - string
+                format: int64
   /api/quiz-attempts/{id}/complete:
     post:
       tags:
@@ -700,6 +967,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/QuizAttemptDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizAttemptDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/QuizAttemptDto"
   /api/quiz-attempts/{id}:
     get:
       tags:
@@ -717,6 +994,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/QuizAttemptDetailDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizAttemptDetailDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/QuizAttemptDetailDto"
     delete:
       tags:
         - QuizAttempts
@@ -733,6 +1020,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/quiz-attempts/quiz/{quizId}:
     get:
       tags:
@@ -768,6 +1065,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfQuizAttemptDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfQuizAttemptDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfQuizAttemptDto"
   /api/quiz-attempts/responses/{responseId}/grade:
     patch:
       tags:
@@ -797,6 +1104,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/QuestionResponseDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionResponseDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/QuestionResponseDto"
   /api/quizzes/{quizId}:
     get:
       tags:
@@ -814,6 +1131,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/QuizDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/QuizDto"
     patch:
       tags:
         - Quizzes
@@ -842,6 +1169,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/QuizDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/QuizDto"
     delete:
       tags:
         - Quizzes
@@ -858,6 +1195,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/quizzes/{quizId}/questions:
     get:
       tags:
@@ -919,6 +1266,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfQuizQuestionDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfQuizQuestionDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfQuizQuestionDto"
     post:
       tags:
         - Quizzes
@@ -947,6 +1304,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/QuizQuestionDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizQuestionDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/QuizQuestionDto"
   /api/quizzes/{quizId}/questions/{questionId}:
     get:
       tags:
@@ -973,6 +1340,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/QuizQuestionDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizQuestionDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/QuizQuestionDto"
     patch:
       tags:
         - Quizzes
@@ -1010,6 +1387,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/QuizQuestionDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizQuestionDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/QuizQuestionDto"
     delete:
       tags:
         - Quizzes
@@ -1035,6 +1422,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/quizzes/{quizId}/questions/{questionId}/options:
     get:
       tags:
@@ -1297,6 +1694,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfSchoolClassDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfSchoolClassDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfSchoolClassDto"
     post:
       tags:
         - SchoolClasses
@@ -1315,6 +1722,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/SchoolClassDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SchoolClassDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/SchoolClassDto"
   /api/classes/{id}:
     get:
       tags:
@@ -1332,6 +1749,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/SchoolClassDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SchoolClassDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/SchoolClassDto"
     patch:
       tags:
         - SchoolClasses
@@ -1360,6 +1787,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/SchoolClassDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SchoolClassDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/SchoolClassDto"
     delete:
       tags:
         - SchoolClasses
@@ -1376,6 +1813,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/classes/{id}/students:
     post:
       tags:
@@ -1405,6 +1852,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/classes/{id}/students/remove:
     post:
       tags:
@@ -1434,6 +1891,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/students:
     get:
       tags:
@@ -1482,6 +1949,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfStudentDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfStudentDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfStudentDto"
   /api/students/{id}:
     get:
       tags:
@@ -1499,6 +1976,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/StudentDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/StudentDto"
     patch:
       tags:
         - Students
@@ -1527,6 +2014,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/StudentDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/StudentDto"
     delete:
       tags:
         - Students
@@ -1543,6 +2040,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/subjects:
     get:
       tags:
@@ -1604,6 +2111,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfSubjectDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfSubjectDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfSubjectDto"
     post:
       tags:
         - Subjects
@@ -1622,6 +2139,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/SubjectDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubjectDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/SubjectDto"
   /api/subjects/{id}:
     get:
       tags:
@@ -1639,6 +2166,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/SubjectDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubjectDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/SubjectDto"
     patch:
       tags:
         - Subjects
@@ -1667,6 +2204,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/SubjectDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubjectDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/SubjectDto"
     delete:
       tags:
         - Subjects
@@ -1683,6 +2230,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/subjects/{subjectId}/enrollments:
     get:
       tags:
@@ -1748,6 +2305,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfEnrollmentDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfEnrollmentDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfEnrollmentDto"
     post:
       tags:
         - Subjects
@@ -1776,6 +2343,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
     delete:
       tags:
         - Subjects
@@ -1804,6 +2381,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/subjects/{subjectId}/quizzes:
     get:
       tags:
@@ -1863,6 +2450,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfQuizDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfQuizDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfQuizDto"
     post:
       tags:
         - Subjects
@@ -1891,6 +2488,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/QuizDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/QuizDto"
   /api/system-config:
     get:
       tags:
@@ -1898,6 +2505,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/SystemConfigDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemConfigDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/SystemConfigDto"
     patch:
       tags:
         - SystemConfig
@@ -1916,6 +2533,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/SystemConfigDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemConfigDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/SystemConfigDto"
   /api/teachers:
     get:
       tags:
@@ -1968,6 +2595,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfTeacherDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfTeacherDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfTeacherDto"
   /api/teachers/{id}:
     get:
       tags:
@@ -1985,6 +2622,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/TeacherDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeacherDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/TeacherDto"
     patch:
       tags:
         - Teachers
@@ -2013,6 +2660,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/TeacherDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeacherDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/TeacherDto"
     delete:
       tags:
         - Teachers
@@ -2029,6 +2686,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/users/me/avatar:
     post:
       tags:
@@ -2045,8 +2712,66 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/AvatarUploadResponseDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarUploadResponseDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/AvatarUploadResponseDto"
 components:
   schemas:
+    AdminDto:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+        department:
+          type:
+            - "null"
+            - string
+        managedClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        username:
+          type: string
+        email:
+          type: string
+        currentXP:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        role:
+          type: string
+        avatarUrl:
+          type:
+            - "null"
+            - string
+        lastSeen:
+          type: string
+          format: date-time
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
     AssignStudentsDto:
       required:
         - studentIds
@@ -2060,6 +2785,56 @@ components:
               - integer
               - string
             format: int64
+    AttemptStatus:
+      enum:
+        - Created
+        - Started
+        - Completed
+        - Abandoned
+    AvatarUploadResponseDto:
+      required:
+        - message
+        - avatarUrl
+      type: object
+      properties:
+        message:
+          type: string
+        avatarUrl:
+          type: string
+    BadgeDto:
+      required:
+        - id
+        - name
+        - description
+        - iconUrl
+        - xpBonus
+        - rules
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        iconUrl:
+          type:
+            - "null"
+            - string
+        xpBonus:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/BadgeRuleDto"
     BadgeMetric:
       enum:
         - ScorePercentage
@@ -2074,6 +2849,30 @@ components:
         - LessThan
         - LessThanOrEqual
         - NotEquals
+    BadgeRuleDto:
+      required:
+        - id
+        - metric
+        - operator
+        - targetValue
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        metric:
+          $ref: "#/components/schemas/BadgeMetric"
+        operator:
+          $ref: "#/components/schemas/BadgeOperator"
+        targetValue:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
+          type:
+            - number
+            - string
+          format: double
     CreateBadgeRuleDto:
       required:
         - metric
@@ -2271,6 +3070,63 @@ components:
             - integer
             - string
           format: int64
+    EnrollmentDto:
+      required:
+        - id
+        - mark
+        - enrolledAt
+        - archivedAt
+        - studentId
+        - subjectId
+        - quizAttemptsCount
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        mark:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int32
+        enrolledAt:
+          type: string
+          format: date-time
+        archivedAt:
+          type:
+            - "null"
+            - string
+          format: date-time
+        studentId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        subjectId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        quizAttemptsCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    EntityTagHeaderValue:
+      type: object
+      properties:
+        tag:
+          $ref: "#/components/schemas/StringSegment"
+        isWeak:
+          type: boolean
     GradeQuestionResponseDto:
       required:
         - score
@@ -2301,13 +3157,359 @@ components:
         rememberMe:
           type: boolean
           default: false
+    MediaAssetDto:
+      required:
+        - id
+        - locationUrl
+        - mimeType
+        - isPrivate
+        - description
+        - ownerId
+        - ownerUsername
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        locationUrl:
+          type: string
+        mimeType:
+          $ref: "#/components/schemas/MediaType"
+        isPrivate:
+          type: boolean
+        description:
+          type:
+            - "null"
+            - string
+        ownerId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        ownerUsername:
+          type:
+            - "null"
+            - string
     MediaType:
       enum:
         - Image
         - Video
         - Audio
         - Document
-        - null
+    PagedResponseOfAdminDto:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminDto"
+        totalCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageNumber:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalPages:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    PagedResponseOfEnrollmentDto:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/EnrollmentDto"
+        totalCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageNumber:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalPages:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    PagedResponseOfMediaAssetDto:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaAssetDto"
+        totalCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageNumber:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalPages:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    PagedResponseOfQuizAttemptDto:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuizAttemptDto"
+        totalCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageNumber:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalPages:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    PagedResponseOfQuizDto:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuizDto"
+        totalCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageNumber:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalPages:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    PagedResponseOfQuizQuestionDto:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuizQuestionDto"
+        totalCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageNumber:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalPages:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    PagedResponseOfSchoolClassDto:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchoolClassDto"
+        totalCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageNumber:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalPages:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    PagedResponseOfStudentDto:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/StudentDto"
+        totalCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageNumber:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalPages:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    PagedResponseOfSubjectDto:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/SubjectDto"
+        totalCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageNumber:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalPages:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    PagedResponseOfTeacherDto:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/TeacherDto"
+        totalCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageNumber:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalPages:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
     PatchAdminDto:
       type: object
       properties:
@@ -2579,6 +3781,382 @@ components:
           type:
             - "null"
             - string
+    PhysicalFileResult:
+      type: object
+      properties:
+        fileName:
+          type: string
+        contentType:
+          type:
+            - "null"
+            - string
+        fileDownloadName:
+          type:
+            - "null"
+            - string
+        lastModified:
+          type:
+            - "null"
+            - string
+          format: date-time
+        entityTag:
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/EntityTagHeaderValue"
+        enableRangeProcessing:
+          type: boolean
+    QuestionAnsweredDto:
+      required:
+        - id
+        - quizQuestionId
+        - responseTimeMs
+        - freeTextAnswer
+        - isLiked
+        - score
+        - selectedOptionIds
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        quizQuestionId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        responseTimeMs:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        freeTextAnswer:
+          type:
+            - "null"
+            - string
+        isLiked:
+          type: boolean
+        score:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        selectedOptionIds:
+          type: array
+          items:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        correctOptionIds:
+          type:
+            - "null"
+            - array
+          items:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        correctFreeTextAnswer:
+          type:
+            - "null"
+            - string
+        nextQuestionId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    QuestionResponseDto:
+      required:
+        - id
+        - quizQuestionId
+        - responseTimeMs
+        - freeTextAnswer
+        - isLiked
+        - score
+        - selectedOptionIds
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        quizQuestionId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        responseTimeMs:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        freeTextAnswer:
+          type:
+            - "null"
+            - string
+        isLiked:
+          type: boolean
+        score:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        selectedOptionIds:
+          type: array
+          items:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+    QuizAttemptDetailDto:
+      required:
+        - id
+        - quizId
+        - enrollmentId
+        - startTime
+        - endTime
+        - status
+        - totalScore
+        - mark
+        - responses
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        quizId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        enrollmentId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        startTime:
+          type:
+            - "null"
+            - string
+          format: date-time
+        endTime:
+          type:
+            - "null"
+            - string
+          format: date-time
+        status:
+          $ref: "#/components/schemas/AttemptStatus"
+        totalScore:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        mark:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int32
+        responses:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionResponseDto"
+    QuizAttemptDto:
+      required:
+        - id
+        - quizId
+        - enrollmentId
+        - startTime
+        - endTime
+        - status
+        - totalScore
+        - mark
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        quizId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        enrollmentId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        startTime:
+          type:
+            - "null"
+            - string
+          format: date-time
+        endTime:
+          type:
+            - "null"
+            - string
+          format: date-time
+        status:
+          $ref: "#/components/schemas/AttemptStatus"
+        totalScore:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        mark:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int32
+        nextQuestionId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    QuizDto:
+      required:
+        - id
+        - title
+        - description
+        - maxRetries
+        - createdAt
+        - publishDate
+        - closingDate
+        - subjectId
+        - quizQuestions
+        - quizAttempts
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        title:
+          type: string
+        description:
+          type: string
+        maxRetries:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        createdAt:
+          type: string
+          format: date-time
+        publishDate:
+          type:
+            - "null"
+            - string
+          format: date-time
+        closingDate:
+          type:
+            - "null"
+            - string
+          format: date-time
+        subjectId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        quizQuestions:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        quizAttempts:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    QuizQuestionDto:
+      required:
+        - id
+        - title
+        - difficulty
+        - timeLimit
+        - quizId
+        - mediaAssetId
+        - quizOptions
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        title:
+          type: string
+        difficulty:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        timeLimit:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        quizId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        mediaAssetId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        quizOptions:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
     RegisterDTO:
       required:
         - username
@@ -2608,6 +4186,53 @@ components:
               - integer
               - string
             format: int64
+    SchoolClassDto:
+      required:
+        - id
+        - name
+        - academicYear
+        - section
+        - teacherId
+        - teacherName
+        - studentCount
+        - subjectCount
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        name:
+          type: string
+        academicYear:
+          type: string
+        section:
+          type: string
+        teacherId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        teacherName:
+          type:
+            - "null"
+            - string
+        studentCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        subjectCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
     StartQuizAttemptDto:
       required:
         - quizId
@@ -2626,6 +4251,171 @@ components:
             - integer
             - string
           format: int64
+    StringSegment:
+      type: object
+      properties:
+        buffer:
+          type:
+            - "null"
+            - string
+        offset:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        length:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        value:
+          type:
+            - "null"
+            - string
+        hasValue:
+          type: boolean
+    StudentBadgeDto:
+      required:
+        - badgeId
+        - name
+        - description
+        - iconUrl
+        - xpBonus
+        - earnedAt
+      type: object
+      properties:
+        badgeId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        iconUrl:
+          type:
+            - "null"
+            - string
+        xpBonus:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        earnedAt:
+          type: string
+          format: date-time
+    StudentDto:
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        username:
+          type: string
+        email:
+          type: string
+        currentXP:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        role:
+          type: string
+        avatarUrl:
+          type:
+            - "null"
+            - string
+        lastSeen:
+          type: string
+          format: date-time
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    SubjectDto:
+      required:
+        - id
+        - name
+        - code
+        - description
+        - startDate
+        - endDate
+        - teacherId
+        - teacherName
+        - schoolClassId
+        - schoolClassName
+        - enrollmentCount
+        - quizCount
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        name:
+          type: string
+        code:
+          type: string
+        description:
+          type:
+            - "null"
+            - string
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type:
+            - "null"
+            - string
+          format: date-time
+        teacherId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        teacherName:
+          type:
+            - "null"
+            - string
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        schoolClassName:
+          type:
+            - "null"
+            - string
+        enrollmentCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        quizCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
     SubmitQuestionResponseDto:
       required:
         - quizQuestionId
@@ -2658,6 +4448,91 @@ components:
               - integer
               - string
             format: int64
+    SystemConfigDto:
+      required:
+        - schoolName
+        - logoUrl
+        - supportEmail
+        - defaultLanguage
+        - currentAcademicYear
+        - allowPublicRegistration
+        - requireEmailVerification
+        - maxFileUploadSizeMB
+        - maxActiveSessionsPerUser
+      type: object
+      properties:
+        schoolName:
+          type: string
+        logoUrl:
+          type: string
+        supportEmail:
+          type: string
+        defaultLanguage:
+          type: string
+        currentAcademicYear:
+          type: string
+        allowPublicRegistration:
+          type: boolean
+        requireEmailVerification:
+          type: boolean
+        maxFileUploadSizeMB:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        maxActiveSessionsPerUser:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    TeacherDto:
+      type: object
+      properties:
+        department:
+          type:
+            - "null"
+            - string
+        managedClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        username:
+          type: string
+        email:
+          type: string
+        currentXP:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        role:
+          type: string
+        avatarUrl:
+          type:
+            - "null"
+            - string
+        lastSeen:
+          type: string
+          format: date-time
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
     UpdateBadgeRuleDto:
       required:
         - id

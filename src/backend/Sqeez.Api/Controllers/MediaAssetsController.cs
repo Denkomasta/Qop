@@ -23,7 +23,7 @@ namespace Sqeez.Api.Controllers
         /// GET /api/media-assets
         /// </summary>
         [HttpGet]
-        public async Task<ActionResult> GetAll([FromQuery] MediaAssetFilterDto filter)
+        public async Task<ActionResult<PagedResponse<MediaAssetDto>>> GetAll([FromQuery] MediaAssetFilterDto filter)
         {
             var result = await _mediaAssetService.GetAllMediaAssetsAsync(filter);
             return HandleServiceResult(result);
@@ -33,7 +33,7 @@ namespace Sqeez.Api.Controllers
         /// GET /api/media-assets/{id}
         /// </summary>
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetById(long id)
+        public async Task<ActionResult<MediaAssetDto>> GetById(long id)
         {
             var result = await _mediaAssetService.GetMediaAssetByIdAsync(id);
             return HandleServiceResult(result);
@@ -45,7 +45,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] CreateMediaAssetDto dto)
+        public async Task<ActionResult<MediaAssetDto>> Create([FromBody] CreateMediaAssetDto dto)
         {
             var result = await _mediaAssetService.CreateMediaAssetAsync(dto);
             return HandleServiceResult(result);
@@ -56,7 +56,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPatch("{id}")]
-        public async Task<ActionResult> Patch(long id, [FromBody] PatchMediaAssetDto dto)
+        public async Task<ActionResult<MediaAssetDto>> Patch(long id, [FromBody] PatchMediaAssetDto dto)
         {
             var result = await _mediaAssetService.PatchMediaAssetAsync(id, dto);
             return HandleServiceResult(result);
@@ -69,7 +69,7 @@ namespace Sqeez.Api.Controllers
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPost("upload")]
         [Consumes("multipart/form-data")]
-        public async Task<ActionResult> UploadFile([FromForm] UploadMediaAssetDto dto)
+        public async Task<ActionResult<MediaAssetDto>> UploadFile([FromForm] UploadMediaAssetDto dto)
         {
             if (dto.File == null || dto.File.Length == 0)
                 return BadRequest("No file was uploaded.");
@@ -127,7 +127,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(long id)
+        public async Task<ActionResult<bool>> Delete(long id)
         {
             var dbDeleteResult = await _mediaAssetService.DeleteMediaAssetAsync(id);
             return HandleServiceResult(dbDeleteResult);
@@ -139,7 +139,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize]
         [HttpGet("{id}/file")]
-        public async Task<IActionResult> GetFile(long id)
+        public async Task<ActionResult<PhysicalFileResult>> GetFile(long id)
         {
             var userIdStr = GetUserIdFromClaims();
             var role = GetUserRoleFromClaims() ?? string.Empty;

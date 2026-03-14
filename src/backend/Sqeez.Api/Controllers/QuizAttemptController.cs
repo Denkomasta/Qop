@@ -21,7 +21,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize]
         [HttpPost("start")]
-        public async Task<ActionResult> StartAttempt([FromBody] StartQuizAttemptDto dto)
+        public async Task<ActionResult<QuizAttemptDto>> StartAttempt([FromBody] StartQuizAttemptDto dto)
         {
             var studentIdStr = GetUserIdFromClaims();
             if (!long.TryParse(studentIdStr, out long studentId))
@@ -37,7 +37,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize]
         [HttpPost("{id}/answer")]
-        public async Task<ActionResult> SubmitAnswer(long id, [FromBody] SubmitQuestionResponseDto dto)
+        public async Task<ActionResult<QuestionAnsweredDto>> SubmitAnswer(long id, [FromBody] SubmitQuestionResponseDto dto)
         {
             var studentIdStr = GetUserIdFromClaims();
             if (!long.TryParse(studentIdStr, out long studentId))
@@ -53,7 +53,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize]
         [HttpGet("{id}/next-question")]
-        public async Task<ActionResult> GetNextPendingQuestionId(long id)
+        public async Task<ActionResult<long?>> GetNextPendingQuestionId(long id)
         {
             var studentIdStr = GetUserIdFromClaims();
             if (!long.TryParse(studentIdStr, out long studentId))
@@ -70,7 +70,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize]
         [HttpPost("{id}/complete")]
-        public async Task<ActionResult> CompleteAttempt(long id)
+        public async Task<ActionResult<QuizAttemptDto>> CompleteAttempt(long id)
         {
             var studentIdStr = GetUserIdFromClaims();
             if (!long.TryParse(studentIdStr, out long studentId))
@@ -86,7 +86,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetAttemptDetails(long id)
+        public async Task<ActionResult<QuizAttemptDetailDto>> GetAttemptDetails(long id)
         {
             var userIdStr = GetUserIdFromClaims();
             var role = GetUserRoleFromClaims() ?? string.Empty;
@@ -103,7 +103,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Teacher,Admin")]
         [HttpGet("quiz/{quizId}")]
-        public async Task<ActionResult> GetAttemptsForQuiz(long quizId, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20)
+        public async Task<ActionResult<PagedResponse<QuizAttemptDto>>> GetAttemptsForQuiz(long quizId, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20)
         {
             var teacherIdStr = GetUserIdFromClaims();
             if (!long.TryParse(teacherIdStr, out long teacherId))
@@ -119,7 +119,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Teacher,Admin")]
         [HttpPatch("responses/{responseId}/grade")]
-        public async Task<ActionResult> GradeResponse(long responseId, [FromBody] GradeQuestionResponseDto dto)
+        public async Task<ActionResult<QuestionResponseDto>> GradeResponse(long responseId, [FromBody] GradeQuestionResponseDto dto)
         {
             var teacherIdStr = GetUserIdFromClaims();
             if (!long.TryParse(teacherIdStr, out long teacherId))
@@ -135,7 +135,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Teacher,Admin")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteAttempt(long id)
+        public async Task<ActionResult<bool>> DeleteAttempt(long id)
         {
             var teacherIdStr = GetUserIdFromClaims();
             if (!long.TryParse(teacherIdStr, out long teacherId))

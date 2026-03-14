@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sqeez.Api.DTOs;
 using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
@@ -17,7 +18,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize]
         [HttpPost("me/avatar")]
-        public async Task<IActionResult> UploadAvatar(IFormFile file)
+        public async Task<ActionResult<AvatarUploadResponseDto>> UploadAvatar(IFormFile file)
         {
             var userIdClaim = GetUserIdFromClaims();
             if (string.IsNullOrEmpty(userIdClaim))
@@ -34,11 +35,7 @@ namespace Sqeez.Api.Controllers
                 return HandleServiceResult(result);
             }
 
-            return Ok(new
-            {
-                message = "Avatar updated successfully.",
-                avatarUrl = result.Data
-            });
+            return Ok(new AvatarUploadResponseDto("Avatar updated successfully.", result.Data!));
         }
     }
 }

@@ -17,14 +17,14 @@ namespace Sqeez.Api.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetAll([FromQuery] AdminFilterDto filter)
+        public async Task<ActionResult<PagedResponse<AdminDto>>> GetAll([FromQuery] AdminFilterDto filter)
         {
             return HandleServiceResult(await _adminService.GetAllAdminsAsync(filter));
         }
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetById(long id)
+        public async Task<ActionResult<AdminDto>> GetById(long id)
         {
             return HandleServiceResult(await _adminService.GetAdminByIdAsync(id));
         }
@@ -38,7 +38,7 @@ namespace Sqeez.Api.Controllers
 
         [HttpPatch("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Patch(long id, [FromBody] PatchAdminDto dto)
+        public async Task<ActionResult<AdminDto>> Patch(long id, [FromBody] PatchAdminDto dto)
         {
             if (!IsIdLoggedUser(id))
             {
@@ -52,7 +52,7 @@ namespace Sqeez.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(long id)
+        public async Task<ActionResult<bool>> Delete(long id)
         {
             if (!IsIdLoggedUser(id))
             {

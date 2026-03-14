@@ -24,8 +24,10 @@ import type {
   AssignStudentsDto,
   CreateSchoolClassDto,
   GetApiClassesParams,
+  PagedResponseOfSchoolClassDto,
   PatchSchoolClassDto,
   RemoveStudentsDto,
+  SchoolClassDto,
 } from '../../model'
 
 import { customInstance } from '../../../custom-axios'
@@ -38,7 +40,7 @@ export const getApiClasses = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<PagedResponseOfSchoolClassDto>(
     { url: `/api/classes`, method: 'GET', params, signal },
     options,
   )
@@ -172,7 +174,7 @@ export const postApiClasses = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<SchoolClassDto>(
     {
       url: `/api/classes`,
       method: 'POST',
@@ -255,7 +257,7 @@ export const getApiClassesId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<SchoolClassDto>(
     { url: `/api/classes/${id}`, method: 'GET', signal },
     options,
   )
@@ -415,7 +417,7 @@ export const patchApiClassesId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<SchoolClassDto>(
     {
       url: `/api/classes/${id}`,
       method: 'PATCH',
@@ -498,7 +500,7 @@ export const deleteApiClassesId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<boolean>(
     { url: `/api/classes/${id}`, method: 'DELETE', signal },
     options,
   )
@@ -576,7 +578,7 @@ export const postApiClassesIdStudents = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<boolean>(
     {
       url: `/api/classes/${id}/students`,
       method: 'POST',
@@ -663,7 +665,7 @@ export const postApiClassesIdStudentsRemove = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<boolean>(
     {
       url: `/api/classes/${id}/students/remove`,
       method: 'POST',

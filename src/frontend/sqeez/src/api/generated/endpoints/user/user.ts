@@ -12,7 +12,10 @@ import type {
   UseMutationResult,
 } from '@tanstack/react-query'
 
-import type { PostApiUsersMeAvatarBody } from '../../model'
+import type {
+  AvatarUploadResponseDto,
+  PostApiUsersMeAvatarBody,
+} from '../../model'
 
 import { customInstance } from '../../../custom-axios'
 import type { ErrorType } from '../../../custom-axios'
@@ -29,7 +32,7 @@ export const postApiUsersMeAvatar = (
     formData.append(`file`, postApiUsersMeAvatarBody.file)
   }
 
-  return customInstance<void>(
+  return customInstance<AvatarUploadResponseDto>(
     { url: `/api/users/me/avatar`, method: 'POST', data: formData, signal },
     options,
   )

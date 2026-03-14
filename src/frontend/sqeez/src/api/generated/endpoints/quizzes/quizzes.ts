@@ -25,9 +25,12 @@ import type {
   CreateQuizQuestionDto,
   GetApiQuizzesQuizIdQuestionsParams,
   GetApiQuizzesQuizIdQuestionsQuestionIdOptionsParams,
+  PagedResponseOfQuizQuestionDto,
   PatchQuizDto,
   PatchQuizOptionDto,
   PatchQuizQuestionDto,
+  QuizDto,
+  QuizQuestionDto,
 } from '../../model'
 
 import { customInstance } from '../../../custom-axios'
@@ -40,7 +43,7 @@ export const getApiQuizzesQuizId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<QuizDto>(
     { url: `/api/quizzes/${quizId}`, method: 'GET', signal },
     options,
   )
@@ -201,7 +204,7 @@ export const patchApiQuizzesQuizId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<QuizDto>(
     {
       url: `/api/quizzes/${quizId}`,
       method: 'PATCH',
@@ -287,7 +290,7 @@ export const deleteApiQuizzesQuizId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<boolean>(
     { url: `/api/quizzes/${quizId}`, method: 'DELETE', signal },
     options,
   )
@@ -368,7 +371,7 @@ export const getApiQuizzesQuizIdQuestions = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<PagedResponseOfQuizQuestionDto>(
     { url: `/api/quizzes/${quizId}/questions`, method: 'GET', params, signal },
     options,
   )
@@ -546,7 +549,7 @@ export const postApiQuizzesQuizIdQuestions = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<QuizQuestionDto>(
     {
       url: `/api/quizzes/${quizId}/questions`,
       method: 'POST',
@@ -633,7 +636,7 @@ export const getApiQuizzesQuizIdQuestionsQuestionId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<QuizQuestionDto>(
     {
       url: `/api/quizzes/${quizId}/questions/${questionId}`,
       method: 'GET',
@@ -819,7 +822,7 @@ export const patchApiQuizzesQuizIdQuestionsQuestionId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<QuizQuestionDto>(
     {
       url: `/api/quizzes/${quizId}/questions/${questionId}`,
       method: 'PATCH',
@@ -934,7 +937,7 @@ export const deleteApiQuizzesQuizIdQuestionsQuestionId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<boolean>(
     {
       url: `/api/quizzes/${quizId}/questions/${questionId}`,
       method: 'DELETE',

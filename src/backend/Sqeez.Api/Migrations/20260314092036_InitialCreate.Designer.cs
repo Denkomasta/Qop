@@ -12,7 +12,7 @@ using Sqeez.Api.Data;
 namespace Sqeez.Api.Migrations
 {
     [DbContext(typeof(SqeezDbContext))]
-    [Migration("20260313212436_InitialCreate")]
+    [Migration("20260314092036_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -555,6 +555,37 @@ namespace Sqeez.Api.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("Sqeez.Api.Models.Users.UserSession", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserSessions");
+                });
+
             modelBuilder.Entity("Sqeez.Api.Models.Users.Teacher", b =>
                 {
                     b.HasBaseType("Sqeez.Api.Models.Users.Student");
@@ -763,6 +794,17 @@ namespace Sqeez.Api.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("SchoolClass");
+                });
+
+            modelBuilder.Entity("Sqeez.Api.Models.Users.UserSession", b =>
+                {
+                    b.HasOne("Sqeez.Api.Models.Users.Student", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Sqeez.Api.Models.Users.Teacher", b =>

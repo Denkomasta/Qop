@@ -23,33 +23,78 @@ namespace Sqeez.Api.Services.AuthService
             _superUserEmail = config["SUPER_USER_EMAIL"]?.Trim().ToLower() ?? string.Empty;
         }
 
-        public async Task<ServiceResult<string>> LoginAsync(LoginDTO dto)
+        private async Task<AuthResponseDto> GenerateAuthResponseAndSessionAsync(Student user)
+        {
+            var tokenResult = _tokenService.CreateToken(user);
+            string accessToken = tokenResult.Data!;
+            string refreshToken = _tokenService.GenerateRefreshToken();
+
+            // TODO move the deletion to background service
+            var deadSessions = await _context.UserSessions
+                .Where(s => s.UserId == user.Id && (s.IsRevoked || s.ExpiresAt <= DateTime.UtcNow))
+                .ToListAsync();
+
+            if (deadSessions.Any())
+            {
+                _context.UserSessions.RemoveRange(deadSessions);
+            }
+
+            var configResult = await _configService.GetConfigAsync();
+            int maxSessions = configResult.Data!.MaxActiveSessionsPerUser;
+
+            var activeSessions = await _context.UserSessions
+                .Where(s => s.UserId == user.Id && !s.IsRevoked && s.ExpiresAt > DateTime.UtcNow)
+                .OrderBy(s => s.CreatedAt)
+                .ToListAsync();
+
+            if (activeSessions.Count >= maxSessions)
+            {
+                int sessionsToKill = (activeSessions.Count - maxSessions) + 1;
+                var doomedSessions = activeSessions.Take(sessionsToKill);
+                foreach (var session in doomedSessions)
+                {
+                    _context.UserSessions.Remove(session);
+                }
+            }
+
+            var newSession = new UserSession
+            {
+                UserId = user.Id,
+                RefreshToken = refreshToken,
+                ExpiresAt = DateTime.UtcNow.AddDays(7)
+            };
+
+            _context.UserSessions.Add(newSession);
+            await _context.SaveChangesAsync();
+
+            return new AuthResponseDto(accessToken, refreshToken);
+        }
+
+        public async Task<ServiceResult<AuthResponseDto>> LoginAsync(LoginDTO dto)
         {
             _logger.LogInformation("Attempting to login user: {Email}", dto.Email);
-            var user = await _context.Students
-                .FirstOrDefaultAsync(u => u.Email == dto.Email.Trim().ToLower());
+            var user = await _context.Students.FirstOrDefaultAsync(u => u.Email == dto.Email.Trim().ToLower());
 
-            if (user == null) return ServiceResult<string>.Failure("Invalid email or password.", ServiceError.NotFound);
+            if (user == null) return ServiceResult<AuthResponseDto>.Failure("Invalid email or password.", ServiceError.NotFound);
 
             bool isValid = BC.Verify(dto.Password.Trim(), user.PasswordHash);
-
-            if (!isValid) return ServiceResult<string>.Failure("Invalid email or password.", ServiceError.Unauthorized);
+            if (!isValid) return ServiceResult<AuthResponseDto>.Failure("Invalid email or password.", ServiceError.Unauthorized);
 
             user.IsOnline = true;
             user.LastSeen = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
 
-            return _tokenService.CreateToken(user);
+            var response = await GenerateAuthResponseAndSessionAsync(user);
+            return ServiceResult<AuthResponseDto>.Ok(response);
         }
 
-        public async Task<ServiceResult<string>> RegisterAsync(RegisterDTO dto)
+        public async Task<ServiceResult<AuthResponseDto>> RegisterAsync(RegisterDTO dto)
         {
             _logger.LogInformation("Attempting to register user: {Email}", dto.Email);
 
             var config = await _configService.GetConfigAsync();
             if (!config.Data!.AllowPublicRegistration)
             {
-                return ServiceResult<string>.Failure(
+                return ServiceResult<AuthResponseDto>.Failure(
                     "Public registration is currently closed. Please contact your administrator for an invite.",
                     ServiceError.Forbidden);
             }
@@ -59,62 +104,62 @@ namespace Sqeez.Api.Services.AuthService
             string hashedPassword = BC.HashPassword(dto.Password.Trim(), salt);
             string username = string.IsNullOrWhiteSpace(dto.Username) ? email.Split('@')[0] : dto.Username.Trim();
 
-            // TODO rework to one query if performance is bad.
-            if (await _context.Students.AnyAsync(x => x.Email == email))
-            {
-                _logger.LogWarning("Registration failed: Email {Email} already exists.", email);
-                return ServiceResult<string>.Failure("Email already exists.", ServiceError.Conflict);
-            }
-
-            if (await _context.Students.AnyAsync(x => x.Username == username))
-            {
-                _logger.LogWarning("Registration failed: Username {Username} already exists.", username);
-                return ServiceResult<string>.Failure("Username already exists", ServiceError.Conflict);
-            }
+            if (await _context.Students.AnyAsync(x => x.Email == email)) return ServiceResult<AuthResponseDto>.Failure("Email already exists.", ServiceError.Conflict);
+            if (await _context.Students.AnyAsync(x => x.Username == username)) return ServiceResult<AuthResponseDto>.Failure("Username already exists", ServiceError.Conflict);
 
             bool isSuperUser = email == _superUserEmail;
-            Student user;
+            Student user = isSuperUser
+                ? new Admin { Username = username, Email = email, PasswordHash = hashedPassword, Role = UserRole.Admin, LastSeen = DateTime.UtcNow }
+                : new Student { Username = username, Email = email, PasswordHash = hashedPassword, Role = UserRole.Student, LastSeen = DateTime.UtcNow };
 
-            if (!isSuperUser)
-            {
-                user = new Student
-                {
-                    Username = username,
-                    Email = email,
-                    PasswordHash = hashedPassword,
-                    Role = Enums.UserRole.Student,
-                    LastSeen = DateTime.UtcNow,
-                };
-            } else
-            {
-                user = new Admin
-                {
-                    Username = username,
-                    Email = email,
-                    PasswordHash = hashedPassword,
-                    Role = Enums.UserRole.Admin,
-                    LastSeen = DateTime.UtcNow,
-                };
-            }
-
-            // Works for both Student and Admin since Admin inherits from Student and shares the same db table
             _context.Students.Add(user);
-
             await _context.SaveChangesAsync();
 
-            return _tokenService.CreateToken(user);
+            var response = await GenerateAuthResponseAndSessionAsync(user);
+            return ServiceResult<AuthResponseDto>.Ok(response);
         }
 
-        public async Task<ServiceResult<bool>> LogoutAsync(long userId)
+        public async Task<ServiceResult<AuthResponseDto>> RefreshTokenAsync(RefreshTokenDto dto)
+        {
+            var session = await _context.UserSessions
+                .Include(s => s.User)
+                .FirstOrDefaultAsync(s => s.RefreshToken == dto.RefreshToken);
+
+            if (session == null || session.IsRevoked || session.ExpiresAt <= DateTime.UtcNow)
+            {
+                return ServiceResult<AuthResponseDto>.Failure("Invalid or expired refresh token. Please login again.", ServiceError.Unauthorized);
+            }
+
+            var user = session.User;
+
+            user.LastSeen = DateTime.UtcNow;
+
+            session.IsRevoked = true;
+
+            var response = await GenerateAuthResponseAndSessionAsync(user);
+            return ServiceResult<AuthResponseDto>.Ok(response);
+        }
+
+        public async Task<ServiceResult<bool>> LogoutAsync(long userId, string? refreshToken = null)
         {
             _logger.LogInformation("Attempting to logout user: {id}", userId);
-
             var user = await _context.Students.FindAsync(userId);
-
             if (user == null) return ServiceResult<bool>.Failure("User not found.", ServiceError.NotFound);
 
             user.IsOnline = false;
             user.LastSeen = DateTime.UtcNow;
+
+            var activeSessions = await _context.UserSessions
+                .Where(s => s.UserId == userId && !s.IsRevoked)
+                .ToListAsync();
+
+            foreach (var session in activeSessions)
+            {
+                if (refreshToken == null || session.RefreshToken == refreshToken)
+                {
+                    session.IsRevoked = true;
+                }
+            }
 
             await _context.SaveChangesAsync();
             return ServiceResult<bool>.Ok(true);

@@ -77,14 +77,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = false,
             ValidateAudience = false,
             RoleClaimType = ClaimTypes.Role,
-            NameClaimType = JwtRegisteredClaimNames.UniqueName
+            NameClaimType = JwtRegisteredClaimNames.UniqueName,
+
+            // By default, .NET adds a 5-minute "grace period" to token expirations.
+            ClockSkew = TimeSpan.Zero
         };
 
         options.Events = new JwtBearerEvents
         {
             OnMessageReceived = context =>
             {
-                context.Token = context.Request.Cookies["sqeez_token"];
+                if (context.Request.Cookies.ContainsKey("sqeez_access_token"))
+                {
+                    context.Token = context.Request.Cookies["sqeez_access_token"];
+                }
                 return Task.CompletedTask;
             }
         };

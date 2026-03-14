@@ -1,12 +1,14 @@
 using Sqeez.Api.DTOs;
+using Sqeez.Api.Models.Users;
 
 namespace Sqeez.Api.Services.AuthService
 {
     public interface IAuthService
     {
-        Task<ServiceResult<string>> RegisterAsync(RegisterDTO dto);
-        Task<ServiceResult<string>> LoginAsync(LoginDTO loginDto);
-        Task<ServiceResult<bool>> LogoutAsync(long userId);
+        Task<ServiceResult<AuthResponseDto>> RegisterAsync(RegisterDTO dto);
+        Task<ServiceResult<AuthResponseDto>> LoginAsync(LoginDTO dto);
+        Task<ServiceResult<AuthResponseDto>> RefreshTokenAsync(RefreshTokenDto dto);
+        Task<ServiceResult<bool>> LogoutAsync(long userId, string? refreshToken = null);
         Task<ServiceResult<UserDTO>> GetCurrentUserAsync(long userId, string? role);
         Task<ServiceResult<bool>> UpdateUserRoleAsync(long adminId, UpdateRoleDTO dto);
     }

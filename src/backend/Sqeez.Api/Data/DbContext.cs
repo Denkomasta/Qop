@@ -31,6 +31,7 @@ namespace Sqeez.Api.Data
         public DbSet<QuizQuestionResponse> QuizQuestionResponses { get; set; } = null!;
         public DbSet<MediaAsset> MediaAssets { get; set; } = null!;
         public DbSet<BadgeRule> BadgeRules { get; set; } = null!;
+        public DbSet<UserSession> UserSessions { get; set; } = null!;
 
         // --- Fluent API Configuration ---
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Services;
+using Sqeez.Api.Services.Interfaces;
 using System.Text;
 using Xunit;
 
@@ -14,6 +16,7 @@ namespace Sqeez.Api.Tests.Services
         private readonly string _tempWebRootPath;
         private readonly Mock<IWebHostEnvironment> _mockEnv;
         private readonly Mock<ILogger<LocalFileStorageService>> _mockLogger;
+        private readonly Mock<ISystemConfigService> _mockConfigService;
         private readonly LocalFileStorageService _service;
 
         public LocalFileStorageServiceTests()
@@ -22,13 +25,19 @@ namespace Sqeez.Api.Tests.Services
             Directory.CreateDirectory(_tempWebRootPath);
 
             _mockEnv = new Mock<IWebHostEnvironment>();
-            // Mock both so it works regardless of whether you use wwwroot or SecureStorage!
             _mockEnv.Setup(e => e.WebRootPath).Returns(_tempWebRootPath);
             _mockEnv.Setup(e => e.ContentRootPath).Returns(_tempWebRootPath);
 
             _mockLogger = new Mock<ILogger<LocalFileStorageService>>();
 
-            _service = new LocalFileStorageService(_mockEnv.Object, _mockLogger.Object);
+            _mockConfigService = new Mock<ISystemConfigService>();
+
+            _mockConfigService.Setup(c => c.GetConfigAsync())
+                .ReturnsAsync(ServiceResult<SystemConfigDto>.Ok(
+                    new SystemConfigDto("Sqeez", "", "", "en", "24/25", true, true, 50, 3)
+                ));
+
+            _service = new LocalFileStorageService(_mockEnv.Object, _mockLogger.Object, _mockConfigService.Object);
         }
 
         private IFormFile CreateMockFormFile(string content, string fileName)

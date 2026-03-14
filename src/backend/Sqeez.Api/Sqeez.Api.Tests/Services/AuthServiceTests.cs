@@ -7,6 +7,7 @@ using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services.AuthService;
+using Sqeez.Api.Services.Interfaces;
 using Sqeez.Api.Services.TokenService;
 using BC = BCrypt.Net.BCrypt;
 
@@ -27,7 +28,7 @@ namespace Sqeez.Api.Tests.Services
             return context;
         }
 
-        private AuthService CreateService(SqeezDbContext context, Mock<ITokenService>? mockTokenService = null)
+        private AuthService CreateService(SqeezDbContext context, Mock<ITokenService>? mockTokenService = null, Mock<ISystemConfigService>? mockConfigService = null)
         {
             var mockConfig = new Mock<IConfiguration>();
             mockConfig.Setup(c => c["SUPER_USER_EMAIL"]).Returns(SuperUserEmail);
@@ -37,15 +38,27 @@ namespace Sqeez.Api.Tests.Services
                 mockTokenService = new Mock<ITokenService>();
                 mockTokenService.Setup(t => t.CreateToken(It.IsAny<Student>()))
                                 .Returns(ServiceResult<string>.Ok("fake-jwt-token"));
+                mockTokenService.Setup(t => t.GenerateRefreshToken())
+                                .Returns("fake-refresh-token");
+            }
+
+            if (mockConfigService == null)
+            {
+                mockConfigService = new Mock<ISystemConfigService>();
+                // Fake the global config so Registration is open and Max Sessions = 3
+                mockConfigService.Setup(c => c.GetConfigAsync())
+                    .ReturnsAsync(ServiceResult<SystemConfigDto>.Ok(
+                        new SystemConfigDto("Sqeez", "", "", "en", "24/25", true, true, 10, 3)
+                    ));
             }
 
             var mockLogger = new Mock<ILogger<AuthService>>();
 
-            return new AuthService(context, mockConfig.Object, mockTokenService.Object, mockLogger.Object);
+            return new AuthService(context, mockConfig.Object, mockTokenService.Object, mockConfigService.Object, mockLogger.Object);
         }
 
         [Fact]
-        public async Task LoginAsync_WithValidCredentials_ReturnsTokenAndSetsOnline()
+        public async Task LoginAsync_WithValidCredentials_ReturnsTokensAndSetsOnline()
         {
             var context = await GetInMemoryDbContext();
             string password = "MySecretPassword123!";
@@ -64,11 +77,16 @@ namespace Sqeez.Api.Tests.Services
 
             var result = await service.LoginAsync(loginDto);
 
-            Assert.Null(result.ErrorMessage);
-            Assert.Equal("fake-jwt-token", result.Data);
+            Assert.True(result.Success);
+            Assert.Equal("fake-jwt-token", result.Data!.AccessToken);
+            Assert.Equal("fake-refresh-token", result.Data.RefreshToken);
 
             var dbUser = await context.Students.FindAsync(user.Id);
             Assert.True(dbUser!.IsOnline);
+
+            // Verify a session was saved
+            var sessionCount = await context.UserSessions.CountAsync(s => s.UserId == user.Id);
+            Assert.Equal(1, sessionCount);
         }
 
         [Fact]
@@ -84,7 +102,7 @@ namespace Sqeez.Api.Tests.Services
 
             var result = await service.LoginAsync(loginDto);
 
-            Assert.NotNull(result.ErrorMessage);
+            Assert.False(result.Success);
             Assert.Equal(ServiceError.Unauthorized, result.ErrorCode);
         }
 
@@ -93,11 +111,12 @@ namespace Sqeez.Api.Tests.Services
         {
             var context = await GetInMemoryDbContext();
             var service = CreateService(context);
-            var registerDto = new RegisterDTO("NewUser", "normal@sqeez.com", "pwd" );
+            var registerDto = new RegisterDTO("NewUser", "normal@sqeez.com", "pwd");
 
             var result = await service.RegisterAsync(registerDto);
 
-            Assert.Null(result.ErrorMessage);
+            Assert.True(result.Success);
+            Assert.NotNull(result.Data!.AccessToken);
 
             var savedUser = await context.Students.FirstOrDefaultAsync(u => u.Email == "normal@sqeez.com");
             Assert.NotNull(savedUser);
@@ -110,11 +129,11 @@ namespace Sqeez.Api.Tests.Services
         {
             var context = await GetInMemoryDbContext();
             var service = CreateService(context);
-            var registerDto = new RegisterDTO( "Founder", SuperUserEmail, "pwd");
+            var registerDto = new RegisterDTO("Founder", SuperUserEmail, "pwd");
 
             var result = await service.RegisterAsync(registerDto);
 
-            Assert.Null(result.ErrorMessage);
+            Assert.True(result.Success);
 
             var savedUser = await context.Admins.FirstOrDefaultAsync(u => u.Email == SuperUserEmail);
             Assert.NotNull(savedUser);
@@ -133,27 +152,64 @@ namespace Sqeez.Api.Tests.Services
 
             var result = await service.RegisterAsync(registerDto);
 
-            Assert.NotNull(result.ErrorMessage);
+            Assert.False(result.Success);
             Assert.Equal(ServiceError.Conflict, result.ErrorCode);
         }
 
         [Fact]
-        public async Task LogoutAsync_WhenUserExists_SetsOffline()
+        public async Task RefreshTokenAsync_WhenValid_ReturnsNewTokensAndRevokesOld()
         {
             var context = await GetInMemoryDbContext();
-            var user = new Student { Username = "OnlineUser", Email = "online@sqeez.com", IsOnline = true };
+            var user = new Student { Username = "RefreshUser", Email = "refresh@sqeez.com" };
             context.Students.Add(user);
+            await context.SaveChangesAsync();
+
+            var oldSession = new UserSession
+            {
+                UserId = user.Id,
+                RefreshToken = "old-refresh-token",
+                ExpiresAt = DateTime.UtcNow.AddDays(1),
+                IsRevoked = false
+            };
+            context.UserSessions.Add(oldSession);
             await context.SaveChangesAsync();
 
             var service = CreateService(context);
 
-            var result = await service.LogoutAsync(user.Id);
+            var result = await service.RefreshTokenAsync(new RefreshTokenDto("old-refresh-token"));
 
-            Assert.Null(result.ErrorMessage);
+            Assert.True(result.Success);
+            Assert.Equal("fake-jwt-token", result.Data!.AccessToken);
+            Assert.Equal("fake-refresh-token", result.Data.RefreshToken);
+
+            // Assert that the old session was properly revoked
+            var dbOldSession = await context.UserSessions.FindAsync(oldSession.Id);
+            Assert.True(dbOldSession!.IsRevoked);
+        }
+
+        [Fact]
+        public async Task LogoutAsync_WhenUserExists_SetsOfflineAndRevokesSessions()
+        {
+            var context = await GetInMemoryDbContext();
+            var user = new Student { Username = "OnlineUser", Email = "online@sqeez.com", IsOnline = true };
+            context.Students.Add(user);
+
+            var session = new UserSession { UserId = user.Id, RefreshToken = "my-token", IsRevoked = false };
+            context.UserSessions.Add(session);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.LogoutAsync(user.Id, "my-token");
+
+            Assert.True(result.Success);
             Assert.True(result.Data);
 
             var dbUser = await context.Students.FindAsync(user.Id);
             Assert.False(dbUser!.IsOnline);
+
+            var dbSession = await context.UserSessions.FindAsync(session.Id);
+            Assert.True(dbSession!.IsRevoked);
         }
 
         [Fact]
@@ -168,7 +224,7 @@ namespace Sqeez.Api.Tests.Services
 
             var result = await service.GetCurrentUserAsync(teacher.Id, "Teacher");
 
-            Assert.Null(result.ErrorMessage);
+            Assert.True(result.Success);
             Assert.Equal("History", result.Data!.Department);
             Assert.Null(result.Data.PhoneNumber);
         }
@@ -189,7 +245,7 @@ namespace Sqeez.Api.Tests.Services
 
             var result = await service.UpdateUserRoleAsync(performingAdmin.Id, dto);
 
-            Assert.NotNull(result.ErrorMessage);
+            Assert.False(result.Success);
             Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
         }
 
@@ -208,7 +264,7 @@ namespace Sqeez.Api.Tests.Services
 
             var result = await service.UpdateUserRoleAsync(performingAdmin.Id, dto);
 
-            Assert.NotNull(result.ErrorMessage);
+            Assert.False(result.Success);
             Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
         }
 
@@ -230,8 +286,7 @@ namespace Sqeez.Api.Tests.Services
 
             // Because EF Core InMemory DOES NOT support raw SQL (ExecuteSqlInterpolatedAsync), 
             // it throws an InvalidOperationException, which your catch block handles.
-            // If we get an InternalError, it proves our logic successfully passed all the security guard clauses!
-            Assert.NotNull(result.ErrorMessage);
+            Assert.False(result.Success);
             Assert.Equal(ServiceError.InternalError, result.ErrorCode);
             Assert.Equal("Internal error.", result.ErrorMessage);
         }

@@ -1,11 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
-using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Services.AuthService;
+using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
 {
@@ -20,38 +17,50 @@ namespace Sqeez.Api.Controllers
             _authService = authService;
         }
 
-        private void SetCookie(string token)
+        private void SetTokens(AuthResponseDto tokens)
         {
-            var cookieOptions = new CookieOptions
+            // Access Token Cookie (Short Lived)
+            var accessOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddMinutes(15)
+            };
+            Response.Cookies.Append("sqeez_access_token", tokens.AccessToken, accessOptions);
+
+            // Refresh Token Cookie (Long Lived)
+            var refreshOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
                 Expires = DateTime.UtcNow.AddDays(7)
             };
-
-            Response.Cookies.Append("sqeez_token", token, cookieOptions);
+            Response.Cookies.Append("sqeez_refresh_token", tokens.RefreshToken, refreshOptions);
         }
 
-        private void ClearCookie()
+        private void ClearTokens()
         {
-            Response.Cookies.Delete("sqeez_token", new CookieOptions
+            var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict
-            });
+            };
+
+            Response.Cookies.Delete("sqeez_access_token", cookieOptions);
+            Response.Cookies.Delete("sqeez_refresh_token", cookieOptions);
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDTO registerDto)
         {
             var result = await _authService.RegisterAsync(registerDto);
-            var token = result.Data;
 
-            if (!result.Success || token == null) return HandleServiceResult(result);
+            if (!result.Success || result.Data == null) return HandleServiceResult(result);
 
-            SetCookie(token);
+            SetTokens(result.Data);
 
             return Ok(new { message = "Registration was successful." });
         }
@@ -60,13 +69,35 @@ namespace Sqeez.Api.Controllers
         public async Task<IActionResult> Login(LoginDTO loginDto)
         {
             var result = await _authService.LoginAsync(loginDto);
-            var token = result.Data;
 
-            if (!result.Success || token == null) return HandleServiceResult(result);
+            if (!result.Success || result.Data == null) return HandleServiceResult(result);
 
-            SetCookie(token);
+            SetTokens(result.Data);
 
             return Ok(new { message = "Login successful" });
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh()
+        {
+            var refreshToken = Request.Cookies["sqeez_refresh_token"];
+
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                return Unauthorized(new { message = "No refresh token found. Please log in again." });
+            }
+
+            var result = await _authService.RefreshTokenAsync(new RefreshTokenDto(refreshToken));
+
+            if (!result.Success || result.Data == null)
+            {
+                ClearTokens();
+                return HandleServiceResult(result);
+            }
+
+            SetTokens(result.Data);
+
+            return Ok(new { message = "Session refreshed successfully." });
         }
 
         [Authorize]
@@ -80,12 +111,14 @@ namespace Sqeez.Api.Controllers
                 return Unauthorized();
             }
 
-            var result = await _authService.LogoutAsync(long.Parse(userIdClaim));
+            var currentRefreshToken = Request.Cookies["sqeez_refresh_token"];
+
+            var result = await _authService.LogoutAsync(long.Parse(userIdClaim), currentRefreshToken);
 
             if (!result.Success)
                 return HandleServiceResult(result);
 
-            ClearCookie();
+            ClearTokens();
 
             return Ok(new { message = "Logged out successfully" });
         }

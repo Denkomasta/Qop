@@ -17,9 +17,9 @@ namespace Sqeez.Api.Controllers
             _authService = authService;
         }
 
-        private void SetTokens(AuthResponseDto tokens)
+        private void SetTokens(AuthResponseDto tokens, bool rememberMe)
         {
-            // Access Token Cookie (Short Lived)
+            // Access Token Cookie (Always short-lived)
             var accessOptions = new CookieOptions
             {
                 HttpOnly = true,
@@ -29,14 +29,20 @@ namespace Sqeez.Api.Controllers
             };
             Response.Cookies.Append("sqeez_access_token", tokens.AccessToken, accessOptions);
 
-            // Refresh Token Cookie (Long Lived)
+            // Refresh Token Cookie
             var refreshOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddDays(7)
+                Path = "/api/auth/refresh"
             };
+
+            if (rememberMe)
+            {
+                refreshOptions.Expires = DateTime.UtcNow.AddDays(7);
+            }
+            // If false, we leave expires null. The browser treats it as a "Session Cookie" 
             Response.Cookies.Append("sqeez_refresh_token", tokens.RefreshToken, refreshOptions);
         }
 
@@ -60,7 +66,7 @@ namespace Sqeez.Api.Controllers
 
             if (!result.Success || result.Data == null) return HandleServiceResult(result);
 
-            SetTokens(result.Data);
+            SetTokens(result.Data, registerDto.RememberMe);
 
             return Ok(new { message = "Registration was successful." });
         }
@@ -72,7 +78,7 @@ namespace Sqeez.Api.Controllers
 
             if (!result.Success || result.Data == null) return HandleServiceResult(result);
 
-            SetTokens(result.Data);
+            SetTokens(result.Data, loginDto.RememberMe);
 
             return Ok(new { message = "Login successful" });
         }
@@ -95,7 +101,7 @@ namespace Sqeez.Api.Controllers
                 return HandleServiceResult(result);
             }
 
-            SetTokens(result.Data);
+            SetTokens(result.Data, true);
 
             return Ok(new { message = "Session refreshed successfully." });
         }

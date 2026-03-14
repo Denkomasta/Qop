@@ -290,5 +290,51 @@ namespace Sqeez.Api.Tests.Services
             Assert.Equal(ServiceError.InternalError, result.ErrorCode);
             Assert.Equal("Internal error.", result.ErrorMessage);
         }
+
+        [Fact]
+        public async Task LoginAsync_WhenRememberMeIsTrue_SetsSessionExpirationToSevenDays()
+        {
+            var context = await GetInMemoryDbContext();
+            string password = "Password123!";
+            var user = new Student { Username = "RememberMeTrue", Email = "true@sqeez.com", PasswordHash = BC.HashPassword(password) };
+            context.Students.Add(user);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            // RememberMe = true
+            var loginDto = new LoginDTO("true@sqeez.com", password, true);
+
+            await service.LoginAsync(loginDto);
+
+            var session = await context.UserSessions.FirstOrDefaultAsync(s => s.UserId == user.Id);
+            Assert.NotNull(session);
+
+            // Check if expiration is roughly 7 days from now (allowing a 1-minute buffer for test execution time)
+            var expectedExpiration = DateTime.UtcNow.AddDays(7);
+            Assert.True(session!.ExpiresAt > expectedExpiration.AddMinutes(-1) && session.ExpiresAt <= expectedExpiration);
+        }
+
+        [Fact]
+        public async Task LoginAsync_WhenRememberMeIsFalse_SetsSessionExpirationToOneDay()
+        {
+            var context = await GetInMemoryDbContext();
+            string password = "Password123!";
+            var user = new Student { Username = "RememberMeFalse", Email = "false@sqeez.com", PasswordHash = BC.HashPassword(password) };
+            context.Students.Add(user);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            // RememberMe = false
+            var loginDto = new LoginDTO("false@sqeez.com", password, false);
+
+            await service.LoginAsync(loginDto);
+
+            var session = await context.UserSessions.FirstOrDefaultAsync(s => s.UserId == user.Id);
+            Assert.NotNull(session);
+
+            // Check if expiration is roughly 24 hours from now
+            var expectedExpiration = DateTime.UtcNow.AddHours(24);
+            Assert.True(session!.ExpiresAt > expectedExpiration.AddMinutes(-1) && session.ExpiresAt <= expectedExpiration);
+        }
     }
 }

@@ -4,24 +4,21 @@ import { Input } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { useTranslation } from 'react-i18next'
-import { Link, useNavigate, useRouter, useSearch } from '@tanstack/react-router'
-import {
-  getGetApiAuthMeQueryOptions,
-  usePostApiAuthLogin as useLogin,
-} from '@/api/generated/endpoints/auth/auth'
+import { Link, useSearch } from '@tanstack/react-router'
+import { usePostApiAuthLogin as useLogin } from '@/api/generated/endpoints/auth/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form'
 import type { TranslationKey } from '@/i18next'
 import { AxiosError } from 'axios'
-import { queryClient } from '@/main'
-import { useAuthStore } from '@/store/useAuthStore'
+import { useAuthSuccess } from '@/hooks/useAuthSuccess'
 
 const loginSchema = z.object({
   email: z.email({ message: 'Invalid email address' }),
   password: z
     .string()
     .min(4, { message: 'Password must be at least 4 characters' }),
+  remember: z.boolean(),
 })
 
 const errorMapping: Record<number, TranslationKey> = {
@@ -32,41 +29,36 @@ const errorMapping: Record<number, TranslationKey> = {
 type LoginFormValues = z.infer<typeof loginSchema>
 
 export function LoginForm() {
-  const navigate = useNavigate()
-  const router = useRouter()
   const { t } = useTranslation()
-  const setUser = useAuthStore((state) => state.setUser)
   const search = useSearch({ strict: false })
+  const handleAuthSuccess = useAuthSuccess()
 
   const {
     register,
     handleSubmit,
     setError,
+    control,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
+      remember: false,
     },
   })
 
   const { mutate, isPending } = useLogin({
     mutation: {
       onSuccess: async () => {
-        const user = await queryClient.fetchQuery({
-          ...getGetApiAuthMeQueryOptions(),
-          staleTime: 0,
-        })
-
-        setUser(user)
-
-        await router.invalidate()
-
-        navigate({
-          to: search?.redirect || '/app',
-          replace: true,
-        })
+        try {
+          await handleAuthSuccess(search?.redirect)
+        } catch {
+          setError('root', {
+            type: 'manual',
+            message: t('error.serverError'),
+          })
+        }
       },
       onError: (error: AxiosError) => {
         setError('root', {
@@ -81,11 +73,12 @@ export function LoginForm() {
     },
   })
 
-  const onSubmit = (values: LoginFormValues) => {
+  const onSubmit: SubmitHandler<LoginFormValues> = (values) => {
     mutate({
       data: {
         email: values.email,
         password: values.password,
+        rememberMe: values.remember,
       },
     })
   }
@@ -147,7 +140,19 @@ export function LoginForm() {
         />
 
         <div className="flex items-center gap-2">
-          <Checkbox id="remember" aria-label="Remember me for 30 days" />
+          <Controller
+            name="remember"
+            control={control}
+            render={({ field }) => (
+              <Checkbox
+                id="remember"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                disabled={isPending}
+                aria-label="Remember me for 30 days"
+              />
+            )}
+          />
           <Label
             htmlFor="remember"
             className="cursor-pointer text-sm font-normal text-muted-foreground"

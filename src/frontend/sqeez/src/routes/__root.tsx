@@ -15,7 +15,7 @@ const RootLayout = () => {
 
   const {
     data: user,
-    isError,
+    error,
     // isLoading,
   } = useGetApiAuthMe({
     query: {
@@ -28,10 +28,12 @@ const RootLayout = () => {
   useEffect(() => {
     if (user) {
       setUser(user)
-    } else if (isError) {
-      logout()
+    } else if (error != null) {
+      if (error?.response?.status === 401) {
+        logout()
+      }
     }
-  }, [user, isError, setUser, logout])
+  }, [user, error, setUser, logout])
 
   const navLinks = [{ to: '/', label: t('common.home') }]
   const footerLinks = [

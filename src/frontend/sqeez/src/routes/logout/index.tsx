@@ -1,42 +1,16 @@
-import { useState } from 'react'
-import { createFileRoute, useNavigate, Link } from '@tanstack/react-router'
-import { useAuthStore } from '@/store/useAuthStore'
-import { useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { Button } from '@/components/ui'
 import { LogOut, ArrowLeft, Loader2 } from 'lucide-react'
-import { postApiAuthLogout } from '@/api/generated/endpoints/auth/auth'
 import { useTranslation } from 'react-i18next'
+import { useLogout } from '@/hooks/useLogout'
 
 export const Route = createFileRoute('/logout/')({
   component: LogoutPage,
 })
 
 function LogoutPage() {
-  const navigate = useNavigate()
   const { t } = useTranslation()
-  const logout = useAuthStore((s) => s.logout)
-  const queryClient = useQueryClient()
-  const [isPending, setIsPending] = useState(false)
-
-  const handleConfirmLogout = async () => {
-    setIsPending(true)
-
-    try {
-      // TODO add toasts
-      await postApiAuthLogout()
-    } catch (error) {
-      console.error(
-        'Server logout failed, but clearing local session anyway',
-        error,
-      )
-    } finally {
-      logout()
-
-      queryClient.clear()
-
-      navigate({ to: '/', replace: true })
-    }
-  }
+  const { performLogout, isPending } = useLogout()
 
   return (
     <div className="flex min-h-[80vh] flex-col items-center justify-center p-4">
@@ -54,7 +28,7 @@ function LogoutPage() {
           <Button
             variant="destructive"
             className="h-11 w-full cursor-pointer rounded-xl font-semibold"
-            onClick={handleConfirmLogout}
+            onClick={performLogout}
             disabled={isPending}
           >
             {isPending ? (

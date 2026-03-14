@@ -4,16 +4,12 @@ import { Input } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { useTranslation } from 'react-i18next'
-import { Link, useNavigate, useRouter } from '@tanstack/react-router'
-import { useForm } from 'react-hook-form'
+import { Link, useSearch } from '@tanstack/react-router'
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import {
-  usePostApiAuthRegister as useRegister,
-  getGetApiAuthMeQueryOptions,
-} from '@/api/generated/endpoints/auth/auth'
-import { useAuthStore } from '@/store/useAuthStore'
-import { queryClient } from '@/main'
+import { usePostApiAuthRegister as useRegister } from '@/api/generated/endpoints/auth/auth'
+import { useAuthSuccess } from '@/hooks/useAuthSuccess' // Adjust path as needed
 
 const registerSchema = z.object({
   username: z
@@ -23,20 +19,21 @@ const registerSchema = z.object({
   password: z
     .string()
     .min(4, { message: 'Password must be at least 4 characters' }),
+  remember: z.boolean(),
 })
 
 type RegisterFormValues = z.infer<typeof registerSchema>
 
 export function RegisterForm() {
-  const navigate = useNavigate()
-  const router = useRouter()
   const { t } = useTranslation()
-  const setUser = useAuthStore((state) => state.setUser)
+  const search = useSearch({ strict: false })
+  const handleAuthSuccess = useAuthSuccess()
 
   const {
     register,
     handleSubmit,
     setError,
+    control,
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -44,6 +41,7 @@ export function RegisterForm() {
       username: '',
       email: '',
       password: '',
+      remember: false,
     },
   })
 
@@ -51,16 +49,7 @@ export function RegisterForm() {
     mutation: {
       onSuccess: async () => {
         try {
-          const user = await queryClient.fetchQuery({
-            ...getGetApiAuthMeQueryOptions(),
-            staleTime: 0,
-          })
-
-          setUser(user)
-
-          await router.invalidate()
-
-          navigate({ to: '/app', replace: true })
+          await handleAuthSuccess(search?.redirect)
         } catch {
           setError('root', {
             type: 'manual',
@@ -77,12 +66,13 @@ export function RegisterForm() {
     },
   })
 
-  const onSubmit = (values: RegisterFormValues) => {
+  const onSubmit: SubmitHandler<RegisterFormValues> = (values) => {
     mutate({
       data: {
         username: values.username,
         email: values.email,
         password: values.password,
+        rememberMe: values.remember,
       },
     })
   }
@@ -143,9 +133,21 @@ export function RegisterForm() {
           icon={<Lock className="h-4 w-4" />}
         />
 
-        {/* TODO add remember */}
+        {/* Hooked up the Checkbox to React Hook Form using Controller */}
         <div className="flex items-center gap-2">
-          <Checkbox id="remember" aria-label="Remember me for 30 days" />
+          <Controller
+            name="remember"
+            control={control}
+            render={({ field }) => (
+              <Checkbox
+                id="remember"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                disabled={isPending}
+                aria-label="Remember me for 30 days"
+              />
+            )}
+          />
           <Label
             htmlFor="remember"
             className="cursor-pointer text-sm font-normal text-muted-foreground"

@@ -4,10 +4,8 @@
  * Sqeez.Api | v1
  * OpenAPI spec version: 1.0.0
  */
+import type { IFormFile } from './iFormFile'
 
-export interface RegisterDTO {
-  username: string
-  email: string
-  password: string
-  rememberMe?: boolean
+export type PostApiUsersMeAvatarBody = {
+  file?: IFormFile
 }

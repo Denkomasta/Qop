@@ -9,7 +9,7 @@ namespace Sqeez.Api.DTOs
         string Username,
         string Email,
         string CurrentXP,
-        string Role,
+        UserRole Role,
         string? AvatarUrl
     );
 

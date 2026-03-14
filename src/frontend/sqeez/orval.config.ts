@@ -15,10 +15,11 @@ export default defineConfig({
           path: './src/api/custom-axios.ts',
           name: 'customInstance',
         },
+        enumGenerationType: 'union',
       },
     },
     hooks: {
-      afterAllFilesWrite: 'prettier --write src/api/generated', // Optional: auto-format
+      afterAllFilesWrite: 'prettier --write src/api/generated',
     },
   },
 })

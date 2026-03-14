@@ -5,7 +5,7 @@
         public long Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public string IconUrl { get; set; } = string.Empty;
+        public string? IconUrl { get; set; }
         public int XpBonus { get; set; }
         public string Condition { get; set; } = string.Empty;
 

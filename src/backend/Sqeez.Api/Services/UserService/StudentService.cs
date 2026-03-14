@@ -26,9 +26,12 @@ namespace Sqeez.Api.Services.UserService
                                          s.Email.ToLower().Contains(searchTerm));
             }
 
-            if (filter.IsOnline.HasValue)
+            if (filter.IsOnline is bool isOnline)
             {
-                query = query.Where(s => s.IsOnline == filter.IsOnline.Value);
+                var threshold = DateTime.UtcNow.AddMinutes(-15);
+
+                query = query.Where(s =>
+                    isOnline ? s.LastSeen >= threshold : s.LastSeen < threshold);
             }
 
             if (filter.SchoolClassId.HasValue)
@@ -36,7 +39,7 @@ namespace Sqeez.Api.Services.UserService
                 query = query.Where(s => s.SchoolClassId == filter.SchoolClassId.Value);
             }
 
-            if (filter.IsArchived == true)
+            if (filter.IsArchived is true)
             {
                 query = query.Where(s => s.ArchivedAt != null);
             }
@@ -58,7 +61,7 @@ namespace Sqeez.Api.Services.UserService
                     Email = s.Email,
                     CurrentXP = s.CurrentXP,
                     Role = s.Role.ToString(),
-                    IsOnline = s.IsOnline,
+                    LastSeen = s.LastSeen,
                     SchoolClassId = s.SchoolClassId
                 })
                 .ToListAsync();
@@ -85,7 +88,7 @@ namespace Sqeez.Api.Services.UserService
                     Email = s.Email,
                     CurrentXP = s.CurrentXP,
                     Role = s.Role.ToString(),
-                    IsOnline = s.IsOnline,
+                    LastSeen = s.LastSeen,
                     SchoolClassId = s.SchoolClassId
                 })
                 .FirstOrDefaultAsync();

@@ -14,7 +14,7 @@ namespace Sqeez.Api.Models.Users
         public UserRole Role { get; set; }
         public DateTime LastSeen { get; set; }
         public DateTime? ArchivedAt { get; set; }
-        public bool IsOnline { get; set; }
+        public string? AvatarUrl { get; set; }
 
         public long? SchoolClassId { get; set; }
         public SchoolClass? SchoolClass { get; set; }

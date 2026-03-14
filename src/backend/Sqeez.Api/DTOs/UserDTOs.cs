@@ -9,7 +9,7 @@ namespace Sqeez.Api.DTOs
         public string Email { get; init; } = string.Empty;
         public int CurrentXP { get; init; }
         public string Role { get; init; } = string.Empty;
-        public bool IsOnline { get; init; }
+        public DateTime LastSeen { get; init; }
         public long? SchoolClassId { get; init; }
     }
 

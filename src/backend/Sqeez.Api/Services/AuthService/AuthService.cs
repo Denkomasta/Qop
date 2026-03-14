@@ -23,7 +23,7 @@ namespace Sqeez.Api.Services.AuthService
             _superUserEmail = config["SUPER_USER_EMAIL"]?.Trim().ToLower() ?? string.Empty;
         }
 
-        private async Task<AuthResponseDto> GenerateAuthResponseAndSessionAsync(Student user)
+        private async Task<AuthResponseDto> GenerateAuthResponseAndSessionAsync(Student user, bool rememberMe = false)
         {
             var tokenResult = _tokenService.CreateToken(user);
             string accessToken = tokenResult.Data!;
@@ -57,11 +57,15 @@ namespace Sqeez.Api.Services.AuthService
                 }
             }
 
+            var expirationDate = rememberMe
+                ? DateTime.UtcNow.AddDays(7)
+                : DateTime.UtcNow.AddHours(24);
+
             var newSession = new UserSession
             {
                 UserId = user.Id,
                 RefreshToken = refreshToken,
-                ExpiresAt = DateTime.UtcNow.AddDays(7)
+                ExpiresAt = expirationDate
             };
 
             _context.UserSessions.Add(newSession);
@@ -83,7 +87,7 @@ namespace Sqeez.Api.Services.AuthService
             user.IsOnline = true;
             user.LastSeen = DateTime.UtcNow;
 
-            var response = await GenerateAuthResponseAndSessionAsync(user);
+            var response = await GenerateAuthResponseAndSessionAsync(user, dto.RememberMe);
             return ServiceResult<AuthResponseDto>.Ok(response);
         }
 
@@ -115,7 +119,7 @@ namespace Sqeez.Api.Services.AuthService
             _context.Students.Add(user);
             await _context.SaveChangesAsync();
 
-            var response = await GenerateAuthResponseAndSessionAsync(user);
+            var response = await GenerateAuthResponseAndSessionAsync(user, dto.RememberMe);
             return ServiceResult<AuthResponseDto>.Ok(response);
         }
 
@@ -136,7 +140,7 @@ namespace Sqeez.Api.Services.AuthService
 
             session.IsRevoked = true;
 
-            var response = await GenerateAuthResponseAndSessionAsync(user);
+            var response = await GenerateAuthResponseAndSessionAsync(user, true);
             return ServiceResult<AuthResponseDto>.Ok(response);
         }
 

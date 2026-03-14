@@ -29,7 +29,7 @@ namespace Sqeez.Api.Controllers
         /// GET /api/subjects
         /// </summary>
         [HttpGet]
-        public async Task<ActionResult> GetAllSubjects([FromQuery] SubjectFilterDto filter)
+        public async Task<ActionResult<PagedResponse<SubjectDto>>> GetAllSubjects([FromQuery] SubjectFilterDto filter)
         {
             var result = await _subjectService.GetAllSubjectsAsync(filter);
             return HandleServiceResult(result);
@@ -39,7 +39,7 @@ namespace Sqeez.Api.Controllers
         /// GET /api/subjects/5
         /// </summary>
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetSubjectById(long id)
+        public async Task<ActionResult<SubjectDto>> GetSubjectById(long id)
         {
             var result = await _subjectService.GetSubjectByIdAsync(id);
             return HandleServiceResult(result);
@@ -50,7 +50,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Admin")] // Only staff can create subjects
         [HttpPost]
-        public async Task<ActionResult> CreateSubject([FromBody] CreateSubjectDto dto)
+        public async Task<ActionResult<SubjectDto>> CreateSubject([FromBody] CreateSubjectDto dto)
         {
             var result = await _subjectService.CreateSubjectAsync(dto);
             return HandleServiceResult(result);
@@ -61,7 +61,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Admin")]
         [HttpPatch("{id}")]
-        public async Task<ActionResult> PatchSubject(long id, [FromBody] PatchSubjectDto dto)
+        public async Task<ActionResult<SubjectDto>> PatchSubject(long id, [FromBody] PatchSubjectDto dto)
         {
             var result = await _subjectService.PatchSubjectAsync(id, dto);
             return HandleServiceResult(result);
@@ -73,7 +73,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteSubject(long id)
+        public async Task<ActionResult<bool>> DeleteSubject(long id)
         {
             var result = await _subjectService.DeleteSubjectAsync(id);
             return HandleServiceResult(result);
@@ -83,7 +83,7 @@ namespace Sqeez.Api.Controllers
         /// GET /api/subjects/5/enrollments
         /// </summary>
         [HttpGet("{subjectId}/enrollments")]
-        public async Task<ActionResult> GetEnrollmentsForSubject(long subjectId, [FromQuery] EnrollmentFilterDto filter)
+        public async Task<ActionResult<PagedResponse<EnrollmentDto>>> GetEnrollmentsForSubject(long subjectId, [FromQuery] EnrollmentFilterDto filter)
         {
             // Force the filter to only look at this specific subject
             filter.SubjectId = subjectId;
@@ -96,7 +96,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPost("{subjectId}/enrollments")]
-        public async Task<ActionResult> EnrollStudents(long subjectId, [FromBody] AssignStudentsDto dto)
+        public async Task<ActionResult<bool>> EnrollStudents(long subjectId, [FromBody] AssignStudentsDto dto)
         {
             var result = await _enrollmentService.EnrollStudentsInSubjectAsync(subjectId, dto);
             return HandleServiceResult(result);
@@ -107,7 +107,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpDelete("{subjectId}/enrollments")]
-        public async Task<ActionResult> UnenrollStudents(long subjectId, [FromBody] RemoveStudentsDto dto)
+        public async Task<ActionResult<bool>> UnenrollStudents(long subjectId, [FromBody] RemoveStudentsDto dto)
         {
             var result = await _enrollmentService.UnenrollStudentsFromSubjectAsync(subjectId, dto);
             return HandleServiceResult(result);
@@ -117,7 +117,7 @@ namespace Sqeez.Api.Controllers
         /// GET /api/subjects/5/quizzes
         /// </summary>
         [HttpGet("{subjectId}/quizzes")]
-        public async Task<ActionResult> GetQuizzesForSubject(long subjectId, [FromQuery] QuizFilterDto filter)
+        public async Task<ActionResult<PagedResponse<QuizDto>>> GetQuizzesForSubject(long subjectId, [FromQuery] QuizFilterDto filter)
         {
             filter.SubjectId = subjectId; // Force the filter to this subject
             var result = await _quizService.GetAllQuizzesAsync(filter);
@@ -130,7 +130,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPost("{subjectId}/quizzes")]
-        public async Task<ActionResult> AddQuizToSubject(long subjectId, [FromBody] CreateQuizDto dto)
+        public async Task<ActionResult<QuizDto>> AddQuizToSubject(long subjectId, [FromBody] CreateQuizDto dto)
         {
             // Force the subjectId from the route into the DTO
             var safeDto = dto with { SubjectId = subjectId };

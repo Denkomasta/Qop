@@ -20,7 +20,12 @@ import type {
   UseQueryResult,
 } from '@tanstack/react-query'
 
-import type { GetApiTeachersParams, PatchTeacherDto } from '../../model'
+import type {
+  GetApiTeachersParams,
+  PagedResponseOfTeacherDto,
+  PatchTeacherDto,
+  TeacherDto,
+} from '../../model'
 
 import { customInstance } from '../../../custom-axios'
 import type { ErrorType } from '../../../custom-axios'
@@ -32,7 +37,7 @@ export const getApiTeachers = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<PagedResponseOfTeacherDto>(
     { url: `/api/teachers`, method: 'GET', params, signal },
     options,
   )
@@ -166,7 +171,7 @@ export const getApiTeachersId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<TeacherDto>(
     { url: `/api/teachers/${id}`, method: 'GET', signal },
     options,
   )
@@ -326,7 +331,7 @@ export const patchApiTeachersId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<TeacherDto>(
     {
       url: `/api/teachers/${id}`,
       method: 'PATCH',
@@ -409,7 +414,7 @@ export const deleteApiTeachersId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<boolean>(
     { url: `/api/teachers/${id}`, method: 'DELETE', signal },
     options,
   )

@@ -20,7 +20,7 @@ import type {
   UseQueryResult,
 } from '@tanstack/react-query'
 
-import type { UpdateSystemConfigDto } from '../../model'
+import type { SystemConfigDto, UpdateSystemConfigDto } from '../../model'
 
 import { customInstance } from '../../../custom-axios'
 import type { ErrorType } from '../../../custom-axios'
@@ -31,7 +31,7 @@ export const getApiSystemConfig = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<SystemConfigDto>(
     { url: `/api/system-config`, method: 'GET', signal },
     options,
   )
@@ -178,7 +178,7 @@ export const patchApiSystemConfig = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<SystemConfigDto>(
     {
       url: `/api/system-config`,
       method: 'PATCH',

@@ -21,7 +21,7 @@ namespace Sqeez.Api.Controllers
         /// Global search for enrollments (useful for Admins or global gradebooks)
         /// </summary>
         [HttpGet]
-        public async Task<ActionResult> GetAllEnrollments([FromQuery] EnrollmentFilterDto filter)
+        public async Task<ActionResult<PagedResponse<EnrollmentDto>>> GetAllEnrollments([FromQuery] EnrollmentFilterDto filter)
         {
             var result = await _enrollmentService.GetAllEnrollmentsAsync(filter);
             return HandleServiceResult(result);
@@ -31,7 +31,7 @@ namespace Sqeez.Api.Controllers
         /// GET /api/enrollments/452
         /// </summary>
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetEnrollmentById(long id)
+        public async Task<ActionResult<EnrollmentDto>> GetEnrollmentById(long id)
         {
             var result = await _enrollmentService.GetEnrollmentByIdAsync(id);
             return HandleServiceResult(result);
@@ -43,7 +43,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPatch("{id}")]
-        public async Task<ActionResult> PatchEnrollment(long id, [FromBody] PatchEnrollmentDto dto)
+        public async Task<ActionResult<EnrollmentDto>> PatchEnrollment(long id, [FromBody] PatchEnrollmentDto dto)
         {
             var result = await _enrollmentService.PatchEnrollmentAsync(id, dto);
             return HandleServiceResult(result);
@@ -55,7 +55,7 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteEnrollment(long id)
+        public async Task<ActionResult<bool>> DeleteEnrollment(long id)
         {
             var result = await _enrollmentService.DeleteEnrollmentAsync(id);
             return HandleServiceResult(result);

@@ -23,6 +23,11 @@ import type {
 import type {
   GetApiQuizAttemptsQuizQuizIdParams,
   GradeQuestionResponseDto,
+  PagedResponseOfQuizAttemptDto,
+  QuestionAnsweredDto,
+  QuestionResponseDto,
+  QuizAttemptDetailDto,
+  QuizAttemptDto,
   StartQuizAttemptDto,
   SubmitQuestionResponseDto,
 } from '../../model'
@@ -37,7 +42,7 @@ export const postApiQuizAttemptsStart = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<QuizAttemptDto>(
     {
       url: `/api/quiz-attempts/start`,
       method: 'POST',
@@ -124,7 +129,7 @@ export const postApiQuizAttemptsIdAnswer = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<QuestionAnsweredDto>(
     {
       url: `/api/quiz-attempts/${id}/answer`,
       method: 'POST',
@@ -210,7 +215,7 @@ export const getApiQuizAttemptsIdNextQuestion = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<number | string | null>(
     { url: `/api/quiz-attempts/${id}/next-question`, method: 'GET', signal },
     options,
   )
@@ -376,7 +381,7 @@ export const postApiQuizAttemptsIdComplete = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<QuizAttemptDto>(
     { url: `/api/quiz-attempts/${id}/complete`, method: 'POST', signal },
     options,
   )
@@ -456,7 +461,7 @@ export const getApiQuizAttemptsId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<QuizAttemptDetailDto>(
     { url: `/api/quiz-attempts/${id}`, method: 'GET', signal },
     options,
   )
@@ -615,7 +620,7 @@ export const deleteApiQuizAttemptsId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<boolean>(
     { url: `/api/quiz-attempts/${id}`, method: 'DELETE', signal },
     options,
   )
@@ -696,7 +701,7 @@ export const getApiQuizAttemptsQuizQuizId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<PagedResponseOfQuizAttemptDto>(
     { url: `/api/quiz-attempts/quiz/${quizId}`, method: 'GET', params, signal },
     options,
   )
@@ -874,7 +879,7 @@ export const patchApiQuizAttemptsResponsesResponseIdGrade = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<QuestionResponseDto>(
     {
       url: `/api/quiz-attempts/responses/${responseId}/grade`,
       method: 'PATCH',

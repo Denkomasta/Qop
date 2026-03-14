@@ -27,8 +27,13 @@ import type {
   GetApiSubjectsParams,
   GetApiSubjectsSubjectIdEnrollmentsParams,
   GetApiSubjectsSubjectIdQuizzesParams,
+  PagedResponseOfEnrollmentDto,
+  PagedResponseOfQuizDto,
+  PagedResponseOfSubjectDto,
   PatchSubjectDto,
+  QuizDto,
   RemoveStudentsDto,
+  SubjectDto,
 } from '../../model'
 
 import { customInstance } from '../../../custom-axios'
@@ -41,7 +46,7 @@ export const getApiSubjects = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<PagedResponseOfSubjectDto>(
     { url: `/api/subjects`, method: 'GET', params, signal },
     options,
   )
@@ -175,7 +180,7 @@ export const postApiSubjects = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<SubjectDto>(
     {
       url: `/api/subjects`,
       method: 'POST',
@@ -258,7 +263,7 @@ export const getApiSubjectsId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<SubjectDto>(
     { url: `/api/subjects/${id}`, method: 'GET', signal },
     options,
   )
@@ -418,7 +423,7 @@ export const patchApiSubjectsId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<SubjectDto>(
     {
       url: `/api/subjects/${id}`,
       method: 'PATCH',
@@ -501,7 +506,7 @@ export const deleteApiSubjectsId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<boolean>(
     { url: `/api/subjects/${id}`, method: 'DELETE', signal },
     options,
   )
@@ -582,7 +587,7 @@ export const getApiSubjectsSubjectIdEnrollments = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<PagedResponseOfEnrollmentDto>(
     {
       url: `/api/subjects/${subjectId}/enrollments`,
       method: 'GET',
@@ -770,7 +775,7 @@ export const postApiSubjectsSubjectIdEnrollments = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<boolean>(
     {
       url: `/api/subjects/${subjectId}/enrollments`,
       method: 'POST',
@@ -858,7 +863,7 @@ export const deleteApiSubjectsSubjectIdEnrollments = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<boolean>(
     {
       url: `/api/subjects/${subjectId}/enrollments`,
       method: 'DELETE',
@@ -951,7 +956,7 @@ export const getApiSubjectsSubjectIdQuizzes = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<PagedResponseOfQuizDto>(
     {
       url: `/api/subjects/${subjectId}/quizzes`,
       method: 'GET',
@@ -1134,7 +1139,7 @@ export const postApiSubjectsSubjectIdQuizzes = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<QuizDto>(
     {
       url: `/api/subjects/${subjectId}/quizzes`,
       method: 'POST',

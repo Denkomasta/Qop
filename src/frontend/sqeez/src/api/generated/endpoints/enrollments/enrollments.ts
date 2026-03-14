@@ -20,7 +20,12 @@ import type {
   UseQueryResult,
 } from '@tanstack/react-query'
 
-import type { GetApiEnrollmentsParams, PatchEnrollmentDto } from '../../model'
+import type {
+  EnrollmentDto,
+  GetApiEnrollmentsParams,
+  PagedResponseOfEnrollmentDto,
+  PatchEnrollmentDto,
+} from '../../model'
 
 import { customInstance } from '../../../custom-axios'
 import type { ErrorType } from '../../../custom-axios'
@@ -32,7 +37,7 @@ export const getApiEnrollments = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<PagedResponseOfEnrollmentDto>(
     { url: `/api/enrollments`, method: 'GET', params, signal },
     options,
   )
@@ -189,7 +194,7 @@ export const getApiEnrollmentsId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<EnrollmentDto>(
     { url: `/api/enrollments/${id}`, method: 'GET', signal },
     options,
   )
@@ -349,7 +354,7 @@ export const patchApiEnrollmentsId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<EnrollmentDto>(
     {
       url: `/api/enrollments/${id}`,
       method: 'PATCH',
@@ -435,7 +440,7 @@ export const deleteApiEnrollmentsId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<boolean>(
     { url: `/api/enrollments/${id}`, method: 'DELETE', signal },
     options,
   )

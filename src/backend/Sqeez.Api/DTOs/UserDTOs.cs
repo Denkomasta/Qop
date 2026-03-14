@@ -84,4 +84,6 @@ namespace Sqeez.Api.DTOs
     {
         public string? PhoneNumber { get; init; }
     }
+
+    public record AvatarUploadResponseDto(string Message, string AvatarUrl);
 }

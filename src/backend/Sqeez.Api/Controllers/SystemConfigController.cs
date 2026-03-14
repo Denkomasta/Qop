@@ -16,7 +16,7 @@ namespace Sqeez.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetConfig()
+        public async Task<ActionResult<SystemConfigDto>> GetConfig()
         {
             var result = await _configService.GetConfigAsync();
             return HandleServiceResult(result);
@@ -24,7 +24,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPatch]
-        public async Task<ActionResult> UpdateConfig([FromBody] UpdateSystemConfigDto dto)
+        public async Task<ActionResult<SystemConfigDto>> UpdateConfig([FromBody] UpdateSystemConfigDto dto)
         {
             var result = await _configService.UpdateConfigAsync(dto);
             return HandleServiceResult(result);

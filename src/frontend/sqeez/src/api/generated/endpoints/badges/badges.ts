@@ -20,7 +20,12 @@ import type {
   UseQueryResult,
 } from '@tanstack/react-query'
 
-import type { PatchApiBadgesIdBody, PostApiBadgesBody } from '../../model'
+import type {
+  BadgeDto,
+  PatchApiBadgesIdBody,
+  PostApiBadgesBody,
+  StudentBadgeDto,
+} from '../../model'
 
 import { customInstance } from '../../../custom-axios'
 import type { ErrorType } from '../../../custom-axios'
@@ -51,7 +56,7 @@ export const postApiBadges = (
     )
   }
 
-  return customInstance<void>(
+  return customInstance<BadgeDto>(
     { url: `/api/badges`, method: 'POST', data: formData, signal },
     options,
   )
@@ -127,7 +132,7 @@ export const getApiBadges = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<BadgeDto[]>(
     { url: `/api/badges`, method: 'GET', signal },
     options,
   )
@@ -274,7 +279,7 @@ export const patchApiBadgesId = (
     )
   }
 
-  return customInstance<void>(
+  return customInstance<BadgeDto>(
     { url: `/api/badges/${id}`, method: 'PATCH', data: formData, signal },
     options,
   )
@@ -351,7 +356,7 @@ export const deleteApiBadgesId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<boolean>(
     { url: `/api/badges/${id}`, method: 'DELETE', signal },
     options,
   )
@@ -429,7 +434,7 @@ export const postApiBadgesBadgeIdAwardStudentId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<boolean>(
     {
       url: `/api/badges/${badgeId}/award/${studentId}`,
       method: 'POST',
@@ -516,7 +521,7 @@ export const getApiBadgesMyBadges = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<StudentBadgeDto[]>(
     { url: `/api/badges/my-badges`, method: 'GET', signal },
     options,
   )

@@ -18,7 +18,7 @@ namespace Sqeez.Api.Controllers
         // Maybe only authentication
         [Authorize(Roles = "Teacher,Admin")]
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] SchoolClassFilterDto filter)
+        public async Task<ActionResult<PagedResponse<SchoolClassDto>>> GetAll([FromQuery] SchoolClassFilterDto filter)
         {
             var result = await _schoolClassService.GetAllClassesAsync(filter);
             return HandleServiceResult(result);
@@ -26,7 +26,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(long id)
+        public async Task<ActionResult<SchoolClassDto>> GetById(long id)
         {
             var result = await _schoolClassService.GetClassByIdAsync(id);
             return HandleServiceResult(result);
@@ -34,7 +34,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateSchoolClassDto dto)
+        public async Task<ActionResult<SchoolClassDto>> Create([FromBody] CreateSchoolClassDto dto)
         {
             var result = await _schoolClassService.CreateClassAsync(dto);
 
@@ -49,7 +49,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPatch("{id}")]
-        public async Task<IActionResult> Patch(long id, [FromBody] PatchSchoolClassDto dto)
+        public async Task<ActionResult<SchoolClassDto>> Patch(long id, [FromBody] PatchSchoolClassDto dto)
         {
             var result = await _schoolClassService.PatchClassAsync(id, dto);
             return HandleServiceResult(result);
@@ -57,7 +57,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(long id)
+        public async Task<ActionResult<bool>> Delete(long id)
         {
             var result = await _schoolClassService.DeleteClassAsync(id);
             return HandleServiceResult(result);
@@ -65,7 +65,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost("{id}/students")]
-        public async Task<IActionResult> AssignStudents(long id, [FromBody] AssignStudentsDto dto)
+        public async Task<ActionResult<bool>> AssignStudents(long id, [FromBody] AssignStudentsDto dto)
         {
             var result = await _schoolClassService.AssignStudentsToClassAsync(id, dto);
             return HandleServiceResult(result);
@@ -73,7 +73,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost("{id}/students/remove")]
-        public async Task<IActionResult> RemoveStudents(long id, [FromBody] RemoveStudentsDto dto)
+        public async Task<ActionResult<bool>> RemoveStudents(long id, [FromBody] RemoveStudentsDto dto)
         {
             var result = await _schoolClassService.RemoveStudentsFromClassAsync(id, dto);
             return HandleServiceResult(result);

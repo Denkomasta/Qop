@@ -20,7 +20,12 @@ import type {
   UseQueryResult,
 } from '@tanstack/react-query'
 
-import type { GetApiAdminsParams, PatchAdminDto } from '../../model'
+import type {
+  AdminDto,
+  GetApiAdminsParams,
+  PagedResponseOfAdminDto,
+  PatchAdminDto,
+} from '../../model'
 
 import { customInstance } from '../../../custom-axios'
 import type { ErrorType } from '../../../custom-axios'
@@ -32,7 +37,7 @@ export const getApiAdmins = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<PagedResponseOfAdminDto>(
     { url: `/api/admins`, method: 'GET', params, signal },
     options,
   )
@@ -166,7 +171,7 @@ export const getApiAdminsId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<AdminDto>(
     { url: `/api/admins/${id}`, method: 'GET', signal },
     options,
   )
@@ -306,7 +311,7 @@ export const patchApiAdminsId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<AdminDto>(
     {
       url: `/api/admins/${id}`,
       method: 'PATCH',
@@ -389,7 +394,7 @@ export const deleteApiAdminsId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<boolean>(
     { url: `/api/admins/${id}`, method: 'DELETE', signal },
     options,
   )

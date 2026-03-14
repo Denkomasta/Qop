@@ -23,7 +23,10 @@ import type {
 import type {
   CreateMediaAssetDto,
   GetApiMediaAssetsParams,
+  MediaAssetDto,
+  PagedResponseOfMediaAssetDto,
   PatchMediaAssetDto,
+  PhysicalFileResult,
   PostApiMediaAssetsUploadBody,
 } from '../../model'
 
@@ -37,7 +40,7 @@ export const getApiMediaAssets = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<PagedResponseOfMediaAssetDto>(
     { url: `/api/media-assets`, method: 'GET', params, signal },
     options,
   )
@@ -194,7 +197,7 @@ export const postApiMediaAssets = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<MediaAssetDto>(
     {
       url: `/api/media-assets`,
       method: 'POST',
@@ -277,7 +280,7 @@ export const getApiMediaAssetsId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<MediaAssetDto>(
     { url: `/api/media-assets/${id}`, method: 'GET', signal },
     options,
   )
@@ -437,7 +440,7 @@ export const patchApiMediaAssetsId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<MediaAssetDto>(
     {
       url: `/api/media-assets/${id}`,
       method: 'PATCH',
@@ -523,7 +526,7 @@ export const deleteApiMediaAssetsId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<boolean>(
     { url: `/api/media-assets/${id}`, method: 'DELETE', signal },
     options,
   )
@@ -620,7 +623,7 @@ export const postApiMediaAssetsUpload = (
     formData.append(`Description`, postApiMediaAssetsUploadBody.Description)
   }
 
-  return customInstance<void>(
+  return customInstance<MediaAssetDto>(
     { url: `/api/media-assets/upload`, method: 'POST', data: formData, signal },
     options,
   )
@@ -700,7 +703,7 @@ export const getApiMediaAssetsIdFile = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<PhysicalFileResult>(
     { url: `/api/media-assets/${id}/file`, method: 'GET', signal },
     options,
   )

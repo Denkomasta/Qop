@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Services.Interfaces;
-using System.Security.Claims;
 
 namespace Sqeez.Api.Controllers
 {
@@ -42,7 +41,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// POST /api/media-assets
-        /// Saves metadata for a new media asset.
+        /// Saves metadata for a new media asset (without a file upload).
         /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPost]
@@ -65,7 +64,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// POST /api/media-assets/upload
-        /// Accepts a physical file, saves it, and creates the database record.
+        /// Accepts a physical file, saves it securely, and creates the database record.
         /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPost("upload")]
@@ -74,26 +73,34 @@ namespace Sqeez.Api.Controllers
             if (dto.File == null || dto.File.Length == 0)
                 return BadRequest("No file was uploaded.");
 
+            var userIdStr = GetUserIdFromClaims();
+            if (string.IsNullOrEmpty(userIdStr) || !long.TryParse(userIdStr, out long ownerId))
+            {
+                return Unauthorized();
+            }
+
             try
             {
                 var mimeTypeStr = dto.File.ContentType.ToLower();
-                MediaType mediaType = MediaType.Document; // Default fallback
+                MediaType mediaType = MediaType.Document;
                 if (mimeTypeStr.StartsWith("image/")) mediaType = MediaType.Image;
                 else if (mimeTypeStr.StartsWith("video/")) mediaType = MediaType.Video;
                 else if (mimeTypeStr.StartsWith("audio/")) mediaType = MediaType.Audio;
 
-                var response = await _fileStorageService.UploadFileAsync(dto.File);
+                var response = await _fileStorageService.UploadFileAsync(dto.File, "media", false);
+
                 if (!response.Success)
                 {
                     return HandleServiceResult(response);
                 }
+
                 string fileUrl = response.Data!;
 
                 var createDto = new CreateMediaAssetDto(
                     LocationUrl: fileUrl,
                     MimeType: mediaType,
                     IsPrivate: dto.IsPrivate,
-                    OwnerId: dto.OwnerId,
+                    OwnerId: ownerId,
                     Description: dto.Description
                 );
 
@@ -121,24 +128,14 @@ namespace Sqeez.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(long id)
         {
-            var getResult = await _mediaAssetService.GetMediaAssetByIdAsync(id);
-            if (!getResult.Success)
-            {
-                return HandleServiceResult(getResult);
-            }
-
-            var fileUrl = getResult.Data!.LocationUrl;
-
             var dbDeleteResult = await _mediaAssetService.DeleteMediaAssetAsync(id);
-
-            if (dbDeleteResult.Success)
-            {
-                await _fileStorageService.DeleteFileAsync(fileUrl);
-            }
-
             return HandleServiceResult(dbDeleteResult);
         }
 
+        /// <summary>
+        /// GET /api/media-assets/{id}/file
+        /// Streams a secure file back to authorized users.
+        /// </summary>
         [Authorize]
         [HttpGet("{id}/file")]
         public async Task<IActionResult> GetFile(long id)

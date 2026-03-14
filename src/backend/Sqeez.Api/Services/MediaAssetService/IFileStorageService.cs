@@ -8,7 +8,7 @@ namespace Sqeez.Api.Services.Interfaces
         /// <summary>
         /// Saves the file to storage and returns the public URL.
         /// </summary>
-        Task<ServiceResult<string>> UploadFileAsync(IFormFile file, string subDirectory = "media");
+        Task<ServiceResult<string>> UploadFileAsync(IFormFile file, string subDirectory = "media", bool isPublic = false);
 
         /// <summary>
         /// Deletes the physical file from storage.

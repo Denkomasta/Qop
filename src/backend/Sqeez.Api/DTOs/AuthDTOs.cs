@@ -4,14 +4,13 @@ namespace Sqeez.Api.DTOs
 {
     public record LoginDTO(string Email, string Password, bool RememberMe = false);
 
-    public record UserDTO(  // TODO add classes and enrollments
+    public record UserDTO(
         long Id,
         string Username,
         string Email,
         string CurrentXP,
         string Role,
-        string? Department, // For teachers
-        string? PhoneNumber // For admins
+        string? AvatarUrl
     );
 
     public record RegisterDTO(string Username, string Email, string Password, bool RememberMe = false);

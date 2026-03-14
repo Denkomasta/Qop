@@ -13,6 +13,7 @@ using Sqeez.Api.Services.UserService;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,6 +67,7 @@ builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IQuizAttemptService, QuizAttemptService>();
 builder.Services.AddScoped<IBadgeService, BadgeService>();
 builder.Services.AddScoped<ISystemConfigService, SystemConfigService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -150,6 +152,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
+app.UseRouting();
+app.UseStaticFiles();
 app.UseAuthorization();
 app.MapControllers();
 

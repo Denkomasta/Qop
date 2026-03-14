@@ -78,6 +78,18 @@ namespace Sqeez.Api.Data
                 ManagedClass = class3A
             };
 
+            var avatarsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "avatars");
+            if (!Directory.Exists(avatarsFolder)) Directory.CreateDirectory(avatarsFolder);
+
+            // A tiny grey 1x1 pixel PNG for the default avatar
+            string base64AvatarPng = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
+            byte[] avatarBytes = Convert.FromBase64String(base64AvatarPng);
+
+            if (!File.Exists(Path.Combine(avatarsFolder, "default-avatar.png")))
+            {
+                await File.WriteAllBytesAsync(Path.Combine(avatarsFolder, "default-avatar.png"), avatarBytes);
+            }
+
             // --- 4. Students ---
             var studentTonda = new Student
             {
@@ -86,7 +98,8 @@ namespace Sqeez.Api.Data
                 PasswordHash = defaultPassword,
                 Role = UserRole.Student,
                 LastSeen = DateTime.UtcNow,
-                SchoolClass = class3B
+                SchoolClass = class3B,
+                AvatarUrl = "/avatars/default-avatar.png"
             };
 
             var studentPepa = new Student
@@ -189,7 +202,7 @@ namespace Sqeez.Api.Data
 
             var sampleMedia = new MediaAsset
             {
-                LocationUrl = $"/uploads/media/{sampleFileName}",
+                LocationUrl = $"/secure/media/{sampleFileName}",
                 MimeType = MediaType.Image,
                 IsPrivate = false,
                 Description = "A helpful diagram for the Algebra midterm.",
@@ -263,11 +276,22 @@ namespace Sqeez.Api.Data
             context.Quizzes.AddRange(mathQuiz, englishQuiz);
 
             // --- 9. Gamification Badges ---
+
+            var badgesFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "badges");
+            if (!Directory.Exists(badgesFolder)) Directory.CreateDirectory(badgesFolder);
+
+            string base64BadgePng = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=";
+            byte[] badgeBytes = Convert.FromBase64String(base64BadgePng);
+
+            if (!File.Exists(Path.Combine(badgesFolder, "perfect-score.png"))) await File.WriteAllBytesAsync(Path.Combine(badgesFolder, "perfect-score.png"), badgeBytes);
+            if (!File.Exists(Path.Combine(badgesFolder, "high-scorer.png"))) await File.WriteAllBytesAsync(Path.Combine(badgesFolder, "high-scorer.png"), badgeBytes);
+            if (!File.Exists(Path.Combine(badgesFolder, "participant.png"))) await File.WriteAllBytesAsync(Path.Combine(badgesFolder, "participant.png"), badgeBytes);
+
             var perfectScoreBadge = new Badge
             {
                 Name = "Perfect Score",
                 Description = "You scored 100% on a quiz! Outstanding!",
-                IconUrl = "/assets/badges/perfect-score.png",
+                IconUrl = "/badges/perfect-score.png",
                 XpBonus = 100,
                 Rules = new List<BadgeRule>
                 {
@@ -279,7 +303,7 @@ namespace Sqeez.Api.Data
             {
                 Name = "High Scorer",
                 Description = "You scored at least 80% on a quiz. Great job!",
-                IconUrl = "/assets/badges/high-scorer.png",
+                IconUrl = "/badges/high-scorer.png",
                 XpBonus = 50,
                 Rules = new List<BadgeRule>
                 {
@@ -291,7 +315,7 @@ namespace Sqeez.Api.Data
             {
                 Name = "First Steps",
                 Description = "You completed a quiz and earned your first points!",
-                IconUrl = "/assets/badges/participant.png",
+                IconUrl = "/badges/participant.png",
                 XpBonus = 25,
                 Rules = new List<BadgeRule>
                 {

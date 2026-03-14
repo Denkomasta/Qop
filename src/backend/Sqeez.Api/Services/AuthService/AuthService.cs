@@ -184,8 +184,7 @@ namespace Sqeez.Api.Services.AuthService
                 Email: user.Email,
                 CurrentXP: user.CurrentXP.ToString(),
                 Role: user.Role.ToString(),
-                Department: user is Teacher t ? t.Department : null,
-                PhoneNumber: user is Admin a ? a.PhoneNumber : null
+                AvatarUrl: user.AvatarUrl
             );
             return ServiceResult<UserDTO>.Ok(result);
         }

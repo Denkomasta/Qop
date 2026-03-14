@@ -1,6 +1,6 @@
 ﻿using Sqeez.Api.DTOs;
 
-namespace Sqeez.Api.Services.UserService
+namespace Sqeez.Api.Services.Interfaces
 {
     public interface IAdminService
     {

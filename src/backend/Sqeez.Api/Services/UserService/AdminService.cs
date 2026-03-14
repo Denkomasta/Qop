@@ -3,9 +3,9 @@ using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Users;
-using Sqeez.Api.Services.UserService;
+using Sqeez.Api.Services.Interfaces;
 
-namespace Sqeez.Api.Services
+namespace Sqeez.Api.Services.UserService
 {
     public class AdminService : BaseService<AdminService>, IAdminService
     {

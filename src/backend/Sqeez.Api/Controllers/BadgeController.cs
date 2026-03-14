@@ -18,7 +18,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult> CreateBadge([FromBody] CreateBadgeDto dto)
+        public async Task<ActionResult> CreateBadge([FromForm] CreateBadgeDto dto)
         {
             var result = await _badgeService.CreateBadgeAsync(dto);
             return HandleServiceResult(result);
@@ -26,7 +26,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPatch("{id}")]
-        public async Task<ActionResult> PatchBadge(long id, [FromBody] UpdateBadgeDto dto)
+        public async Task<ActionResult> PatchBadge(long id, [FromForm] UpdateBadgeDto dto)
         {
             var result = await _badgeService.UpdateBadgeAsync(id, dto);
             return HandleServiceResult(result);

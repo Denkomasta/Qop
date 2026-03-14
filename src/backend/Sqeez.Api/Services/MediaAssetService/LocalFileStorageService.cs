@@ -11,7 +11,6 @@ namespace Sqeez.Api.Services
         private readonly IWebHostEnvironment _env;
         private readonly ISystemConfigService _configService;
         private readonly ILogger<LocalFileStorageService> _logger;
-        private const long MaxFileSize = 5 * 1024 * 1024;   // Currently 5 MB, TODO change to modular solution
         private readonly string[] _allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".mp4", ".mp3", ".pdf" };
 
         public LocalFileStorageService(IWebHostEnvironment env, ILogger<LocalFileStorageService> logger, ISystemConfigService configService)
@@ -21,7 +20,7 @@ namespace Sqeez.Api.Services
             _configService = configService;
         }
 
-        public async Task<ServiceResult<string>> UploadFileAsync(IFormFile file, string subDirectory = "media")
+        public async Task<ServiceResult<string>> UploadFileAsync(IFormFile file, string subDirectory = "media", bool isPublic = false)
         {
             if (file == null || file.Length == 0)
                 return ServiceResult<string>.Failure("No file was uploaded.", ServiceError.ValidationFailed);
@@ -46,19 +45,38 @@ namespace Sqeez.Api.Services
 
             try
             {
-                var rootPath = Path.Combine(_env.ContentRootPath ?? Directory.GetCurrentDirectory(), "SecureStorage");
-                var uploadsFolder = Path.Combine(rootPath, "uploads", subDirectory);
-                if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+                string rootFolder;
+                string returnedUrlPrefix;
+
+                if (isPublic)
+                {
+                    // Saves straight to /wwwroot/badges or /wwwroot/avatars
+                    rootFolder = _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                    returnedUrlPrefix = ""; // No prefix needed!
+                }
+                else
+                {
+                    // Saves to /SecureStorage/...
+                    rootFolder = Path.Combine(_env.ContentRootPath ?? Directory.GetCurrentDirectory(), "SecureStorage");
+                    returnedUrlPrefix = "/secure";
+                }
+
+                var targetDirectory = Path.Combine(rootFolder, subDirectory);
+                if (!Directory.Exists(targetDirectory)) Directory.CreateDirectory(targetDirectory);
 
                 var uniqueFileName = $"{Guid.NewGuid()}{extension}";
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                var filePath = Path.Combine(targetDirectory, uniqueFileName);
 
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
                     await file.CopyToAsync(fileStream);
                 }
 
-                return ServiceResult<string>.Ok($"/uploads/{subDirectory}/{uniqueFileName}");
+                var finalUrl = string.IsNullOrEmpty(returnedUrlPrefix)
+                    ? $"/{subDirectory}/{uniqueFileName}"
+                    : $"{returnedUrlPrefix}/{subDirectory}/{uniqueFileName}";
+
+                return ServiceResult<string>.Ok(finalUrl);
             }
             catch (Exception ex)
             {
@@ -69,14 +87,25 @@ namespace Sqeez.Api.Services
 
         public Task<ServiceResult<string>> GetPhysicalFilePathAsync(string fileUrl)
         {
-            // Task.FromResult to satisfy the Task method signature
             if (string.IsNullOrWhiteSpace(fileUrl) || fileUrl.Contains(".."))
             {
                 return Task.FromResult(ServiceResult<string>.Failure("Invalid file path.", ServiceError.ValidationFailed));
             }
 
-            var relativePath = fileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
-            var rootPath = Path.Combine(_env.ContentRootPath ?? Directory.GetCurrentDirectory(), "SecureStorage");
+            string rootPath;
+            string relativePath;
+
+            if (fileUrl.StartsWith("/secure/"))
+            {
+                relativePath = fileUrl.Replace("/secure/", "").Replace('/', Path.DirectorySeparatorChar);
+                rootPath = Path.Combine(_env.ContentRootPath ?? Directory.GetCurrentDirectory(), "SecureStorage");
+            }
+            else
+            {
+                relativePath = fileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+                rootPath = _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            }
+
             var physicalPath = Path.Combine(rootPath, relativePath);
 
             var fullRootPath = Path.GetFullPath(rootPath);
@@ -100,28 +129,26 @@ namespace Sqeez.Api.Services
             try
             {
                 if (string.IsNullOrWhiteSpace(fileUrl) || fileUrl.Contains(".."))
-                {
-                    _logger.LogWarning("Blocked attempt to delete invalid or unsafe file path: {FileUrl}", fileUrl);
                     return Task.FromResult(ServiceResult<bool>.Failure("Invalid file path.", ServiceError.ValidationFailed));
+
+                string physicalPath;
+
+                if (fileUrl.StartsWith("/secure/"))
+                {
+                    var relativePath = fileUrl.Replace("/secure/", "").Replace('/', Path.DirectorySeparatorChar);
+                    var rootPath = Path.Combine(_env.ContentRootPath ?? Directory.GetCurrentDirectory(), "SecureStorage");
+                    physicalPath = Path.Combine(rootPath, relativePath);
+                }
+                else
+                {
+                    var relativePath = fileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+                    var rootPath = _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                    physicalPath = Path.Combine(rootPath, relativePath);
                 }
 
-                var relativePath = fileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
-                var rootPath = Path.Combine(_env.ContentRootPath ?? Directory.GetCurrentDirectory(), "SecureStorage");
-                var physicalPath = Path.Combine(rootPath, relativePath);
-
-                var fullRootPath = Path.GetFullPath(rootPath);
-                var fullPhysicalPath = Path.GetFullPath(physicalPath);
-
-                if (!fullPhysicalPath.StartsWith(fullRootPath))
+                if (File.Exists(physicalPath))
                 {
-                    _logger.LogWarning("Blocked attempt to delete file outside of WebRoot: {FileUrl}", fileUrl);
-                    return Task.FromResult(ServiceResult<bool>.Failure("Access denied.", ServiceError.Forbidden));
-                }
-
-                if (File.Exists(fullPhysicalPath))
-                {
-                    File.Delete(fullPhysicalPath);
-                    return Task.FromResult(ServiceResult<bool>.Ok(true));
+                    File.Delete(physicalPath);
                 }
 
                 return Task.FromResult(ServiceResult<bool>.Ok(true));

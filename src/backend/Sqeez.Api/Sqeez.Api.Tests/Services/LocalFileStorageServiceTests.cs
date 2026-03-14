@@ -54,21 +54,42 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
-        public async Task UploadFileAsync_WhenValidFile_SavesFileAndReturnsUrl()
+        public async Task UploadFileAsync_WhenSecureFile_SavesToSecureStorageAndReturnsSecureUrl()
         {
             var mockFile = CreateMockFormFile("This is a test file.", "test-image.jpg");
 
-            var response = await _service.UploadFileAsync(mockFile, "test-media");
+            var response = await _service.UploadFileAsync(mockFile, "test-media", isPublic: false);
 
-            Assert.True(response.Success); // Ensure the upload succeeded
+            Assert.True(response.Success);
             var resultUrl = response.Data;
 
             Assert.NotNull(resultUrl);
-            Assert.StartsWith("/uploads/test-media/", resultUrl);
+            Assert.StartsWith("/secure/test-media/", resultUrl);
+            Assert.EndsWith(".jpg", resultUrl);
+
+            var relativePath = resultUrl.Replace("/secure/", "").Replace('/', Path.DirectorySeparatorChar);
+            var physicalPath = Path.Combine(_tempWebRootPath, "SecureStorage", relativePath);
+
+            Assert.True(File.Exists(physicalPath));
+        }
+
+        [Fact]
+        public async Task UploadFileAsync_WhenPublicFile_SavesToWwwRootAndReturnsPublicUrl()
+        {
+            var mockFile = CreateMockFormFile("This is an avatar.", "avatar.jpg");
+
+            var response = await _service.UploadFileAsync(mockFile, "avatars", isPublic: true);
+
+            Assert.True(response.Success);
+            var resultUrl = response.Data;
+
+            Assert.NotNull(resultUrl);
+
+            Assert.StartsWith("/avatars/", resultUrl);
             Assert.EndsWith(".jpg", resultUrl);
 
             var relativePath = resultUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
-            var physicalPath = Path.Combine(_tempWebRootPath, "SecureStorage", relativePath);
+            var physicalPath = Path.Combine(_tempWebRootPath, relativePath);
 
             Assert.True(File.Exists(physicalPath));
         }
@@ -78,7 +99,6 @@ namespace Sqeez.Api.Tests.Services
         {
             IFormFile nullFile = null!;
 
-            // We no longer expect a crash, we expect a graceful failure!
             var result = await _service.UploadFileAsync(nullFile);
 
             Assert.False(result.Success);
@@ -87,36 +107,61 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
-        public async Task DeleteFileAsync_WhenFileExists_DeletesFileAndReturnsTrue()
+        public async Task DeleteFileAsync_WhenSecureFileExists_DeletesFileAndReturnsTrue()
         {
             var mockFile = CreateMockFormFile("To be deleted", "delete-me.jpg");
-            var response = await _service.UploadFileAsync(mockFile, "temp");
+            var response = await _service.UploadFileAsync(mockFile, "temp", isPublic: false);
             var fileUrl = response.Data;
 
             Assert.NotNull(fileUrl);
 
-            var relativePath = fileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+            var relativePath = fileUrl.Replace("/secure/", "").Replace('/', Path.DirectorySeparatorChar);
             var physicalPath = Path.Combine(_tempWebRootPath, "SecureStorage", relativePath);
 
-            Assert.True(File.Exists(physicalPath)); // Prove it's there first
+            Assert.True(File.Exists(physicalPath));
 
             var result = await _service.DeleteFileAsync(fileUrl);
 
             Assert.True(result.Success);
             Assert.True(result.Data);
-            Assert.False(File.Exists(physicalPath)); // Prove it's gone
+            Assert.False(File.Exists(physicalPath));
         }
 
         [Fact]
         public async Task DeleteFileAsync_WhenFileDoesNotExist_ReturnsTrue()
         {
-            var fakeUrl = "/uploads/media/does-not-exist.jpg";
+            var fakeUrl = "/secure/media/does-not-exist.jpg";
 
             var result = await _service.DeleteFileAsync(fakeUrl);
 
-            // Because it's idempotent, deleting a missing file is considered a success
             Assert.True(result.Success);
             Assert.True(result.Data);
+        }
+
+        [Fact]
+        public async Task GetPhysicalFilePathAsync_WhenValidUrl_ReturnsCorrectlyRoutedPath()
+        {
+            var mockFile = CreateMockFormFile("Test Content", "test.jpg");
+            var uploadResponse = await _service.UploadFileAsync(mockFile, "test", isPublic: false);
+            var fileUrl = uploadResponse.Data!;
+
+            var getResult = await _service.GetPhysicalFilePathAsync(fileUrl);
+
+            Assert.True(getResult.Success);
+            Assert.NotNull(getResult.Data);
+            Assert.Contains("SecureStorage", getResult.Data);
+            Assert.True(File.Exists(getResult.Data));
+        }
+
+        [Fact]
+        public async Task GetPhysicalFilePathAsync_WhenPathTraversalAttempted_ReturnsForbidden()
+        {
+            string maliciousUrl = "/secure/media/../../windows/system32/cmd.exe";
+
+            var getResult = await _service.GetPhysicalFilePathAsync(maliciousUrl);
+
+            Assert.False(getResult.Success);
+            Assert.Equal(ServiceError.ValidationFailed, getResult.ErrorCode);
         }
 
         public void Dispose()

@@ -3,6 +3,7 @@ using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Users;
+using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services.UserService
 {
@@ -62,6 +63,7 @@ namespace Sqeez.Api.Services.UserService
                     CurrentXP = s.CurrentXP,
                     Role = s.Role.ToString(),
                     LastSeen = s.LastSeen,
+                    AvatarUrl = s.AvatarUrl,
                     SchoolClassId = s.SchoolClassId
                 })
                 .ToListAsync();
@@ -89,6 +91,7 @@ namespace Sqeez.Api.Services.UserService
                     CurrentXP = s.CurrentXP,
                     Role = s.Role.ToString(),
                     LastSeen = s.LastSeen,
+                    AvatarUrl = s.AvatarUrl,
                     SchoolClassId = s.SchoolClassId
                 })
                 .FirstOrDefaultAsync();

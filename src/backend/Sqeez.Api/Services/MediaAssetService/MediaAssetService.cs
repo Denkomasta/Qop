@@ -10,7 +10,11 @@ namespace Sqeez.Api.Services
 {
     public class MediaAssetService : BaseService<MediaAssetService>, IMediaAssetService
     {
-        public MediaAssetService(SqeezDbContext context, ILogger<MediaAssetService> logger) : base(context, logger) { }
+        private readonly IFileStorageService _fileStorageService;
+        public MediaAssetService(SqeezDbContext context, ILogger<MediaAssetService> logger, IFileStorageService fileStorageService) : base(context, logger)
+        {
+            _fileStorageService = fileStorageService;
+        }
 
         public async Task<ServiceResult<PagedResponse<MediaAssetDto>>> GetAllMediaAssetsAsync(MediaAssetFilterDto filter)
         {
@@ -166,11 +170,16 @@ namespace Sqeez.Api.Services
             if (asset == null)
                 return ServiceResult<bool>.Failure("Media asset not found.", ServiceError.NotFound);
 
+            string fileUrlToDelete = asset.LocationUrl;
+
             _context.MediaAssets.Remove(asset);
 
             try
             {
                 await _context.SaveChangesAsync();
+
+                await _fileStorageService.DeleteFileAsync(fileUrlToDelete);
+
                 return ServiceResult<bool>.Ok(true);
             }
             catch (DbUpdateException ex)

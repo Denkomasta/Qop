@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sqeez.Api.DTOs;
-using Sqeez.Api.Services.UserService;
+using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
 {

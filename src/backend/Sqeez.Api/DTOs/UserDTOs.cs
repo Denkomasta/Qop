@@ -9,6 +9,7 @@ namespace Sqeez.Api.DTOs
         public string Email { get; init; } = string.Empty;
         public int CurrentXP { get; init; }
         public string Role { get; init; } = string.Empty;
+        public string? AvatarUrl { get; init; }
         public DateTime LastSeen { get; init; }
         public long? SchoolClassId { get; init; }
     }
@@ -36,6 +37,7 @@ namespace Sqeez.Api.DTOs
         public string? Username { get; init; }
         public string? Email { get; init; }
         public long? SchoolClassId { get; init; }
+        public string? AvatarUrl { get; init; }
     }
 
     public record TeacherDto : StudentDto

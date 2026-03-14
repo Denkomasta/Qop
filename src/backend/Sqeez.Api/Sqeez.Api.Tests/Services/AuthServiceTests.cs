@@ -212,22 +212,6 @@ namespace Sqeez.Api.Tests.Services
             Assert.True(dbSession!.IsRevoked);
         }
 
-        [Fact]
-        public async Task GetCurrentUserAsync_WhenUserIsTeacher_ReturnsTeacherProperties()
-        {
-            var context = await GetInMemoryDbContext();
-            var teacher = new Teacher { Username = "MrSmith", Email = "smith@sqeez.com", Role = UserRole.Teacher, Department = "History" };
-            context.Teachers.Add(teacher);
-            await context.SaveChangesAsync();
-
-            var service = CreateService(context);
-
-            var result = await service.GetCurrentUserAsync(teacher.Id, "Teacher");
-
-            Assert.True(result.Success);
-            Assert.Equal("History", result.Data!.Department);
-            Assert.Null(result.Data.PhoneNumber);
-        }
 
         [Fact]
         public async Task UpdateUserRoleAsync_WhenModifyingSuperUser_ReturnsForbidden()

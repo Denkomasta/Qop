@@ -9,16 +9,34 @@ namespace Sqeez.Api.Services
 {
     public class BadgeService : BaseService<BadgeService>, IBadgeService
     {
-        public BadgeService(SqeezDbContext context, ILogger<BadgeService> logger)
-            : base(context, logger) { }
+        private readonly IFileStorageService _fileStorageService;
+
+        public BadgeService(
+            SqeezDbContext context,
+            ILogger<BadgeService> logger,
+            IFileStorageService fileStorageService) : base(context, logger)
+        {
+            _fileStorageService = fileStorageService;
+        }
 
         public async Task<ServiceResult<BadgeDto>> CreateBadgeAsync(CreateBadgeDto dto)
         {
+            string? iconUrl = null;
+            if (dto.IconFile != null)
+            {
+                var uploadResult = await _fileStorageService.UploadFileAsync(dto.IconFile, "badges", isPublic: true);
+                if (!uploadResult.Success)
+                {
+                    return ServiceResult<BadgeDto>.Failure(uploadResult.ErrorMessage ?? "Not specified", uploadResult.ErrorCode);
+                }
+                iconUrl = uploadResult.Data;
+            }
+
             var badge = new Badge
             {
                 Name = dto.Name,
                 Description = dto.Description,
-                IconUrl = dto.IconUrl,
+                IconUrl = iconUrl,
                 XpBonus = dto.XpBonus,
                 Rules = dto.Rules.Select(r => new BadgeRule
                 {
@@ -47,8 +65,23 @@ namespace Sqeez.Api.Services
 
             if (dto.Name != null) badge.Name = dto.Name;
             if (dto.Description != null) badge.Description = dto.Description;
-            if (dto.IconUrl != null) badge.IconUrl = dto.IconUrl;
             if (dto.XpBonus.HasValue) badge.XpBonus = dto.XpBonus.Value;
+
+            if (dto.NewIconFile != null)
+            {
+                if (!string.IsNullOrEmpty(badge.IconUrl))
+                {
+                    await _fileStorageService.DeleteFileAsync(badge.IconUrl);
+                }
+
+                var uploadResult = await _fileStorageService.UploadFileAsync(dto.NewIconFile, "badges", isPublic: true);
+                if (!uploadResult.Success)
+                {
+                    return ServiceResult<BadgeDto>.Failure(uploadResult.ErrorMessage ?? "Not specified", uploadResult.ErrorCode);
+                }
+
+                badge.IconUrl = uploadResult.Data!;
+            }
 
             if (dto.Rules != null)
             {
@@ -97,10 +130,28 @@ namespace Sqeez.Api.Services
             var badge = await _context.Badges.FindAsync(id);
             if (badge == null) return ServiceResult<bool>.Failure("Badge not found.", ServiceError.NotFound);
 
-            _context.Badges.Remove(badge);
-            await _context.SaveChangesAsync();
+            string? iconUrlToDelete = badge.IconUrl;
 
-            return ServiceResult<bool>.Ok(true);
+            _context.Badges.Remove(badge);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+
+                if (!string.IsNullOrEmpty(iconUrlToDelete))
+                {
+                    await _fileStorageService.DeleteFileAsync(iconUrlToDelete);
+                }
+
+                return ServiceResult<bool>.Ok(true);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to delete Badge {Id} due to database constraints.", id);
+                return ServiceResult<bool>.Failure(
+                    "Cannot delete this badge because it has already been awarded to one or more students.",
+                    ServiceError.Conflict);
+            }
         }
 
         public async Task<ServiceResult<IEnumerable<BadgeDto>>> GetAllBadgesAsync()
@@ -135,6 +186,7 @@ namespace Sqeez.Api.Services
 
         public async Task<ServiceResult<bool>> AwardBadgeToStudentAsync(long studentId, long badgeId)
         {
+            // ... (Your existing logic here is absolutely perfect) ...
             var student = await _context.Students.FindAsync(studentId);
             if (student == null) return ServiceResult<bool>.Failure("Student not found.", ServiceError.NotFound);
 
@@ -155,7 +207,6 @@ namespace Sqeez.Api.Services
             };
 
             _context.StudentBadges.Add(studentBadge);
-
             student.CurrentXP += badge.XpBonus;
 
             await _context.SaveChangesAsync();
@@ -165,19 +216,17 @@ namespace Sqeez.Api.Services
 
         public async Task EvaluateAndAwardBadgesAsync(long studentId, BadgeEvaluationMetrics metrics)
         {
-            // Find out which badges the student already owns
+            // ... (Your existing evaluation engine is perfect and needs no changes!) ...
             var earnedBadgeIds = await _context.StudentBadges
                 .Where(sb => sb.StudentId == studentId)
                 .Select(sb => sb.BadgeId)
                 .ToListAsync();
 
-            // Only fetch badges that the student does not have yet!
             var availableBadges = await _context.Badges
                 .Include(b => b.Rules)
                 .Where(b => !earnedBadgeIds.Contains(b.Id))
                 .ToListAsync();
 
-            // Evaluate the remaining unearned badges
             foreach (var badge in availableBadges)
             {
                 if (!badge.Rules.Any()) continue;

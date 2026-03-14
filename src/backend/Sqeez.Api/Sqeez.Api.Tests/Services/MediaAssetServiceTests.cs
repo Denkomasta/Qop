@@ -7,6 +7,8 @@ using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Media;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services;
+using Sqeez.Api.Services.Interfaces;
+using Sqeez.Api.Services.TokenService;
 
 namespace Sqeez.Api.Tests.Services
 {
@@ -26,7 +28,8 @@ namespace Sqeez.Api.Tests.Services
         private MediaAssetService CreateService(SqeezDbContext context)
         {
             var mockLogger = new Mock<ILogger<MediaAssetService>>();
-            return new MediaAssetService(context, mockLogger.Object);
+            var mockFileService = new Mock<IFileStorageService>();
+            return new MediaAssetService(context, mockLogger.Object, mockFileService.Object);
         }
 
         [Fact]

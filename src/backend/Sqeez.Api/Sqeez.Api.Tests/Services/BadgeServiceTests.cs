@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Sqeez.Api.Data;
@@ -7,6 +8,7 @@ using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Gamification;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services;
+using Sqeez.Api.Services.Interfaces;
 using Xunit;
 
 namespace Sqeez.Api.Tests.Services
@@ -15,6 +17,7 @@ namespace Sqeez.Api.Tests.Services
     {
         private readonly DbContextOptions<SqeezDbContext> _dbContextOptions;
         private readonly Mock<ILogger<BadgeService>> _mockLogger;
+        private readonly Mock<IFileStorageService> _mockFileStorage;
 
         public BadgeServiceTests()
         {
@@ -23,6 +26,12 @@ namespace Sqeez.Api.Tests.Services
                 .Options;
 
             _mockLogger = new Mock<ILogger<BadgeService>>();
+
+            _mockFileStorage = new Mock<IFileStorageService>();
+            _mockFileStorage.Setup(fs => fs.UploadFileAsync(It.IsAny<IFormFile>(), It.IsAny<string>(), It.IsAny<bool>()))
+                .ReturnsAsync(ServiceResult<string>.Ok("/badges/mock-icon.png"));
+            _mockFileStorage.Setup(fs => fs.DeleteFileAsync(It.IsAny<string>()))
+                .ReturnsAsync(ServiceResult<bool>.Ok(true));
         }
 
         private async Task<SqeezDbContext> GetSeededContextAsync()
@@ -66,13 +75,22 @@ namespace Sqeez.Api.Tests.Services
         public async Task CreateBadgeAsync_WithRules_AddsBadgeAndRulesToDatabase()
         {
             await using var context = await GetSeededContextAsync();
-            var service = new BadgeService(context, _mockLogger.Object);
 
-            var rules = new List<BadgeRuleDto>
+            var service = new BadgeService(context, _mockLogger.Object, _mockFileStorage.Object);
+
+            var rules = new List<CreateBadgeRuleDto>
             {
-                new BadgeRuleDto(0, BadgeMetric.TotalScore, BadgeOperator.GreaterThanOrEqual, 1000)
+                new CreateBadgeRuleDto(BadgeMetric.TotalScore, BadgeOperator.GreaterThanOrEqual, 1000)
             };
-            var dto = new CreateBadgeDto("1K Club", "Score 1000 points total", "url.png", 200, rules);
+
+            var dto = new CreateBadgeDto
+            {
+                Name = "1K Club",
+                Description = "Score 1000 points total",
+                IconFile = null, // Testing without an image upload
+                XpBonus = 200,
+                Rules = rules
+            };
 
             var result = await service.CreateBadgeAsync(dto);
 
@@ -88,17 +106,21 @@ namespace Sqeez.Api.Tests.Services
         public async Task UpdateBadgeAsync_WithUpsertRules_SyncsDatabasePerfectly()
         {
             await using var context = await GetSeededContextAsync();
-            var service = new BadgeService(context, _mockLogger.Object);
+            var service = new BadgeService(context, _mockLogger.Object, _mockFileStorage.Object);
 
             var upsertRules = new List<UpdateBadgeRuleDto>
             {
                 new UpdateBadgeRuleDto(1, BadgeMetric.ScorePercentage, BadgeOperator.Equals, 90),
-                
                 new UpdateBadgeRuleDto(null, BadgeMetric.TotalScore, BadgeOperator.GreaterThanOrEqual, 500)
             };
 
-            var dto = new UpdateBadgeDto("Updated Name", null, null, null, upsertRules);
+            var dto = new UpdateBadgeDto
+            {
+                Name = "Updated Name",
+                Rules = upsertRules
+            };
 
+            // Test execution & assertions...
             var result = await service.UpdateBadgeAsync(1, dto);
 
             Assert.True(result.Success);
@@ -122,7 +144,7 @@ namespace Sqeez.Api.Tests.Services
         public async Task AwardBadgeToStudentAsync_WhenValid_AwardsBadgeAndAddsXP()
         {
             await using var context = await GetSeededContextAsync();
-            var service = new BadgeService(context, _mockLogger.Object);
+            var service = new BadgeService(context, _mockLogger.Object, _mockFileStorage.Object);
 
             var result = await service.AwardBadgeToStudentAsync(1, 1);
 
@@ -142,7 +164,7 @@ namespace Sqeez.Api.Tests.Services
             context.StudentBadges.Add(new StudentBadge { StudentId = 1, BadgeId = 1, EarnedAt = DateTime.UtcNow });
             await context.SaveChangesAsync();
 
-            var service = new BadgeService(context, _mockLogger.Object);
+            var service = new BadgeService(context, _mockLogger.Object, _mockFileStorage.Object);
 
             var result = await service.AwardBadgeToStudentAsync(1, 1);
 
@@ -158,7 +180,7 @@ namespace Sqeez.Api.Tests.Services
         public async Task EvaluateAndAwardBadgesAsync_WhenMeetsRules_AwardsBadge()
         {
             await using var context = await GetSeededContextAsync();
-            var service = new BadgeService(context, _mockLogger.Object);
+            var service = new BadgeService(context, _mockLogger.Object, _mockFileStorage.Object);
 
             // Student scores exactly 100% and 60 Total Points
             var metrics = new BadgeEvaluationMetrics(ScorePercentage: 100m, TotalScore: 60);
@@ -177,7 +199,7 @@ namespace Sqeez.Api.Tests.Services
         public async Task EvaluateAndAwardBadgesAsync_WhenFailsRules_DoesNotAwardBadge()
         {
             await using var context = await GetSeededContextAsync();
-            var service = new BadgeService(context, _mockLogger.Object);
+            var service = new BadgeService(context, _mockLogger.Object, _mockFileStorage.Object);
 
             // Student scores 90% and 40 Total Points (Fails both conditions)
             var metrics = new BadgeEvaluationMetrics(ScorePercentage: 90m, TotalScore: 40);
@@ -198,7 +220,7 @@ namespace Sqeez.Api.Tests.Services
             context.StudentBadges.Add(new StudentBadge { StudentId = 1, BadgeId = 1, EarnedAt = DateTime.UtcNow });
             await context.SaveChangesAsync();
 
-            var service = new BadgeService(context, _mockLogger.Object);
+            var service = new BadgeService(context, _mockLogger.Object, _mockFileStorage.Object);
 
             // Metrics perfect for Badge 1, but they already have it!
             var metrics = new BadgeEvaluationMetrics(ScorePercentage: 100m, TotalScore: 0);

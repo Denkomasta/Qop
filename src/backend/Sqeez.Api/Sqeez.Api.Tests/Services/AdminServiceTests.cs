@@ -5,7 +5,7 @@ using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Users;
-using Sqeez.Api.Services;
+using Sqeez.Api.Services.UserService;
 using Xunit;
 
 namespace Sqeez.Api.Tests.Services

@@ -1,4 +1,5 @@
-﻿using Sqeez.Api.Enums;
+﻿using Microsoft.AspNetCore.Http;
+using Sqeez.Api.Enums;
 
 namespace Sqeez.Api.DTOs
 {
@@ -9,34 +10,44 @@ namespace Sqeez.Api.DTOs
         decimal TargetValue
     );
 
-    public record CreateBadgeDto(
-        string Name,
-        string Description,
-        string IconUrl,
-        int XpBonus,
-        List<BadgeRuleDto> Rules
-    );
-
-    public record UpdateBadgeRuleDto(
-        long? Id,
+    public record CreateBadgeRuleDto(
         BadgeMetric Metric,
         BadgeOperator Operator,
         decimal TargetValue
     );
 
-    public record UpdateBadgeDto(
-        string? Name,
-        string? Description,
-        string? IconUrl,
-        int? XpBonus,
-        List<UpdateBadgeRuleDto>? Rules
+    public record UpdateBadgeRuleDto(
+        long? Id, // Null means "Create a new rule attached to this badge"
+        BadgeMetric Metric,
+        BadgeOperator Operator,
+        decimal TargetValue
     );
+
+    // Using classes here because model binding IFormFile with Lists in records can be tricky in ASP.NET
+    public class CreateBadgeDto
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public int XpBonus { get; set; }
+        public IFormFile? IconFile { get; set; } = null;
+
+        public List<CreateBadgeRuleDto> Rules { get; set; } = new List<CreateBadgeRuleDto>();
+    }
+
+    public class UpdateBadgeDto
+    {
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public int? XpBonus { get; set; }
+        public IFormFile? NewIconFile { get; set; }
+        public List<UpdateBadgeRuleDto>? Rules { get; set; }
+    }
 
     public record BadgeDto(
         long Id,
         string Name,
         string Description,
-        string IconUrl,
+        string? IconUrl,
         int XpBonus,
         List<BadgeRuleDto> Rules
     );
@@ -45,7 +56,7 @@ namespace Sqeez.Api.DTOs
         long BadgeId,
         string Name,
         string Description,
-        string IconUrl,
+        string? IconUrl,
         int XpBonus,
         DateTime EarnedAt
     );

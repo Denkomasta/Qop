@@ -21,7 +21,30 @@
     "phoneNumber": "Telefonní číslo",
     "xp": "XP",
     "level": "Level",
-    "loading": "Načítání"
+    "loading": "Načítání",
+    "welcome": "Vítej"
+  },
+  "dashboard": {
+    "administration": "Administrativa",
+    "teachingTools": "Výukové nástroje",
+    "yourLearning": "Tvé studium",
+    "navigationDecription": "Kam se dnes chceš podívat?",
+    "subjects": "Předměty",
+    "subjectDescription": "Procházejte všechny dostupné předměty.",
+    "myClass": "Třída",
+    "myClassDescripiton": "Zobrazte si své spolužáky a informace ke třídě",
+    "quizzes": "Kvízy",
+    "quizzesDescription": "Vypracujte otevřené kvízy.",
+    "leaderboards": "Žebříčky",
+    "leaderboardsDescription": "Porovnejte se s ostatními.",
+    "manageQuizzes": "Správa kvízů",
+    "manageQuizzesDescription": "Vytvářejte a upravujte kvízy k vašim předmětům.",
+    "classManagement": "Správa třídy",
+    "classManagementDescription": "Zobrazte si pokroky studentů",
+    "userManagement": "Správa uživatelů",
+    "userManagementDescription": "Spravujte třídy, předměty, uživatele a jejich role.",
+    "systemSettings": "Nastavení",
+    "systemSettingsDescription": "Globální nastavení systému."
   },
   "error": {
     "generic": "Nastala chyba. Prosím zkuste to později.",

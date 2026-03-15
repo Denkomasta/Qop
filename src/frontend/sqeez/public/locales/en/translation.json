@@ -21,7 +21,30 @@
     "phoneNumber": "Phone Number",
     "xp": "XP",
     "level": "Level",
-    "loading": "Loading"
+    "loading": "Loading",
+    "welcome": "Welcome"
+  },
+  "dashboard": {
+    "administration": "Administration",
+    "teachingTools": "Teaching Tools",
+    "yourLearning": "Your Learning",
+    "navigationDecription": "Where would you like to go today?",
+    "subjects": "Subjects",
+    "subjectDescription": "Browse all available subjects and courses.",
+    "myClass": "Class",
+    "myClassDescripiton": "View your classmates and class progress.",
+    "quizzes": "Quizzes",
+    "quizzesDescription": "Take pending quizzes and review past results.",
+    "leaderboards": "Leaderboards",
+    "leaderboardsDescription": "Compare yourself to others.",
+    "manageQuizzes": "Manage Quizzes",
+    "manageQuizzesDescription": "Create, edit, and assign quizzes to your classes.",
+    "classManagement": "Class Management",
+    "classManagementDescription": "Review student performance.",
+    "userManagement": "User Management",
+    "userManagementDescription": "Manage classes, subjects, users and their roles.",
+    "systemSettings": "System Settings",
+    "systemSettingsDescription": "Global app configurations and subject creation."
   },
   "error": {
     "generic": "An error occurred. Please try again later.",

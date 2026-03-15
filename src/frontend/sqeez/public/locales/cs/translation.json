@@ -20,7 +20,8 @@
     "department": "Oddělení",
     "phoneNumber": "Telefonní číslo",
     "xp": "XP",
-    "level": "Level"
+    "level": "Level",
+    "loading": "Načítání"
   },
   "error": {
     "generic": "Nastala chyba. Prosím zkuste to později.",

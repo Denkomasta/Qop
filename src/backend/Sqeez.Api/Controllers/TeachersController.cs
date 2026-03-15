@@ -6,7 +6,6 @@ using Sqeez.Api.Services.Interfaces;
 namespace Sqeez.Api.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")]
     public class TeachersController : ApiBaseController
     {
         private readonly ITeacherService _teacherService;

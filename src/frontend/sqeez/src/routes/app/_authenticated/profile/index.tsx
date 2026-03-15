@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useAuthStore } from '@/store/useAuthStore'
+import { useExtendedUserProfile } from '@/hooks/useExtendedUserProfile' // Adjust path
 import { Avatar, AvatarFallback } from '@/components/ui/Avatar'
 import { InfoItem } from '@/components/ui/InfoItem'
 import {
@@ -27,6 +28,11 @@ function ProfilePage() {
   const { t } = useTranslation()
   const user = useAuthStore((s) => s.user)
 
+  const { data: extendedData, isLoading } = useExtendedUserProfile(
+    user?.id,
+    user?.role,
+  )
+
   if (!user) return null
 
   const initials = user.username.substring(0, 2).toUpperCase()
@@ -46,7 +52,6 @@ function ProfilePage() {
                 {initials}
               </AvatarFallback>
             </Avatar>
-
             <h2 className="mt-5 text-2xl font-bold">{user.username}</h2>
             <p className="text-sm text-muted-foreground">{user.email}</p>
             <div className="mt-6 flex items-center justify-center gap-2 rounded-full bg-secondary/80 px-4 py-1.5 text-sm font-semibold text-secondary-foreground shadow-sm">
@@ -80,19 +85,31 @@ function ProfilePage() {
                 value={user.role}
               />
 
-              {user.department && (
-                <InfoItem
-                  icon={<Briefcase className="h-4 w-4" />}
-                  label={t('common.department')}
-                  value={user.department}
-                />
-              )}
-              {user.phoneNumber && (
-                <InfoItem
-                  icon={<Phone className="h-4 w-4" />}
-                  label={t('common.phoneNumber')}
-                  value={user.phoneNumber}
-                />
+              {isLoading ? (
+                <p className="text-sm text-muted-foreground">
+                  {t('common.loading')}...
+                </p>
+              ) : (
+                <>
+                  {extendedData &&
+                    'department' in extendedData &&
+                    extendedData.department && (
+                      <InfoItem
+                        icon={<Briefcase className="h-4 w-4" />}
+                        label={t('common.department')}
+                        value={extendedData.department}
+                      />
+                    )}
+                  {extendedData &&
+                    'phoneNumber' in extendedData &&
+                    extendedData.phoneNumber && (
+                      <InfoItem
+                        icon={<Phone className="h-4 w-4" />}
+                        label={t('common.phoneNumber')}
+                        value={extendedData.phoneNumber}
+                      />
+                    )}
+                </>
               )}
             </div>
           </CardContent>

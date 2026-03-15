@@ -5,16 +5,18 @@ import { buttonVariants } from './buttonVariant'
 
 import { cn } from '@/lib/utils'
 
+export interface ButtonProps
+  extends React.ComponentProps<'button'>, VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+}
+
 export function Button({
   className,
   variant = 'default',
   size = 'default',
   asChild = false,
   ...props
-}: React.ComponentProps<'button'> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
+}: ButtonProps) {
   const Tag = asChild ? Slot.Root : 'button'
 
   return (

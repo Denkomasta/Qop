@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next'
 // import { toast } from 'sonner'
 
 import { EditableInfoItem } from '@/components/ui/InfoItem'
-import { AsyncButton } from '@/components/ui/Button'
+import { AsyncButton, Button } from '@/components/ui/Button'
 import { BaseModal } from '@/components/ui/Modal'
 import {
   useUpdateProfile,
@@ -206,14 +206,14 @@ function ProfilePage() {
         })}
         footer={
           <div className="flex w-full justify-center gap-4 sm:space-x-0">
-            <AsyncButton
+            <Button
               variant="outline"
               size="lg"
               onClick={handleCloseModal}
               className="min-w-32"
             >
               {t('common.cancel')}
-            </AsyncButton>
+            </Button>
 
             <AsyncButton
               size="lg"

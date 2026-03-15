@@ -20,7 +20,8 @@
     "department": "Department",
     "phoneNumber": "Phone Number",
     "xp": "XP",
-    "level": "Level"
+    "level": "Level",
+    "loading": "Loading"
   },
   "error": {
     "generic": "An error occurred. Please try again later.",

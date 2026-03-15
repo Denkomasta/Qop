@@ -22,7 +22,13 @@
     "xp": "XP",
     "level": "Level",
     "loading": "Načítání",
-    "welcome": "Vítej"
+    "welcome": "Vítej",
+    "save": "Uložit",
+    "saving": "Ukládání",
+    "cancel": "Zrušit",
+    "confirm": "Potvrdit",
+    "send": "Poslat",
+    "edit": "Upravit"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -88,7 +94,8 @@
   "profile": {
     "title": "Můj profil",
     "accountDetails": "Detaily účtu",
-    "description": "Vaše osobní a organizační informace."
+    "description": "Vaše osobní a organizační informace.",
+    "editModalDescription": "Zde proveďte změny v položce {{field}}. Až budete hotovi, klikněte na uložit."
   },
   "register": {
     "title": "Vytvořte si účet",

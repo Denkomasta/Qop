@@ -22,7 +22,13 @@
     "xp": "XP",
     "level": "Level",
     "loading": "Loading",
-    "welcome": "Welcome"
+    "welcome": "Welcome",
+    "save": "Save",
+    "saving": "Saving",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "send": "Send",
+    "edit": "Edit"
   },
   "dashboard": {
     "administration": "Administration",
@@ -88,7 +94,8 @@
   "profile": {
     "title": "My Profile",
     "accountDetails": "Account Details",
-    "description": "Your personal and organizational information."
+    "description": "Your personal and organizational information.",
+    "editModalDescription": "Make changes to your {{field}} here. Click save when you're done."
   },
   "register": {
     "title": "Create your account",

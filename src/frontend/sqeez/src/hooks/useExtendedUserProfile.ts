@@ -11,12 +11,19 @@ import { useQuery } from '@tanstack/react-query'
 
 export type ExtendedProfileDto = AdminDto | StudentDto | TeacherDto
 
+export const getExtendedProfileQueryKey = (
+  role?: UserRole,
+  id?: number | string,
+) => {
+  return ['extended-profile', role, id] as const
+}
+
 export const useExtendedUserProfile = (
   id?: number | string,
   role?: UserRole,
 ) => {
   return useQuery({
-    queryKey: ['extended-profile', role, id],
+    queryKey: getExtendedProfileQueryKey(role, id),
     queryFn: async ({ signal }): Promise<ExtendedProfileDto> => {
       if (!id || !role) throw new Error('Missing user ID or role')
 

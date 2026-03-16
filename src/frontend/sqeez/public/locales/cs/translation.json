@@ -73,6 +73,7 @@
     "serverError": "Na serveru nastal problém. Prosím zkuste to později."
   },
   "errors": {
+    "userNotFound": "Uživatele se nepovedlo najít.",
     "networkTitle": "Chyba sítě",
     "networkDescription": "Zkontrolujte prosím své připojení k internetu.",
     "sessionExpiredTitle": "Platnost relace vypršela",
@@ -126,9 +127,11 @@
   },
   "profile": {
     "title": "Můj profil",
+    "userTitle": "Profil uživatele {{name}}",
     "accountDetails": "Detaily účtu",
     "description": "Vaše osobní a organizační informace.",
-    "editModalDescription": "Zde proveďte změny v položce {{field}}. Až budete hotovi, klikněte na uložit."
+    "editModalDescription": "Zde proveďte změny v položce {{field}}. Až budete hotovi, klikněte na uložit.",
+    "viewOnlyDescription": "Osobní a organizační informace tvého kamaráda."
   },
   "register": {
     "title": "Vytvořte si účet",

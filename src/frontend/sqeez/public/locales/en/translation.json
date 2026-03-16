@@ -73,6 +73,7 @@
     "serverError": "An error occurred on the server. Please try again later."
   },
   "errors": {
+    "userNotFound": "User not found.",
     "networkTitle": "Network Error",
     "networkDescription": "Please check your internet connection.",
     "sessionExpiredTitle": "Session Expired",
@@ -126,9 +127,11 @@
   },
   "profile": {
     "title": "My Profile",
+    "userTitle": "Profile of {{name}}",
     "accountDetails": "Account Details",
     "description": "Your personal and organizational information.",
-    "editModalDescription": "Make changes to your {{field}} here. Click save when you're done."
+    "editModalDescription": "Make changes to your {{field}} here. Click save when you're done.",
+    "viewOnlyDescription": "Personal and organizational information of your friend."
   },
   "register": {
     "title": "Create your account",

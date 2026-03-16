@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   BookOpen,
   GraduationCap,
@@ -104,18 +104,32 @@ export function ClassPage() {
             <CardContent>
               {classData.teacher ? (
                 <div className="flex items-center space-x-4">
-                  <SimpleAvatar
-                    url={classData.teacher.avatarUrl}
-                    firstName={classData.teacher.firstName}
-                    lastName={classData.teacher.lastName}
-                    wrapperClassName="size-12"
-                  />
+                  <Link
+                    to="/app/profile/$userId"
+                    params={{ userId: (classData.teacher.id ?? 0).toString() }}
+                    className="transition-opacity hover:opacity-80"
+                  >
+                    <SimpleAvatar
+                      url={classData.teacher.avatarUrl}
+                      firstName={classData.teacher.firstName}
+                      lastName={classData.teacher.lastName}
+                      wrapperClassName="size-12"
+                    />
+                  </Link>
                   <div>
                     <p className="text-sm leading-none font-medium">
-                      {formatName(
-                        classData.teacher.firstName ?? 'John',
-                        classData.teacher.lastName ?? 'Doe',
-                      )}
+                      <Link
+                        to="/app/profile/$userId"
+                        params={{
+                          userId: (classData.teacher.id ?? 0).toString(),
+                        }}
+                        className="hover:underline"
+                      >
+                        {formatName(
+                          classData.teacher.firstName ?? 'John',
+                          classData.teacher.lastName ?? 'Doe',
+                        )}
+                      </Link>
                     </p>
                     <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
                       <Mail className="h-3 w-3" />
@@ -143,9 +157,18 @@ export function ClassPage() {
             <CardContent>
               <div className="flex flex-wrap gap-2">
                 {classData.subjects?.map((subject) => (
-                  <Badge key={subject.id} variant="secondary">
-                    {subject.name}
-                  </Badge>
+                  <Link
+                    key={subject.id}
+                    to="/app/subject/$subjectId"
+                    params={{ subjectId: (subject.id ?? 0).toString() }}
+                  >
+                    <Badge
+                      variant="secondary"
+                      className="cursor-pointer transition-colors hover:bg-secondary/80"
+                    >
+                      {subject.name}
+                    </Badge>
+                  </Link>
                 ))}
               </div>
             </CardContent>
@@ -182,17 +205,31 @@ export function ClassPage() {
                         }`}
                       >
                         <div className="flex items-center gap-4">
-                          <SimpleAvatar
-                            url={student.avatarUrl}
-                            firstName={student.firstName}
-                            lastName={student.lastName}
-                          />
+                          <Link
+                            to="/app/profile/$userId"
+                            params={{ userId: (student.id ?? 0).toString() }}
+                            className="transition-opacity hover:opacity-80"
+                          >
+                            <SimpleAvatar
+                              url={student.avatarUrl}
+                              firstName={student.firstName}
+                              lastName={student.lastName}
+                            />
+                          </Link>
                           <div>
                             <p className="flex items-center gap-2 text-sm leading-none font-medium">
-                              {formatName(
-                                student.firstName,
-                                student.lastName ?? 'Doe',
-                              )}
+                              <Link
+                                to="/app/profile/$userId"
+                                params={{
+                                  userId: (student.id ?? 0).toString(),
+                                }}
+                                className="hover:underline"
+                              >
+                                {formatName(
+                                  student.firstName,
+                                  student.lastName ?? 'Doe',
+                                )}
+                              </Link>
                               {isMe && (
                                 <Badge
                                   variant="default"

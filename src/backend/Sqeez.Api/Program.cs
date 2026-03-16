@@ -161,11 +161,16 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
-app.UseRouting();
 app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseCors("AllowFrontend");
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();

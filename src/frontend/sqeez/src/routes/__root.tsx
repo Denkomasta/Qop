@@ -1,6 +1,7 @@
 import { useGetApiAuthMe } from '@/api/generated/endpoints/auth/auth'
 import { Footer } from '@/components/layouting/Footer/Footer'
 import { Navbar } from '@/components/layouting/Navbar/Navbar'
+import { Toaster } from '@/components/ui/Sonner'
 import { ThemeProvider } from '@/context/ThemeContext'
 import { useAuthStore } from '@/store/useAuthStore'
 import { createRootRoute, Outlet } from '@tanstack/react-router'
@@ -73,6 +74,7 @@ const RootLayout = () => {
           rightsText={`© ${currentYear} ${t('system.name')}. ${t('footer.rights')}`}
         />
       </div>
+      <Toaster richColors position="bottom-right" />
       <TanStackRouterDevtools />
     </ThemeProvider>
   )

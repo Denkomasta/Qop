@@ -4,6 +4,8 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from 'axios'
 import { useAuthStore } from '@/store/useAuthStore'
+import { toast } from 'sonner'
+import i18n from '@/i18n'
 
 interface RetryQueueItem {
   resolve: (value: unknown) => void
@@ -12,6 +14,16 @@ interface RetryQueueItem {
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean
+}
+
+export interface AspNetProblemDetails {
+  type?: string
+  title?: string
+  status?: number
+  detail?: string
+  instance?: string
+  traceId?: string
+  errors?: Record<string, string[]>
 }
 
 const baseURL =
@@ -46,10 +58,19 @@ const AUTH_ENDPOINTS = [
 
 AXIOS_INSTANCE.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError) => {
+  async (error: AxiosError<AspNetProblemDetails>) => {
+    if (axios.isCancel(error)) {
+      return Promise.reject(error)
+    }
+
     const originalRequest = error.config as CustomAxiosRequestConfig
 
     if (!error.response || !originalRequest) {
+      if (error.request) {
+        toast.error(i18n.t('errors.networkTitle'), {
+          description: i18n.t('errors.networkDescription'),
+        })
+      }
       return Promise.reject(error)
     }
 
@@ -82,9 +103,44 @@ AXIOS_INSTANCE.interceptors.response.use(
         // Use the store's state directly for a clean logout
         useAuthStore.getState().setUser(null)
 
+        // toast.error(i18n.t('errors.sessionExpiredTitle'), {
+        //   description: i18n.t('errors.sessionExpiredDescription'),
+        // })
+
         return Promise.reject(refreshError)
       } finally {
         isRefreshing = false
+      }
+    }
+
+    if (error.response) {
+      const status = error.response.status
+      const data = error.response.data
+
+      let errorMessage = data?.detail || data?.title
+
+      // If there are specific DTO validation errors, flatten them into a single string
+      if (data?.errors) {
+        const validationMessages = Object.values(data.errors).flat().join(' ')
+
+        if (validationMessages) {
+          errorMessage = validationMessages
+        }
+      }
+
+      switch (status) {
+        case 500:
+          toast.error(i18n.t('errors.serverErrorTitle'), {
+            description:
+              i18n.t('errors.serverErrorDescription') || errorMessage,
+          })
+          break
+        default:
+          break
+        // toast.error(i18n.t('errors.defaultErrorTitle'), {
+        //   description:
+        //     i18n.t('errors.defaultErrorDescription') || errorMessage,
+        // })
       }
     }
 

@@ -40,7 +40,10 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "send": "Send",
-    "edit": "Edit"
+    "error": "Error",
+    "edit": "Edit",
+    "successfulChange": "The change was successful!",
+    "unsuccessfulChange": "An error occurred, the change was not successful."
   },
   "dashboard": {
     "administration": "Administration",

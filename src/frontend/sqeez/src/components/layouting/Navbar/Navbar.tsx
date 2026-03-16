@@ -11,7 +11,8 @@ import {
 import { LanguageSwitcher } from '@/components/settings/LanguageSwitcher/LanguageSwitcher'
 import { ThemeSwitcher } from '@/components/settings/ThemeSwitcher/ThemeSwitcher'
 import SqeezLogo from '@/components/icons/logos/SqeezLogo'
-import { Avatar, AvatarFallback } from '@/components/ui/Avatar'
+import { SimpleAvatar } from '@/components/ui/Avatar'
+import type { UserDTO } from '@/api/generated/model'
 
 export interface LinkProps {
   to: string
@@ -24,7 +25,7 @@ interface NavbarProps {
   loginButtonText?: string
   registerButtonText?: string
   logoutButtonText?: string
-  username?: string
+  user?: UserDTO
   navigationText?: string
   isAuthenticated?: boolean
 }
@@ -37,7 +38,7 @@ export function Navbar({
   navigationText,
   logoutButtonText,
   isAuthenticated,
-  username,
+  user,
 }: NavbarProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -75,12 +76,11 @@ export function Navbar({
                   to="/app/profile"
                   className="text-lg font-semibold text-muted-foreground"
                 >
-                  <Avatar className="h-9 w-9">
-                    {/* <AvatarImage src={user?.avatarUrl} /> TODO: add avatar url to user */}
-                    <AvatarFallback>
-                      {username?.substring(0, 2).toUpperCase() || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
+                  <SimpleAvatar
+                    wrapperClassName="size-9 border-2"
+                    url={user?.avatarUrl}
+                    username={user?.username}
+                  />
                 </Link>{' '}
                 <Button variant="ghost" size="sm" asChild>
                   <Link to="/logout">{logoutButtonText}</Link>
@@ -129,12 +129,12 @@ export function Navbar({
                       to="/app/profile"
                       className="text-lg font-semibold text-muted-foreground"
                     >
-                      <Avatar className="h-9 w-9">
-                        {/* <AvatarImage src={user?.avatarUrl} /> TODO: add avatar url to user */}
-                        <AvatarFallback>
-                          {username?.substring(0, 2).toUpperCase() || 'U'}
-                        </AvatarFallback>
-                      </Avatar>
+                      <SimpleAvatar
+                        url={user?.avatarUrl}
+                        username={user?.username}
+                        wrapperClassName="size-9"
+                        imageClassName="object-cover"
+                      />
                     </Link>{' '}
                     <Button variant={'outline'} className="w-full" asChild>
                       <Link to="/logout">{logoutButtonText}</Link>

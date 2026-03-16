@@ -62,7 +62,7 @@ const RootLayout = () => {
           navigationText={t('navbar.navigation')}
           logoutButtonText={t('navbar.logout')}
           isAuthenticated={isAuthenticated}
-          username={user?.username || ''}
+          user={user}
         />
 
         <main className="flex-1">

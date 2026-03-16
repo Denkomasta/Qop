@@ -8,6 +8,18 @@
     "welcomeTo": "Welcome to",
     "description": "Turn every quiz into progress. Climb leaderboards, unlock achievements, and build your knowledge streak."
   },
+  "class": {
+    "noClassTitle": "No Class Assigned",
+    "noClassDesc": "It looks like you haven't been assigned to a class for the current academic year yet.",
+    "noClassAction": "Please contact your school administrator or homeroom teacher to be added to your class roster. Once assigned, your schedule and classmates will appear here.",
+    "teacherTitle": "Class Teacher",
+    "noTeacher": "No teacher assigned.",
+    "subjects": "Subjects ({{count}})",
+    "classmatesTitle": "Classmates",
+    "studentsCount": "{{count}} students enrolled in this class.",
+    "me": "Me",
+    "level": "Level {{level}}"
+  },
   "common": {
     "signIn": "Sign In",
     "login": "Login",

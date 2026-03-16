@@ -4581,6 +4581,10 @@ components:
           type: string
         email:
           type: string
+        avatarUrl:
+          type:
+            - "null"
+            - string
     TeacherDto:
       type: object
       properties:

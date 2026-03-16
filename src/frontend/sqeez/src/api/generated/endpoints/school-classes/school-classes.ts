@@ -27,6 +27,7 @@ import type {
   PagedResponseOfSchoolClassDto,
   PatchSchoolClassDto,
   RemoveStudentsDto,
+  SchoolClassDetailDto,
   SchoolClassDto,
 } from '../../model'
 
@@ -257,7 +258,7 @@ export const getApiClassesId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<SchoolClassDto>(
+  return customInstance<SchoolClassDetailDto>(
     { url: `/api/classes/${id}`, method: 'GET', signal },
     options,
   )

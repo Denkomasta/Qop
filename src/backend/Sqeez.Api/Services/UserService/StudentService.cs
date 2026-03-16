@@ -4,12 +4,35 @@ using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services.Interfaces;
+using System.Linq.Expressions;
 
 namespace Sqeez.Api.Services.UserService
 {
     public class StudentService : BaseService<StudentService>, IStudentService
     {
         public StudentService(SqeezDbContext context, ILogger<StudentService> logger) : base(context, logger) { }
+
+        private static Expression<Func<Student, StudentDto>> MapStudentToDtoExpr => s => new StudentDto
+        {
+            Id = s.Id,
+            FirstName = s.FirstName,
+            LastName = s.LastName,
+            Username = s.Username,
+            Email = s.Email,
+            CurrentXP = s.CurrentXP,
+            Role = s.Role,
+            LastSeen = s.LastSeen,
+            AvatarUrl = s.AvatarUrl,
+            SchoolClassId = s.SchoolClassId
+        };
+
+        private static readonly Func<Student, StudentDto> MapStudentToDtoCompiled = MapStudentToDtoExpr.Compile();
+
+        private static StudentDto MapStudentToDto(Student s)
+        {
+            if (s == null) return null!;
+            return MapStudentToDtoCompiled(s);
+        }
 
         public async Task<ServiceResult<PagedResponse<StudentDto>>> GetAllStudentsAsync(StudentFilterDto filter)
         {
@@ -55,17 +78,7 @@ namespace Sqeez.Api.Services.UserService
                 .OrderBy(s => s.Username)
                 .Skip((filter.PageNumber - 1) * filter.PageSize)
                 .Take(filter.PageSize)
-                .Select(s => new StudentDto
-                {
-                    Id = s.Id,
-                    Username = s.Username,
-                    Email = s.Email,
-                    CurrentXP = s.CurrentXP,
-                    Role = s.Role.ToString(),
-                    LastSeen = s.LastSeen,
-                    AvatarUrl = s.AvatarUrl,
-                    SchoolClassId = s.SchoolClassId
-                })
+                .Select(MapStudentToDtoExpr)
                 .ToListAsync();
 
             var response = new PagedResponse<StudentDto>
@@ -83,17 +96,7 @@ namespace Sqeez.Api.Services.UserService
         {
             var student = await _context.Students
                 .Where(s => s.Id == id)
-                .Select(s => new StudentDto
-                {
-                    Id = s.Id,
-                    Username = s.Username,
-                    Email = s.Email,
-                    CurrentXP = s.CurrentXP,
-                    Role = s.Role.ToString(),
-                    LastSeen = s.LastSeen,
-                    AvatarUrl = s.AvatarUrl,
-                    SchoolClassId = s.SchoolClassId
-                })
+                .Select(MapStudentToDtoExpr)
                 .FirstOrDefaultAsync();
 
             if (student == null) return ServiceResult<StudentDto>.Failure("Student not found.", ServiceError.NotFound);
@@ -124,14 +127,7 @@ namespace Sqeez.Api.Services.UserService
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
 
-            var resultDto = new StudentDto
-            {
-                Id = student.Id,
-                Username = student.Username,
-                Email = student.Email,
-                Role = student.Role.ToString(),
-                SchoolClassId = student.SchoolClassId
-            };
+            var resultDto = MapStudentToDto(student);
 
             return ServiceResult<StudentDto>.Ok(resultDto);
         }
@@ -164,14 +160,7 @@ namespace Sqeez.Api.Services.UserService
 
             await _context.SaveChangesAsync();
 
-            var resultDto = new StudentDto
-            {
-                Id = student.Id,
-                Username = student.Username,
-                Email = student.Email,
-                Role = student.Role.ToString(),
-                SchoolClassId = student.SchoolClassId
-            };
+            var resultDto = MapStudentToDto(student);
 
             return ServiceResult<StudentDto>.Ok(resultDto);
         }

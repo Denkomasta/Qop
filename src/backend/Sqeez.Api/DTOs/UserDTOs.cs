@@ -1,14 +1,17 @@
-﻿using System.Text.Json.Serialization;
+﻿using Sqeez.Api.Enums;
+using System.Text.Json.Serialization;
 
 namespace Sqeez.Api.DTOs
 {
     public record StudentDto
     {
         public long Id { get; init; }
+        public string FirstName { get; init; } = string.Empty;
+        public string LastName { get; init; } = string.Empty;
         public string Username { get; init; } = string.Empty;
         public string Email { get; init; } = string.Empty;
         public int CurrentXP { get; init; }
-        public string Role { get; init; } = string.Empty;
+        public UserRole Role { get; init; }
         public string? AvatarUrl { get; init; }
         public DateTime LastSeen { get; init; }
         public long? SchoolClassId { get; init; }
@@ -26,6 +29,8 @@ namespace Sqeez.Api.DTOs
 
     public record CreateStudentDto
     {
+        public string FirstName { get; init; } = string.Empty;
+        public string LastName { get; init; } = string.Empty;
         public string Username { get; init; } = string.Empty;
         public string Email { get; init; } = string.Empty;
         public string Password { get; init; } = string.Empty;
@@ -86,4 +91,22 @@ namespace Sqeez.Api.DTOs
     }
 
     public record AvatarUploadResponseDto(string Message, string AvatarUrl);
+
+    public record ClassmateDto
+    {
+        public long Id { get; init; }
+        public string FirstName { get; init; } = string.Empty;
+        public string LastName { get; init; } = string.Empty;
+        public string Email { get; init; } = string.Empty;
+        public int CurrentXp { get; init; }
+        public string? AvatarUrl { get; init; }
+    }
+
+    public record TeacherBasicDto
+    {
+        public long Id { get; init; }
+        public string FirstName { get; init; } = string.Empty;
+        public string LastName { get; init; } = string.Empty;
+        public string Email { get; init; } = string.Empty;
+    }
 }

@@ -6,7 +6,7 @@ namespace Sqeez.Api.Services.Interfaces
     {
         Task<ServiceResult<PagedResponse<SchoolClassDto>>> GetAllClassesAsync(SchoolClassFilterDto filter);
 
-        Task<ServiceResult<SchoolClassDto>> GetClassByIdAsync(long id);
+        Task<ServiceResult<SchoolClassDetailDto>> GetClassByIdAsync(long id);
         Task<ServiceResult<SchoolClassDto>> CreateClassAsync(CreateSchoolClassDto dto);
         Task<ServiceResult<SchoolClassDto>> PatchClassAsync(long id, PatchSchoolClassDto dto);
         Task<ServiceResult<bool>> DeleteClassAsync(long id);

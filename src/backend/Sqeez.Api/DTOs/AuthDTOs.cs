@@ -13,7 +13,7 @@ namespace Sqeez.Api.DTOs
         string? AvatarUrl
     );
 
-    public record RegisterDTO(string Username, string Email, string Password, bool RememberMe = false);
+    public record RegisterDTO(string FirstName, string LastName, string Username, string Email, string Password, bool RememberMe = false);
     public record UpdateRoleDTO(long Id, UserRole Role, string? Department = null, string? PhoneNumber = null);
 
     public record AuthResponseDto(

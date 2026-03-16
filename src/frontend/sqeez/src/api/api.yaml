@@ -1752,13 +1752,13 @@ paths:
           content:
             text/plain:
               schema:
-                $ref: "#/components/schemas/SchoolClassDto"
+                $ref: "#/components/schemas/SchoolClassDetailDto"
             application/json:
               schema:
-                $ref: "#/components/schemas/SchoolClassDto"
+                $ref: "#/components/schemas/SchoolClassDetailDto"
             text/json:
               schema:
-                $ref: "#/components/schemas/SchoolClassDto"
+                $ref: "#/components/schemas/SchoolClassDetailDto"
     patch:
       tags:
         - SchoolClasses
@@ -2746,6 +2746,10 @@ components:
             - integer
             - string
           format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
         username:
           type: string
         email:
@@ -2757,7 +2761,7 @@ components:
             - string
           format: int32
         role:
-          type: string
+          $ref: "#/components/schemas/UserRole"
         avatarUrl:
           type:
             - "null"
@@ -2873,6 +2877,31 @@ components:
             - number
             - string
           format: double
+    ClassmateDto:
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        currentXp:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        avatarUrl:
+          type:
+            - "null"
+            - string
     CreateBadgeRuleDto:
       required:
         - metric
@@ -4159,11 +4188,17 @@ components:
           format: int32
     RegisterDTO:
       required:
+        - firstName
+        - lastName
         - username
         - email
         - password
       type: object
       properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
         username:
           type: string
         email:
@@ -4186,6 +4221,33 @@ components:
               - integer
               - string
             format: int64
+    SchoolClassDetailDto:
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        name:
+          type: string
+        academicYear:
+          type: string
+        section:
+          type: string
+        teacher:
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/TeacherBasicDto"
+        students:
+          type: array
+          items:
+            $ref: "#/components/schemas/ClassmateDto"
+        subjects:
+          type: array
+          items:
+            $ref: "#/components/schemas/SubjectBasicDto"
     SchoolClassDto:
       required:
         - id
@@ -4318,6 +4380,10 @@ components:
             - integer
             - string
           format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
         username:
           type: string
         email:
@@ -4329,7 +4395,7 @@ components:
             - string
           format: int32
         role:
-          type: string
+          $ref: "#/components/schemas/UserRole"
         avatarUrl:
           type:
             - "null"
@@ -4344,6 +4410,19 @@ components:
             - integer
             - string
           format: int64
+    SubjectBasicDto:
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        name:
+          type: string
+        code:
+          type: string
     SubjectDto:
       required:
         - id
@@ -4487,6 +4566,21 @@ components:
             - integer
             - string
           format: int32
+    TeacherBasicDto:
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
     TeacherDto:
       type: object
       properties:
@@ -4507,6 +4601,10 @@ components:
             - integer
             - string
           format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
         username:
           type: string
         email:
@@ -4518,7 +4616,7 @@ components:
             - string
           format: int32
         role:
-          type: string
+          $ref: "#/components/schemas/UserRole"
         avatarUrl:
           type:
             - "null"

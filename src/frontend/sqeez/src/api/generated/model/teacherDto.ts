@@ -4,6 +4,7 @@
  * Sqeez.Api | v1
  * OpenAPI spec version: 1.0.0
  */
+import type { UserRole } from './userRole'
 
 export interface TeacherDto {
   /** @nullable */
@@ -15,11 +16,13 @@ export interface TeacherDto {
   managedClassId?: number | string | null
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id?: number | string
+  firstName?: string
+  lastName?: string
   username?: string
   email?: string
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   currentXP?: number | string
-  role?: string
+  role?: UserRole
   /** @nullable */
   avatarUrl?: string | null
   lastSeen?: string

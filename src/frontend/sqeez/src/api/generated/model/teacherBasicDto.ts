@@ -11,4 +11,6 @@ export interface TeacherBasicDto {
   firstName?: string
   lastName?: string
   email?: string
+  /** @nullable */
+  avatarUrl?: string | null
 }

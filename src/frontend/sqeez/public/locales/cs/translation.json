@@ -8,6 +8,18 @@
     "welcomeTo": "Vítejte v",
     "description": "Proměňte každý kvíz v pokrok. Stoupejte v žebříčcích, odemykejte úspěchy a udržujte svoji sérii přihlášení."
   },
+  "class": {
+    "noClassTitle": "Žádná třída",
+    "noClassDesc": "Vypadá to, že pro aktuální školní rok zatím nejste zařazeni do žádné třídy.",
+    "noClassAction": "Obraťte se prosím na správce školy nebo třídního učitele, aby vás přidal do seznamu. Jakmile budete přiřazeni, objeví se zde váš rozvrh a spolužáci.",
+    "teacherTitle": "Třídní učitel",
+    "noTeacher": "Není přiřazen žádný učitel.",
+    "subjects": "Předměty ({{count}})",
+    "classmatesTitle": "Spolužáci",
+    "studentsCount": "V této třídě je zapsáno {{count}} studentů.",
+    "me": "Já",
+    "level": "Úroveň {{level}}"
+  },
   "common": {
     "signIn": "Přihlásit se",
     "login": "Přihlášení",

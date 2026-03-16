@@ -96,7 +96,8 @@ namespace Sqeez.Api.Services
                             Id = c.Teacher.Id,
                             FirstName = c.Teacher.FirstName,
                             LastName = c.Teacher.LastName,
-                            Email = c.Teacher.Email
+                            Email = c.Teacher.Email,
+                            AvatarUrl = c.Teacher.AvatarUrl,
                         } : null,
 
                         Students = c.Students.Select(s => new ClassmateDto

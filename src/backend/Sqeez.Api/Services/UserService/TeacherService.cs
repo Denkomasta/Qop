@@ -4,12 +4,37 @@ using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services.Interfaces;
+using System.Linq.Expressions;
 
 namespace Sqeez.Api.Services.UserService
 {
     public class TeacherService : BaseService<TeacherService>, ITeacherService
     {
         public TeacherService(SqeezDbContext context, ILogger<TeacherService> logger) : base(context, logger) { }
+
+        private static Expression<Func<Teacher, TeacherDto>> MapTeacherToDtoExpr => t => new TeacherDto
+        {
+            Id = t.Id,
+            FirstName = t.FirstName,
+            LastName = t.LastName,
+            Username = t.Username,
+            Email = t.Email,
+            CurrentXP = t.CurrentXP,
+            Role = t.Role,
+            LastSeen = t.LastSeen,
+            AvatarUrl = t.AvatarUrl,
+            SchoolClassId = t.SchoolClassId,
+            Department = t.Department,
+            ManagedClassId = t.ManagedClassId,
+        };
+
+        private static readonly Func<Teacher, TeacherDto> MapTeacherToDtoCompiled = MapTeacherToDtoExpr.Compile();
+
+        private static TeacherDto MapTeacherToDto(Teacher t)
+        {
+            if (t == null) return null!;
+            return MapTeacherToDtoCompiled(t);
+        }
 
         public async Task<ServiceResult<PagedResponse<TeacherDto>>> GetAllTeachersAsync(TeacherFilterDto filter)
         {
@@ -61,18 +86,7 @@ namespace Sqeez.Api.Services.UserService
                 .OrderBy(t => t.Username)
                 .Skip((filter.PageNumber - 1) * filter.PageSize)
                 .Take(filter.PageSize)
-                .Select(t => new TeacherDto
-                {
-                    Id = t.Id,
-                    Username = t.Username,
-                    Email = t.Email,
-                    CurrentXP = t.CurrentXP,
-                    Role = t.Role.ToString(),
-                    LastSeen = t.LastSeen,
-                    SchoolClassId = t.SchoolClassId,
-                    Department = t.Department,
-                    ManagedClassId = t.ManagedClassId,
-                })
+                .Select(MapTeacherToDtoExpr)
                 .ToListAsync();
 
             var response = new PagedResponse<TeacherDto>
@@ -90,18 +104,7 @@ namespace Sqeez.Api.Services.UserService
         {
             var teacher = await _context.Teachers
                 .Where(t => t.Id == id)
-                .Select(t => new TeacherDto
-                {
-                    Id = t.Id,
-                    Username = t.Username,
-                    Email = t.Email,
-                    CurrentXP = t.CurrentXP,
-                    Role = t.Role.ToString(),
-                    LastSeen = t.LastSeen,
-                    SchoolClassId = t.SchoolClassId,
-                    Department = t.Department,
-                    ManagedClassId= t.ManagedClassId,
-                })
+                .Select(MapTeacherToDtoExpr)
                 .FirstOrDefaultAsync();
 
             if (teacher == null) return ServiceResult<TeacherDto>.Failure("Teacher not found.", ServiceError.NotFound);
@@ -140,16 +143,7 @@ namespace Sqeez.Api.Services.UserService
             _context.Teachers.Add(teacher);
             await _context.SaveChangesAsync();
 
-            var resultDto = new TeacherDto
-            {
-                Id = teacher.Id,
-                Username = teacher.Username,
-                Email = teacher.Email,
-                Role = teacher.Role.ToString(),
-                SchoolClassId = teacher.SchoolClassId,
-                Department = teacher.Department,
-                ManagedClassId= teacher.ManagedClassId,
-            };
+            var resultDto = MapTeacherToDto(teacher);
 
             return ServiceResult<TeacherDto>.Ok(resultDto);
         }
@@ -194,16 +188,7 @@ namespace Sqeez.Api.Services.UserService
 
             await _context.SaveChangesAsync();
 
-            var resultDto = new TeacherDto
-            {
-                Id = teacher.Id,
-                Username = teacher.Username,
-                Email = teacher.Email,
-                Role = teacher.Role.ToString(),
-                SchoolClassId = teacher.SchoolClassId,
-                Department = teacher.Department,
-                ManagedClassId = teacher.ManagedClassId,
-            };
+            var resultDto = MapTeacherToDto(teacher);
 
             return ServiceResult<TeacherDto>.Ok(resultDto);
         }

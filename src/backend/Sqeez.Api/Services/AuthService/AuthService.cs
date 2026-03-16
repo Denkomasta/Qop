@@ -102,6 +102,8 @@ namespace Sqeez.Api.Services.AuthService
                     ServiceError.Forbidden);
             }
 
+            string firstName = dto.FirstName.Trim();
+            string lastName = dto.LastName.Trim();
             string email = dto.Email.Trim().ToLower();
             string salt = BC.GenerateSalt(12);
             string hashedPassword = BC.HashPassword(dto.Password.Trim(), salt);
@@ -112,8 +114,8 @@ namespace Sqeez.Api.Services.AuthService
 
             bool isSuperUser = email == _superUserEmail;
             Student user = isSuperUser
-                ? new Admin { Username = username, Email = email, PasswordHash = hashedPassword, Role = UserRole.Admin, LastSeen = DateTime.UtcNow }
-                : new Student { Username = username, Email = email, PasswordHash = hashedPassword, Role = UserRole.Student, LastSeen = DateTime.UtcNow };
+                ? new Admin { FirstName = firstName, LastName = lastName, Username = username, Email = email, PasswordHash = hashedPassword, Role = UserRole.Admin, LastSeen = DateTime.UtcNow }
+                : new Student { FirstName = firstName, LastName = lastName, Username = username, Email = email, PasswordHash = hashedPassword, Role = UserRole.Student, LastSeen = DateTime.UtcNow };
 
             _context.Students.Add(user);
             await _context.SaveChangesAsync();

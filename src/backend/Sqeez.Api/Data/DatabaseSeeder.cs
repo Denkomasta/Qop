@@ -29,6 +29,8 @@ namespace Sqeez.Api.Data
             // --- 1. Admin ---
             var superAdmin = new Admin
             {
+                FirstName = "System",
+                LastName = "Master",
                 Username = superEmail.Split('@')[0],
                 Email = superEmail,
                 PasswordHash = superPasswordHash,
@@ -58,6 +60,8 @@ namespace Sqeez.Api.Data
             // --- 3. Teachers ---
             var teacherDenda = new Teacher
             {
+                FirstName = "Denda",
+                LastName = "Valachu",
                 Username = "teacher_denda",
                 Email = "denda@sqeez.com",
                 PasswordHash = defaultPassword,
@@ -69,6 +73,8 @@ namespace Sqeez.Api.Data
 
             var teacherJana = new Teacher
             {
+                FirstName = "Jana",
+                LastName = "Hrouzkova",
                 Username = "teacher_jana",
                 Email = "jana@sqeez.com",
                 PasswordHash = defaultPassword,
@@ -93,6 +99,8 @@ namespace Sqeez.Api.Data
             // --- 4. Students ---
             var studentTonda = new Student
             {
+                FirstName = "Antonín",
+                LastName = "Tučný",
                 Username = "student_tonda",
                 Email = "tonda@sqeez.com",
                 PasswordHash = defaultPassword,
@@ -104,6 +112,8 @@ namespace Sqeez.Api.Data
 
             var studentPepa = new Student
             {
+                FirstName = "Josef",
+                LastName = "Nohavica",
                 Username = "student_pepa",
                 Email = "pepa@sqeez.com",
                 PasswordHash = defaultPassword,
@@ -114,6 +124,8 @@ namespace Sqeez.Api.Data
 
             var studentKarel = new Student
             {
+                FirstName = "Karel",
+                LastName = "Eisenstadt",
                 Username = "student_karel",
                 Email = "karel@sqeez.com",
                 PasswordHash = defaultPassword,
@@ -124,6 +136,8 @@ namespace Sqeez.Api.Data
 
             var studentEva = new Student
             {
+                FirstName = "Eva",
+                LastName = "Tomanová",
                 Username = "student_eva",
                 Email = "eva@sqeez.com",
                 PasswordHash = defaultPassword,

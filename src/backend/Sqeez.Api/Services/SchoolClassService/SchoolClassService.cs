@@ -75,31 +75,65 @@ namespace Sqeez.Api.Services
             }
         }
 
-        public async Task<ServiceResult<SchoolClassDto>> GetClassByIdAsync(long id)
+        public async Task<ServiceResult<SchoolClassDetailDto>> GetClassByIdAsync(long id)
         {
-            _logger.LogInformation("Fetching school class with ID: {Id}", id);
+            _logger.LogInformation("Fetching school class details for ID: {ClassId}", id);
 
-            var schoolClass = await _context.SchoolClasses
-                .Where(c => c.Id == id)
-                .Select(c => new SchoolClassDto(
-                    c.Id,
-                    c.Name,
-                    c.AcademicYear,
-                    c.Section,
-                    c.Teacher != null ? c.Teacher.Id : null,
-                    c.Teacher != null ? c.Teacher.Username : null,
-                    c.Students.Count,
-                    c.Subjects.Count
-                ))
-                .FirstOrDefaultAsync();
-
-            if (schoolClass == null)
+            try
             {
-                _logger.LogWarning("School class with ID {Id} not found.", id);
-                return ServiceResult<SchoolClassDto>.Failure("Class not found.", ServiceError.NotFound);
-            }
+                var classDetail = await _context.SchoolClasses
+                    .AsNoTracking()
+                    .Where(c => c.Id == id)
+                    .Select(c => new SchoolClassDetailDto
+                    {
+                        Id = c.Id,
+                        Name = c.Name,
+                        AcademicYear = c.AcademicYear,
+                        Section = c.Section,
 
-            return ServiceResult<SchoolClassDto>.Ok(schoolClass);
+                        Teacher = c.Teacher != null ? new TeacherBasicDto
+                        {
+                            Id = c.Teacher.Id,
+                            FirstName = c.Teacher.FirstName,
+                            LastName = c.Teacher.LastName,
+                            Email = c.Teacher.Email
+                        } : null,
+
+                        Students = c.Students.Select(s => new ClassmateDto
+                        {
+                            Id = s.Id,
+                            FirstName = s.FirstName,
+                            LastName = s.LastName,
+                            Email = s.Email,
+                            AvatarUrl = s.AvatarUrl
+                        }).ToList(),
+
+                        Subjects = c.Subjects.Select(s => new SubjectBasicDto
+                        {
+                            Id = s.Id,
+                            Name = s.Name,
+                            Code = s.Code
+                        }).ToList()
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (classDetail == null)
+                {
+                    _logger.LogWarning("School class with ID {ClassId} was not found.", id);
+                    return ServiceResult<SchoolClassDetailDto>.Failure(
+                        "Class not found.",
+                        ServiceError.NotFound);
+                }
+
+                return ServiceResult<SchoolClassDetailDto>.Ok(classDetail);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching school class details for ID: {ClassId}", id);
+                return ServiceResult<SchoolClassDetailDto>.Failure(
+                    "Internal error occurred.",
+                    ServiceError.InternalError);
+            }
         }
 
         public async Task<ServiceResult<SchoolClassDto>> CreateClassAsync(CreateSchoolClassDto dto)

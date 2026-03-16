@@ -4,24 +4,15 @@
  * Sqeez.Api | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { UserRole } from './userRole'
 
-export interface StudentDto {
+export interface ClassmateDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id?: number | string
   firstName?: string
   lastName?: string
-  username?: string
   email?: string
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  currentXP?: number | string
-  role?: UserRole
+  currentXp?: number | string
   /** @nullable */
   avatarUrl?: string | null
-  lastSeen?: string
-  /**
-   * @nullable
-   * @pattern ^-?(?:0|[1-9]\d*)$
-   */
-  schoolClassId?: number | string | null
 }

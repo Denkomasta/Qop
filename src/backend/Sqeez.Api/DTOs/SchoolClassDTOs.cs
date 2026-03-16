@@ -31,4 +31,16 @@
 
     public record AssignStudentsDto(List<long> StudentIds);
     public record RemoveStudentsDto(List<long> StudentIds);
+
+    public record SchoolClassDetailDto
+    {
+        public long Id { get; init; }
+        public string Name { get; init; } = string.Empty;
+        public string AcademicYear { get; init; } = string.Empty;
+        public string Section { get; init; } = string.Empty;
+
+        public TeacherBasicDto? Teacher { get; init; }
+        public List<ClassmateDto> Students { get; init; } = new();
+        public List<SubjectBasicDto> Subjects { get; init; } = new();
+    }
 }

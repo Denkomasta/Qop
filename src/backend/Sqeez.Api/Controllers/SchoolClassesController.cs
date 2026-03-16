@@ -26,7 +26,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<SchoolClassDto>> GetById(long id)
+        public async Task<ActionResult<SchoolClassDetailDto>> GetById(long id)
         {
             var result = await _schoolClassService.GetClassByIdAsync(id);
             return HandleServiceResult(result);

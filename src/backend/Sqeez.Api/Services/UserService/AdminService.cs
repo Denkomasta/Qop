@@ -4,12 +4,38 @@ using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services.Interfaces;
+using System.Linq.Expressions;
 
 namespace Sqeez.Api.Services.UserService
 {
     public class AdminService : BaseService<AdminService>, IAdminService
     {
         public AdminService(SqeezDbContext context, ILogger<AdminService> logger) : base(context, logger) { }
+
+        private static Expression<Func<Admin, AdminDto>> MapAdminToDtoExpr => a => new AdminDto
+        {
+            Id = a.Id,
+            FirstName = a.FirstName,
+            LastName = a.LastName,
+            Username = a.Username,
+            Email = a.Email,
+            CurrentXP = a.CurrentXP,
+            Role = a.Role,
+            LastSeen = a.LastSeen,
+            AvatarUrl = a.AvatarUrl,
+            SchoolClassId = a.SchoolClassId,
+            Department = a.Department,
+            ManagedClassId = a.ManagedClassId,
+            PhoneNumber = a.PhoneNumber,
+        };
+
+        private static readonly Func<Admin, AdminDto> MapAdminToDtoCompiled = MapAdminToDtoExpr.Compile();
+
+        private static AdminDto MapAdminToDto(Admin a)
+        {
+            if (a == null) return null!;
+            return MapAdminToDtoCompiled(a);
+        }
 
         public async Task<ServiceResult<PagedResponse<AdminDto>>> GetAllAdminsAsync(AdminFilterDto filter)
         {
@@ -60,19 +86,7 @@ namespace Sqeez.Api.Services.UserService
                 .OrderBy(a => a.Username)
                 .Skip((filter.PageNumber - 1) * filter.PageSize)
                 .Take(filter.PageSize)
-                .Select(a => new AdminDto
-                {
-                    Id = a.Id,
-                    Username = a.Username,
-                    Email = a.Email,
-                    CurrentXP = a.CurrentXP,
-                    Role = a.Role.ToString(),
-                    LastSeen = a.LastSeen,
-                    SchoolClassId = a.SchoolClassId,
-                    Department = a.Department,
-                    ManagedClassId = a.ManagedClassId,
-                    PhoneNumber = a.PhoneNumber,
-                })
+                .Select(MapAdminToDtoExpr)
                 .ToListAsync();
 
             var response = new PagedResponse<AdminDto>
@@ -90,19 +104,7 @@ namespace Sqeez.Api.Services.UserService
         {
             var admin = await _context.Admins
                 .Where(a => a.Id == id)
-                .Select(a => new AdminDto
-                {
-                    Id = a.Id,
-                    Username = a.Username,
-                    Email = a.Email,
-                    CurrentXP = a.CurrentXP,
-                    Role = a.Role.ToString(),
-                    LastSeen = a.LastSeen,
-                    SchoolClassId = a.SchoolClassId,
-                    Department = a.Department,
-                    ManagedClassId = a.ManagedClassId,
-                    PhoneNumber = a.PhoneNumber
-                })
+                .Select(MapAdminToDtoExpr)
                 .FirstOrDefaultAsync();
 
             if (admin == null) return ServiceResult<AdminDto>.Failure("Admin not found.", ServiceError.NotFound);
@@ -142,17 +144,7 @@ namespace Sqeez.Api.Services.UserService
             _context.Admins.Add(admin);
             await _context.SaveChangesAsync();
 
-            var resultDto = new AdminDto
-            {
-                Id = admin.Id,
-                Username = admin.Username,
-                Email = admin.Email,
-                Role = admin.Role.ToString(),
-                SchoolClassId = admin.SchoolClassId,
-                Department = admin.Department,
-                ManagedClassId= admin.ManagedClassId,
-                PhoneNumber = string.IsNullOrWhiteSpace(dto.PhoneNumber) ? "-" : dto.PhoneNumber
-            };
+            var resultDto = MapAdminToDto(admin);
 
             return ServiceResult<AdminDto>.Ok(resultDto);
         }
@@ -199,17 +191,7 @@ namespace Sqeez.Api.Services.UserService
 
             await _context.SaveChangesAsync();
 
-            var resultDto = new AdminDto
-            {
-                Id = admin.Id,
-                Username = admin.Username,
-                Email = admin.Email,
-                Role = admin.Role.ToString(),
-                SchoolClassId = admin.SchoolClassId,
-                Department = admin.Department,
-                ManagedClassId = admin.ManagedClassId,
-                PhoneNumber = string.IsNullOrWhiteSpace(dto.PhoneNumber) ? "-" : dto.PhoneNumber
-            };
+            var resultDto = MapAdminToDto(admin);
 
             return ServiceResult<AdminDto>.Ok(resultDto);
         }

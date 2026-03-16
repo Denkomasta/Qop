@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/Card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/Avatar'
+import { SimpleAvatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge/Badge'
 import { ScrollArea } from '@/components/ui/ScrollArea'
 import { useTranslation } from 'react-i18next'
@@ -22,7 +22,7 @@ import { useExtendedUserProfile } from '@/hooks/useExtendedUserProfile'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useGetApiClassesId } from '@/api/generated/endpoints/school-classes/school-classes'
 import { Spinner } from '@/components/ui/Spinner'
-import { calculateLevel, formatName, getNameInitials } from '@/lib/userHelpers'
+import { calculateLevel, formatName } from '@/lib/userHelpers'
 
 export const Route = createFileRoute('/app/_authenticated/class/')({
   component: ClassPage,
@@ -104,21 +104,12 @@ export function ClassPage() {
             <CardContent>
               {classData.teacher ? (
                 <div className="flex items-center space-x-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage
-                      src={
-                        classData.teacher.avatarUrl !== null
-                          ? classData.teacher.avatarUrl
-                          : undefined
-                      }
-                    />
-                    <AvatarFallback>
-                      {getNameInitials(
-                        classData.teacher.firstName,
-                        classData.teacher.lastName,
-                      )}
-                    </AvatarFallback>
-                  </Avatar>
+                  <SimpleAvatar
+                    url={classData.teacher.avatarUrl}
+                    firstName={classData.teacher.firstName}
+                    lastName={classData.teacher.lastName}
+                    wrapperClassName="size-12"
+                  />
                   <div>
                     <p className="text-sm leading-none font-medium">
                       {formatName(
@@ -191,21 +182,11 @@ export function ClassPage() {
                         }`}
                       >
                         <div className="flex items-center gap-4">
-                          <Avatar>
-                            <AvatarImage
-                              src={
-                                student.avatarUrl !== null
-                                  ? student.avatarUrl
-                                  : undefined
-                              }
-                            />
-                            <AvatarFallback>
-                              {getNameInitials(
-                                student.firstName,
-                                student.lastName,
-                              )}
-                            </AvatarFallback>
-                          </Avatar>
+                          <SimpleAvatar
+                            url={student.avatarUrl}
+                            firstName={student.firstName}
+                            lastName={student.lastName}
+                          />
                           <div>
                             <p className="flex items-center gap-2 text-sm leading-none font-medium">
                               {formatName(

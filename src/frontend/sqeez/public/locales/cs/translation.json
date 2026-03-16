@@ -40,7 +40,10 @@
     "cancel": "Zrušit",
     "confirm": "Potvrdit",
     "send": "Poslat",
-    "edit": "Upravit"
+    "error": "Chyba",
+    "edit": "Upravit",
+    "successfulChange": "Změna proběhla úspěšně!",
+    "unsuccessfulChange": "Nastala chyba, změna se nepodařila."
   },
   "dashboard": {
     "administration": "Administrativa",

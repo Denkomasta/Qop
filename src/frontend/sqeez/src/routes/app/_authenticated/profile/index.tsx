@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useExtendedUserProfile } from '@/hooks/useExtendedUserProfile'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/Avatar'
+import { SimpleAvatar } from '@/components/ui/Avatar'
 import {
   Card,
   CardContent,
@@ -30,6 +30,7 @@ import {
   type ProfilePatchPayload,
 } from '@/hooks/useUpdateProfile'
 import { Spinner } from '@/components/ui/Spinner'
+import { toast } from 'sonner'
 
 export const Route = createFileRoute('/app/_authenticated/profile/')({
   component: ProfilePage,
@@ -58,8 +59,6 @@ function ProfilePage() {
 
   if (!user) return null
 
-  const initials = user.username.substring(0, 2).toUpperCase()
-
   const handleEditClick = (
     key: string,
     label: string,
@@ -83,16 +82,16 @@ function ProfilePage() {
 
       await updateProfile.mutateAsync(payload)
 
-      // toast.success(t('common.success'), {
-      //   description: `${editingField.label} has been successfully updated.`,
-      // })
+      toast.success(true, {
+        description: t('common.successfulChange'),
+      })
 
       handleCloseModal()
     } catch (error) {
       console.error(error)
-      // toast.error(t('common.error'), {
-      //   description: 'Failed to update your profile. Please try again.',
-      // })
+      toast.error(true, {
+        description: t('common.unsuccessfulChange'),
+      })
     }
   }
 
@@ -105,19 +104,13 @@ function ProfilePage() {
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="shadow-sm md:col-span-1">
           <CardContent className="flex flex-col items-center pt-8">
-            <Avatar className="size-32 border-4 border-primary/10">
-              {user.avatarUrl !== null ? (
-                <AvatarImage
-                  src={user.avatarUrl}
-                  alt={`${user.username}'s avatar`}
-                  className="object-cover"
-                />
-              ) : (
-                <AvatarFallback className="bg-primary text-4xl font-bold text-primary-foreground">
-                  {initials}
-                </AvatarFallback>
-              )}
-            </Avatar>
+            <SimpleAvatar
+              url={user.avatarUrl}
+              username={user.username}
+              wrapperClassName="size-32 border-4 border-primary/10"
+              imageClassName="object-cover"
+              fallbackClassName="bg-primary text-4xl font-bold text-primary-foreground"
+            />
             <h2 className="mt-5 text-2xl font-bold">{user.username}</h2>
             <p className="text-sm text-muted-foreground">{user.email}</p>
             <div className="mt-6 flex items-center justify-center gap-2 rounded-full bg-secondary/80 px-4 py-1.5 text-sm font-semibold text-secondary-foreground shadow-sm">

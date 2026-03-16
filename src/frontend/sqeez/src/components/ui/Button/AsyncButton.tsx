@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Button, type ButtonProps } from '@/components/ui/Button'
-import { Loader2 } from 'lucide-react'
+import { Spinner } from '../Spinner'
 
 interface AsyncButtonProps extends Omit<ButtonProps, 'onClick' | 'asChild'> {
   onClick?: (
@@ -37,7 +37,7 @@ export function AsyncButton({
       onClick={handleClick}
       {...props}
     >
-      {isInternalLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+      {isInternalLoading && <Spinner size={'sm'} />}
       {isInternalLoading && loadingText ? loadingText : children}
     </Button>
   )

@@ -29,6 +29,7 @@ import {
   useUpdateProfile,
   type ProfilePatchPayload,
 } from '@/hooks/useUpdateProfile'
+import { Spinner } from '@/components/ui/Spinner'
 
 export const Route = createFileRoute('/app/_authenticated/profile/')({
   component: ProfilePage,
@@ -137,35 +138,34 @@ function ProfilePage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <EditableInfoItem
-                icon={<UserIcon className="h-4 w-4" />}
-                label={t('common.username')}
-                value={user.username}
-                fieldKey="username"
-                onEdit={handleEditClick}
-              />
-              <EditableInfoItem
-                icon={<Mail className="h-4 w-4" />}
-                label={t('common.email')}
-                value={user.email}
-                fieldKey="email"
-                onEdit={handleEditClick}
-              />
-              <EditableInfoItem
-                icon={<Shield className="h-4 w-4" />}
-                label={t('common.role')}
-                value={user.role}
-                fieldKey="role"
-                canEdit={false}
-                onEdit={handleEditClick}
-              />
-
-              {isLoading ? (
-                <p className="text-sm text-muted-foreground">
-                  {t('common.loading')}...
-                </p>
-              ) : (
+            {isLoading ? (
+              <p className="text-sm text-muted-foreground">
+                <Spinner size="lg" className="text-primary" />
+              </p>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <EditableInfoItem
+                  icon={<UserIcon className="h-4 w-4" />}
+                  label={t('common.username')}
+                  value={user.username}
+                  fieldKey="username"
+                  onEdit={handleEditClick}
+                />
+                <EditableInfoItem
+                  icon={<Mail className="h-4 w-4" />}
+                  label={t('common.email')}
+                  value={user.email}
+                  fieldKey="email"
+                  onEdit={handleEditClick}
+                />
+                <EditableInfoItem
+                  icon={<Shield className="h-4 w-4" />}
+                  label={t('common.role')}
+                  value={user.role}
+                  fieldKey="role"
+                  canEdit={false}
+                  onEdit={handleEditClick}
+                />
                 <>
                   {extendedData &&
                     'department' in extendedData &&
@@ -190,8 +190,8 @@ function ProfilePage() {
                       />
                     )}
                 </>
-              )}
-            </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -235,9 +235,6 @@ function ProfilePage() {
               id="edit-input"
               value={editValue}
               onChange={(e) => setEditValue(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSave()
-              }}
               autoFocus
             />
           </div>

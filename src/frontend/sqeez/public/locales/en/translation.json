@@ -57,6 +57,24 @@
     "invalidCredentials": "Invalid email or password. Please try again.",
     "serverError": "An error occurred on the server. Please try again later."
   },
+  "errors": {
+    "networkTitle": "Network Error",
+    "networkDescription": "Please check your internet connection.",
+    "sessionExpiredTitle": "Session Expired",
+    "sessionExpiredDescription": "Please log in again to continue.",
+    "invalidRequestTitle": "Invalid request",
+    "invalidRequestDescription": "Please check your inputs.",
+    "unauthorizedTitle": "Unauthorized",
+    "unauthorizedDescription": "Invalid credentials.",
+    "accessDeniedTitle": "Access Denied",
+    "accessDeniedDescription": "You do not have permission to perform this action.",
+    "notFoundTitle": "Not Found",
+    "notFoundDescription": "The requested resource could not be found.",
+    "serverErrorTitle": "Server Error",
+    "serverErrorDescription": "Something went wrong on our end. Please try again later.",
+    "defaultErrorTitle": "An error occurred",
+    "defaultErrorDescription": "Please try again."
+  },
   "footer": {
     "rights": "All rights reserved.",
     "help": "Help",

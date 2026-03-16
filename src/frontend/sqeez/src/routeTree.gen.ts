@@ -17,6 +17,8 @@ import { Route as AppAuthenticatedRouteImport } from './routes/app/_authenticate
 import { Route as AppAuthenticatedIndexRouteImport } from './routes/app/_authenticated/index'
 import { Route as AppAuthenticatedProfileIndexRouteImport } from './routes/app/_authenticated/profile/index'
 import { Route as AppAuthenticatedClassIndexRouteImport } from './routes/app/_authenticated/class/index'
+import { Route as AppAuthenticatedSubjectSubjectIdRouteImport } from './routes/app/_authenticated/subject/$subjectId'
+import { Route as AppAuthenticatedProfileUserIdRouteImport } from './routes/app/_authenticated/profile/$userId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -60,6 +62,18 @@ const AppAuthenticatedClassIndexRoute =
     path: '/class/',
     getParentRoute: () => AppAuthenticatedRoute,
   } as any)
+const AppAuthenticatedSubjectSubjectIdRoute =
+  AppAuthenticatedSubjectSubjectIdRouteImport.update({
+    id: '/subject/$subjectId',
+    path: '/subject/$subjectId',
+    getParentRoute: () => AppAuthenticatedRoute,
+  } as any)
+const AppAuthenticatedProfileUserIdRoute =
+  AppAuthenticatedProfileUserIdRouteImport.update({
+    id: '/profile/$userId',
+    path: '/profile/$userId',
+    getParentRoute: () => AppAuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +82,8 @@ export interface FileRoutesByFullPath {
   '/logout/': typeof LogoutIndexRoute
   '/register/': typeof RegisterIndexRoute
   '/app/': typeof AppAuthenticatedIndexRoute
+  '/app/profile/$userId': typeof AppAuthenticatedProfileUserIdRoute
+  '/app/subject/$subjectId': typeof AppAuthenticatedSubjectSubjectIdRoute
   '/app/class/': typeof AppAuthenticatedClassIndexRoute
   '/app/profile/': typeof AppAuthenticatedProfileIndexRoute
 }
@@ -77,6 +93,8 @@ export interface FileRoutesByTo {
   '/logout': typeof LogoutIndexRoute
   '/register': typeof RegisterIndexRoute
   '/app': typeof AppAuthenticatedIndexRoute
+  '/app/profile/$userId': typeof AppAuthenticatedProfileUserIdRoute
+  '/app/subject/$subjectId': typeof AppAuthenticatedSubjectSubjectIdRoute
   '/app/class': typeof AppAuthenticatedClassIndexRoute
   '/app/profile': typeof AppAuthenticatedProfileIndexRoute
 }
@@ -88,6 +106,8 @@ export interface FileRoutesById {
   '/logout/': typeof LogoutIndexRoute
   '/register/': typeof RegisterIndexRoute
   '/app/_authenticated/': typeof AppAuthenticatedIndexRoute
+  '/app/_authenticated/profile/$userId': typeof AppAuthenticatedProfileUserIdRoute
+  '/app/_authenticated/subject/$subjectId': typeof AppAuthenticatedSubjectSubjectIdRoute
   '/app/_authenticated/class/': typeof AppAuthenticatedClassIndexRoute
   '/app/_authenticated/profile/': typeof AppAuthenticatedProfileIndexRoute
 }
@@ -100,6 +120,8 @@ export interface FileRouteTypes {
     | '/logout/'
     | '/register/'
     | '/app/'
+    | '/app/profile/$userId'
+    | '/app/subject/$subjectId'
     | '/app/class/'
     | '/app/profile/'
   fileRoutesByTo: FileRoutesByTo
@@ -109,6 +131,8 @@ export interface FileRouteTypes {
     | '/logout'
     | '/register'
     | '/app'
+    | '/app/profile/$userId'
+    | '/app/subject/$subjectId'
     | '/app/class'
     | '/app/profile'
   id:
@@ -119,6 +143,8 @@ export interface FileRouteTypes {
     | '/logout/'
     | '/register/'
     | '/app/_authenticated/'
+    | '/app/_authenticated/profile/$userId'
+    | '/app/_authenticated/subject/$subjectId'
     | '/app/_authenticated/class/'
     | '/app/_authenticated/profile/'
   fileRoutesById: FileRoutesById
@@ -189,17 +215,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAuthenticatedClassIndexRouteImport
       parentRoute: typeof AppAuthenticatedRoute
     }
+    '/app/_authenticated/subject/$subjectId': {
+      id: '/app/_authenticated/subject/$subjectId'
+      path: '/subject/$subjectId'
+      fullPath: '/app/subject/$subjectId'
+      preLoaderRoute: typeof AppAuthenticatedSubjectSubjectIdRouteImport
+      parentRoute: typeof AppAuthenticatedRoute
+    }
+    '/app/_authenticated/profile/$userId': {
+      id: '/app/_authenticated/profile/$userId'
+      path: '/profile/$userId'
+      fullPath: '/app/profile/$userId'
+      preLoaderRoute: typeof AppAuthenticatedProfileUserIdRouteImport
+      parentRoute: typeof AppAuthenticatedRoute
+    }
   }
 }
 
 interface AppAuthenticatedRouteChildren {
   AppAuthenticatedIndexRoute: typeof AppAuthenticatedIndexRoute
+  AppAuthenticatedProfileUserIdRoute: typeof AppAuthenticatedProfileUserIdRoute
+  AppAuthenticatedSubjectSubjectIdRoute: typeof AppAuthenticatedSubjectSubjectIdRoute
   AppAuthenticatedClassIndexRoute: typeof AppAuthenticatedClassIndexRoute
   AppAuthenticatedProfileIndexRoute: typeof AppAuthenticatedProfileIndexRoute
 }
 
 const AppAuthenticatedRouteChildren: AppAuthenticatedRouteChildren = {
   AppAuthenticatedIndexRoute: AppAuthenticatedIndexRoute,
+  AppAuthenticatedProfileUserIdRoute: AppAuthenticatedProfileUserIdRoute,
+  AppAuthenticatedSubjectSubjectIdRoute: AppAuthenticatedSubjectSubjectIdRoute,
   AppAuthenticatedClassIndexRoute: AppAuthenticatedClassIndexRoute,
   AppAuthenticatedProfileIndexRoute: AppAuthenticatedProfileIndexRoute,
 }

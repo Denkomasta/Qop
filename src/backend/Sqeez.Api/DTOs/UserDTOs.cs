@@ -130,7 +130,7 @@ namespace Sqeez.Api.DTOs
         public string? AvatarUrl { get; init; }
     }
 
-    public record DetailedStudentDto : StudentDto
+    public record DetailedUserDto : AdminDto
     {
         public SchoolClassBasicDto? SchoolClassDetails { get; init; }
         public List<StudentBadgeBasicDto> Badges { get; init; } = new();

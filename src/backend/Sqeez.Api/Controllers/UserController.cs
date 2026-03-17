@@ -40,7 +40,7 @@ namespace Sqeez.Api.Controllers
 
         [HttpGet("{id}/details")]
         [Authorize]
-        public async Task<ActionResult<DetailedStudentDto>> GetDetailedUserById(long id)
+        public async Task<ActionResult<DetailedUserDto>> GetDetailedUserById(long id)
         {
             var result = await _userService.GetDetailedUserByIdAsync(id);
 

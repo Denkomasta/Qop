@@ -165,7 +165,7 @@ namespace Sqeez.Api.Services.UserService
             return ServiceResult<StudentDto>.Ok(MapUserToDto(user));
         }
 
-        public async Task<ServiceResult<DetailedStudentDto>> GetDetailedUserByIdAsync(long id)
+        public async Task<ServiceResult<DetailedUserDto>> GetDetailedUserByIdAsync(long id)
         {
             var user = await _context.Students
                 .AsNoTracking()
@@ -177,11 +177,11 @@ namespace Sqeez.Api.Services.UserService
                 .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null)
-                return ServiceResult<DetailedStudentDto>.Failure("User not found.", ServiceError.NotFound);
+                return ServiceResult<DetailedUserDto>.Failure("User not found.", ServiceError.NotFound);
 
             var baseDto = MapUserToDto(user);
 
-            var detailedDto = new DetailedStudentDto
+            var detailedDto = new DetailedUserDto
             {
                 Id = baseDto.Id,
                 FirstName = baseDto.FirstName,
@@ -193,6 +193,10 @@ namespace Sqeez.Api.Services.UserService
                 LastSeen = baseDto.LastSeen,
                 AvatarUrl = baseDto.AvatarUrl,
                 SchoolClassId = baseDto.SchoolClassId,
+
+                Department = baseDto is TeacherDto t ? t.Department : null,
+                ManagedClassId = baseDto is TeacherDto tm ? tm.ManagedClassId : null,
+                PhoneNumber = baseDto is AdminDto a ? a.PhoneNumber : string.Empty,
 
                 SchoolClassDetails = user.SchoolClass == null ? null : new SchoolClassBasicDto
                 {
@@ -220,7 +224,7 @@ namespace Sqeez.Api.Services.UserService
                 }).ToList()
             };
 
-            return ServiceResult<DetailedStudentDto>.Ok(detailedDto);
+            return ServiceResult<DetailedUserDto>.Ok(detailedDto);
         }
 
         public async Task<ServiceResult<StudentDto>> CreateUserAsync(CreateStudentDto dto)

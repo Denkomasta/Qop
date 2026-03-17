@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
-import { useExtendedUserProfile } from '@/hooks/useExtendedUserProfile'
 import { SimpleAvatar } from '@/components/ui/Avatar'
 import {
   Card,
@@ -23,14 +22,15 @@ import { useTranslation } from 'react-i18next'
 import { EditableInfoItem } from '@/components/ui/InfoItem'
 import { AsyncButton, Button } from '@/components/ui/Button'
 import { BaseModal } from '@/components/ui/Modal'
-import {
-  useUpdateProfile,
-  type ProfilePatchPayload,
-} from '@/hooks/useUpdateProfile'
 import { Spinner } from '@/components/ui/Spinner'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/Badge/Badge'
 import { calculateLevel, formatName } from '@/lib/userHelpers'
+import {
+  useGetApiUsersIdDetails,
+  usePatchApiUsersId,
+} from '@/api/generated/endpoints/user/user'
+import type { PatchStudentDto, UserRole } from '@/api/generated/model'
 
 type EditFieldState = {
   key: string
@@ -46,12 +46,12 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
 
   const isOwnProfile = currentUser?.id === idToFetch
 
-  const { data: profileData, isLoading } = useExtendedUserProfile(
-    idToFetch,
-    isOwnProfile ? currentUser?.role : 'Student',
+  const { data: profileData, isLoading: isLoading } = useGetApiUsersIdDetails(
+    currentUser?.id ?? 0,
+    { query: { enabled: !!currentUser?.id } },
   )
 
-  const updateProfile = useUpdateProfile(currentUser?.id, currentUser?.role)
+  const updateProfile = usePatchApiUsersId()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingField, setEditingField] = useState<EditFieldState>(null)
@@ -131,7 +131,8 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
   }
 
   const handleSave = async () => {
-    if (!editingField || !isOwnProfile) return
+    if (!editingField || !isOwnProfile || !currentUser || !profileData.role)
+      return
 
     const validationError = validateField(editingField.key, editValue)
     if (validationError) {
@@ -140,11 +141,27 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
     }
 
     try {
-      const payload = {
-        [editingField.key]: editValue.trim(),
-      } as ProfilePatchPayload
+      const discriminatorMap: Record<
+        UserRole,
+        'student' | 'teacher' | 'admin'
+      > = {
+        Student: 'student',
+        Teacher: 'teacher',
+        Admin: 'admin',
+      }
 
-      await updateProfile.mutateAsync(payload)
+      const discriminator =
+        discriminatorMap[profileData.role as UserRole] ?? 'student'
+
+      const payload: PatchStudentDto = {
+        role: discriminator,
+        [editingField.key]: editValue.trim(),
+      }
+
+      await updateProfile.mutateAsync({
+        id: currentUser.id,
+        data: payload,
+      })
 
       toast.success(t('common.successfulChange'))
       handleCloseModal()
@@ -243,7 +260,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
                 onEdit={handleEditClick}
               />
 
-              {'department' in profileData && profileData.department && (
+              {profileData.department && (
                 <EditableInfoItem
                   icon={<Briefcase className="h-4 w-4" />}
                   label={t('common.department')}
@@ -254,7 +271,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
                 />
               )}
 
-              {'phoneNumber' in profileData && profileData.phoneNumber && (
+              {profileData.phoneNumber && (
                 <EditableInfoItem
                   icon={<Phone className="h-4 w-4" />}
                   label={t('common.phoneNumber')}

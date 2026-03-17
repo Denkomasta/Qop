@@ -4,24 +4,11 @@
  * Sqeez.Api | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { UserRole } from './userRole'
+import type { StudentDtoAdminDto } from './studentDtoAdminDto'
+import type { StudentDtoStudentDto } from './studentDtoStudentDto'
+import type { StudentDtoTeacherDto } from './studentDtoTeacherDto'
 
-export interface StudentDto {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  id?: number | string
-  firstName?: string
-  lastName?: string
-  username?: string
-  email?: string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  currentXP?: number | string
-  role?: UserRole
-  /** @nullable */
-  avatarUrl?: string | null
-  lastSeen?: string
-  /**
-   * @nullable
-   * @pattern ^-?(?:0|[1-9]\d*)$
-   */
-  schoolClassId?: number | string | null
-}
+export type StudentDto =
+  | StudentDtoStudentDto
+  | StudentDtoTeacherDto
+  | StudentDtoAdminDto

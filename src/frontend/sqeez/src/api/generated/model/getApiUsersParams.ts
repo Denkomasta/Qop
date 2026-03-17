@@ -4,11 +4,9 @@
  * Sqeez.Api | v1
  * OpenAPI spec version: 1.0.0
  */
+import type { UserRole } from './userRole'
 
-export type GetApiAdminsParams = {
-  PhoneNumber?: string
-  StrictRoleOnly?: boolean
-  Department?: string
+export type GetApiUsersParams = {
   SearchTerm?: string
   IsOnline?: boolean
   /**
@@ -16,6 +14,10 @@ export type GetApiAdminsParams = {
    */
   SchoolClassId?: number | string
   IsArchived?: boolean
+  Role?: UserRole
+  StrictRoleOnly?: boolean
+  Department?: string
+  PhoneNumber?: string
   /**
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

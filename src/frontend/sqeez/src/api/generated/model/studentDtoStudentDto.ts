@@ -4,16 +4,11 @@
  * Sqeez.Api | v1
  * OpenAPI spec version: 1.0.0
  */
+import type { StudentDtoStudentDtoType } from './studentDtoStudentDtoType'
 import type { UserRole } from './userRole'
 
-export interface TeacherDto {
-  /** @nullable */
-  department?: string | null
-  /**
-   * @nullable
-   * @pattern ^-?(?:0|[1-9]\d*)$
-   */
-  managedClassId?: number | string | null
+export interface StudentDtoStudentDto {
+  $type: StudentDtoStudentDtoType
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id?: number | string
   firstName?: string

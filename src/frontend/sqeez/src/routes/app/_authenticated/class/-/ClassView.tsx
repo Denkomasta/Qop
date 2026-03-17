@@ -18,20 +18,19 @@ import { SimpleAvatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge/Badge'
 import { ScrollArea } from '@/components/ui/ScrollArea'
 import { useTranslation } from 'react-i18next'
-import { useExtendedUserProfile } from '@/hooks/useExtendedUserProfile'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useGetApiClassesId } from '@/api/generated/endpoints/school-classes/school-classes'
 import { Spinner } from '@/components/ui/Spinner'
 import { calculateLevel, formatName } from '@/lib/userHelpers'
+import { useGetApiUsersId } from '@/api/generated/endpoints/user/user'
 
 export function ClassView({ targetClassId }: { targetClassId?: number }) {
   const { t } = useTranslation()
   const user = useAuthStore((s) => s.user)
 
-  const { data: userData, isLoading: userLoading } = useExtendedUserProfile(
-    user?.id,
-    user?.role,
-    // { query: { enabled: !targetClassId } }, TODO use one EP.
+  const { data: userData, isLoading: userLoading } = useGetApiUsersId(
+    user?.id ?? 0,
+    { query: { enabled: !!user?.id && !targetClassId } },
   )
 
   const resolvedClassId = targetClassId || userData?.schoolClassId

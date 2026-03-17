@@ -4,6 +4,8 @@ using Moq;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
+using Sqeez.Api.Models.Academics;
+using Sqeez.Api.Models.Gamification;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services.Interfaces;
 using Sqeez.Api.Services.UserService;
@@ -333,6 +335,114 @@ namespace Sqeez.Api.Tests.Services
 
             Assert.Equal(2, result.Data!.TotalCount);
             Assert.DoesNotContain(result.Data.Data, u => u.Username == "Class2Student");
+        }
+
+        // ==========================================
+        // 6. DETAILED USER PROFILE TESTS
+        // ==========================================
+
+        [Fact]
+        public async Task GetDetailedUserByIdAsync_WhenUserExists_ReturnsDetailedDtoWithAllRelations()
+        {
+            var context = await GetInMemoryDbContext();
+
+            var schoolClass = new SchoolClass { Name = "Class 1A", AcademicYear = "2025/2026" };
+            var subject = new Subject { Name = "Advanced Mathematics" };
+            var badge = new Badge { Name = "Math Whiz", IconUrl = "/icons/math.png" };
+
+            context.SchoolClasses.Add(schoolClass);
+            context.Subjects.Add(subject);
+            context.Badges.Add(badge);
+            await context.SaveChangesAsync();
+
+            var student = new Student
+            {
+                Username = "DetailedStudent",
+                Role = UserRole.Student,
+                SchoolClassId = schoolClass.Id,
+                Enrollments = new List<Enrollment>
+                {
+                    new Enrollment
+                    {
+                        SubjectId = subject.Id,
+                        Mark = 95,
+                        EnrolledAt = DateTime.UtcNow.AddMonths(-1)
+                    }
+                },
+                StudentBadges = new List<StudentBadge>
+                {
+                    new StudentBadge
+                    {
+                        BadgeId = badge.Id,
+                        EarnedAt = DateTime.UtcNow.AddDays(-5)
+                    }
+                }
+            };
+
+            context.Students.Add(student);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.GetDetailedUserByIdAsync(student.Id);
+
+            Assert.Null(result.ErrorMessage);
+            Assert.NotNull(result.Data);
+
+            Assert.Equal("DetailedStudent", result.Data.Username);
+
+            Assert.NotNull(result.Data.SchoolClassDetails);
+            Assert.Equal("Class 1A", result.Data.SchoolClassDetails.Name);
+
+            Assert.Single(result.Data.Enrollments);
+            var enrollmentDto = result.Data.Enrollments.First();
+            Assert.Equal("Advanced Mathematics", enrollmentDto.SubjectName);
+            Assert.Equal(95, enrollmentDto.Mark);
+
+            Assert.Single(result.Data.Badges);
+            var badgeDto = result.Data.Badges.First();
+            Assert.Equal("Math Whiz", badgeDto.Name);
+            Assert.Equal("/icons/math.png", badgeDto.IconUrl);
+        }
+
+        [Fact]
+        public async Task GetDetailedUserByIdAsync_WhenUserHasNoRelations_ReturnsDetailedDtoWithEmptyCollections()
+        {
+            var context = await GetInMemoryDbContext();
+            var student = new Student
+            {
+                Username = "LonelyStudent",
+                Role = UserRole.Student
+            };
+
+            context.Students.Add(student);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.GetDetailedUserByIdAsync(student.Id);
+
+            Assert.Null(result.ErrorMessage);
+            Assert.NotNull(result.Data);
+
+            Assert.Equal("LonelyStudent", result.Data.Username);
+
+            Assert.Null(result.Data.SchoolClassDetails);
+            Assert.Empty(result.Data.Enrollments);
+            Assert.Empty(result.Data.Badges);
+        }
+
+        [Fact]
+        public async Task GetDetailedUserByIdAsync_WhenUserDoesNotExist_ReturnsFailure()
+        {
+            var context = await GetInMemoryDbContext();
+            var service = CreateService(context);
+
+            var result = await service.GetDetailedUserByIdAsync(999);
+
+            Assert.NotNull(result.ErrorMessage);
+            Assert.Equal(ServiceError.NotFound, result.ErrorCode);
+            Assert.Equal("User not found.", result.ErrorMessage);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Sqeez.Api.Enums;
+﻿using Sqeez.Api.Enums;
 
 namespace Sqeez.Api.DTOs
 {
@@ -60,6 +59,14 @@ namespace Sqeez.Api.DTOs
         int XpBonus,
         DateTime EarnedAt
     );
+
+    public record StudentBadgeBasicDto
+    {
+        public long BadgeId { get; init; }
+        public string Name { get; init; } = string.Empty;
+        public string? IconUrl { get; init; }
+        public DateTime EarnedAt { get; init; }
+    }
 
     public record BadgeEvaluationMetrics(
         decimal ScorePercentage,

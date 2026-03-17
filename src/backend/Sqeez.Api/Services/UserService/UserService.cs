@@ -165,6 +165,64 @@ namespace Sqeez.Api.Services.UserService
             return ServiceResult<StudentDto>.Ok(MapUserToDto(user));
         }
 
+        public async Task<ServiceResult<DetailedStudentDto>> GetDetailedUserByIdAsync(long id)
+        {
+            var user = await _context.Students
+                .AsNoTracking()
+                .Include(u => u.SchoolClass)
+                .Include(u => u.Enrollments)
+                    .ThenInclude(e => e.Subject)
+                .Include(u => u.StudentBadges)
+                    .ThenInclude(sb => sb.Badge)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+                return ServiceResult<DetailedStudentDto>.Failure("User not found.", ServiceError.NotFound);
+
+            var baseDto = MapUserToDto(user);
+
+            var detailedDto = new DetailedStudentDto
+            {
+                Id = baseDto.Id,
+                FirstName = baseDto.FirstName,
+                LastName = baseDto.LastName,
+                Username = baseDto.Username,
+                Email = baseDto.Email,
+                CurrentXP = baseDto.CurrentXP,
+                Role = baseDto.Role,
+                LastSeen = baseDto.LastSeen,
+                AvatarUrl = baseDto.AvatarUrl,
+                SchoolClassId = baseDto.SchoolClassId,
+
+                SchoolClassDetails = user.SchoolClass == null ? null : new SchoolClassBasicDto
+                {
+                    Id = user.SchoolClass.Id,
+                    Name = user.SchoolClass.Name,
+                    AcademicYear = user.SchoolClass.AcademicYear
+                },
+
+                Enrollments = user.Enrollments.Select(e => new EnrollmentBasicDto
+                {
+                    Id = e.Id,
+                    SubjectId = e.SubjectId,
+                    SubjectName = e.Subject?.Name ?? "Unknown Subject",
+                    Mark = e.Mark,
+                    EnrolledAt = e.EnrolledAt,
+                    ArchivedAt = e.ArchivedAt
+                }).ToList(),
+
+                Badges = user.StudentBadges.Select(sb => new StudentBadgeBasicDto
+                {
+                    BadgeId = sb.BadgeId,
+                    Name = sb.Badge?.Name ?? "Unknown Badge",
+                    IconUrl = sb.Badge?.IconUrl,
+                    EarnedAt = sb.EarnedAt
+                }).ToList()
+            };
+
+            return ServiceResult<DetailedStudentDto>.Ok(detailedDto);
+        }
+
         public async Task<ServiceResult<StudentDto>> CreateUserAsync(CreateStudentDto dto)
         {
             if (await _context.Students.AnyAsync(u => u.Email == dto.Email.Trim().ToLower()))

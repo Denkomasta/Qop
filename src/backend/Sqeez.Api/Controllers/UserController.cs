@@ -38,6 +38,18 @@ namespace Sqeez.Api.Controllers
             return Ok(result.Data);
         }
 
+        [HttpGet("{id}/details")]
+        [Authorize]
+        public async Task<ActionResult<DetailedStudentDto>> GetDetailedUserById(long id)
+        {
+            var result = await _userService.GetDetailedUserByIdAsync(id);
+
+            if (!result.Success)
+                return NotFound(result.ErrorMessage);
+
+            return Ok(result.Data);
+        }
+
         [HttpPost]
         public async Task<ActionResult<StudentDto>> CreateUser([FromBody] CreateStudentDto dto)
         {

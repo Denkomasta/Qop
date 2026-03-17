@@ -1,4 +1,3 @@
-using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -52,7 +51,7 @@ builder.Services.Configure<Microsoft.AspNetCore.Mvc.JsonOptions>(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-builder.Services.Configure<RouteOptions>(options => 
+builder.Services.Configure<RouteOptions>(options =>
 {
     options.LowercaseUrls = true;
 });
@@ -66,9 +65,6 @@ builder.Services.AddMemoryCache();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ISchoolClassService, SchoolClassService>();
-builder.Services.AddScoped<IStudentService, StudentService>();
-builder.Services.AddScoped<ITeacherService, TeacherService>();
-builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 builder.Services.AddScoped<IQuizService, QuizService>();

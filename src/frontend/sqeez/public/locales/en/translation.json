@@ -27,6 +27,7 @@
     "home": "Home",
     "goBack": "Go Back",
     "username": "Username",
+    "unknown": "Unknown",
     "email": "Email",
     "role": "Role",
     "department": "Department",
@@ -146,6 +147,19 @@
     "signIn": "Sign in!",
     "username": "Username",
     "register": "Register"
+  },
+  "subject": {
+    "notFound": "Subject Not Found",
+    "notFoundDesc": "The subject you are looking for does not exist or you don't have permission to view it.",
+    "ongoing": "Ongoing",
+    "taughtBy": "Taught By",
+    "noTeacher": "No teacher assigned yet.",
+    "assignedClass": "Assigned Class",
+    "noClass": "Not assigned to a specific class.",
+    "description": "About this Subject",
+    "noDescription": "No description has been provided for this subject.",
+    "enrolledStudents": "Enrolled Students",
+    "totalQuizzes": "Total Quizzes"
   },
   "system": {
     "name": "Sqeez"

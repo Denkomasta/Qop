@@ -25,4 +25,14 @@
         int? Mark = null,
         bool? RemoveMark = null
     );
+
+    public record EnrollmentBasicDto
+    {
+        public long Id { get; init; }
+        public long SubjectId { get; init; }
+        public string SubjectName { get; init; } = string.Empty;
+        public int? Mark { get; init; }
+        public DateTime EnrolledAt { get; init; }
+        public DateTime? ArchivedAt { get; init; }
+    }
 }

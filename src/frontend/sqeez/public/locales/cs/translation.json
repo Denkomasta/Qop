@@ -96,7 +96,8 @@
     "usernameShort": "Uživatelské jméno musí mít alespoň 3 znaky.",
     "usernameLong": "Uživatelské jméno může mít maximálně 20 znaků.",
     "invalidPhone": "Zadejte platné telefonní číslo.",
-    "invalidCharacters": "Hodnota obsahuje nepovolené znaky. Použijte pouze písmena, číslice, pomlčky a podtržítka."
+    "invalidCharacters": "Hodnota obsahuje nepovolené znaky. Použijte pouze písmena, číslice, pomlčky a podtržítka.",
+    "fileTooLarge": "Vybraný soubor je příliš velký (maximum {{maxValue}} MB)."
   },
   "footer": {
     "rights": "Všechna práva vyhrazena.",
@@ -133,6 +134,12 @@
     "logout": "Odhlásit se"
   },
   "profile": {
+    "updateAvatar": "Změnit profilový obrázek",
+    "updateAvatarDescription": "Vyberte nový obrázek pro váš profil. Podporovány jsou formáty JPG, PNG a GIF.",
+    "clickToSelect": "Klikněte pro výběr obrázku",
+    "avatarUpdated": "Profilový obrázek byl úspěšně nahrán!",
+    "avatarUpdateFailed": "Při nahrávání obrázku došlo k chybě.",
+
     "title": "Můj profil",
     "userTitle": "Profil uživatele {{name}}",
     "accountDetails": "Detaily účtu",

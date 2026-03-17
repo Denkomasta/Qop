@@ -96,7 +96,8 @@
     "usernameShort": "Username must be at least 3 characters long.",
     "usernameLong": "Username cannot exceed 20 characters.",
     "invalidPhone": "Please enter a valid phone number.",
-    "invalidCharacters": "Input contains invalid characters. Please use only letters, numbers, dashes, and underscores."
+    "invalidCharacters": "Input contains invalid characters. Please use only letters, numbers, dashes, and underscores.",
+    "fileTooLarge": "Attached file is too large to send (max {{maxValue}} MB)."
   },
   "footer": {
     "rights": "All rights reserved.",
@@ -133,6 +134,12 @@
     "logout": "Logout"
   },
   "profile": {
+    "updateAvatar": "Update Avatar",
+    "updateAvatarDescription": "Select a new image for your profile. Supported formats are JPG, PNG, and GIF.",
+    "clickToSelect": "Click to select an image",
+    "avatarUpdated": "Profile picture updated successfully!",
+    "avatarUpdateFailed": "An error occurred while uploading your avatar.",
+
     "title": "My Profile",
     "userTitle": "Profile of {{name}}",
     "accountDetails": "Account Details",

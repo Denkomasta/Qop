@@ -27,8 +27,7 @@ export function BaseModal({
 }: BaseModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[425px]">
-        {/* Only render the header if title or description is provided */}
+      <DialogContent className="sm:max-w-106.25">
         {(title || description) && (
           <DialogHeader>
             {title && <DialogTitle>{title}</DialogTitle>}
@@ -38,10 +37,8 @@ export function BaseModal({
           </DialogHeader>
         )}
 
-        {/* Main Content Area */}
         <div className="py-4">{children}</div>
 
-        {/* Action Buttons Area */}
         {footer && <DialogFooter>{footer}</DialogFooter>}
       </DialogContent>
     </Dialog>

@@ -16,6 +16,7 @@ import {
   Shield,
   Star,
   User as UserIcon,
+  Camera,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
@@ -31,6 +32,10 @@ import {
   usePatchApiUsersId,
 } from '@/api/generated/endpoints/user/user'
 import type { PatchStudentDto, UserRole } from '@/api/generated/model'
+import { getImageUrl } from '@/lib/imageHelpers'
+import { getGetApiAuthMeQueryKey } from '@/api/generated/endpoints/auth/auth'
+import { useQueryClient } from '@tanstack/react-query'
+import { AvatarUploadModal } from './AvatarUploadModal'
 
 type EditFieldState = {
   key: string
@@ -43,13 +48,15 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
   const currentUser = useAuthStore((s) => s.user)
 
   const idToFetch = targetUserId || currentUser?.id
-
   const isOwnProfile = currentUser?.id === idToFetch
 
-  const { data: profileData, isLoading: isLoading } = useGetApiUsersIdDetails(
-    currentUser?.id ?? 0,
-    { query: { enabled: !!currentUser?.id } },
-  )
+  const {
+    data: profileData,
+    isLoading: isLoading,
+    refetch,
+  } = useGetApiUsersIdDetails(idToFetch ?? 0, {
+    query: { enabled: !!idToFetch },
+  })
 
   const updateProfile = usePatchApiUsersId()
 
@@ -57,6 +64,10 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
   const [editingField, setEditingField] = useState<EditFieldState>(null)
   const [editValue, setEditValue] = useState('')
   const [editError, setEditError] = useState<string | undefined>(undefined)
+
+  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false)
+
+  const queryClient = useQueryClient()
 
   if (isLoading) {
     return (
@@ -79,7 +90,6 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
 
   const validateField = (key: string, value: string): string | null => {
     const trimmedValue = value.trim()
-
     if (!trimmedValue) return t('errors.required')
 
     switch (key) {
@@ -88,19 +98,15 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
         if (!emailRegex.test(trimmedValue)) return t('errors.invalidEmail')
         break
       }
-
       case 'username': {
         const safeUsernameRegex =
           /^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$/
-
         if (trimmedValue.length < 3) return t('errors.usernameShort')
         if (trimmedValue.length > 20) return t('errors.usernameLong')
-        if (!safeUsernameRegex.test(trimmedValue)) {
+        if (!safeUsernameRegex.test(trimmedValue))
           return t('errors.invalidCharacters')
-        }
         break
       }
-
       case 'phoneNumber': {
         const phoneRegex = /^\+?[0-9\s\-()]{7,15}$/
         if (trimmedValue && !phoneRegex.test(trimmedValue))
@@ -108,7 +114,6 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
         break
       }
     }
-
     return null
   }
 
@@ -118,7 +123,6 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
     currentValue: string,
   ) => {
     if (!isOwnProfile) return
-
     setEditingField({ key, label, value: currentValue })
     setEditValue(currentValue)
     setIsModalOpen(true)
@@ -165,10 +169,30 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
 
       toast.success(t('common.successfulChange'))
       handleCloseModal()
+      queryClient.invalidateQueries({
+        queryKey: getGetApiAuthMeQueryKey(),
+      })
+      refetch()
     } catch (error) {
       console.error(error)
       toast.error(t('common.unsuccessfulChange'))
     }
+  }
+
+  const handleAvatarClick = () => {
+    if (!isOwnProfile) return
+    setIsAvatarModalOpen(true)
+  }
+
+  const handleCloseAvatarModal = () => {
+    setIsAvatarModalOpen(false)
+  }
+
+  const onAvatarSave = () => {
+    queryClient.invalidateQueries({
+      queryKey: getGetApiAuthMeQueryKey(),
+    })
+    refetch()
   }
 
   return (
@@ -192,14 +216,26 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="shadow-sm md:col-span-1">
           <CardContent className="flex flex-col items-center pt-8">
-            <SimpleAvatar
-              url={profileData.avatarUrl}
-              firstName={profileData.firstName}
-              lastName={profileData.lastName}
-              wrapperClassName="size-32 border-4 border-primary/10"
-              imageClassName="object-cover"
-              fallbackClassName="bg-primary text-4xl font-bold text-primary-foreground"
-            />
+            <div
+              className={`relative rounded-full ${isOwnProfile ? 'group cursor-pointer' : ''}`}
+              onClick={handleAvatarClick}
+            >
+              <SimpleAvatar
+                url={getImageUrl(profileData.avatarUrl)}
+                firstName={profileData.firstName}
+                lastName={profileData.lastName}
+                wrapperClassName="size-32 border-4 border-primary/10"
+                imageClassName="object-cover"
+                fallbackClassName="bg-primary text-4xl font-bold text-primary-foreground"
+              />
+
+              {isOwnProfile && (
+                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                  <Camera className="h-8 w-8 text-white" />
+                </div>
+              )}
+            </div>
+
             <h2 className="mt-5 text-center text-2xl font-bold">
               {formatName(profileData.firstName, profileData.lastName)}
             </h2>
@@ -221,7 +257,6 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
           </CardContent>
         </Card>
 
-        {/* Right Column: Detailed Account Info */}
         <Card className="h-fit shadow-sm md:col-span-2">
           <CardHeader>
             <CardTitle className="text-xl">
@@ -304,7 +339,6 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
               >
                 {t('common.cancel')}
               </Button>
-
               <AsyncButton
                 size="lg"
                 onClick={handleSave}
@@ -331,6 +365,14 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
             </div>
           </div>
         </BaseModal>
+      )}
+
+      {isOwnProfile && (
+        <AvatarUploadModal
+          isOpen={isAvatarModalOpen}
+          onClose={handleCloseAvatarModal}
+          onUpload={onAvatarSave}
+        />
       )}
     </div>
   )

@@ -23,6 +23,7 @@ import { useGetApiClassesId } from '@/api/generated/endpoints/school-classes/sch
 import { Spinner } from '@/components/ui/Spinner'
 import { calculateLevel, formatName } from '@/lib/userHelpers'
 import { useGetApiUsersId } from '@/api/generated/endpoints/user/user'
+import { getImageUrl } from '@/lib/imageHelpers'
 
 export function ClassView({ targetClassId }: { targetClassId?: number }) {
   const { t } = useTranslation()
@@ -115,7 +116,7 @@ export function ClassView({ targetClassId }: { targetClassId?: number }) {
                     className="transition-opacity hover:opacity-80"
                   >
                     <SimpleAvatar
-                      url={classData.teacher.avatarUrl}
+                      url={getImageUrl(classData.teacher.avatarUrl)}
                       firstName={classData.teacher.firstName}
                       lastName={classData.teacher.lastName}
                       wrapperClassName="size-12"
@@ -216,7 +217,7 @@ export function ClassView({ targetClassId }: { targetClassId?: number }) {
                             className="transition-opacity hover:opacity-80"
                           >
                             <SimpleAvatar
-                              url={student.avatarUrl}
+                              url={getImageUrl(student.avatarUrl)}
                               firstName={student.firstName}
                               lastName={student.lastName}
                             />

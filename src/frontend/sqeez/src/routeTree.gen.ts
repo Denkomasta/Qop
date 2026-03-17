@@ -19,6 +19,7 @@ import { Route as AppAuthenticatedProfileIndexRouteImport } from './routes/app/_
 import { Route as AppAuthenticatedClassIndexRouteImport } from './routes/app/_authenticated/class/index'
 import { Route as AppAuthenticatedSubjectSubjectIdRouteImport } from './routes/app/_authenticated/subject/$subjectId'
 import { Route as AppAuthenticatedProfileUserIdRouteImport } from './routes/app/_authenticated/profile/$userId'
+import { Route as AppAuthenticatedClassClassIdRouteImport } from './routes/app/_authenticated/class/$classId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -74,6 +75,12 @@ const AppAuthenticatedProfileUserIdRoute =
     path: '/profile/$userId',
     getParentRoute: () => AppAuthenticatedRoute,
   } as any)
+const AppAuthenticatedClassClassIdRoute =
+  AppAuthenticatedClassClassIdRouteImport.update({
+    id: '/class/$classId',
+    path: '/class/$classId',
+    getParentRoute: () => AppAuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/logout/': typeof LogoutIndexRoute
   '/register/': typeof RegisterIndexRoute
   '/app/': typeof AppAuthenticatedIndexRoute
+  '/app/class/$classId': typeof AppAuthenticatedClassClassIdRoute
   '/app/profile/$userId': typeof AppAuthenticatedProfileUserIdRoute
   '/app/subject/$subjectId': typeof AppAuthenticatedSubjectSubjectIdRoute
   '/app/class/': typeof AppAuthenticatedClassIndexRoute
@@ -93,6 +101,7 @@ export interface FileRoutesByTo {
   '/logout': typeof LogoutIndexRoute
   '/register': typeof RegisterIndexRoute
   '/app': typeof AppAuthenticatedIndexRoute
+  '/app/class/$classId': typeof AppAuthenticatedClassClassIdRoute
   '/app/profile/$userId': typeof AppAuthenticatedProfileUserIdRoute
   '/app/subject/$subjectId': typeof AppAuthenticatedSubjectSubjectIdRoute
   '/app/class': typeof AppAuthenticatedClassIndexRoute
@@ -106,6 +115,7 @@ export interface FileRoutesById {
   '/logout/': typeof LogoutIndexRoute
   '/register/': typeof RegisterIndexRoute
   '/app/_authenticated/': typeof AppAuthenticatedIndexRoute
+  '/app/_authenticated/class/$classId': typeof AppAuthenticatedClassClassIdRoute
   '/app/_authenticated/profile/$userId': typeof AppAuthenticatedProfileUserIdRoute
   '/app/_authenticated/subject/$subjectId': typeof AppAuthenticatedSubjectSubjectIdRoute
   '/app/_authenticated/class/': typeof AppAuthenticatedClassIndexRoute
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/logout/'
     | '/register/'
     | '/app/'
+    | '/app/class/$classId'
     | '/app/profile/$userId'
     | '/app/subject/$subjectId'
     | '/app/class/'
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/logout'
     | '/register'
     | '/app'
+    | '/app/class/$classId'
     | '/app/profile/$userId'
     | '/app/subject/$subjectId'
     | '/app/class'
@@ -143,6 +155,7 @@ export interface FileRouteTypes {
     | '/logout/'
     | '/register/'
     | '/app/_authenticated/'
+    | '/app/_authenticated/class/$classId'
     | '/app/_authenticated/profile/$userId'
     | '/app/_authenticated/subject/$subjectId'
     | '/app/_authenticated/class/'
@@ -229,11 +242,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAuthenticatedProfileUserIdRouteImport
       parentRoute: typeof AppAuthenticatedRoute
     }
+    '/app/_authenticated/class/$classId': {
+      id: '/app/_authenticated/class/$classId'
+      path: '/class/$classId'
+      fullPath: '/app/class/$classId'
+      preLoaderRoute: typeof AppAuthenticatedClassClassIdRouteImport
+      parentRoute: typeof AppAuthenticatedRoute
+    }
   }
 }
 
 interface AppAuthenticatedRouteChildren {
   AppAuthenticatedIndexRoute: typeof AppAuthenticatedIndexRoute
+  AppAuthenticatedClassClassIdRoute: typeof AppAuthenticatedClassClassIdRoute
   AppAuthenticatedProfileUserIdRoute: typeof AppAuthenticatedProfileUserIdRoute
   AppAuthenticatedSubjectSubjectIdRoute: typeof AppAuthenticatedSubjectSubjectIdRoute
   AppAuthenticatedClassIndexRoute: typeof AppAuthenticatedClassIndexRoute
@@ -242,6 +263,7 @@ interface AppAuthenticatedRouteChildren {
 
 const AppAuthenticatedRouteChildren: AppAuthenticatedRouteChildren = {
   AppAuthenticatedIndexRoute: AppAuthenticatedIndexRoute,
+  AppAuthenticatedClassClassIdRoute: AppAuthenticatedClassClassIdRoute,
   AppAuthenticatedProfileUserIdRoute: AppAuthenticatedProfileUserIdRoute,
   AppAuthenticatedSubjectSubjectIdRoute: AppAuthenticatedSubjectSubjectIdRoute,
   AppAuthenticatedClassIndexRoute: AppAuthenticatedClassIndexRoute,

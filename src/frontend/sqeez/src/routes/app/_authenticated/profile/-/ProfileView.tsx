@@ -25,7 +25,6 @@ import { AsyncButton, Button } from '@/components/ui/Button'
 import { BaseModal } from '@/components/ui/Modal'
 import { Spinner } from '@/components/ui/Spinner'
 import { toast } from 'sonner'
-import { Badge } from '@/components/ui/Badge/Badge'
 import { calculateLevel, formatName } from '@/lib/userHelpers'
 import {
   useGetApiUsersIdDetails,
@@ -203,14 +202,6 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
           : t('profile.userTitle', {
               name: formatName(profileData.firstName, profileData.lastName),
             })}
-        {isOwnProfile && (
-          <Badge
-            variant="outline"
-            className="ml-2 border-primary/20 bg-primary/10 text-primary"
-          >
-            {t('class.me')}
-          </Badge>
-        )}
       </h1>
 
       <div className="grid gap-6 md:grid-cols-3">

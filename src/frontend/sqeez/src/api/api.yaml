@@ -3015,7 +3015,10 @@ components:
         - enrolledAt
         - archivedAt
         - studentId
+        - studentUserName
         - subjectId
+        - subjectName
+        - subjectCode
         - quizAttemptsCount
       type: object
       properties:
@@ -3046,12 +3049,18 @@ components:
             - integer
             - string
           format: int64
+        studentUserName:
+          type: string
         subjectId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
           format: int64
+        subjectName:
+          type: string
+        subjectCode:
+          type: string
         quizAttemptsCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:

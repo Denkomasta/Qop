@@ -42,7 +42,10 @@ namespace Sqeez.Api.Services
                     e.EnrolledAt,
                     e.ArchivedAt,
                     e.StudentId,
+                    e.Student.Username,
                     e.SubjectId,
+                    e.Subject.Name,
+                    e.Subject.Code,
                     e.QuizAttempts.Count
                 ))
                 .ToListAsync();
@@ -60,18 +63,25 @@ namespace Sqeez.Api.Services
         {
             var e = await _context.Enrollments
                 .Include(e => e.QuizAttempts)
+                .Include(e => e.Student)
+                .Include(e => e.Subject)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(e => e.Id == id);
 
             if (e == null) return ServiceResult<EnrollmentDto>.Failure("Enrollment not found.", ServiceError.NotFound);
 
-            var dto = new EnrollmentDto(e.Id, e.Mark, e.EnrolledAt, e.ArchivedAt, e.StudentId, e.SubjectId, e.QuizAttempts.Count);
+            var dto = new EnrollmentDto(e.Id, e.Mark, e.EnrolledAt, e.ArchivedAt, e.StudentId, e.Student.Username, e.SubjectId, e.Subject.Name, e.Subject.Code, e.QuizAttempts.Count);
             return ServiceResult<EnrollmentDto>.Ok(dto);
         }
 
         public async Task<ServiceResult<EnrollmentDto>> PatchEnrollmentAsync(long id, PatchEnrollmentDto dto)
         {
-            var enrollment = await _context.Enrollments.Include(e => e.QuizAttempts).FirstOrDefaultAsync(e => e.Id == id);
+            var enrollment = await _context.Enrollments
+                .Include(e => e.QuizAttempts)
+                .Include(e => e.Student)
+                .Include(e => e.Subject)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
             if (enrollment == null) return ServiceResult<EnrollmentDto>.Failure("Enrollment not found.", ServiceError.NotFound);
 
             if (dto.RemoveMark == true)
@@ -89,7 +99,7 @@ namespace Sqeez.Api.Services
 
             await _context.SaveChangesAsync();
 
-            var resultDto = new EnrollmentDto(enrollment.Id, enrollment.Mark, enrollment.EnrolledAt, enrollment.ArchivedAt, enrollment.StudentId, enrollment.SubjectId, enrollment.QuizAttempts.Count);
+            var resultDto = new EnrollmentDto(enrollment.Id, enrollment.Mark, enrollment.EnrolledAt, enrollment.ArchivedAt, enrollment.StudentId, enrollment.Student.Username, enrollment.SubjectId, enrollment.Subject.Name, enrollment.Subject.Code, enrollment.QuizAttempts.Count);
             return ServiceResult<EnrollmentDto>.Ok(resultDto);
         }
 

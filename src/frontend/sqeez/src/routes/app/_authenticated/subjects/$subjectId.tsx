@@ -19,9 +19,11 @@ import { Badge } from '@/components/ui/Badge/Badge'
 import { Spinner } from '@/components/ui/Spinner'
 import { useGetApiSubjectsId } from '@/api/generated/endpoints/subjects/subjects'
 
-export const Route = createFileRoute('/app/_authenticated/subject/$subjectId')({
-  component: SubjectPage,
-})
+export const Route = createFileRoute('/app/_authenticated/subjects/$subjectId')(
+  {
+    component: SubjectPage,
+  },
+)
 
 function SubjectPage() {
   const { t } = useTranslation()

@@ -1,4 +1,5 @@
 ﻿using Sqeez.Api.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Sqeez.Api.DTOs
@@ -31,7 +32,11 @@ namespace Sqeez.Api.DTOs
     {
         public string FirstName { get; init; } = string.Empty;
         public string LastName { get; init; } = string.Empty;
+        [RegularExpression(@"^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$",
+            ErrorMessage = "Username cannot contain spaces or special characters.")]
         public string Username { get; init; } = string.Empty;
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", 
+            ErrorMessage = "Invalid email format.")]
         public string Email { get; init; } = string.Empty;
         public string Password { get; init; } = string.Empty;
         public long? SchoolClassId { get; init; }
@@ -39,7 +44,11 @@ namespace Sqeez.Api.DTOs
 
     public record PatchStudentDto
     {
+        [RegularExpression(@"^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$", 
+            ErrorMessage = "Username cannot contain spaces or special characters.")]
         public string? Username { get; init; }
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+            ErrorMessage = "Invalid email format.")]
         public string? Email { get; init; }
         public long? SchoolClassId { get; init; }
         public string? AvatarUrl { get; init; }
@@ -58,12 +67,16 @@ namespace Sqeez.Api.DTOs
 
     public record CreateTeacherDto : CreateStudentDto
     {
+        [RegularExpression(@"^[a-zA-Z0-9_ \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ.,&]+$",
+            ErrorMessage = "Department contains invalid characters. No HTML tags allowed.")]
         public string? Department { get; init; }
         public long? ManagedClassId { get; init; }
     }
 
     public record PatchTeacherDto : PatchStudentDto
     {
+        [RegularExpression(@"^[a-zA-Z0-9_ \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ.,&]+$",
+            ErrorMessage = "Department contains invalid characters. No HTML tags allowed.")]
         public string? Department { get; init; }
         public long? ManagedClassId { get; init; }
     }
@@ -82,11 +95,15 @@ namespace Sqeez.Api.DTOs
 
     public record CreateAdminDto : CreateTeacherDto
     {
+        [RegularExpression(@"^\+?[0-9\s\-()]{7,15}$",
+        ErrorMessage = "Phone number must be between 7 and 15 characters and contain only valid phone symbols.")]
         public string? PhoneNumber { get; init; }
     }
 
     public record PatchAdminDto : PatchTeacherDto
     {
+        [RegularExpression(@"^\+?[0-9\s\-()]{7,15}$",
+        ErrorMessage = "Phone number must be between 7 and 15 characters and contain only valid phone symbols.")]
         public string? PhoneNumber { get; init; }
     }
 

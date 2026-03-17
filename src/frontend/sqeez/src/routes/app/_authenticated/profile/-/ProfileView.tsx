@@ -56,6 +56,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingField, setEditingField] = useState<EditFieldState>(null)
   const [editValue, setEditValue] = useState('')
+  const [editError, setEditError] = useState<string | undefined>(undefined)
 
   if (isLoading) {
     return (
@@ -76,6 +77,41 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
     )
   }
 
+  const validateField = (key: string, value: string): string | null => {
+    const trimmedValue = value.trim()
+
+    if (!trimmedValue) return t('errors.required')
+
+    switch (key) {
+      case 'email': {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(trimmedValue)) return t('errors.invalidEmail')
+        break
+      }
+
+      case 'username': {
+        const safeUsernameRegex =
+          /^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$/
+
+        if (trimmedValue.length < 3) return t('errors.usernameShort')
+        if (trimmedValue.length > 20) return t('errors.usernameLong')
+        if (!safeUsernameRegex.test(trimmedValue)) {
+          return t('errors.invalidCharacters')
+        }
+        break
+      }
+
+      case 'phoneNumber': {
+        const phoneRegex = /^\+?[0-9\s\-()]{7,15}$/
+        if (trimmedValue && !phoneRegex.test(trimmedValue))
+          return t('errors.invalidPhone')
+        break
+      }
+    }
+
+    return null
+  }
+
   const handleEditClick = (
     key: string,
     label: string,
@@ -91,13 +127,22 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
   const handleCloseModal = () => {
     setIsModalOpen(false)
     setEditingField(null)
+    setEditError(undefined)
   }
 
   const handleSave = async () => {
     if (!editingField || !isOwnProfile) return
 
+    const validationError = validateField(editingField.key, editValue)
+    if (validationError) {
+      setEditError(validationError)
+      return
+    }
+
     try {
-      const payload = { [editingField.key]: editValue } as ProfilePatchPayload
+      const payload = {
+        [editingField.key]: editValue.trim(),
+      } as ProfilePatchPayload
 
       await updateProfile.mutateAsync(payload)
 
@@ -264,6 +309,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
                 value={editValue}
                 onChange={(e) => setEditValue(e.target.value)}
                 autoFocus
+                error={editError}
               />
             </div>
           </div>

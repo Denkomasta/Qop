@@ -27,6 +27,7 @@
     "home": "Domů",
     "goBack": "Zpět",
     "username": "Uživatelské jméno",
+    "unknown": "Neznámé",
     "email": "E-mail",
     "role": "Role",
     "department": "Oddělení",
@@ -146,6 +147,19 @@
     "signIn": "Přihlaste se!",
     "username": "Uživatelské jméno",
     "register": "Zaregistrovat se"
+  },
+  "subject": {
+    "notFound": "Předmět nenalezen",
+    "notFoundDesc": "Předmět, který hledáte, neexistuje, nebo nemáte oprávnění k jeho zobrazení.",
+    "ongoing": "Probíhá",
+    "taughtBy": "Vyučuje",
+    "noTeacher": "Zatím nebyl přiřazen žádný učitel.",
+    "assignedClass": "Přiřazená třída",
+    "noClass": "Není přiřazeno konkrétní třídě.",
+    "description": "O tomto předmětu",
+    "noDescription": "Pro tento předmět nebyl zadán žádný popis.",
+    "enrolledStudents": "Zapsaní studenti",
+    "totalQuizzes": "Celkem kvízů"
   },
   "system": {
     "name": "Sqeez"

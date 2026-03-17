@@ -18,8 +18,11 @@ export interface EnrollmentDto {
   archivedAt: string | null
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   studentId: number | string
+  studentUserName: string
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   subjectId: number | string
+  subjectName: string
+  subjectCode: string
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   quizAttemptsCount: number | string
 }

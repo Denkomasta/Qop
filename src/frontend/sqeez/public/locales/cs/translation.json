@@ -44,7 +44,9 @@
     "error": "Chyba",
     "edit": "Upravit",
     "successfulChange": "Změna proběhla úspěšně!",
-    "unsuccessfulChange": "Nastala chyba, změna se nepodařila."
+    "unsuccessfulChange": "Nastala chyba, změna se nepodařila.",
+    "delete": "Vymazat",
+    "confirmAction": "Jste si jistý?"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -98,6 +100,26 @@
     "invalidPhone": "Zadejte platné telefonní číslo.",
     "invalidCharacters": "Hodnota obsahuje nepovolené znaky. Použijte pouze písmena, číslice, pomlčky a podtržítka.",
     "fileTooLarge": "Vybraný soubor je příliš velký (maximum {{maxValue}} MB)."
+  },
+  "enrollments": {
+    "confirmDelete": "Opravdu se chcete odhlásit z tohoto předmětu? Tuto akci nelze vrátit zpět.",
+    "unenrollSuccess": "Úspěšně jste se odhlásili z předmětu.",
+    "unenrollError": "Nepodařilo se odhlásit z předmětu.",
+    "title": "Moje předměty",
+    "subtitle": "Spravujte svůj aktuální studijní plán.",
+    "enrollButton": "Zapsat si předmět",
+    "goToSubject": "Přejít na předmět",
+    "noGrade": "Bez známky",
+    "enrolledOn": "Zapsáno:",
+    "emptyTitle": "Žádné aktivní předměty",
+    "emptyDescription": "Zatím nemáte zapsané žádné předměty. Klikněte na tlačítko výše, prohlédněte si dostupné předměty a začněte se učit.",
+    "enrollSuccess": "Úspěšně zapsáno do předmětu!",
+    "enrollError": "Nepodařilo se zapsat do předmětu.",
+    "enrollNew": "Zapsat se do předmětu",
+    "enrollDescription": "Vyberte si předmět ze seznamu níže a přidejte si ho do svého studijního plánu.",
+    "confirmEnroll": "Zapsat",
+    "selectSubject": "Dostupné předměty",
+    "chooseOption": "-- Vyberte předmět --"
   },
   "footer": {
     "rights": "Všechna práva vyhrazena.",

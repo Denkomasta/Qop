@@ -165,7 +165,7 @@ export function ClassView({ targetClassId }: { targetClassId?: number }) {
                 {classData.subjects?.map((subject) => (
                   <Link
                     key={subject.id}
-                    to="/app/subject/$subjectId"
+                    to="/app/subjects/$subjectId"
                     params={{ subjectId: (subject.id ?? 0).toString() }}
                   >
                     <Badge

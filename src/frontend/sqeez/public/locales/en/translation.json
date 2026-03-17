@@ -44,7 +44,9 @@
     "error": "Error",
     "edit": "Edit",
     "successfulChange": "The change was successful!",
-    "unsuccessfulChange": "An error occurred, the change was not successful."
+    "unsuccessfulChange": "An error occurred, the change was not successful.",
+    "delete": "Delete",
+    "confirmAction": "Are you sure?"
   },
   "dashboard": {
     "administration": "Administration",
@@ -67,6 +69,26 @@
     "userManagementDescription": "Manage classes, subjects, users and their roles.",
     "systemSettings": "System Settings",
     "systemSettingsDescription": "Global app configurations and subject creation."
+  },
+  "enrollments": {
+    "confirmDelete": "Are you sure you want to unenroll from this subject? This action cannot be undone.",
+    "unenrollSuccess": "Successfully unenrolled from the subject.",
+    "unenrollError": "Failed to unenroll from the subject.",
+    "title": "My Subjects",
+    "subtitle": "Manage your current academic curriculum.",
+    "enrollButton": "Enroll in Subject",
+    "goToSubject": "Go to Subject",
+    "noGrade": "No Grade",
+    "enrolledOn": "Enrolled:",
+    "emptyTitle": "No active subjects",
+    "emptyDescription": "You haven't enrolled in any subjects yet. Click the button above to browse available subjects and start learning.",
+    "enrollSuccess": "Successfully enrolled in the subject!",
+    "enrollError": "Failed to enroll in the subject.",
+    "enrollNew": "Enroll in a Subject",
+    "enrollDescription": "Select a subject from the list below to add it to your curriculum.",
+    "confirmEnroll": "Enroll",
+    "selectSubject": "Available Subjects",
+    "chooseOption": "-- Choose a subject --"
   },
   "error": {
     "generic": "An error occurred. Please try again later.",

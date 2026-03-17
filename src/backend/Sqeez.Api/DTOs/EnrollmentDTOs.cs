@@ -6,7 +6,10 @@
         DateTime EnrolledAt,
         DateTime? ArchivedAt,
         long StudentId,
+        string StudentUserName,
         long SubjectId,
+        string SubjectName,
+        string SubjectCode,
         int QuizAttemptsCount
         );
 

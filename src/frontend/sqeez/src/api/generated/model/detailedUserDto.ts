@@ -4,9 +4,15 @@
  * Sqeez.Api | v1
  * OpenAPI spec version: 1.0.0
  */
+import type { EnrollmentBasicDto } from './enrollmentBasicDto'
+import type { SchoolClassBasicDto } from './schoolClassBasicDto'
+import type { StudentBadgeBasicDto } from './studentBadgeBasicDto'
 import type { UserRole } from './userRole'
 
-export interface AdminDto {
+export interface DetailedUserDto {
+  schoolClassDetails?: null | SchoolClassBasicDto
+  badges?: StudentBadgeBasicDto[]
+  enrollments?: EnrollmentBasicDto[]
   phoneNumber?: string
   /** @nullable */
   department?: string | null

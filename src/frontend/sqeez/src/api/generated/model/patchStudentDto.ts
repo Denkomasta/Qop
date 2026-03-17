@@ -4,17 +4,11 @@
  * Sqeez.Api | v1
  * OpenAPI spec version: 1.0.0
  */
+import type { PatchStudentDtoPatchAdminDto } from './patchStudentDtoPatchAdminDto'
+import type { PatchStudentDtoPatchStudentDto } from './patchStudentDtoPatchStudentDto'
+import type { PatchStudentDtoPatchTeacherDto } from './patchStudentDtoPatchTeacherDto'
 
-export interface PatchStudentDto {
-  /** @nullable */
-  username?: string | null
-  /** @nullable */
-  email?: string | null
-  /**
-   * @nullable
-   * @pattern ^-?(?:0|[1-9]\d*)$
-   */
-  schoolClassId?: number | string | null
-  /** @nullable */
-  avatarUrl?: string | null
-}
+export type PatchStudentDto =
+  | PatchStudentDtoPatchStudentDto
+  | PatchStudentDtoPatchTeacherDto
+  | PatchStudentDtoPatchAdminDto

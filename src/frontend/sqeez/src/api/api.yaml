@@ -5,163 +5,6 @@ info:
 servers:
   - url: http://localhost:5000/
 paths:
-  /api/admins:
-    get:
-      tags:
-        - Admins
-      parameters:
-        - name: PhoneNumber
-          in: query
-          schema:
-            type: string
-        - name: StrictRoleOnly
-          in: query
-          schema:
-            type: boolean
-        - name: Department
-          in: query
-          schema:
-            type: string
-        - name: SearchTerm
-          in: query
-          schema:
-            type: string
-        - name: IsOnline
-          in: query
-          schema:
-            type: boolean
-        - name: SchoolClassId
-          in: query
-          schema:
-            pattern: ^-?(?:0|[1-9]\d*)$
-            type:
-              - integer
-              - string
-            format: int64
-        - name: IsArchived
-          in: query
-          schema:
-            type: boolean
-        - name: PageNumber
-          in: query
-          schema:
-            pattern: ^-?(?:0|[1-9]\d*)$
-            type:
-              - integer
-              - string
-            format: int32
-        - name: PageSize
-          in: query
-          schema:
-            pattern: ^-?(?:0|[1-9]\d*)$
-            type:
-              - integer
-              - string
-            format: int32
-      responses:
-        "200":
-          description: OK
-          content:
-            text/plain:
-              schema:
-                $ref: "#/components/schemas/PagedResponseOfAdminDto"
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PagedResponseOfAdminDto"
-            text/json:
-              schema:
-                $ref: "#/components/schemas/PagedResponseOfAdminDto"
-  /api/admins/{id}:
-    get:
-      tags:
-        - Admins
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            pattern: ^-?(?:0|[1-9]\d*)$
-            type:
-              - integer
-              - string
-            format: int64
-      responses:
-        "200":
-          description: OK
-          content:
-            text/plain:
-              schema:
-                $ref: "#/components/schemas/AdminDto"
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AdminDto"
-            text/json:
-              schema:
-                $ref: "#/components/schemas/AdminDto"
-    patch:
-      tags:
-        - Admins
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            pattern: ^-?(?:0|[1-9]\d*)$
-            type:
-              - integer
-              - string
-            format: int64
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PatchAdminDto"
-          text/json:
-            schema:
-              $ref: "#/components/schemas/PatchAdminDto"
-          application/*+json:
-            schema:
-              $ref: "#/components/schemas/PatchAdminDto"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            text/plain:
-              schema:
-                $ref: "#/components/schemas/AdminDto"
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AdminDto"
-            text/json:
-              schema:
-                $ref: "#/components/schemas/AdminDto"
-    delete:
-      tags:
-        - Admins
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            pattern: ^-?(?:0|[1-9]\d*)$
-            type:
-              - integer
-              - string
-            format: int64
-      responses:
-        "200":
-          description: OK
-          content:
-            text/plain:
-              schema:
-                type: boolean
-            application/json:
-              schema:
-                type: boolean
-            text/json:
-              schema:
-                type: boolean
   /api/auth/register:
     post:
       tags:
@@ -1901,155 +1744,6 @@ paths:
             text/json:
               schema:
                 type: boolean
-  /api/students:
-    get:
-      tags:
-        - Students
-      parameters:
-        - name: SearchTerm
-          in: query
-          schema:
-            type: string
-        - name: IsOnline
-          in: query
-          schema:
-            type: boolean
-        - name: SchoolClassId
-          in: query
-          schema:
-            pattern: ^-?(?:0|[1-9]\d*)$
-            type:
-              - integer
-              - string
-            format: int64
-        - name: IsArchived
-          in: query
-          schema:
-            type: boolean
-        - name: StrictRoleOnly
-          in: query
-          schema:
-            type: boolean
-        - name: PageNumber
-          in: query
-          schema:
-            pattern: ^-?(?:0|[1-9]\d*)$
-            type:
-              - integer
-              - string
-            format: int32
-        - name: PageSize
-          in: query
-          schema:
-            pattern: ^-?(?:0|[1-9]\d*)$
-            type:
-              - integer
-              - string
-            format: int32
-      responses:
-        "200":
-          description: OK
-          content:
-            text/plain:
-              schema:
-                $ref: "#/components/schemas/PagedResponseOfStudentDto"
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PagedResponseOfStudentDto"
-            text/json:
-              schema:
-                $ref: "#/components/schemas/PagedResponseOfStudentDto"
-  /api/students/{id}:
-    get:
-      tags:
-        - Students
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            pattern: ^-?(?:0|[1-9]\d*)$
-            type:
-              - integer
-              - string
-            format: int64
-      responses:
-        "200":
-          description: OK
-          content:
-            text/plain:
-              schema:
-                $ref: "#/components/schemas/StudentDto"
-            application/json:
-              schema:
-                $ref: "#/components/schemas/StudentDto"
-            text/json:
-              schema:
-                $ref: "#/components/schemas/StudentDto"
-    patch:
-      tags:
-        - Students
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            pattern: ^-?(?:0|[1-9]\d*)$
-            type:
-              - integer
-              - string
-            format: int64
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PatchStudentDto"
-          text/json:
-            schema:
-              $ref: "#/components/schemas/PatchStudentDto"
-          application/*+json:
-            schema:
-              $ref: "#/components/schemas/PatchStudentDto"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            text/plain:
-              schema:
-                $ref: "#/components/schemas/StudentDto"
-            application/json:
-              schema:
-                $ref: "#/components/schemas/StudentDto"
-            text/json:
-              schema:
-                $ref: "#/components/schemas/StudentDto"
-    delete:
-      tags:
-        - Students
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            pattern: ^-?(?:0|[1-9]\d*)$
-            type:
-              - integer
-              - string
-            format: int64
-      responses:
-        "200":
-          description: OK
-          content:
-            text/plain:
-              schema:
-                type: boolean
-            application/json:
-              schema:
-                type: boolean
-            text/json:
-              schema:
-                type: boolean
   /api/subjects:
     get:
       tags:
@@ -2543,15 +2237,11 @@ paths:
             text/json:
               schema:
                 $ref: "#/components/schemas/SystemConfigDto"
-  /api/teachers:
+  /api/users:
     get:
       tags:
-        - Teachers
+        - User
       parameters:
-        - name: Department
-          in: query
-          schema:
-            type: string
         - name: SearchTerm
           in: query
           schema:
@@ -2572,10 +2262,22 @@ paths:
           in: query
           schema:
             type: boolean
+        - name: Role
+          in: query
+          schema:
+            $ref: "#/components/schemas/UserRole"
         - name: StrictRoleOnly
           in: query
           schema:
             type: boolean
+        - name: Department
+          in: query
+          schema:
+            type: string
+        - name: PhoneNumber
+          in: query
+          schema:
+            type: string
         - name: PageNumber
           in: query
           schema:
@@ -2598,17 +2300,45 @@ paths:
           content:
             text/plain:
               schema:
-                $ref: "#/components/schemas/PagedResponseOfTeacherDto"
+                $ref: "#/components/schemas/PagedResponseOfStudentDto"
             application/json:
               schema:
-                $ref: "#/components/schemas/PagedResponseOfTeacherDto"
+                $ref: "#/components/schemas/PagedResponseOfStudentDto"
             text/json:
               schema:
-                $ref: "#/components/schemas/PagedResponseOfTeacherDto"
-  /api/teachers/{id}:
+                $ref: "#/components/schemas/PagedResponseOfStudentDto"
+    post:
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateStudentDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/CreateStudentDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/CreateStudentDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/StudentDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/StudentDto"
+  /api/users/{id}:
     get:
       tags:
-        - Teachers
+        - User
       parameters:
         - name: id
           in: path
@@ -2625,16 +2355,16 @@ paths:
           content:
             text/plain:
               schema:
-                $ref: "#/components/schemas/TeacherDto"
+                $ref: "#/components/schemas/StudentDto"
             application/json:
               schema:
-                $ref: "#/components/schemas/TeacherDto"
+                $ref: "#/components/schemas/StudentDto"
             text/json:
               schema:
-                $ref: "#/components/schemas/TeacherDto"
+                $ref: "#/components/schemas/StudentDto"
     patch:
       tags:
-        - Teachers
+        - User
       parameters:
         - name: id
           in: path
@@ -2649,13 +2379,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PatchTeacherDto"
+              $ref: "#/components/schemas/PatchStudentDto"
           text/json:
             schema:
-              $ref: "#/components/schemas/PatchTeacherDto"
+              $ref: "#/components/schemas/PatchStudentDto"
           application/*+json:
             schema:
-              $ref: "#/components/schemas/PatchTeacherDto"
+              $ref: "#/components/schemas/PatchStudentDto"
         required: true
       responses:
         "200":
@@ -2663,16 +2393,33 @@ paths:
           content:
             text/plain:
               schema:
-                $ref: "#/components/schemas/TeacherDto"
+                $ref: "#/components/schemas/StudentDto"
             application/json:
               schema:
-                $ref: "#/components/schemas/TeacherDto"
+                $ref: "#/components/schemas/StudentDto"
             text/json:
               schema:
-                $ref: "#/components/schemas/TeacherDto"
+                $ref: "#/components/schemas/StudentDto"
     delete:
       tags:
-        - Teachers
+        - User
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/users/{id}/details:
+    get:
+      tags:
+        - User
       parameters:
         - name: id
           in: path
@@ -2689,13 +2436,13 @@ paths:
           content:
             text/plain:
               schema:
-                type: boolean
+                $ref: "#/components/schemas/DetailedUserDto"
             application/json:
               schema:
-                type: boolean
+                $ref: "#/components/schemas/DetailedUserDto"
             text/json:
               schema:
-                type: boolean
+                $ref: "#/components/schemas/DetailedUserDto"
   /api/users/me/avatar:
     post:
       tags:
@@ -2724,58 +2471,6 @@ paths:
                 $ref: "#/components/schemas/AvatarUploadResponseDto"
 components:
   schemas:
-    AdminDto:
-      type: object
-      properties:
-        phoneNumber:
-          type: string
-        department:
-          type:
-            - "null"
-            - string
-        managedClassId:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - "null"
-            - integer
-            - string
-          format: int64
-        id:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - integer
-            - string
-          format: int64
-        firstName:
-          type: string
-        lastName:
-          type: string
-        username:
-          type: string
-        email:
-          type: string
-        currentXP:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - integer
-            - string
-          format: int32
-        role:
-          $ref: "#/components/schemas/UserRole"
-        avatarUrl:
-          type:
-            - "null"
-            - string
-        lastSeen:
-          type: string
-          format: date-time
-        schoolClassId:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - "null"
-            - integer
-            - string
-          format: int64
     AssignStudentsDto:
       required:
         - studentIds
@@ -3061,6 +2756,124 @@ components:
             - integer
             - string
           format: int64
+    CreateStudentDto:
+      required:
+        - role
+      type: object
+      anyOf:
+        - $ref: "#/components/schemas/CreateStudentDtoCreateStudentDto"
+        - $ref: "#/components/schemas/CreateStudentDtoCreateTeacherDto"
+        - $ref: "#/components/schemas/CreateStudentDtoCreateAdminDto"
+      discriminator:
+        propertyName: role
+        mapping:
+          student: "#/components/schemas/CreateStudentDtoCreateStudentDto"
+          teacher: "#/components/schemas/CreateStudentDtoCreateTeacherDto"
+          admin: "#/components/schemas/CreateStudentDtoCreateAdminDto"
+    CreateStudentDtoCreateAdminDto:
+      properties:
+        role:
+          enum:
+            - admin
+          type: string
+        phoneNumber:
+          pattern: ^00[1-9][0-9]{0,2}[0-9]{7,12}$
+          type:
+            - "null"
+            - string
+        department:
+          pattern: ^[a-zA-Z0-9_ \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ.,&]+$
+          type:
+            - "null"
+            - string
+        managedClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          pattern: ^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$
+          type: string
+        email:
+          pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+          type: string
+        password:
+          type: string
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    CreateStudentDtoCreateStudentDto:
+      properties:
+        role:
+          enum:
+            - student
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          pattern: ^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$
+          type: string
+        email:
+          pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+          type: string
+        password:
+          type: string
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    CreateStudentDtoCreateTeacherDto:
+      properties:
+        role:
+          enum:
+            - teacher
+          type: string
+        department:
+          pattern: ^[a-zA-Z0-9_ \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ.,&]+$
+          type:
+            - "null"
+            - string
+        managedClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          pattern: ^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$
+          type: string
+        email:
+          pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+          type: string
+        password:
+          type: string
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
     CreateSubjectDto:
       required:
         - name
@@ -3099,6 +2912,102 @@ components:
             - integer
             - string
           format: int64
+    DetailedUserDto:
+      type: object
+      properties:
+        schoolClassDetails:
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/SchoolClassBasicDto"
+        badges:
+          type: array
+          items:
+            $ref: "#/components/schemas/StudentBadgeBasicDto"
+        enrollments:
+          type: array
+          items:
+            $ref: "#/components/schemas/EnrollmentBasicDto"
+        phoneNumber:
+          type: string
+        department:
+          type:
+            - "null"
+            - string
+        managedClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        currentXP:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        role:
+          $ref: "#/components/schemas/UserRole"
+        avatarUrl:
+          type:
+            - "null"
+            - string
+        lastSeen:
+          type: string
+          format: date-time
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    EnrollmentBasicDto:
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        subjectId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        subjectName:
+          type: string
+        mark:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int32
+        enrolledAt:
+          type: string
+          format: date-time
+        archivedAt:
+          type:
+            - "null"
+            - string
+          format: date-time
     EnrollmentDto:
       required:
         - id
@@ -3229,37 +3138,6 @@ components:
         - Video
         - Audio
         - Document
-    PagedResponseOfAdminDto:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/AdminDto"
-        totalCount:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - integer
-            - string
-          format: int32
-        pageNumber:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - integer
-            - string
-          format: int32
-        pageSize:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - integer
-            - string
-          format: int32
-        totalPages:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - integer
-            - string
-          format: int32
     PagedResponseOfEnrollmentDto:
       type: object
       properties:
@@ -3508,74 +3386,6 @@ components:
             - integer
             - string
           format: int32
-    PagedResponseOfTeacherDto:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/TeacherDto"
-        totalCount:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - integer
-            - string
-          format: int32
-        pageNumber:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - integer
-            - string
-          format: int32
-        pageSize:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - integer
-            - string
-          format: int32
-        totalPages:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - integer
-            - string
-          format: int32
-    PatchAdminDto:
-      type: object
-      properties:
-        phoneNumber:
-          type:
-            - "null"
-            - string
-        department:
-          type:
-            - "null"
-            - string
-        managedClassId:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - "null"
-            - integer
-            - string
-          format: int64
-        username:
-          type:
-            - "null"
-            - string
-        email:
-          type:
-            - "null"
-            - string
-        schoolClassId:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - "null"
-            - integer
-            - string
-          format: int64
-        avatarUrl:
-          type:
-            - "null"
-            - string
     PatchEnrollmentDto:
       type: object
       properties:
@@ -3717,13 +3527,115 @@ components:
             - string
           format: int64
     PatchStudentDto:
+      required:
+        - role
       type: object
+      anyOf:
+        - $ref: "#/components/schemas/PatchStudentDtoPatchStudentDto"
+        - $ref: "#/components/schemas/PatchStudentDtoPatchTeacherDto"
+        - $ref: "#/components/schemas/PatchStudentDtoPatchAdminDto"
+      discriminator:
+        propertyName: role
+        mapping:
+          student: "#/components/schemas/PatchStudentDtoPatchStudentDto"
+          teacher: "#/components/schemas/PatchStudentDtoPatchTeacherDto"
+          admin: "#/components/schemas/PatchStudentDtoPatchAdminDto"
+    PatchStudentDtoPatchAdminDto:
       properties:
+        role:
+          enum:
+            - admin
+          type: string
+        phoneNumber:
+          pattern: ^00[1-9][0-9]{0,2}[0-9]{7,12}$
+          type:
+            - "null"
+            - string
+        department:
+          pattern: ^[a-zA-Z0-9_ \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ.,&]+$
+          type:
+            - "null"
+            - string
+        managedClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
         username:
+          pattern: ^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$
           type:
             - "null"
             - string
         email:
+          pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+          type:
+            - "null"
+            - string
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        avatarUrl:
+          type:
+            - "null"
+            - string
+    PatchStudentDtoPatchStudentDto:
+      properties:
+        role:
+          enum:
+            - student
+          type: string
+        username:
+          pattern: ^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$
+          type:
+            - "null"
+            - string
+        email:
+          pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+          type:
+            - "null"
+            - string
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        avatarUrl:
+          type:
+            - "null"
+            - string
+    PatchStudentDtoPatchTeacherDto:
+      properties:
+        role:
+          enum:
+            - teacher
+          type: string
+        department:
+          pattern: ^[a-zA-Z0-9_ \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ.,&]+$
+          type:
+            - "null"
+            - string
+        managedClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        username:
+          pattern: ^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$
+          type:
+            - "null"
+            - string
+        email:
+          pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
           type:
             - "null"
             - string
@@ -3777,39 +3689,6 @@ components:
             - integer
             - string
           format: int64
-    PatchTeacherDto:
-      type: object
-      properties:
-        department:
-          type:
-            - "null"
-            - string
-        managedClassId:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - "null"
-            - integer
-            - string
-          format: int64
-        username:
-          type:
-            - "null"
-            - string
-        email:
-          type:
-            - "null"
-            - string
-        schoolClassId:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - "null"
-            - integer
-            - string
-          format: int64
-        avatarUrl:
-          type:
-            - "null"
-            - string
     PhysicalFileResult:
       type: object
       properties:
@@ -4221,6 +4100,21 @@ components:
               - integer
               - string
             format: int64
+    SchoolClassBasicDto:
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        name:
+          type: string
+        academicYear:
+          type: string
+        section:
+          type: string
     SchoolClassDetailDto:
       type: object
       properties:
@@ -4338,6 +4232,24 @@ components:
             - string
         hasValue:
           type: boolean
+    StudentBadgeBasicDto:
+      type: object
+      properties:
+        badgeId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        name:
+          type: string
+        iconUrl:
+          type:
+            - "null"
+            - string
+        earnedAt:
+          type: string
+          format: date-time
     StudentBadgeDto:
       required:
         - badgeId
@@ -4372,8 +4284,133 @@ components:
           type: string
           format: date-time
     StudentDto:
+      required:
+        - $type
       type: object
+      anyOf:
+        - $ref: "#/components/schemas/StudentDtoStudentDto"
+        - $ref: "#/components/schemas/StudentDtoTeacherDto"
+        - $ref: "#/components/schemas/StudentDtoAdminDto"
+      discriminator:
+        propertyName: $type
+        mapping:
+          student: "#/components/schemas/StudentDtoStudentDto"
+          teacher: "#/components/schemas/StudentDtoTeacherDto"
+          admin: "#/components/schemas/StudentDtoAdminDto"
+    StudentDtoAdminDto:
       properties:
+        $type:
+          enum:
+            - admin
+          type: string
+        phoneNumber:
+          type: string
+        department:
+          type:
+            - "null"
+            - string
+        managedClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        currentXP:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        role:
+          $ref: "#/components/schemas/UserRole"
+        avatarUrl:
+          type:
+            - "null"
+            - string
+        lastSeen:
+          type: string
+          format: date-time
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    StudentDtoStudentDto:
+      properties:
+        $type:
+          enum:
+            - student
+          type: string
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        currentXP:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        role:
+          $ref: "#/components/schemas/UserRole"
+        avatarUrl:
+          type:
+            - "null"
+            - string
+        lastSeen:
+          type: string
+          format: date-time
+        schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    StudentDtoTeacherDto:
+      properties:
+        $type:
+          enum:
+            - teacher
+          type: string
+        department:
+          type:
+            - "null"
+            - string
+        managedClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
         id:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
@@ -4585,56 +4622,6 @@ components:
           type:
             - "null"
             - string
-    TeacherDto:
-      type: object
-      properties:
-        department:
-          type:
-            - "null"
-            - string
-        managedClassId:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - "null"
-            - integer
-            - string
-          format: int64
-        id:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - integer
-            - string
-          format: int64
-        firstName:
-          type: string
-        lastName:
-          type: string
-        username:
-          type: string
-        email:
-          type: string
-        currentXP:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - integer
-            - string
-          format: int32
-        role:
-          $ref: "#/components/schemas/UserRole"
-        avatarUrl:
-          type:
-            - "null"
-            - string
-        lastSeen:
-          type: string
-          format: date-time
-        schoolClassId:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - "null"
-            - integer
-            - string
-          format: int64
     UpdateBadgeRuleDto:
       required:
         - id
@@ -4771,7 +4758,6 @@ components:
         - Teacher
         - Admin
 tags:
-  - name: Admins
   - name: Auth
   - name: Badges
   - name: Enrollments
@@ -4779,8 +4765,6 @@ tags:
   - name: QuizAttempts
   - name: Quizzes
   - name: SchoolClasses
-  - name: Students
   - name: Subjects
   - name: SystemConfig
-  - name: Teachers
   - name: User

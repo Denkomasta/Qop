@@ -6,7 +6,7 @@ namespace Sqeez.Api.Services.Interfaces
     {
         Task<ServiceResult<PagedResponse<StudentDto>>> GetAllUsersAsync(UserFilterDto filter);
         Task<ServiceResult<StudentDto>> GetUserByIdAsync(long id);
-        Task<ServiceResult<DetailedStudentDto>> GetDetailedUserByIdAsync(long id);
+        Task<ServiceResult<DetailedUserDto>> GetDetailedUserByIdAsync(long id);
         Task<ServiceResult<StudentDto>> CreateUserAsync(CreateStudentDto dto);
         Task<ServiceResult<StudentDto>> PatchUserAsync(long id, PatchStudentDto dto);
         Task<ServiceResult<bool>> ArchiveUserAsync(long id);

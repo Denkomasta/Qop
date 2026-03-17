@@ -2,6 +2,7 @@
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
+using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services.UserService
@@ -16,6 +17,250 @@ namespace Sqeez.Api.Services.UserService
             IFileStorageService fileStorageService) : base(context, logger)
         {
             _fileStorageService = fileStorageService;
+        }
+
+        private static StudentDto MapUserToDto(Student user)
+        {
+            if (user == null) return null!;
+
+            return user switch
+            {
+                Admin a => new AdminDto
+                {
+                    Id = a.Id,
+                    FirstName = a.FirstName,
+                    LastName = a.LastName,
+                    Username = a.Username,
+                    Email = a.Email,
+                    CurrentXP = a.CurrentXP,
+                    Role = a.Role,
+                    LastSeen = a.LastSeen,
+                    AvatarUrl = a.AvatarUrl,
+                    SchoolClassId = a.SchoolClassId,
+                    Department = a.Department,
+                    ManagedClassId = a.ManagedClassId,
+                    PhoneNumber = a.PhoneNumber
+                },
+                Teacher t => new TeacherDto
+                {
+                    Id = t.Id,
+                    FirstName = t.FirstName,
+                    LastName = t.LastName,
+                    Username = t.Username,
+                    Email = t.Email,
+                    CurrentXP = t.CurrentXP,
+                    Role = t.Role,
+                    LastSeen = t.LastSeen,
+                    AvatarUrl = t.AvatarUrl,
+                    SchoolClassId = t.SchoolClassId,
+                    Department = t.Department,
+                    ManagedClassId = t.ManagedClassId
+                },
+                _ => new StudentDto
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Username = user.Username,
+                    Email = user.Email,
+                    CurrentXP = user.CurrentXP,
+                    Role = user.Role,
+                    LastSeen = user.LastSeen,
+                    AvatarUrl = user.AvatarUrl,
+                    SchoolClassId = user.SchoolClassId
+                }
+            };
+        }
+
+        public async Task<ServiceResult<PagedResponse<StudentDto>>> GetAllUsersAsync(UserFilterDto filter)
+        {
+            IQueryable<Student> query = _context.Students.AsNoTracking();
+
+            if (filter.Role.HasValue)
+            {
+                if (filter.StrictRoleOnly)
+                {
+                    query = query.Where(u => u.Role == filter.Role.Value);
+                }
+                else
+                {
+                    switch (filter.Role.Value)
+                    {
+                        case UserRole.Admin:
+                            query = query.Where(u => u.Role == UserRole.Admin);
+                            break;
+                        case UserRole.Teacher:
+                            query = query.Where(u => u.Role == UserRole.Teacher || u.Role == UserRole.Admin);
+                            break;
+                        case UserRole.Student:
+                            break;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
+            {
+                var searchTerm = filter.SearchTerm.Trim().ToLower();
+                query = query.Where(u => u.Username.ToLower().Contains(searchTerm) ||
+                                         u.Email.ToLower().Contains(searchTerm));
+            }
+
+            if (filter.IsOnline is bool isOnline)
+            {
+                var threshold = DateTime.UtcNow.AddMinutes(-15);
+                query = query.Where(u => isOnline ? u.LastSeen >= threshold : u.LastSeen < threshold);
+            }
+
+            if (filter.SchoolClassId.HasValue)
+            {
+                query = query.Where(u => u.SchoolClassId == filter.SchoolClassId.Value);
+            }
+
+            if (filter.IsArchived is true)
+            {
+                query = query.Where(u => u.ArchivedAt != null);
+            }
+            else if (filter.IsArchived is false)
+            {
+                query = query.Where(u => u.ArchivedAt == null);
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter.Department))
+            {
+                query = query.OfType<Teacher>().Where(t => t.Department == filter.Department).Cast<Student>();
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter.PhoneNumber))
+            {
+                query = query.OfType<Admin>().Where(a => a.PhoneNumber == filter.PhoneNumber).Cast<Student>();
+            }
+
+            int totalCount = await query.CountAsync();
+
+            var users = await query
+                .OrderBy(u => u.Username)
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToListAsync();
+
+            var mappedUsers = users.Select(MapUserToDto).ToList();
+
+            var response = new PagedResponse<StudentDto>
+            {
+                Data = mappedUsers,
+                TotalCount = totalCount,
+                PageNumber = filter.PageNumber,
+                PageSize = filter.PageSize
+            };
+
+            return ServiceResult<PagedResponse<StudentDto>>.Ok(response);
+        }
+
+        public async Task<ServiceResult<StudentDto>> GetUserByIdAsync(long id)
+        {
+            var user = await _context.Students.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null) return ServiceResult<StudentDto>.Failure("User not found.", ServiceError.NotFound);
+
+            return ServiceResult<StudentDto>.Ok(MapUserToDto(user));
+        }
+
+        public async Task<ServiceResult<StudentDto>> CreateUserAsync(CreateStudentDto dto)
+        {
+            if (await _context.Students.AnyAsync(u => u.Email == dto.Email.Trim().ToLower()))
+                return ServiceResult<StudentDto>.Failure("Email already in use.", ServiceError.Conflict);
+
+            if (dto.SchoolClassId.HasValue && dto.SchoolClassId.Value != 0)
+            {
+                var classExists = await _context.SchoolClasses.AnyAsync(c => c.Id == dto.SchoolClassId.Value);
+                if (!classExists)
+                    return ServiceResult<StudentDto>.Failure("School Class does not exist.", ServiceError.NotFound);
+            }
+
+            Student newUser = dto switch
+            {
+                CreateAdminDto adminDto => new Admin
+                {
+                    Role = UserRole.Admin,
+                    Department = adminDto.Department,
+                    ManagedClassId = adminDto.ManagedClassId,
+                    PhoneNumber = string.IsNullOrWhiteSpace(adminDto.PhoneNumber) ? "-" : adminDto.PhoneNumber
+                },
+                CreateTeacherDto teacherDto => new Teacher
+                {
+                    Role = UserRole.Teacher,
+                    Department = teacherDto.Department,
+                    ManagedClassId = teacherDto.ManagedClassId
+                },
+                _ => new Student { Role = UserRole.Student }
+            };
+
+            newUser.FirstName = dto.FirstName;
+            newUser.LastName = dto.LastName;
+            newUser.Username = dto.Username.Trim();
+            newUser.Email = dto.Email.Trim().ToLower();
+            newUser.PasswordHash = dto.Password;
+            newUser.LastSeen = DateTime.UtcNow;
+            newUser.SchoolClassId = dto.SchoolClassId == 0 ? null : dto.SchoolClassId;
+
+            _context.Students.Add(newUser);
+            await _context.SaveChangesAsync();
+
+            return ServiceResult<StudentDto>.Ok(MapUserToDto(newUser));
+        }
+
+        public async Task<ServiceResult<bool>> ArchiveUserAsync(long id)
+        {
+            var user = await _context.Students.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null)
+                return ServiceResult<bool>.Failure("User not found.", ServiceError.NotFound);
+
+            user.ArchivedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            return ServiceResult<bool>.Ok(true);
+        }
+
+        public async Task<ServiceResult<StudentDto>> PatchUserAsync(long id, PatchStudentDto dto)
+        {
+            var user = await _context.Students.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null)
+                return ServiceResult<StudentDto>.Failure("User not found.", ServiceError.NotFound);
+
+            if (!string.IsNullOrWhiteSpace(dto.Username)) user.Username = dto.Username;
+            if (!string.IsNullOrWhiteSpace(dto.Email)) user.Email = dto.Email.Trim().ToLower();
+            if (dto.AvatarUrl != null) user.AvatarUrl = dto.AvatarUrl;
+
+            if (dto.SchoolClassId.HasValue)
+            {
+                if (dto.SchoolClassId.Value != 0 && !await _context.SchoolClasses.AnyAsync(c => c.Id == dto.SchoolClassId.Value))
+                    return ServiceResult<StudentDto>.Failure("School Class not found.", ServiceError.NotFound);
+
+                user.SchoolClassId = dto.SchoolClassId.Value == 0 ? null : dto.SchoolClassId.Value;
+            }
+
+            if (user is Teacher teacher && dto is PatchTeacherDto teacherDto)
+            {
+                if (teacherDto.Department != null) teacher.Department = teacherDto.Department;
+
+                if (teacherDto.ManagedClassId.HasValue)
+                {
+                    if (teacherDto.ManagedClassId.Value != 0 && !await _context.SchoolClasses.AnyAsync(c => c.Id == teacherDto.ManagedClassId.Value))
+                        return ServiceResult<StudentDto>.Failure("Managed Class not found.", ServiceError.NotFound);
+
+                    teacher.ManagedClassId = teacherDto.ManagedClassId.Value == 0 ? null : teacherDto.ManagedClassId.Value;
+                }
+            }
+
+            if (user is Admin admin && dto is PatchAdminDto adminDto)
+            {
+                if (adminDto.PhoneNumber != null)
+                    admin.PhoneNumber = string.IsNullOrWhiteSpace(adminDto.PhoneNumber) ? "-" : adminDto.PhoneNumber;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return ServiceResult<StudentDto>.Ok(MapUserToDto(user));
         }
 
         public async Task<ServiceResult<string>> UploadAvatarAsync(long userId, IFormFile imageFile)
@@ -33,7 +278,6 @@ namespace Sqeez.Api.Services.UserService
                 return ServiceResult<string>.Failure("User not found.", ServiceError.NotFound);
             }
 
-            // Delete the old avatar if it exists
             if (!string.IsNullOrWhiteSpace(user.AvatarUrl))
             {
                 _logger.LogInformation("Deleting old avatar for user {UserId}: {Url}", userId, user.AvatarUrl);

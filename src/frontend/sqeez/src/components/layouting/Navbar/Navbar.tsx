@@ -13,6 +13,7 @@ import { ThemeSwitcher } from '@/components/settings/ThemeSwitcher/ThemeSwitcher
 import SqeezLogo from '@/components/icons/logos/SqeezLogo'
 import { SimpleAvatar } from '@/components/ui/Avatar'
 import type { UserDTO } from '@/api/generated/model'
+import { getImageUrl } from '@/lib/imageHelpers'
 
 export interface LinkProps {
   to: string
@@ -40,6 +41,8 @@ export function Navbar({
   isAuthenticated,
   user,
 }: NavbarProps) {
+  const avatarUrl = getImageUrl(user?.avatarUrl)
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="flex h-16 items-center justify-between pr-4">
@@ -78,7 +81,7 @@ export function Navbar({
                 >
                   <SimpleAvatar
                     wrapperClassName="size-9 border-2"
-                    url={user?.avatarUrl}
+                    url={avatarUrl}
                     username={user?.username}
                   />
                 </Link>{' '}
@@ -130,7 +133,7 @@ export function Navbar({
                       className="text-lg font-semibold text-muted-foreground"
                     >
                       <SimpleAvatar
-                        url={user?.avatarUrl}
+                        url={avatarUrl}
                         username={user?.username}
                         wrapperClassName="size-9"
                         imageClassName="object-cover"

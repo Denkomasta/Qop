@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Sqeez.Api.Data;
@@ -443,6 +444,89 @@ namespace Sqeez.Api.Tests.Services
             Assert.NotNull(result.ErrorMessage);
             Assert.Equal(ServiceError.NotFound, result.ErrorCode);
             Assert.Equal("User not found.", result.ErrorMessage);
+        }
+
+        private Mock<IFormFile> CreateMockFile(string fileName)
+        {
+            var mockFile = new Mock<IFormFile>();
+            mockFile.Setup(f => f.FileName).Returns(fileName);
+            mockFile.Setup(f => f.Length).Returns(1024);
+            return mockFile;
+        }
+
+        [Fact]
+        public async Task UploadAvatarAsync_WithValidImage_UploadsAndSavesUrl()
+        {
+            var context = await GetInMemoryDbContext();
+            var student = new Student { Username = "TestUser", Role = UserRole.Student };
+            context.Students.Add(student);
+            await context.SaveChangesAsync();
+
+            var mockFileService = new Mock<IFileStorageService>();
+            mockFileService.Setup(s => s.UploadFileAsync(It.IsAny<IFormFile>(), "avatars", true))
+                .ReturnsAsync(ServiceResult<string>.Ok("/avatars/new-avatar.png"));
+
+            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object);
+            var mockFile = CreateMockFile("profile.png");
+
+            var result = await service.UploadAvatarAsync(student.Id, mockFile.Object);
+
+            Assert.True(result.Success);
+            Assert.Equal("/avatars/new-avatar.png", result.Data);
+
+            var updatedUser = await context.Students.FindAsync(student.Id);
+            Assert.Equal("/avatars/new-avatar.png", updatedUser!.AvatarUrl);
+        }
+
+        [Fact]
+        public async Task UploadAvatarAsync_WhenUserHasExistingAvatar_DeletesOldAvatar()
+        {
+            var context = await GetInMemoryDbContext();
+            var student = new Student { Username = "TestUser", Role = UserRole.Student, AvatarUrl = "/avatars/old.png" };
+            context.Students.Add(student);
+            await context.SaveChangesAsync();
+
+            var mockFileService = new Mock<IFileStorageService>();
+            mockFileService.Setup(s => s.UploadFileAsync(It.IsAny<IFormFile>(), "avatars", true))
+                .ReturnsAsync(ServiceResult<string>.Ok("/avatars/new.png"));
+
+            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object);
+            var mockFile = CreateMockFile("new.png");
+
+            await service.UploadAvatarAsync(student.Id, mockFile.Object);
+
+            mockFileService.Verify(s => s.DeleteFileAsync("/avatars/old.png"), Times.Once);
+        }
+
+        [Fact]
+        public async Task UploadAvatarAsync_WithInvalidExtension_ReturnsValidationFailure()
+        {
+            var context = await GetInMemoryDbContext();
+            var mockFileService = new Mock<IFileStorageService>();
+            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object);
+
+            var mockFile = CreateMockFile("document.pdf");
+
+            var result = await service.UploadAvatarAsync(1, mockFile.Object);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.ValidationFailed, result.ErrorCode);
+            Assert.Contains("must be an image file", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task UploadAvatarAsync_WhenUserDoesNotExist_ReturnsNotFound()
+        {
+            var context = await GetInMemoryDbContext();
+            var mockFileService = new Mock<IFileStorageService>();
+            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object);
+
+            var mockFile = CreateMockFile("profile.jpg");
+
+            var result = await service.UploadAvatarAsync(999, mockFile.Object);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.NotFound, result.ErrorCode);
         }
     }
 }

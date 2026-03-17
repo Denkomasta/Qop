@@ -346,7 +346,7 @@ namespace Sqeez.Api.Services.UserService
                 await _fileStorageService.DeleteFileAsync(user.AvatarUrl);
             }
 
-            var uploadResult = await _fileStorageService.UploadFileAsync(imageFile, "avatars");
+            var uploadResult = await _fileStorageService.UploadFileAsync(imageFile, "avatars", true);
             if (!uploadResult.Success)
             {
                 return ServiceResult<string>.Failure(uploadResult.ErrorMessage ?? "Internal error", uploadResult.ErrorCode);

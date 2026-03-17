@@ -111,7 +111,7 @@ namespace Sqeez.Api.Tests.Services
         {
             var context = await GetInMemoryDbContext();
             var service = CreateService(context);
-            var registerDto = new RegisterDTO("NewUser", "normal@sqeez.com", "pwd");
+            var registerDto = new RegisterDTO("Tonda", "Svoboda", "NewUser", "normal@sqeez.com", "pwd");
 
             var result = await service.RegisterAsync(registerDto);
 
@@ -129,7 +129,7 @@ namespace Sqeez.Api.Tests.Services
         {
             var context = await GetInMemoryDbContext();
             var service = CreateService(context);
-            var registerDto = new RegisterDTO("Founder", SuperUserEmail, "pwd");
+            var registerDto = new RegisterDTO("Super", "Borec", "Founder", SuperUserEmail, "pwd");
 
             var result = await service.RegisterAsync(registerDto);
 
@@ -148,7 +148,7 @@ namespace Sqeez.Api.Tests.Services
             await context.SaveChangesAsync();
 
             var service = CreateService(context);
-            var registerDto = new RegisterDTO("SecondUser", "taken@sqeez.com", "pwd");
+            var registerDto = new RegisterDTO("Tonda", "Druhy", "SecondUser", "taken@sqeez.com", "pwd");
 
             var result = await service.RegisterAsync(registerDto);
 

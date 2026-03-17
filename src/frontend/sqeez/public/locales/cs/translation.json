@@ -89,7 +89,13 @@
     "serverErrorTitle": "Chyba serveru",
     "serverErrorDescription": "Na naší straně se něco pokazilo. Zkuste to prosím znovu později.",
     "defaultErrorTitle": "Došlo k chybě",
-    "defaultErrorDescription": "Zkuste to prosím znovu."
+    "defaultErrorDescription": "Zkuste to prosím znovu.",
+    "required": "Toto pole je povinné.",
+    "invalidEmail": "Zadejte platnou e-mailovou adresu.",
+    "usernameShort": "Uživatelské jméno musí mít alespoň 3 znaky.",
+    "usernameLong": "Uživatelské jméno může mít maximálně 20 znaků.",
+    "invalidPhone": "Zadejte platné telefonní číslo.",
+    "invalidCharacters": "Hodnota obsahuje nepovolené znaky. Použijte pouze písmena, číslice, pomlčky a podtržítka."
   },
   "footer": {
     "rights": "Všechna práva vyhrazena.",

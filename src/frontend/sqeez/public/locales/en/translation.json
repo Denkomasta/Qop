@@ -89,7 +89,13 @@
     "serverErrorTitle": "Server Error",
     "serverErrorDescription": "Something went wrong on our end. Please try again later.",
     "defaultErrorTitle": "An error occurred",
-    "defaultErrorDescription": "Please try again."
+    "defaultErrorDescription": "Please try again.",
+    "required": "This field is required.",
+    "invalidEmail": "Please enter a valid email address.",
+    "usernameShort": "Username must be at least 3 characters long.",
+    "usernameLong": "Username cannot exceed 20 characters.",
+    "invalidPhone": "Please enter a valid phone number.",
+    "invalidCharacters": "Input contains invalid characters. Please use only letters, numbers, dashes, and underscores."
   },
   "footer": {
     "rights": "All rights reserved.",

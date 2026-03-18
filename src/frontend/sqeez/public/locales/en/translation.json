@@ -46,7 +46,8 @@
     "successfulChange": "The change was successful!",
     "unsuccessfulChange": "An error occurred, the change was not successful.",
     "delete": "Delete",
-    "confirmAction": "Are you sure?"
+    "confirmAction": "Are you sure?",
+    "noResults": "No results found"
   },
   "dashboard": {
     "administration": "Administration",
@@ -89,7 +90,9 @@
     "enrollDescription": "Select a subject from the list below to add it to your curriculum.",
     "confirmEnroll": "Enroll",
     "selectSubject": "Available Subjects",
-    "chooseOption": "-- Choose a subject --"
+    "chooseOption": "-- Choose a subject --",
+    "searchPlaceholder": "Search by code or name...",
+    "onlyActive": "Show active subjects only"
   },
   "error": {
     "generic": "An error occurred. Please try again later.",

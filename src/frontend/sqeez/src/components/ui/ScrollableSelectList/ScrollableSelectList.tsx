@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils'
 import type { ReactNode } from 'react'
+import { AsyncButton } from '@/components/ui/Button'
 
 export interface SelectOption {
   id: string | number
@@ -14,7 +14,11 @@ interface ScrollableSelectListProps {
   isLoading?: boolean
   loadingText?: string
   emptyText?: string
-  wrapperClassName?: string
+  maxHeight?: string
+
+  hasMore?: boolean
+  onLoadMore?: () => void
+  isFetchingNextPage?: boolean
 }
 
 export function ScrollableSelectList({
@@ -24,16 +28,16 @@ export function ScrollableSelectList({
   isLoading = false,
   loadingText = 'Loading...',
   emptyText = 'No options found.',
-  wrapperClassName = 'max-h-[240px]',
+  maxHeight = 'max-h-[240px]',
+  hasMore = false,
+  onLoadMore,
+  isFetchingNextPage = false,
 }: ScrollableSelectListProps) {
   return (
     <div
-      className={cn(
-        'flex flex-col gap-2 overflow-y-auto rounded-md border border-input bg-muted/20 p-2',
-        wrapperClassName,
-      )}
+      className={`flex flex-col gap-2 overflow-y-auto rounded-md border border-input bg-muted/20 p-2 ${maxHeight}`}
     >
-      {isLoading ? (
+      {isLoading && options.length === 0 ? (
         <div className="py-8 text-center text-sm text-muted-foreground">
           {loadingText}
         </div>
@@ -42,42 +46,55 @@ export function ScrollableSelectList({
           {emptyText}
         </div>
       ) : (
-        options.map((option) => {
-          const isSelected = selectedId === option.id
-          return (
-            <button
-              key={option.id}
-              type="button"
-              onClick={() => onSelect(option.id)}
-              className={`flex items-center justify-between rounded-md border px-3 py-3 text-left text-sm transition-all focus:ring-1 focus:ring-primary focus:outline-none ${
-                isSelected
-                  ? 'border-primary bg-primary/10 font-medium'
-                  : 'border-transparent bg-background hover:border-input hover:bg-muted/50'
-              }`}
-            >
-              <span className="truncate pr-4">
-                <span className="mr-2 font-semibold text-foreground">
-                  {option.title}
-                </span>
-                {option.subtitle && (
-                  <span className="text-muted-foreground">
-                    {option.subtitle}
-                  </span>
-                )}
-              </span>
-
-              <div
-                className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
-                  isSelected ? 'border-primary bg-primary' : 'border-input'
+        <>
+          {options.map((option) => {
+            const isSelected = selectedId === option.id
+            return (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => onSelect(option.id)}
+                className={`flex items-center justify-between rounded-md border px-3 py-3 text-left text-sm transition-all focus:ring-1 focus:ring-primary focus:outline-none ${
+                  isSelected
+                    ? 'border-primary bg-primary/10 font-medium'
+                    : 'border-transparent bg-background hover:border-input hover:bg-muted/50'
                 }`}
               >
-                {isSelected && (
-                  <div className="h-1.5 w-1.5 rounded-full bg-white" />
-                )}
-              </div>
-            </button>
-          )
-        })
+                <span className="truncate pr-4">
+                  <span className="mr-2 font-semibold text-foreground">
+                    {option.title}
+                  </span>
+                  {option.subtitle && (
+                    <span className="text-muted-foreground">
+                      {option.subtitle}
+                    </span>
+                  )}
+                </span>
+                <div
+                  className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border ${isSelected ? 'border-primary bg-primary' : 'border-input'}`}
+                >
+                  {isSelected && (
+                    <div className="h-1.5 w-1.5 rounded-full bg-white" />
+                  )}
+                </div>
+              </button>
+            )
+          })}
+
+          {hasMore && (
+            <div className="flex justify-center pt-2 pb-1">
+              <AsyncButton
+                variant="outline"
+                size="sm"
+                onClick={onLoadMore}
+                isLoading={isFetchingNextPage}
+                className="w-full text-xs"
+              >
+                Load More
+              </AsyncButton>
+            </div>
+          )}
+        </>
       )}
     </div>
   )

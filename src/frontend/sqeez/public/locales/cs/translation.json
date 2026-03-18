@@ -46,7 +46,8 @@
     "successfulChange": "Změna proběhla úspěšně!",
     "unsuccessfulChange": "Nastala chyba, změna se nepodařila.",
     "delete": "Vymazat",
-    "confirmAction": "Jste si jistý?"
+    "confirmAction": "Jste si jistý?",
+    "noResults": "Nebyly nalezeny žádné výsledky."
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -120,7 +121,9 @@
     "enrollDescription": "Vyberte si předmět ze seznamu níže a přidejte si ho do svého studijního plánu.",
     "confirmEnroll": "Zapsat",
     "selectSubject": "Dostupné předměty",
-    "chooseOption": "-- Vyberte předmět --"
+    "chooseOption": "-- Vyberte předmět --",
+    "searchPlaceholder": "Vyhledejte pomocí jména nebo kódu...",
+    "onlyActive": "Zobrazit pouze aktivní předměty"
   },
   "footer": {
     "rights": "Všechna práva vyhrazena.",

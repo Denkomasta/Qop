@@ -4,11 +4,9 @@ import { BaseModal } from '@/components/ui/Modal'
 import { AsyncButton, Button } from '@/components/ui/Button'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/store/useAuthStore'
-import {
-  useGetApiSubjects,
-  usePostApiSubjectsSubjectIdEnrollments as useEnrollToSubject,
-} from '@/api/generated/endpoints/subjects/subjects'
+import { usePostApiSubjectsSubjectIdEnrollments as useEnrollToSubject } from '@/api/generated/endpoints/subjects/subjects'
 import { ScrollableSelectList } from '@/components/ui/ScrollableSelectList/ScrollableSelectList'
+import { useGetApiSubjectsInfinite } from '@/hooks/useGetApiSubjectsInfinite'
 
 interface EnrollSubjectModalProps {
   isOpen: boolean
@@ -36,16 +34,21 @@ export function EnrollSubjectModal({
     return () => clearTimeout(timer)
   }, [searchTerm])
 
-  const { data: subjectsData, isLoading: isLoadingSubjects } =
-    useGetApiSubjects(
-      {
-        IsActive: isActive ? isActive : undefined,
-        ...(debouncedSearchTerm ? { SearchTerm: debouncedSearchTerm } : {}),
-      },
-      {
-        query: { enabled: isOpen },
-      },
-    )
+  const {
+    data: infiniteData,
+    isLoading: isLoadingSubjects,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useGetApiSubjectsInfinite(
+    {
+      IsActive: isActive ? isActive : undefined,
+      ...(debouncedSearchTerm ? { SearchTerm: debouncedSearchTerm } : {}),
+    },
+    {
+      enabled: isOpen,
+    },
+  )
 
   const enrollMutation = useEnrollToSubject()
 
@@ -82,7 +85,7 @@ export function EnrollSubjectModal({
     }
   }
 
-  const subjects = subjectsData?.data || []
+  const subjects = infiniteData?.pages.flatMap((page) => page.data || []) || []
 
   const subjectOptions = subjects.map((subject) => ({
     id: subject.id,
@@ -129,10 +132,7 @@ export function EnrollSubjectModal({
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder={t(
-                'enrollments.searchPlaceholder',
-                'Search by code or name...',
-              )}
+              placeholder={t('enrollments.searchPlaceholder')}
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
             />
           </div>
@@ -149,7 +149,7 @@ export function EnrollSubjectModal({
               htmlFor="subject-active"
               className="cursor-pointer text-sm font-medium select-none"
             >
-              {t('enrollments.onlyActive', 'Show active subjects only')}
+              {t('enrollments.onlyActive')}
             </label>
           </div>
         </div>
@@ -164,8 +164,11 @@ export function EnrollSubjectModal({
             selectedId={selectedSubjectId}
             onSelect={(id) => setSelectedSubjectId(Number(id))}
             isLoading={isLoadingSubjects}
-            loadingText={t('common.loading', 'Loading...')}
-            emptyText={t('common.noResults', 'No subjects found.')}
+            loadingText={`${t('common.loading')}...`}
+            emptyText={t('common.noResults')}
+            hasMore={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+            onLoadMore={() => fetchNextPage()}
           />
         </div>
       </div>

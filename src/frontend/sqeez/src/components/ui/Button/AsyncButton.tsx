@@ -7,6 +7,7 @@ interface AsyncButtonProps extends Omit<ButtonProps, 'onClick' | 'asChild'> {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => Promise<void> | void
   loadingText?: string
+  isLoading?: boolean
 }
 
 export function AsyncButton({
@@ -14,6 +15,7 @@ export function AsyncButton({
   children,
   disabled,
   loadingText,
+  isLoading,
   ...props
 }: AsyncButtonProps) {
   const [isInternalLoading, setIsInternalLoading] = useState(false)
@@ -33,12 +35,12 @@ export function AsyncButton({
 
   return (
     <Button
-      disabled={isInternalLoading || disabled}
+      disabled={isInternalLoading || isLoading || disabled}
       onClick={handleClick}
       {...props}
     >
-      {isInternalLoading && <Spinner size={'sm'} />}
-      {isInternalLoading && loadingText ? loadingText : children}
+      {(isInternalLoading || isLoading) && <Spinner size={'sm'} />}
+      {(isInternalLoading || isLoading) && loadingText ? loadingText : children}
     </Button>
   )
 }

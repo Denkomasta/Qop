@@ -114,6 +114,7 @@
     "emptyTitle": "Žádné aktivní předměty",
     "emptyDescription": "Zatím nemáte zapsané žádné předměty. Klikněte na tlačítko výše, prohlédněte si dostupné předměty a začněte se učit.",
     "enrollSuccess": "Úspěšně zapsáno do předmětu!",
+    "enrollAlreadyEnrolled": "V předmětu již máte aktivní zápis!",
     "enrollError": "Nepodařilo se zapsat do předmětu.",
     "enrollNew": "Zapsat se do předmětu",
     "enrollDescription": "Vyberte si předmět ze seznamu níže a přidejte si ho do svého studijního plánu.",

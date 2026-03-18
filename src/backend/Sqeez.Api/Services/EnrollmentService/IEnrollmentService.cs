@@ -9,7 +9,7 @@ namespace Sqeez.Api.Services.Interfaces
         Task<ServiceResult<EnrollmentDto>> PatchEnrollmentAsync(long id, PatchEnrollmentDto enrollment);
         Task<ServiceResult<bool>> DeleteEnrollmentAsync(long id);
 
-        Task<ServiceResult<bool>> EnrollStudentsInSubjectAsync(long subjectId, AssignStudentsDto dto);
+        Task<ServiceResult<BulkEnrollmentResultDto>> EnrollStudentsInSubjectAsync(long subjectId, AssignStudentsDto dto);
         Task<ServiceResult<bool>> UnenrollStudentsFromSubjectAsync(long subjectId, RemoveStudentsDto dto);
     }
 }

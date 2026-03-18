@@ -2040,13 +2040,13 @@ paths:
           content:
             text/plain:
               schema:
-                type: boolean
+                $ref: "#/components/schemas/BulkEnrollmentResultDto"
             application/json:
               schema:
-                type: boolean
+                $ref: "#/components/schemas/BulkEnrollmentResultDto"
             text/json:
               schema:
-                type: boolean
+                $ref: "#/components/schemas/BulkEnrollmentResultDto"
     delete:
       tags:
         - Subjects
@@ -2572,6 +2572,25 @@ components:
             - number
             - string
           format: double
+    BulkEnrollmentResultDto:
+      type: object
+      properties:
+        newlyEnrolledIds:
+          type: array
+          items:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        alreadyEnrolledIds:
+          type: array
+          items:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
     ClassmateDto:
       type: object
       properties:

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BaseModal } from '@/components/ui/Modal'
 import { AsyncButton, Button } from '@/components/ui/Button'
@@ -8,6 +8,7 @@ import {
   useGetApiSubjects,
   usePostApiSubjectsSubjectIdEnrollments as useEnrollToSubject,
 } from '@/api/generated/endpoints/subjects/subjects'
+import { ScrollableSelectList } from '@/components/ui/ScrollableSelectList/ScrollableSelectList'
 
 interface EnrollSubjectModalProps {
   isOpen: boolean
@@ -24,10 +25,23 @@ export function EnrollSubjectModal({
   const currentUser = useAuthStore((s) => s.user)
 
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | ''>('')
+  const [isActive, setIsActive] = useState(true)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchTerm])
 
   const { data: subjectsData, isLoading: isLoadingSubjects } =
     useGetApiSubjects(
-      {},
+      {
+        IsActive: isActive ? isActive : undefined,
+        ...(debouncedSearchTerm ? { SearchTerm: debouncedSearchTerm } : {}),
+      },
       {
         query: { enabled: isOpen },
       },
@@ -37,6 +51,9 @@ export function EnrollSubjectModal({
 
   const handleClose = () => {
     setSelectedSubjectId('')
+    setSearchTerm('')
+    setDebouncedSearchTerm('')
+    setIsActive(true)
     onClose()
   }
 
@@ -44,13 +61,20 @@ export function EnrollSubjectModal({
     if (!currentUser?.id || !selectedSubjectId) return
 
     try {
-      await enrollMutation.mutateAsync({
+      const result = await enrollMutation.mutateAsync({
         subjectId: selectedSubjectId,
         data: { studentIds: [currentUser.id] },
       })
 
-      toast.success(t('enrollments.enrollSuccess'))
-      onSuccess()
+      if (result.newlyEnrolledIds?.includes(currentUser.id)) {
+        toast.success(t('enrollments.enrollSuccess'))
+        onSuccess()
+      } else if (result.alreadyEnrolledIds?.includes(currentUser.id)) {
+        toast.info(t('enrollments.enrollAlreadyEnrolled'))
+      } else {
+        toast.error(t('enrollments.enrollError'))
+      }
+
       handleClose()
     } catch (error) {
       console.error(error)
@@ -59,6 +83,12 @@ export function EnrollSubjectModal({
   }
 
   const subjects = subjectsData?.data || []
+
+  const subjectOptions = subjects.map((subject) => ({
+    id: subject.id,
+    title: subject.code,
+    subtitle: subject.name,
+  }))
 
   return (
     <BaseModal
@@ -88,31 +118,56 @@ export function EnrollSubjectModal({
         </div>
       }
     >
-      <div className="py-4">
-        <label
-          htmlFor="subject-select"
-          className="mb-2 block text-sm font-medium"
-        >
-          {t('enrollments.selectSubject')}
-        </label>
-        <select
-          id="subject-select"
-          value={selectedSubjectId}
-          onChange={(e) => setSelectedSubjectId(Number(e.target.value))}
-          disabled={isLoadingSubjects}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none disabled:opacity-50"
-        >
-          <option value="" disabled>
-            {isLoadingSubjects
-              ? `${t('common.loading')}...`
-              : t('enrollments.chooseOption')}
-          </option>
-          {subjects.map((subject) => (
-            <option key={subject.id} value={subject.id}>
-              {subject.name}
-            </option>
-          ))}
-        </select>
+      <div className="flex flex-col gap-5 py-4">
+        <div className="flex flex-col gap-3">
+          <div>
+            <label htmlFor="subject-search" className="sr-only">
+              {t('common.search', 'Search')}
+            </label>
+            <input
+              id="subject-search"
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder={t(
+                'enrollments.searchPlaceholder',
+                'Search by code or name...',
+              )}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              id="subject-active"
+              type="checkbox"
+              checked={isActive}
+              onChange={(e) => setIsActive(e.target.checked)}
+              className="h-4 w-4 cursor-pointer rounded border-primary text-primary focus:ring-primary"
+            />
+            <label
+              htmlFor="subject-active"
+              className="cursor-pointer text-sm font-medium select-none"
+            >
+              {t('enrollments.onlyActive', 'Show active subjects only')}
+            </label>
+          </div>
+        </div>
+
+        <div className="flex flex-col">
+          <label className="mb-2 block text-sm font-medium">
+            {t('enrollments.selectSubject')}
+          </label>
+
+          <ScrollableSelectList
+            options={subjectOptions}
+            selectedId={selectedSubjectId}
+            onSelect={(id) => setSelectedSubjectId(Number(id))}
+            isLoading={isLoadingSubjects}
+            loadingText={t('common.loading', 'Loading...')}
+            emptyText={t('common.noResults', 'No subjects found.')}
+          />
+        </div>
       </div>
     </BaseModal>
   )

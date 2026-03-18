@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sqeez.Api.DTOs;
-using Sqeez.Api.Services;
 using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
@@ -94,12 +93,24 @@ namespace Sqeez.Api.Controllers
         /// <summary>
         /// POST /api/subjects/5/enrollments
         /// </summary>
-        [Authorize(Roles = "Admin,Teacher")]
+        [Authorize]
         [HttpPost("{subjectId}/enrollments")]
-        public async Task<ActionResult<bool>> EnrollStudents(long subjectId, [FromBody] AssignStudentsDto dto)
+        public async Task<ActionResult<BulkEnrollmentResultDto>> EnrollStudents(long subjectId, [FromBody] AssignStudentsDto dto)
         {
-            var result = await _enrollmentService.EnrollStudentsInSubjectAsync(subjectId, dto);
-            return HandleServiceResult(result);
+            var role = GetUserRoleFromClaims();
+            var claimedId = GetUserIdFromClaims();
+
+            if (role == "Admin" || role == "Teacher" || (long.TryParse(claimedId, out long userId) && dto.StudentIds.Count == 1 && userId == dto.StudentIds[0]))
+            {
+                var result = await _enrollmentService.EnrollStudentsInSubjectAsync(subjectId, dto);
+                return HandleServiceResult(result);
+            }
+
+            return StatusCode(StatusCodes.Status403Forbidden, new
+            {
+                error = "Forbidden",
+                message = "You do not have permission to modify another student's profile."
+            });
         }
 
         /// <summary>

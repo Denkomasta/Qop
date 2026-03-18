@@ -127,14 +127,14 @@ namespace Sqeez.Api.Services
             return ServiceResult<bool>.Ok(true);
         }
 
-        public async Task<ServiceResult<bool>> EnrollStudentsInSubjectAsync(long subjectId, AssignStudentsDto dto)
+        public async Task<ServiceResult<BulkEnrollmentResultDto>> EnrollStudentsInSubjectAsync(long subjectId, AssignStudentsDto dto)
         {
             _logger.LogInformation("Bulk enrolling {Count} students into subject {SubjectId}", dto.StudentIds.Count, subjectId);
 
-            if (!dto.StudentIds.Any()) return ServiceResult<bool>.Ok(true);
+            if (!dto.StudentIds.Any()) return ServiceResult<BulkEnrollmentResultDto>.Ok(new BulkEnrollmentResultDto());
 
             if (!await _context.Subjects.AnyAsync(s => s.Id == subjectId))
-                return ServiceResult<bool>.Failure("Subject not found.", ServiceError.NotFound);
+                return ServiceResult<BulkEnrollmentResultDto>.Failure("Subject not found.", ServiceError.NotFound);
 
             var existingStudentIds = await _context.Enrollments
                 .Where(e => e.SubjectId == subjectId && dto.StudentIds.Contains(e.StudentId))
@@ -143,7 +143,10 @@ namespace Sqeez.Api.Services
 
             var newStudentIds = dto.StudentIds.Except(existingStudentIds).ToList();
 
-            if (!newStudentIds.Any()) return ServiceResult<bool>.Ok(true);
+            if (!newStudentIds.Any()) return ServiceResult<BulkEnrollmentResultDto>.Ok(new BulkEnrollmentResultDto
+            {
+                AlreadyEnrolledIds = existingStudentIds
+            });
 
             var validStudentIds = await _context.Students
                 .Where(s => newStudentIds.Contains(s.Id))
@@ -152,7 +155,7 @@ namespace Sqeez.Api.Services
 
             if (validStudentIds.Count != newStudentIds.Count)
             {
-                return ServiceResult<bool>.Failure(
+                return ServiceResult<BulkEnrollmentResultDto>.Failure(
                     "One or more provided IDs do not exist.",
                     ServiceError.ValidationFailed);
             }
@@ -169,12 +172,16 @@ namespace Sqeez.Api.Services
             try
             {
                 await _context.SaveChangesAsync();
-                return ServiceResult<bool>.Ok(true);
+                return ServiceResult<BulkEnrollmentResultDto>.Ok(new BulkEnrollmentResultDto
+                {
+                    NewlyEnrolledIds = validStudentIds,
+                    AlreadyEnrolledIds = existingStudentIds
+                });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error bulk enrolling students in subject {SubjectId}", subjectId);
-                return ServiceResult<bool>.Failure("Internal database error.", ServiceError.InternalError);
+                return ServiceResult<BulkEnrollmentResultDto>.Failure("Internal database error.", ServiceError.InternalError);
             }
         }
 

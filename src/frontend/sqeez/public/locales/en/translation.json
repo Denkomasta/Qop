@@ -83,6 +83,7 @@
     "emptyTitle": "No active subjects",
     "emptyDescription": "You haven't enrolled in any subjects yet. Click the button above to browse available subjects and start learning.",
     "enrollSuccess": "Successfully enrolled in the subject!",
+    "enrollAlreadyEnrolled": "You already have an active enrollment in this subject!",
     "enrollError": "Failed to enroll in the subject.",
     "enrollNew": "Enroll in a Subject",
     "enrollDescription": "Select a subject from the list below to add it to your curriculum.",

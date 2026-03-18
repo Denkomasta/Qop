@@ -22,6 +22,7 @@ import type {
 
 import type {
   AssignStudentsDto,
+  BulkEnrollmentResultDto,
   CreateQuizDto,
   CreateSubjectDto,
   GetApiSubjectsParams,
@@ -775,7 +776,7 @@ export const postApiSubjectsSubjectIdEnrollments = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<boolean>(
+  return customInstance<BulkEnrollmentResultDto>(
     {
       url: `/api/subjects/${subjectId}/enrollments`,
       method: 'POST',

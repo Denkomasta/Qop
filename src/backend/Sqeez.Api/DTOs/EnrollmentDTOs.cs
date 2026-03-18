@@ -38,4 +38,10 @@
         public DateTime EnrolledAt { get; init; }
         public DateTime? ArchivedAt { get; init; }
     }
+
+    public class BulkEnrollmentResultDto
+    {
+        public List<long> NewlyEnrolledIds { get; set; } = new();
+        public List<long> AlreadyEnrolledIds { get; set; } = new();
+    }
 }

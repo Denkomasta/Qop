@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BaseModal } from '@/components/ui/Modal'
 import { AsyncButton, Button } from '@/components/ui/Button'
@@ -7,6 +7,8 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { usePostApiSubjectsSubjectIdEnrollments as useEnrollToSubject } from '@/api/generated/endpoints/subjects/subjects'
 import { ScrollableSelectList } from '@/components/ui/ScrollableSelectList/ScrollableSelectList'
 import { useGetApiSubjectsInfinite } from '@/hooks/useGetApiSubjectsInfinite'
+import { Search } from 'lucide-react'
+import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 
 interface EnrollSubjectModalProps {
   isOpen: boolean
@@ -25,14 +27,6 @@ export function EnrollSubjectModal({
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | ''>('')
   const [isActive, setIsActive] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm)
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [searchTerm])
 
   const {
     data: infiniteData,
@@ -43,7 +37,7 @@ export function EnrollSubjectModal({
   } = useGetApiSubjectsInfinite(
     {
       IsActive: isActive ? isActive : undefined,
-      ...(debouncedSearchTerm ? { SearchTerm: debouncedSearchTerm } : {}),
+      ...(searchTerm ? { SearchTerm: searchTerm } : {}),
     },
     {
       enabled: isOpen,
@@ -55,7 +49,6 @@ export function EnrollSubjectModal({
   const handleClose = () => {
     setSelectedSubjectId('')
     setSearchTerm('')
-    setDebouncedSearchTerm('')
     setIsActive(true)
     onClose()
   }
@@ -121,19 +114,16 @@ export function EnrollSubjectModal({
         </div>
       }
     >
-      <div className="flex flex-col gap-5 py-4">
+      <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-3">
           <div>
-            <label htmlFor="subject-search" className="sr-only">
-              {t('common.search', 'Search')}
-            </label>
-            <input
+            <DebouncedInput
               id="subject-search"
-              type="text"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={setSearchTerm}
               placeholder={t('enrollments.searchPlaceholder')}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+              icon={<Search className="size-4" />}
+              label={t('common.search', 'Search')}
             />
           </div>
 

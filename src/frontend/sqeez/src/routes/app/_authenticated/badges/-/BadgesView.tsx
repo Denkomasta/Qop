@@ -1,36 +1,61 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Search } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { useAuthStore } from '@/store/useAuthStore'
 
-import { useGetApiUsersIdDetails } from '@/api/generated/endpoints/user/user'
-import type { BadgeDto } from '@/api/generated/model'
-
 import { StudentBadge } from '@/components/ui/StudentBadge'
-import { useGetApiBadges } from '@/api/generated/endpoints/badges/badges'
+import type { BadgeDto } from '@/api/generated/model'
 import { Link } from '@tanstack/react-router'
+import {
+  useGetApiBadges,
+  useGetApiBadgesStudentStudentId,
+} from '@/api/generated/endpoints/badges/badges'
 import { BadgeDetailsModal } from './BadgeDetailsModal'
+import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 
 export function BadgesView({ targetUserId }: { targetUserId?: number }) {
   const { t } = useTranslation()
   const currentUser = useAuthStore((s) => s.user)
+
   const idToFetch = Number(targetUserId || currentUser?.id)
 
   const [selectedBadge, setSelectedBadge] = useState<BadgeDto | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [filterStatus, setFilterStatus] = useState<'all' | 'earned' | 'locked'>(
+    'all',
+  )
 
-  const { data: profileData, isLoading: isLoadingUser } =
-    useGetApiUsersIdDetails(idToFetch, {
+  const { data: earnedBadges, isLoading: isLoadingEarned } =
+    useGetApiBadgesStudentStudentId(idToFetch, {
       query: { enabled: !!idToFetch },
     })
 
-  const { data: badgeData, isLoading: isLoadingBadges } = useGetApiBadges({
-    query: { enabled: !!idToFetch },
+  const { data: pagedCatalog, isLoading: isLoadingCatalog } = useGetApiBadges({
+    SearchTerm: searchQuery,
   })
-  const allBadges: BadgeDto[] = badgeData ?? []
 
-  if (isLoadingUser || isLoadingBadges) {
+  const earnedBadgesMap = useMemo(() => {
+    return new Map(earnedBadges?.map((b) => [Number(b.badgeId), b]) || [])
+  }, [earnedBadges])
+
+  const filteredBadges = useMemo(() => {
+    if (!pagedCatalog?.data) return []
+
+    return pagedCatalog.data.filter((catalogBadge) => {
+      const isEarned = earnedBadgesMap.has(Number(catalogBadge.id))
+
+      const matchesStatus =
+        filterStatus === 'all' ||
+        (filterStatus === 'earned' && isEarned) ||
+        (filterStatus === 'locked' && !isEarned)
+
+      return matchesStatus
+    })
+  }, [pagedCatalog, earnedBadgesMap, filterStatus])
+
+  if (isLoadingEarned) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
         <Spinner size="lg" />
@@ -38,11 +63,7 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
     )
   }
 
-  const earnedBadgesMap = new Map(
-    profileData?.badges?.map((b) => [Number(b.badgeId), b]) || [],
-  )
-
-  const totalBadges = allBadges?.length || 0
+  const totalBadges = Number(pagedCatalog?.totalCount || 0)
   const earnedCount = earnedBadgesMap.size
 
   const isSelectedBadgeEarned = selectedBadge
@@ -63,15 +84,15 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
               params={{ userId: (idToFetch ?? 0).toString() }}
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              {t('common.backToProfile')}
+              {t('common.backToProfile', 'Back to Profile')}
             </Link>
           </Button>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              {t('badges.title')}
+              {t('badges.title', 'All Badges')}
             </h1>
             <p className="font-medium text-muted-foreground">
-              {earnedCount} / {totalBadges} {t('badges.earned')}
+              {earnedCount} / {totalBadges} {t('badges.earned', 'Earned')}
             </p>
           </div>
         </div>
@@ -86,30 +107,71 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-        {allBadges?.map((catalogBadge) => {
-          const userBadgeData = earnedBadgesMap.get(Number(catalogBadge.id))
-          const isEarned = !!userBadgeData
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <DebouncedInput
+          id="badge-search"
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder={t('badges.search', 'Search badges...')}
+          icon={<Search className="h-4 w-4" />}
+          className="sm:max-w-xs"
+        />
 
-          return (
+        <div className="flex w-full items-center rounded-lg border bg-muted/50 p-1 sm:w-auto">
+          {(['all', 'earned', 'locked'] as const).map((status) => (
             <button
-              key={catalogBadge.id}
-              onClick={() => setSelectedBadge(catalogBadge)}
-              className="group flex flex-col items-center text-left focus:outline-none"
+              key={status}
+              onClick={() => setFilterStatus(status)}
+              className={`flex-1 rounded-md px-4 py-1.5 text-sm font-medium transition-colors sm:flex-none ${
+                filterStatus === status
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
             >
-              <div className="w-full transition-transform duration-200 group-hover:scale-105 group-focus:scale-105">
-                <StudentBadge
-                  name={catalogBadge.name}
-                  iconUrl={catalogBadge.iconUrl}
-                  earnedAt={userBadgeData?.earnedAt}
-                  isEarned={isEarned}
-                  lockedText={t('badges.locked')}
-                />
-              </div>
+              {t(
+                `badges.filter.${status}`,
+                status.charAt(0).toUpperCase() + status.slice(1),
+              )}
             </button>
-          )
-        })}
+          ))}
+        </div>
       </div>
+
+      {isLoadingCatalog ? (
+        <div className="flex min-h-[40vh] items-center justify-center">
+          <Spinner size="lg" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          {filteredBadges?.length > 0 ? (
+            filteredBadges.map((catalogBadge) => {
+              const userBadgeData = earnedBadgesMap.get(Number(catalogBadge.id))
+              const isEarned = !!userBadgeData
+
+              return (
+                <button
+                  key={catalogBadge.id}
+                  onClick={() => setSelectedBadge(catalogBadge)}
+                  className="group flex flex-col items-center text-left focus:outline-none"
+                >
+                  <div className="w-full transition-transform duration-200 group-hover:scale-105 group-focus:scale-105">
+                    <StudentBadge
+                      name={catalogBadge.name}
+                      iconUrl={catalogBadge.iconUrl}
+                      earnedAt={userBadgeData?.earnedAt}
+                      isEarned={isEarned}
+                    />
+                  </div>
+                </button>
+              )
+            })
+          ) : (
+            <div className="col-span-full py-12 text-center text-muted-foreground">
+              {t('badges.noResults', 'No badges found.')}
+            </div>
+          )}
+        </div>
+      )}
 
       <BadgeDetailsModal
         isOpen={!!selectedBadge}

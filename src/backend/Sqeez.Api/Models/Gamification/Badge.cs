@@ -7,7 +7,6 @@
         public string Description { get; set; } = string.Empty;
         public string? IconUrl { get; set; }
         public int XpBonus { get; set; }
-        public string Condition { get; set; } = string.Empty;
 
         // Navigation Property
         public ICollection<BadgeRule> Rules { get; set; } = new List<BadgeRule>();

@@ -154,10 +154,24 @@ namespace Sqeez.Api.Services
             }
         }
 
-        public async Task<ServiceResult<IEnumerable<BadgeDto>>> GetAllBadgesAsync()
+        public async Task<ServiceResult<PagedResponse<BadgeDto>>> GetAllBadgesAsync(BadgeFilterDto filter)
         {
-            var badges = await _context.Badges
-                .Include(b => b.Rules)
+            var query = _context.Badges.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
+            {
+                var searchTerm = filter.SearchTerm.ToLower();
+                query = query.Where(b =>
+                    b.Name.ToLower().Contains(searchTerm) ||
+                    b.Description.ToLower().Contains(searchTerm));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var badges = await query
+                .OrderBy(b => b.Id)
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
                 .Select(b => new BadgeDto(
                     b.Id,
                     b.Name,
@@ -168,7 +182,15 @@ namespace Sqeez.Api.Services
                 ))
                 .ToListAsync();
 
-            return ServiceResult<IEnumerable<BadgeDto>>.Ok(badges);
+            var pagedResponse = new PagedResponse<BadgeDto>
+            {
+                Data = badges,
+                TotalCount = totalCount,
+                PageNumber = filter.PageNumber,
+                PageSize = filter.PageSize
+            };
+
+            return ServiceResult<PagedResponse<BadgeDto>>.Ok(pagedResponse);
         }
 
         public async Task<ServiceResult<IEnumerable<StudentBadgeDto>>> GetStudentBadgesAsync(long studentId)
@@ -186,7 +208,6 @@ namespace Sqeez.Api.Services
 
         public async Task<ServiceResult<bool>> AwardBadgeToStudentAsync(long studentId, long badgeId)
         {
-            // ... (Your existing logic here is absolutely perfect) ...
             var student = await _context.Students.FindAsync(studentId);
             if (student == null) return ServiceResult<bool>.Failure("Student not found.", ServiceError.NotFound);
 
@@ -216,7 +237,6 @@ namespace Sqeez.Api.Services
 
         public async Task EvaluateAndAwardBadgesAsync(long studentId, BadgeEvaluationMetrics metrics)
         {
-            // ... (Your existing evaluation engine is perfect and needs no changes!) ...
             var earnedBadgeIds = await _context.StudentBadges
                 .Where(sb => sb.StudentId == studentId)
                 .Select(sb => sb.BadgeId)

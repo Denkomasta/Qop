@@ -51,20 +51,16 @@ namespace Sqeez.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BadgeDto>>> GetAllBadges()
+        public async Task<ActionResult<PagedResponse<BadgeDto>>> GetAllBadges([FromQuery] BadgeFilterDto filter)
         {
-            var result = await _badgeService.GetAllBadgesAsync();
+            var result = await _badgeService.GetAllBadgesAsync(filter);
             return HandleServiceResult(result);
         }
 
-        [HttpGet("my-badges")]
-        public async Task<ActionResult<IEnumerable<StudentBadgeDto>>> GetMyBadges()
+        [HttpGet("student/{studentId}")]
+        public async Task<ActionResult<IEnumerable<StudentBadgeDto>>> GetStudentBadges(long studentId)
         {
-            var userIdStr = GetUserIdFromClaims();
-            if (!long.TryParse(userIdStr, out long currentUserId))
-                return Unauthorized("Invalid user ID token.");
-
-            var result = await _badgeService.GetStudentBadgesAsync(currentUserId);
+            var result = await _badgeService.GetStudentBadgesAsync(studentId);
             return HandleServiceResult(result);
         }
     }

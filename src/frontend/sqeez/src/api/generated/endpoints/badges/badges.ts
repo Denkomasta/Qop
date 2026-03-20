@@ -22,6 +22,8 @@ import type {
 
 import type {
   BadgeDto,
+  GetApiBadgesParams,
+  PagedResponseOfBadgeDto,
   PatchApiBadgesIdBody,
   PostApiBadgesBody,
   StudentBadgeDto,
@@ -129,35 +131,39 @@ export const usePostApiBadges = <
   return useMutation(getPostApiBadgesMutationOptions(options), queryClient)
 }
 export const getApiBadges = (
+  params?: GetApiBadgesParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<BadgeDto[]>(
-    { url: `/api/badges`, method: 'GET', signal },
+  return customInstance<PagedResponseOfBadgeDto>(
+    { url: `/api/badges`, method: 'GET', params, signal },
     options,
   )
 }
 
-export const getGetApiBadgesQueryKey = () => {
-  return [`/api/badges`] as const
+export const getGetApiBadgesQueryKey = (params?: GetApiBadgesParams) => {
+  return [`/api/badges`, ...(params ? [params] : [])] as const
 }
 
 export const getGetApiBadgesQueryOptions = <
   TData = Awaited<ReturnType<typeof getApiBadges>>,
   TError = ErrorType<unknown>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof getApiBadges>>, TError, TData>
-  >
-  request?: SecondParameter<typeof customInstance>
-}) => {
+>(
+  params?: GetApiBadgesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getApiBadges>>, TError, TData>
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+) => {
   const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey = queryOptions?.queryKey ?? getGetApiBadgesQueryKey()
+  const queryKey = queryOptions?.queryKey ?? getGetApiBadgesQueryKey(params)
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiBadges>>> = ({
     signal,
-  }) => getApiBadges(requestOptions, signal)
+  }) => getApiBadges(params, requestOptions, signal)
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof getApiBadges>>,
@@ -175,6 +181,7 @@ export function useGetApiBadges<
   TData = Awaited<ReturnType<typeof getApiBadges>>,
   TError = ErrorType<unknown>,
 >(
+  params: undefined | GetApiBadgesParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getApiBadges>>, TError, TData>
@@ -197,6 +204,7 @@ export function useGetApiBadges<
   TData = Awaited<ReturnType<typeof getApiBadges>>,
   TError = ErrorType<unknown>,
 >(
+  params?: GetApiBadgesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getApiBadges>>, TError, TData>
@@ -219,6 +227,7 @@ export function useGetApiBadges<
   TData = Awaited<ReturnType<typeof getApiBadges>>,
   TError = ErrorType<unknown>,
 >(
+  params?: GetApiBadgesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getApiBadges>>, TError, TData>
@@ -234,6 +243,7 @@ export function useGetApiBadges<
   TData = Awaited<ReturnType<typeof getApiBadges>>,
   TError = ErrorType<unknown>,
 >(
+  params?: GetApiBadgesParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getApiBadges>>, TError, TData>
@@ -244,7 +254,7 @@ export function useGetApiBadges<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 } {
-  const queryOptions = getGetApiBadgesQueryOptions(options)
+  const queryOptions = getGetApiBadgesQueryOptions(params, options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -517,70 +527,84 @@ export const usePostApiBadgesBadgeIdAwardStudentId = <
     queryClient,
   )
 }
-export const getApiBadgesMyBadges = (
+export const getApiBadgesStudentStudentId = (
+  studentId: number | string,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   return customInstance<StudentBadgeDto[]>(
-    { url: `/api/badges/my-badges`, method: 'GET', signal },
+    { url: `/api/badges/student/${studentId}`, method: 'GET', signal },
     options,
   )
 }
 
-export const getGetApiBadgesMyBadgesQueryKey = () => {
-  return [`/api/badges/my-badges`] as const
+export const getGetApiBadgesStudentStudentIdQueryKey = (
+  studentId: number | string,
+) => {
+  return [`/api/badges/student/${studentId}`] as const
 }
 
-export const getGetApiBadgesMyBadgesQueryOptions = <
-  TData = Awaited<ReturnType<typeof getApiBadgesMyBadges>>,
+export const getGetApiBadgesStudentStudentIdQueryOptions = <
+  TData = Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>,
   TError = ErrorType<unknown>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<
-      Awaited<ReturnType<typeof getApiBadgesMyBadges>>,
-      TError,
-      TData
+>(
+  studentId: number | string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>,
+        TError,
+        TData
+      >
     >
-  >
-  request?: SecondParameter<typeof customInstance>
-}) => {
+    request?: SecondParameter<typeof customInstance>
+  },
+) => {
   const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey = queryOptions?.queryKey ?? getGetApiBadgesMyBadgesQueryKey()
+  const queryKey =
+    queryOptions?.queryKey ?? getGetApiBadgesStudentStudentIdQueryKey(studentId)
 
   const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getApiBadgesMyBadges>>
-  > = ({ signal }) => getApiBadgesMyBadges(requestOptions, signal)
+    Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>
+  > = ({ signal }) =>
+    getApiBadgesStudentStudentId(studentId, requestOptions, signal)
 
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getApiBadgesMyBadges>>,
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!studentId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetApiBadgesMyBadgesQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getApiBadgesMyBadges>>
+export type GetApiBadgesStudentStudentIdQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>
 >
-export type GetApiBadgesMyBadgesQueryError = ErrorType<unknown>
+export type GetApiBadgesStudentStudentIdQueryError = ErrorType<unknown>
 
-export function useGetApiBadgesMyBadges<
-  TData = Awaited<ReturnType<typeof getApiBadgesMyBadges>>,
+export function useGetApiBadgesStudentStudentId<
+  TData = Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>,
   TError = ErrorType<unknown>,
 >(
+  studentId: number | string,
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getApiBadgesMyBadges>>,
+        Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiBadgesMyBadges>>,
+          Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>,
           TError,
-          Awaited<ReturnType<typeof getApiBadgesMyBadges>>
+          Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>
         >,
         'initialData'
       >
@@ -590,23 +614,24 @@ export function useGetApiBadgesMyBadges<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
-export function useGetApiBadgesMyBadges<
-  TData = Awaited<ReturnType<typeof getApiBadgesMyBadges>>,
+export function useGetApiBadgesStudentStudentId<
+  TData = Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>,
   TError = ErrorType<unknown>,
 >(
+  studentId: number | string,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getApiBadgesMyBadges>>,
+        Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiBadgesMyBadges>>,
+          Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>,
           TError,
-          Awaited<ReturnType<typeof getApiBadgesMyBadges>>
+          Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>
         >,
         'initialData'
       >
@@ -616,14 +641,15 @@ export function useGetApiBadgesMyBadges<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
-export function useGetApiBadgesMyBadges<
-  TData = Awaited<ReturnType<typeof getApiBadgesMyBadges>>,
+export function useGetApiBadgesStudentStudentId<
+  TData = Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>,
   TError = ErrorType<unknown>,
 >(
+  studentId: number | string,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getApiBadgesMyBadges>>,
+        Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>,
         TError,
         TData
       >
@@ -635,14 +661,15 @@ export function useGetApiBadgesMyBadges<
   queryKey: DataTag<QueryKey, TData, TError>
 }
 
-export function useGetApiBadgesMyBadges<
-  TData = Awaited<ReturnType<typeof getApiBadgesMyBadges>>,
+export function useGetApiBadgesStudentStudentId<
+  TData = Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>,
   TError = ErrorType<unknown>,
 >(
+  studentId: number | string,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getApiBadgesMyBadges>>,
+        Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>,
         TError,
         TData
       >
@@ -653,7 +680,10 @@ export function useGetApiBadgesMyBadges<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 } {
-  const queryOptions = getGetApiBadgesMyBadgesQueryOptions(options)
+  const queryOptions = getGetApiBadgesStudentStudentIdQueryOptions(
+    studentId,
+    options,
+  )
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

@@ -72,4 +72,9 @@ namespace Sqeez.Api.DTOs
         decimal ScorePercentage,
         int TotalScore
     );
+
+    public class BadgeFilterDto : PagedFilterDto
+    {
+        public string? SearchTerm { get; init; }
+    }
 }

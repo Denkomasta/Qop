@@ -66,9 +66,9 @@ export function BadgeDetailsModal({
           )}
         </div>
 
-        {/* <p className="text-center text-sm text-foreground">
+        <p className="text-center text-sm text-foreground">
           {badge.description}
-        </p> */}
+        </p>
 
         {badge.rules && badge.rules.length > 0 && (
           <div className="w-full rounded-lg border bg-muted/30 p-4">

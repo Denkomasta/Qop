@@ -76,5 +76,7 @@ namespace Sqeez.Api.DTOs
     public class BadgeFilterDto : PagedFilterDto
     {
         public string? SearchTerm { get; init; }
+        public bool? isEarned { get; init; }
+        public long? StudentId { get; init; }
     }
 }

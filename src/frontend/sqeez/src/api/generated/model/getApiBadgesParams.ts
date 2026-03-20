@@ -7,6 +7,11 @@
 
 export type GetApiBadgesParams = {
   SearchTerm?: string
+  isEarned?: boolean
+  /**
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
+  StudentId?: number | string
   /**
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

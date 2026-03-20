@@ -166,6 +166,18 @@ namespace Sqeez.Api.Services
                     b.Description.ToLower().Contains(searchTerm));
             }
 
+            if (filter.StudentId.HasValue && filter.isEarned.HasValue)
+            {
+                if (filter.isEarned == true)
+                {
+                    query = query.Where(b => b.StudentBadges.Any(sb => sb.StudentId == filter.StudentId.Value));
+                }
+                else if (filter.isEarned == false)
+                {
+                    query = query.Where(b => !b.StudentBadges.Any(sb => sb.StudentId == filter.StudentId.Value));
+                }
+            }
+
             var totalCount = await query.CountAsync();
 
             var badges = await query

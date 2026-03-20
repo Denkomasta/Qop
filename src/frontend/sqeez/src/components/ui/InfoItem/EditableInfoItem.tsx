@@ -21,25 +21,24 @@ export function EditableInfoItem({
   buttonText,
   onEdit,
 }: EditableInfoItemProps) {
-  return (
-    <div className="group relative flex h-full items-center justify-between rounded-lg border border-transparent p-2 transition-colors focus-within:border-border focus-within:bg-muted/50 hover:border-border hover:bg-muted/50">
-      <div className="min-w-0 flex-1">
-        <InfoItem icon={icon} label={label} value={String(value)} />
-      </div>
+  const editButton = canEdit ? (
+    <Button
+      variant="ghost"
+      size="icon"
+      className="h-10 w-10 opacity-100 transition-opacity focus:opacity-100 md:h-8 md:w-8 md:opacity-0 md:group-hover:opacity-100"
+      onClick={() => onEdit(fieldKey, label, String(value))}
+      title={`${buttonText} ${label}`}
+    >
+      <Pencil className="h-4 w-4 text-muted-foreground" />
+    </Button>
+  ) : undefined
 
-      <div className="ml-2 flex h-9 w-9 shrink-0 items-center justify-center">
-        {canEdit && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
-            onClick={() => onEdit(fieldKey, label, String(value))}
-            title={`${buttonText} ${label}`}
-          >
-            <Pencil className="h-4 w-4 text-muted-foreground" />
-          </Button>
-        )}
-      </div>
-    </div>
+  return (
+    <InfoItem
+      icon={icon}
+      label={label}
+      value={String(value)}
+      action={editButton}
+    />
   )
 }

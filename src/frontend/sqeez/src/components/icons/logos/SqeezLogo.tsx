@@ -29,8 +29,8 @@ const SqeezLogo = ({
           x2="810.21588"
           y2="315.84412"
         >
-          <stop offset="0" stop-color="#5F1E9E" />
-          <stop offset="1" stop-color="#AC5DC5" />
+          <stop offset="0" stopColor="#5F1E9E" />
+          <stop offset="1" stopColor="#AC5DC5" />
         </linearGradient>
         <linearGradient
           id="gradient_1"
@@ -40,8 +40,8 @@ const SqeezLogo = ({
           x2="804.57098"
           y2="623.0387"
         >
-          <stop offset="0" stop-color="#8033AC" />
-          <stop offset="1" stop-color="#9354B3" />
+          <stop offset="0" stopColor="#8033AC" />
+          <stop offset="1" stopColor="#9354B3" />
         </linearGradient>
         <linearGradient
           id="gradient_2"
@@ -51,8 +51,8 @@ const SqeezLogo = ({
           x2="525.1181"
           y2="645.97516"
         >
-          <stop offset="0" stop-color="#401F72" />
-          <stop offset="1" stop-color="#74569D" />
+          <stop offset="0" stopColor="#401F72" />
+          <stop offset="1" stopColor="#74569D" />
         </linearGradient>
         <linearGradient
           id="gradient_3"
@@ -62,8 +62,8 @@ const SqeezLogo = ({
           x2="175.02956"
           y2="809.20135"
         >
-          <stop offset="0" stop-color="#318D9D" />
-          <stop offset="1" stop-color="#3BABAF" />
+          <stop offset="0" stopColor="#318D9D" />
+          <stop offset="1" stopColor="#3BABAF" />
         </linearGradient>
         <linearGradient
           id="gradient_4"
@@ -73,8 +73,8 @@ const SqeezLogo = ({
           x2="422.29712"
           y2="206.42993"
         >
-          <stop offset="0" stop-color="#2D899B" />
-          <stop offset="1" stop-color="#40ACB1" />
+          <stop offset="0" stopColor="#2D899B" />
+          <stop offset="1" stopColor="#40ACB1" />
         </linearGradient>
       </defs>
       <path

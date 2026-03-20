@@ -2,11 +2,11 @@ import { useTranslation } from 'react-i18next'
 import { Star, Shield, Target } from 'lucide-react'
 import { BaseModal } from '@/components/ui/Modal'
 import { getImageUrl } from '@/lib/imageHelpers'
-import type {
-  BadgeDto,
-  BadgeOperator,
-  BadgeMetric,
-} from '@/api/generated/model'
+import type { BadgeDto, BadgeMetric } from '@/api/generated/model'
+import {
+  METRIC_TRANSLATIONS,
+  OPERATOR_MAP,
+} from '@/constants/badgeRulesMappings'
 
 interface BadgeDetailsModalProps {
   isOpen: boolean
@@ -14,15 +14,6 @@ interface BadgeDetailsModalProps {
   badge: BadgeDto | null
   isEarned: boolean
   earnedDate?: string
-}
-
-const OPERATOR_MAP: Record<BadgeOperator, string> = {
-  Equals: '=',
-  GreaterThan: '>',
-  GreaterThanOrEqual: '>=',
-  LessThan: '<',
-  LessThanOrEqual: '<=',
-  NotEquals: '!=',
 }
 
 export function BadgeDetailsModal({
@@ -37,16 +28,7 @@ export function BadgeDetailsModal({
   if (!badge) return null
 
   const getReadableMetric = (metric: BadgeMetric) => {
-    const metricTranslations: Record<BadgeMetric, string> = {
-      ScorePercentage: t('badges.metrics.scorePercentage', 'Score Percentage'),
-      TotalScore: t('badges.metrics.totalScore', 'Total Score'),
-      PerfectAnswersCount: t(
-        'badges.metrics.perfectAnswers',
-        'Perfect Answers',
-      ),
-      TotalAttempts: t('badges.metrics.totalAttempts', 'Total Attempts'),
-    }
-    return metricTranslations[metric] || metric
+    return t(METRIC_TRANSLATIONS[metric], metric)
   }
 
   return (
@@ -74,25 +56,25 @@ export function BadgeDetailsModal({
           </div>
           {isEarned ? (
             <span className="text-sm font-medium text-green-600 dark:text-green-400">
-              {t('badges.earnedOn', 'Earned on')}{' '}
+              {t('badges.earnedOn')}{' '}
               {earnedDate ? new Date(earnedDate).toLocaleDateString() : ''}
             </span>
           ) : (
             <span className="text-sm font-medium text-muted-foreground">
-              {t('badges.notEarned', 'Not earned yet')}
+              {t('badges.notEarned')}
             </span>
           )}
         </div>
 
-        <p className="text-center text-sm text-foreground">
+        {/* <p className="text-center text-sm text-foreground">
           {badge.description}
-        </p>
+        </p> */}
 
         {badge.rules && badge.rules.length > 0 && (
           <div className="w-full rounded-lg border bg-muted/30 p-4">
             <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
               <Target className="h-4 w-4" />
-              {t('badges.requirements', 'Requirements')}
+              {t('badges.requirements')}
             </h4>
             <ul className="flex flex-col gap-2">
               {badge.rules.map((rule) => {

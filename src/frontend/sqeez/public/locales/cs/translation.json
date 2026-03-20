@@ -3,6 +3,20 @@
     "label": "Čeština",
     "flag": "🇨🇿"
   },
+  "badges": {
+    "earned": "Získáno",
+    "earnedOn": "Získáno",
+    "locked": "Uzamčeno",
+    "metrics": {
+      "scorePercentage": "Procentuální úspěšnost",
+      "totalScore": "Celkové skóre",
+      "perfectAnswers": "Bezchybné odpovědi",
+      "totalAttempts": "Celkový počet pokusů"
+    },
+    "notEarned": "Ještě nezískáno",
+    "requirements": "Požadavky",
+    "title": "Všechny odznaky"
+  },
   "brandingPanel": {
     "title": "Učte se zábavně, soutěžte s přáteli",
     "welcomeTo": "Vítejte v",
@@ -47,7 +61,8 @@
     "unsuccessfulChange": "Nastala chyba, změna se nepodařila.",
     "delete": "Vymazat",
     "confirmAction": "Jste si jistý?",
-    "noResults": "Nebyly nalezeny žádné výsledky."
+    "noResults": "Nebyly nalezeny žádné výsledky.",
+    "backToProfile": "Zpátky na profil"
   },
   "dashboard": {
     "administration": "Administrativa",

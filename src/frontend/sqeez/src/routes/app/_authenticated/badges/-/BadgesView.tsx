@@ -63,15 +63,15 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
               params={{ userId: (idToFetch ?? 0).toString() }}
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              {t('common.backToProfile', 'Back to Profile')}
+              {t('common.backToProfile')}
             </Link>
           </Button>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              {t('badges.title', 'All Badges')}
+              {t('badges.title')}
             </h1>
             <p className="font-medium text-muted-foreground">
-              {earnedCount} / {totalBadges} {t('badges.earned', 'Earned')}
+              {earnedCount} / {totalBadges} {t('badges.earned')}
             </p>
           </div>
         </div>
@@ -103,6 +103,7 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
                   iconUrl={catalogBadge.iconUrl}
                   earnedAt={userBadgeData?.earnedAt}
                   isEarned={isEarned}
+                  lockedText={t('badges.locked')}
                 />
               </div>
             </button>

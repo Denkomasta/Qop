@@ -3,6 +3,20 @@
     "label": "English",
     "flag": "🇺🇸"
   },
+  "badges": {
+    "earned": "Earned",
+    "earnedOn": "Earned on",
+    "locked": "Locked",
+    "metrics": {
+      "scorePercentage": "Score percentage",
+      "totalScore": "Total score",
+      "perfectAnswers": "Perfect answers",
+      "totalAttempts": "Total attempts"
+    },
+    "notEarned": "Not earned yet",
+    "requirements": "Requirements",
+    "title": "All badges"
+  },
   "brandingPanel": {
     "title": "Learn with fun, compete with friends",
     "welcomeTo": "Welcome to",
@@ -47,7 +61,8 @@
     "unsuccessfulChange": "An error occurred, the change was not successful.",
     "delete": "Delete",
     "confirmAction": "Are you sure?",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "backToProfile": "Back to profile"
   },
   "dashboard": {
     "administration": "Administration",

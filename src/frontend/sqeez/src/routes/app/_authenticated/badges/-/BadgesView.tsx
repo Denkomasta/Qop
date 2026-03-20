@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -5,34 +6,34 @@ import { Spinner } from '@/components/ui/Spinner'
 import { useAuthStore } from '@/store/useAuthStore'
 
 import { useGetApiUsersIdDetails } from '@/api/generated/endpoints/user/user'
+import type { BadgeDto } from '@/api/generated/model'
+
 import { StudentBadge } from '@/components/ui/StudentBadge'
+import { useGetApiBadges } from '@/api/generated/endpoints/badges/badges'
 import { Link } from '@tanstack/react-router'
+import { BadgeDetailsModal } from './BadgeDetailsModal'
 
 export function BadgesView({ targetUserId }: { targetUserId?: number }) {
   const { t } = useTranslation()
   const currentUser = useAuthStore((s) => s.user)
+  const idToFetch = Number(targetUserId || currentUser?.id)
 
-  const idToFetch = targetUserId || currentUser?.id
+  const [selectedBadge, setSelectedBadge] = useState<BadgeDto | null>(null)
 
   const { data: profileData, isLoading: isLoadingUser } =
-    useGetApiUsersIdDetails(idToFetch!, {
+    useGetApiUsersIdDetails(idToFetch, {
       query: { enabled: !!idToFetch },
     })
 
-  const isLoadingBadges = false
-  const allBadges = [
-    { id: 1, name: 'First Login', iconUrl: null },
-    { id: 2, name: 'Homework Hero', iconUrl: null },
-    { id: 3, name: 'Perfect Attendance', iconUrl: null },
-  ]
+  const { data: badgeData, isLoading: isLoadingBadges } = useGetApiBadges({
+    query: { enabled: !!idToFetch },
+  })
+  const allBadges: BadgeDto[] = badgeData ?? []
 
   if (isLoadingUser || isLoadingBadges) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
         <Spinner size="lg" />
-        <p className="animate-pulse font-medium text-muted-foreground">
-          {t('common.loading')}...
-        </p>
       </div>
     )
   }
@@ -43,6 +44,14 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
 
   const totalBadges = allBadges?.length || 0
   const earnedCount = earnedBadgesMap.size
+
+  const isSelectedBadgeEarned = selectedBadge
+    ? earnedBadgesMap.has(Number(selectedBadge.id))
+    : false
+
+  const selectedEarnedDate = selectedBadge
+    ? earnedBadgesMap.get(Number(selectedBadge.id))?.earnedAt
+    : undefined
 
   return (
     <div className="container mx-auto max-w-7xl p-6">
@@ -83,16 +92,31 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
           const isEarned = !!userBadgeData
 
           return (
-            <StudentBadge
+            <button
               key={catalogBadge.id}
-              name={catalogBadge.name}
-              iconUrl={catalogBadge.iconUrl}
-              earnedAt={userBadgeData?.earnedAt}
-              isEarned={isEarned}
-            />
+              onClick={() => setSelectedBadge(catalogBadge)}
+              className="group flex flex-col items-center text-left focus:outline-none"
+            >
+              <div className="w-full transition-transform duration-200 group-hover:scale-105 group-focus:scale-105">
+                <StudentBadge
+                  name={catalogBadge.name}
+                  iconUrl={catalogBadge.iconUrl}
+                  earnedAt={userBadgeData?.earnedAt}
+                  isEarned={isEarned}
+                />
+              </div>
+            </button>
           )
         })}
       </div>
+
+      <BadgeDetailsModal
+        isOpen={!!selectedBadge}
+        onClose={() => setSelectedBadge(null)}
+        badge={selectedBadge}
+        isEarned={isSelectedBadgeEarned}
+        earnedDate={selectedEarnedDate}
+      />
     </div>
   )
 }

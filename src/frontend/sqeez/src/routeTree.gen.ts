@@ -21,6 +21,7 @@ import { Route as AppAuthenticatedClassIndexRouteImport } from './routes/app/_au
 import { Route as AppAuthenticatedSubjectsSubjectIdRouteImport } from './routes/app/_authenticated/subjects/$subjectId'
 import { Route as AppAuthenticatedProfileUserIdRouteImport } from './routes/app/_authenticated/profile/$userId'
 import { Route as AppAuthenticatedClassClassIdRouteImport } from './routes/app/_authenticated/class/$classId'
+import { Route as AppAuthenticatedBadgesUserIdRouteImport } from './routes/app/_authenticated/badges/$userId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -88,6 +89,12 @@ const AppAuthenticatedClassClassIdRoute =
     path: '/class/$classId',
     getParentRoute: () => AppAuthenticatedRoute,
   } as any)
+const AppAuthenticatedBadgesUserIdRoute =
+  AppAuthenticatedBadgesUserIdRouteImport.update({
+    id: '/badges/$userId',
+    path: '/badges/$userId',
+    getParentRoute: () => AppAuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/logout/': typeof LogoutIndexRoute
   '/register/': typeof RegisterIndexRoute
   '/app/': typeof AppAuthenticatedIndexRoute
+  '/app/badges/$userId': typeof AppAuthenticatedBadgesUserIdRoute
   '/app/class/$classId': typeof AppAuthenticatedClassClassIdRoute
   '/app/profile/$userId': typeof AppAuthenticatedProfileUserIdRoute
   '/app/subjects/$subjectId': typeof AppAuthenticatedSubjectsSubjectIdRoute
@@ -109,6 +117,7 @@ export interface FileRoutesByTo {
   '/logout': typeof LogoutIndexRoute
   '/register': typeof RegisterIndexRoute
   '/app': typeof AppAuthenticatedIndexRoute
+  '/app/badges/$userId': typeof AppAuthenticatedBadgesUserIdRoute
   '/app/class/$classId': typeof AppAuthenticatedClassClassIdRoute
   '/app/profile/$userId': typeof AppAuthenticatedProfileUserIdRoute
   '/app/subjects/$subjectId': typeof AppAuthenticatedSubjectsSubjectIdRoute
@@ -124,6 +133,7 @@ export interface FileRoutesById {
   '/logout/': typeof LogoutIndexRoute
   '/register/': typeof RegisterIndexRoute
   '/app/_authenticated/': typeof AppAuthenticatedIndexRoute
+  '/app/_authenticated/badges/$userId': typeof AppAuthenticatedBadgesUserIdRoute
   '/app/_authenticated/class/$classId': typeof AppAuthenticatedClassClassIdRoute
   '/app/_authenticated/profile/$userId': typeof AppAuthenticatedProfileUserIdRoute
   '/app/_authenticated/subjects/$subjectId': typeof AppAuthenticatedSubjectsSubjectIdRoute
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/logout/'
     | '/register/'
     | '/app/'
+    | '/app/badges/$userId'
     | '/app/class/$classId'
     | '/app/profile/$userId'
     | '/app/subjects/$subjectId'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/logout'
     | '/register'
     | '/app'
+    | '/app/badges/$userId'
     | '/app/class/$classId'
     | '/app/profile/$userId'
     | '/app/subjects/$subjectId'
@@ -167,6 +179,7 @@ export interface FileRouteTypes {
     | '/logout/'
     | '/register/'
     | '/app/_authenticated/'
+    | '/app/_authenticated/badges/$userId'
     | '/app/_authenticated/class/$classId'
     | '/app/_authenticated/profile/$userId'
     | '/app/_authenticated/subjects/$subjectId'
@@ -269,11 +282,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAuthenticatedClassClassIdRouteImport
       parentRoute: typeof AppAuthenticatedRoute
     }
+    '/app/_authenticated/badges/$userId': {
+      id: '/app/_authenticated/badges/$userId'
+      path: '/badges/$userId'
+      fullPath: '/app/badges/$userId'
+      preLoaderRoute: typeof AppAuthenticatedBadgesUserIdRouteImport
+      parentRoute: typeof AppAuthenticatedRoute
+    }
   }
 }
 
 interface AppAuthenticatedRouteChildren {
   AppAuthenticatedIndexRoute: typeof AppAuthenticatedIndexRoute
+  AppAuthenticatedBadgesUserIdRoute: typeof AppAuthenticatedBadgesUserIdRoute
   AppAuthenticatedClassClassIdRoute: typeof AppAuthenticatedClassClassIdRoute
   AppAuthenticatedProfileUserIdRoute: typeof AppAuthenticatedProfileUserIdRoute
   AppAuthenticatedSubjectsSubjectIdRoute: typeof AppAuthenticatedSubjectsSubjectIdRoute
@@ -284,6 +305,7 @@ interface AppAuthenticatedRouteChildren {
 
 const AppAuthenticatedRouteChildren: AppAuthenticatedRouteChildren = {
   AppAuthenticatedIndexRoute: AppAuthenticatedIndexRoute,
+  AppAuthenticatedBadgesUserIdRoute: AppAuthenticatedBadgesUserIdRoute,
   AppAuthenticatedClassClassIdRoute: AppAuthenticatedClassClassIdRoute,
   AppAuthenticatedProfileUserIdRoute: AppAuthenticatedProfileUserIdRoute,
   AppAuthenticatedSubjectsSubjectIdRoute:

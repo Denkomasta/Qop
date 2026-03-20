@@ -136,25 +136,40 @@ paths:
     get:
       tags:
         - Badges
+      parameters:
+        - name: SearchTerm
+          in: query
+          schema:
+            type: string
+        - name: PageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: PageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
       responses:
         "200":
           description: OK
           content:
             text/plain:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/BadgeDto"
+                $ref: "#/components/schemas/PagedResponseOfBadgeDto"
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/BadgeDto"
+                $ref: "#/components/schemas/PagedResponseOfBadgeDto"
             text/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/BadgeDto"
+                $ref: "#/components/schemas/PagedResponseOfBadgeDto"
   /api/badges/{id}:
     patch:
       tags:
@@ -267,10 +282,20 @@ paths:
             text/json:
               schema:
                 type: boolean
-  /api/badges/my-badges:
+  /api/badges/student/{studentId}:
     get:
       tags:
         - Badges
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
       responses:
         "200":
           description: OK
@@ -3166,6 +3191,37 @@ components:
         - Video
         - Audio
         - Document
+    PagedResponseOfBadgeDto:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/BadgeDto"
+        totalCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageNumber:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalPages:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
     PagedResponseOfEnrollmentDto:
       type: object
       properties:

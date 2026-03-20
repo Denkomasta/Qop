@@ -215,13 +215,17 @@ namespace Sqeez.Api.Services.UserService
                     ArchivedAt = e.ArchivedAt
                 }).ToList(),
 
-                Badges = user.StudentBadges.Select(sb => new StudentBadgeBasicDto
-                {
-                    BadgeId = sb.BadgeId,
-                    Name = sb.Badge?.Name ?? "Unknown Badge",
-                    IconUrl = sb.Badge?.IconUrl,
-                    EarnedAt = sb.EarnedAt
-                }).ToList()
+                // Takes only the last 5 earned.
+                Badges = user.StudentBadges
+                    .OrderByDescending(sb => sb.EarnedAt)
+                    .Take(5)
+                    .Select(sb => new StudentBadgeBasicDto
+                    {
+                        BadgeId = sb.BadgeId,
+                        Name = sb.Badge?.Name ?? "Unknown Badge",
+                        IconUrl = sb.Badge?.IconUrl,
+                        EarnedAt = sb.EarnedAt
+                    }).ToList()
             };
 
             return ServiceResult<DetailedUserDto>.Ok(detailedDto);

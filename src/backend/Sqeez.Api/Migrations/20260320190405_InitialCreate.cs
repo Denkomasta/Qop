@@ -21,8 +21,7 @@ namespace Sqeez.Api.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     IconUrl = table.Column<string>(type: "text", nullable: true),
-                    XpBonus = table.Column<int>(type: "integer", nullable: false),
-                    Condition = table.Column<string>(type: "text", nullable: false)
+                    XpBonus = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

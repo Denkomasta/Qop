@@ -14,6 +14,7 @@ import {
 } from '@/api/generated/endpoints/badges/badges'
 import { BadgeDetailsModal } from './BadgeDetailsModal'
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
+import { Pagination } from '@/components/ui/Pagination'
 
 export function BadgesView({ targetUserId }: { targetUserId?: number }) {
   const { t } = useTranslation()
@@ -26,14 +27,22 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
   const [filterStatus, setFilterStatus] = useState<'all' | 'earned' | 'locked'>(
     'all',
   )
+  const [pageNumber, setPageNumber] = useState(1)
+  const PAGE_SIZE = 12
 
   const { data: earnedBadges, isLoading: isLoadingEarned } =
     useGetApiBadgesStudentStudentId(idToFetch, {
       query: { enabled: !!idToFetch },
     })
 
-  const { data: pagedCatalog, isLoading: isLoadingCatalog } = useGetApiBadges({
+  const {
+    data: pagedCatalog,
+    isLoading: isLoadingCatalog,
+    isFetching: isFetchingCatalog,
+  } = useGetApiBadges({
     SearchTerm: searchQuery,
+    PageNumber: pageNumber,
+    PageSize: PAGE_SIZE,
   })
 
   const earnedBadgesMap = useMemo(() => {
@@ -64,6 +73,9 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
   }
 
   const totalBadges = Number(pagedCatalog?.totalCount || 0)
+  const totalPages = Number(
+    pagedCatalog?.totalPages || Math.ceil(totalBadges / PAGE_SIZE),
+  )
   const earnedCount = earnedBadgesMap.size
 
   const isSelectedBadgeEarned = selectedBadge
@@ -111,7 +123,10 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
         <DebouncedInput
           id="badge-search"
           value={searchQuery}
-          onChange={setSearchQuery}
+          onChange={(newQuery) => {
+            setSearchQuery(newQuery)
+            setPageNumber(1)
+          }}
           placeholder={t('badges.search', 'Search badges...')}
           icon={<Search className="h-4 w-4" />}
           className="sm:max-w-xs"
@@ -137,41 +152,57 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
         </div>
       </div>
 
-      {isLoadingCatalog ? (
-        <div className="flex min-h-[40vh] items-center justify-center">
-          <Spinner size="lg" />
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-          {filteredBadges?.length > 0 ? (
-            filteredBadges.map((catalogBadge) => {
-              const userBadgeData = earnedBadgesMap.get(Number(catalogBadge.id))
-              const isEarned = !!userBadgeData
+      <div
+        className={`transition-opacity duration-200 ${isFetchingCatalog && !isLoadingCatalog ? 'opacity-50' : 'opacity-100'}`}
+      >
+        {isLoadingCatalog ? (
+          <div className="flex min-h-[40vh] items-center justify-center">
+            <Spinner size="lg" />
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+              {filteredBadges?.length > 0 ? (
+                filteredBadges.map((catalogBadge) => {
+                  const userBadgeData = earnedBadgesMap.get(
+                    Number(catalogBadge.id),
+                  )
+                  const isEarned = !!userBadgeData
 
-              return (
-                <button
-                  key={catalogBadge.id}
-                  onClick={() => setSelectedBadge(catalogBadge)}
-                  className="group flex flex-col items-center text-left focus:outline-none"
-                >
-                  <div className="w-full transition-transform duration-200 group-hover:scale-105 group-focus:scale-105">
-                    <StudentBadge
-                      name={catalogBadge.name}
-                      iconUrl={catalogBadge.iconUrl}
-                      earnedAt={userBadgeData?.earnedAt}
-                      isEarned={isEarned}
-                    />
-                  </div>
-                </button>
-              )
-            })
-          ) : (
-            <div className="col-span-full py-12 text-center text-muted-foreground">
-              {t('badges.noResults', 'No badges found.')}
+                  return (
+                    <button
+                      key={catalogBadge.id}
+                      onClick={() => setSelectedBadge(catalogBadge)}
+                      className="group flex flex-col items-center text-left focus:outline-none"
+                    >
+                      <div className="w-full transition-transform duration-200 group-hover:scale-105 group-focus:scale-105">
+                        <StudentBadge
+                          name={catalogBadge.name}
+                          iconUrl={catalogBadge.iconUrl}
+                          earnedAt={userBadgeData?.earnedAt}
+                          isEarned={isEarned}
+                        />
+                      </div>
+                    </button>
+                  )
+                })
+              ) : (
+                <div className="col-span-full py-12 text-center text-muted-foreground">
+                  {t('badges.noResults', 'No badges found.')}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      )}
+
+            <div className="mt-6">
+              <Pagination
+                currentPage={pageNumber}
+                totalPages={totalPages}
+                onPageChange={setPageNumber}
+              />
+            </div>
+          </>
+        )}
+      </div>
 
       <BadgeDetailsModal
         isOpen={!!selectedBadge}

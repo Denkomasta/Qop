@@ -28,12 +28,14 @@ export function DebouncedInput({
   }, [initialValue])
 
   useEffect(() => {
+    if (localValue === initialValue) return
+
     const timer = setTimeout(() => {
       onChange(localValue)
     }, debounceTime)
 
     return () => clearTimeout(timer)
-  }, [localValue, debounceTime, onChange])
+  }, [localValue, initialValue, debounceTime, onChange])
 
   return (
     <div className={`relative w-full ${className}`}>

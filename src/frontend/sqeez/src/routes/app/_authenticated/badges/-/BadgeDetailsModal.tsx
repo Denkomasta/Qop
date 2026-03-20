@@ -2,7 +2,11 @@ import { useTranslation } from 'react-i18next'
 import { Star, Shield, Target } from 'lucide-react'
 import { BaseModal } from '@/components/ui/Modal'
 import { getImageUrl } from '@/lib/imageHelpers'
-import type { BadgeDto } from '@/api/generated/model'
+import type {
+  BadgeDto,
+  BadgeOperator,
+  BadgeMetric,
+} from '@/api/generated/model'
 
 interface BadgeDetailsModalProps {
   isOpen: boolean
@@ -10,6 +14,15 @@ interface BadgeDetailsModalProps {
   badge: BadgeDto | null
   isEarned: boolean
   earnedDate?: string
+}
+
+const OPERATOR_MAP: Record<BadgeOperator, string> = {
+  Equals: '=',
+  GreaterThan: '>',
+  GreaterThanOrEqual: '>=',
+  LessThan: '<',
+  LessThanOrEqual: '<=',
+  NotEquals: '!=',
 }
 
 export function BadgeDetailsModal({
@@ -22,6 +35,19 @@ export function BadgeDetailsModal({
   const { t } = useTranslation()
 
   if (!badge) return null
+
+  const getReadableMetric = (metric: BadgeMetric) => {
+    const metricTranslations: Record<BadgeMetric, string> = {
+      ScorePercentage: t('badges.metrics.scorePercentage', 'Score Percentage'),
+      TotalScore: t('badges.metrics.totalScore', 'Total Score'),
+      PerfectAnswersCount: t(
+        'badges.metrics.perfectAnswers',
+        'Perfect Answers',
+      ),
+      TotalAttempts: t('badges.metrics.totalAttempts', 'Total Attempts'),
+    }
+    return metricTranslations[metric] || metric
+  }
 
   return (
     <BaseModal isOpen={isOpen} onClose={onClose} title={badge.name}>
@@ -69,23 +95,32 @@ export function BadgeDetailsModal({
               {t('badges.requirements', 'Requirements')}
             </h4>
             <ul className="flex flex-col gap-2">
-              {badge.rules.map((rule) => (
-                <li
-                  key={rule.id}
-                  className="flex items-start gap-2 text-sm text-muted-foreground"
-                >
-                  <div className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                  <span>
-                    <span className="font-medium text-foreground">
-                      {rule.metric}
-                    </span>{' '}
-                    {rule.operator}{' '}
-                    <span className="font-medium text-foreground">
-                      {rule.targetValue}
+              {badge.rules.map((rule) => {
+                const isPercentage = rule.metric === 'ScorePercentage'
+                const displayValue = isPercentage
+                  ? `${rule.targetValue}%`
+                  : rule.targetValue
+
+                return (
+                  <li
+                    key={rule.id}
+                    className="flex items-start gap-2 text-sm text-muted-foreground"
+                  >
+                    <div className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                    <span>
+                      <span className="font-medium text-foreground">
+                        {getReadableMetric(rule.metric)}
+                      </span>{' '}
+                      <span className="mx-1 font-bold text-primary">
+                        {OPERATOR_MAP[rule.operator]}
+                      </span>{' '}
+                      <span className="font-medium text-foreground">
+                        {displayValue}
+                      </span>
                     </span>
-                  </span>
-                </li>
-              ))}
+                  </li>
+                )
+              })}
             </ul>
           </div>
         )}

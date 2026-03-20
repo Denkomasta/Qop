@@ -35,6 +35,8 @@ import { getImageUrl } from '@/lib/imageHelpers'
 import { getGetApiAuthMeQueryKey } from '@/api/generated/endpoints/auth/auth'
 import { useQueryClient } from '@tanstack/react-query'
 import { AvatarUploadModal } from './AvatarUploadModal'
+import { Link } from '@tanstack/react-router'
+import { StudentBadge } from '@/components/ui/StudentBadge'
 
 type EditFieldState = {
   key: string
@@ -67,6 +69,14 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false)
 
   const queryClient = useQueryClient()
+
+  const recentBadges = [...(profileData?.badges || [])]
+    .sort((a, b) => {
+      const dateA = a.earnedAt ? new Date(a.earnedAt).getTime() : 0
+      const dateB = b.earnedAt ? new Date(b.earnedAt).getTime() : 0
+      return dateB - dateA
+    })
+    .slice(0, 3)
 
   if (isLoading) {
     return (
@@ -205,8 +215,8 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
       </h1>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <Card className="shadow-sm md:col-span-1">
-          <CardContent className="flex flex-col items-center pt-8">
+        <Card className="self-start shadow-sm md:col-span-1">
+          <CardContent className="flex flex-col items-center pt-8 pb-8">
             <div
               className={`relative rounded-full ${isOwnProfile ? 'group cursor-pointer' : ''}`}
               onClick={handleAvatarClick}
@@ -230,7 +240,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
             <h2 className="mt-5 text-center text-2xl font-bold">
               {formatName(profileData.firstName, profileData.lastName)}
             </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-center text-sm text-muted-foreground">
               @{profileData.username}
             </p>
 
@@ -248,68 +258,114 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
           </CardContent>
         </Card>
 
-        <Card className="h-fit shadow-sm md:col-span-2">
-          <CardHeader>
-            <CardTitle className="text-xl">
-              {t('profile.accountDetails')}
-            </CardTitle>
-            <CardDescription className="text-base">
-              {isOwnProfile
-                ? t('profile.description')
-                : t('profile.viewOnlyDescription')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <EditableInfoItem
-                icon={<UserIcon className="h-4 w-4" />}
-                label={t('common.username')}
-                value={profileData.username ?? 'john_doe'}
-                fieldKey="username"
-                canEdit={isOwnProfile}
-                onEdit={handleEditClick}
-              />
-              <EditableInfoItem
-                icon={<Mail className="h-4 w-4" />}
-                label={t('common.email')}
-                value={profileData.email ?? 'john_doe@sqeez.com'}
-                fieldKey="email"
-                canEdit={isOwnProfile}
-                onEdit={handleEditClick}
-              />
-              <EditableInfoItem
-                icon={<Shield className="h-4 w-4" />}
-                label={t('common.role')}
-                value={profileData.role ?? 'Student'}
-                fieldKey="role"
-                canEdit={false}
-                onEdit={handleEditClick}
-              />
-
-              {profileData.department && (
+        <div className="flex flex-col gap-6 md:col-span-2">
+          <Card className="h-fit shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-xl">
+                {t('profile.accountDetails')}
+              </CardTitle>
+              <CardDescription className="text-base">
+                {isOwnProfile
+                  ? t('profile.description')
+                  : t('profile.viewOnlyDescription')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <EditableInfoItem
-                  icon={<Briefcase className="h-4 w-4" />}
-                  label={t('common.department')}
-                  value={profileData.department}
-                  fieldKey="department"
+                  icon={<UserIcon className="h-4 w-4" />}
+                  label={t('common.username')}
+                  value={profileData.username ?? 'john_doe'}
+                  fieldKey="username"
                   canEdit={isOwnProfile}
                   onEdit={handleEditClick}
                 />
-              )}
-
-              {profileData.phoneNumber && (
                 <EditableInfoItem
-                  icon={<Phone className="h-4 w-4" />}
-                  label={t('common.phoneNumber')}
-                  value={profileData.phoneNumber}
-                  fieldKey="phoneNumber"
+                  icon={<Mail className="h-4 w-4" />}
+                  label={t('common.email')}
+                  value={profileData.email ?? 'john_doe@sqeez.com'}
+                  fieldKey="email"
                   canEdit={isOwnProfile}
                   onEdit={handleEditClick}
                 />
+                <EditableInfoItem
+                  icon={<Shield className="h-4 w-4" />}
+                  label={t('common.role')}
+                  value={profileData.role ?? 'Student'}
+                  fieldKey="role"
+                  canEdit={false}
+                  onEdit={handleEditClick}
+                />
+
+                {profileData.department && (
+                  <EditableInfoItem
+                    icon={<Briefcase className="h-4 w-4" />}
+                    label={t('common.department')}
+                    value={profileData.department}
+                    fieldKey="department"
+                    canEdit={isOwnProfile}
+                    onEdit={handleEditClick}
+                  />
+                )}
+
+                {profileData.phoneNumber && (
+                  <EditableInfoItem
+                    icon={<Phone className="h-4 w-4" />}
+                    label={t('common.phoneNumber')}
+                    value={profileData.phoneNumber}
+                    fieldKey="phoneNumber"
+                    canEdit={isOwnProfile}
+                    onEdit={handleEditClick}
+                  />
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="h-fit shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between pb-4">
+              <div className="space-y-1">
+                <CardTitle className="text-xl">
+                  {t('profile.recentBadges', 'Recent Badges')}{' '}
+                </CardTitle>
+                <CardDescription className="text-base">
+                  {t(
+                    'profile.badgesDescription',
+                    'Your most recently earned achievements.',
+                  )}
+                </CardDescription>
+              </div>
+
+              <Button variant="ghost" size="sm" asChild>
+                <Link to={`/profile/${idToFetch}/badges`}>
+                  {t('common.viewAll', 'View All')}
+                </Link>
+              </Button>
+            </CardHeader>
+
+            <CardContent>
+              {recentBadges.length > 0 ? (
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                  {recentBadges.map((badge) => (
+                    <StudentBadge
+                      key={badge.badgeId}
+                      name={badge.name}
+                      iconUrl={badge.iconUrl}
+                      earnedAt={badge.earnedAt}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-8 text-center">
+                  <Shield className="mb-2 h-8 w-8 text-muted-foreground/50" />
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {t('profile.noBadges', 'No badges earned yet.')}
+                  </p>
+                </div>
               )}
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {isOwnProfile && (

@@ -48,7 +48,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
   const { t } = useTranslation()
   const currentUser = useAuthStore((s) => s.user)
 
-  const idToFetch = targetUserId || currentUser?.id
+  const idToFetch = Number(targetUserId || currentUser?.id)
   const isOwnProfile = currentUser?.id === idToFetch
 
   const {
@@ -337,7 +337,10 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
               </div>
 
               <Button variant="ghost" size="sm" asChild>
-                <Link to={`/profile/${idToFetch}/badges`}>
+                <Link
+                  to="/app/badges/$userId"
+                  params={{ userId: (idToFetch ?? 0).toString() }}
+                >
                   {t('common.viewAll', 'View All')}
                 </Link>
               </Button>

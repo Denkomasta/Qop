@@ -43,26 +43,13 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
     SearchTerm: searchQuery,
     PageNumber: pageNumber,
     PageSize: PAGE_SIZE,
+    isEarned: filterStatus == 'all' ? undefined : filterStatus == 'earned',
+    StudentId: idToFetch,
   })
 
   const earnedBadgesMap = useMemo(() => {
     return new Map(earnedBadges?.map((b) => [Number(b.badgeId), b]) || [])
   }, [earnedBadges])
-
-  const filteredBadges = useMemo(() => {
-    if (!pagedCatalog?.data) return []
-
-    return pagedCatalog.data.filter((catalogBadge) => {
-      const isEarned = earnedBadgesMap.has(Number(catalogBadge.id))
-
-      const matchesStatus =
-        filterStatus === 'all' ||
-        (filterStatus === 'earned' && isEarned) ||
-        (filterStatus === 'locked' && !isEarned)
-
-      return matchesStatus
-    })
-  }, [pagedCatalog, earnedBadgesMap, filterStatus])
 
   if (isLoadingEarned) {
     return (
@@ -72,6 +59,7 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
     )
   }
 
+  const displayBadges = pagedCatalog?.data || []
   const totalBadges = Number(pagedCatalog?.totalCount || 0)
   const totalPages = Number(
     pagedCatalog?.totalPages || Math.ceil(totalBadges / PAGE_SIZE),
@@ -162,8 +150,8 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
         ) : (
           <>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {filteredBadges?.length > 0 ? (
-                filteredBadges.map((catalogBadge) => {
+              {displayBadges?.length > 0 ? (
+                displayBadges.map((catalogBadge) => {
                   const userBadgeData = earnedBadgesMap.get(
                     Number(catalogBadge.id),
                   )

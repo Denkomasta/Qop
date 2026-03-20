@@ -141,6 +141,18 @@ paths:
           in: query
           schema:
             type: string
+        - name: isEarned
+          in: query
+          schema:
+            type: boolean
+        - name: StudentId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
         - name: PageNumber
           in: query
           schema:

@@ -19,7 +19,12 @@
         public DateTime? PublishDate { get; set; }
         public DateTime? ClosingDate { get; set; }
         public long? SubjectId { get; set; }
+        public long? StudentId { get; set; }
     }
+
+    public record GetQuizDto(
+        long? studentId
+        );
 
     public record CreateQuizDto(
         string Title,

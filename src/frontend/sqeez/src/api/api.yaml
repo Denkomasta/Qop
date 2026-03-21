@@ -994,6 +994,74 @@ paths:
             text/json:
               schema:
                 $ref: "#/components/schemas/QuestionResponseDto"
+  /api/quizzes:
+    get:
+      tags:
+        - Quizzes
+      parameters:
+        - name: SearchTerm
+          in: query
+          schema:
+            type: string
+        - name: IsActive
+          in: query
+          schema:
+            type: boolean
+        - name: PublishDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: ClosingDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: SubjectId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: StudentId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: PageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: PageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfQuizDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfQuizDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfQuizDto"
   /api/quizzes/{quizId}:
     get:
       tags:
@@ -1008,6 +1076,18 @@ paths:
               - integer
               - string
             format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetQuizDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/GetQuizDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/GetQuizDto"
+        required: true
       responses:
         "200":
           description: OK
@@ -2162,6 +2242,14 @@ paths:
               - integer
               - string
             format: int64
+        - name: StudentId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
         - name: PageNumber
           in: query
           schema:
@@ -3130,6 +3218,18 @@ components:
           $ref: "#/components/schemas/StringSegment"
         isWeak:
           type: boolean
+    GetQuizDto:
+      required:
+        - studentId
+      type: object
+      properties:
+        studentId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
     GradeQuestionResponseDto:
       required:
         - score

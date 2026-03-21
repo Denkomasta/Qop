@@ -25,10 +25,17 @@ namespace Sqeez.Api.Controllers
 
         #region --- 1. QUIZZES ---
 
-        [HttpGet("{quizId}")]
-        public async Task<ActionResult<QuizDto>> GetQuiz(long quizId)
+        [HttpGet]
+        public async Task<ActionResult<PagedResponse<QuizDto>>> GetQuizzesForSubject([FromQuery] QuizFilterDto filter)
         {
-            var result = await _quizService.GetQuizByIdAsync(quizId);
+            var result = await _quizService.GetAllQuizzesAsync(filter);
+            return HandleServiceResult(result);
+        }
+
+        [HttpGet("{quizId}")]
+        public async Task<ActionResult<QuizDto>> GetQuiz(long quizId, [FromBody] GetQuizDto dto)
+        {
+            var result = await _quizService.GetQuizByIdAsync(quizId, dto);
             return HandleServiceResult(result);
         }
 

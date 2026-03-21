@@ -27,6 +27,14 @@ namespace Sqeez.Api.Services
                 query = query.Where(q => q.SubjectId == filter.SubjectId.Value);
             }
 
+            if (filter.StudentId.HasValue)
+            {
+                query = query.Where(q => _context.Enrollments.Any(e =>
+                    e.StudentId == filter.StudentId.Value &&
+                    e.SubjectId == q.SubjectId &&
+                    e.ArchivedAt == null));
+            }
+
             if (filter.IsActive.HasValue)
             {
                 var now = DateTime.UtcNow;
@@ -65,7 +73,9 @@ namespace Sqeez.Api.Services
                     q.ClosingDate,
                     q.SubjectId,
                     q.QuizQuestions.Count,
-                    q.QuizAttempts.Count
+                    q.QuizAttempts.Count(qa =>
+                        !filter.StudentId.HasValue ||
+                        qa.Enrollment.StudentId == filter.StudentId.Value)
                 ))
                 .ToListAsync();
 
@@ -78,7 +88,7 @@ namespace Sqeez.Api.Services
             });
         }
 
-        public async Task<ServiceResult<QuizDto>> GetQuizByIdAsync(long id)
+        public async Task<ServiceResult<QuizDto>> GetQuizByIdAsync(long id, GetQuizDto dto)
         {
             var quiz = await _context.Quizzes
                 .Where(q => q.Id == id)
@@ -92,7 +102,9 @@ namespace Sqeez.Api.Services
                     q.ClosingDate,
                     q.SubjectId,
                     q.QuizQuestions.Count,
-                    q.QuizAttempts.Count
+                    q.QuizAttempts.Count(qa =>
+                        !dto.studentId.HasValue ||
+                        qa.Enrollment.StudentId == dto.studentId.Value)
                 ))
                 .FirstOrDefaultAsync();
 

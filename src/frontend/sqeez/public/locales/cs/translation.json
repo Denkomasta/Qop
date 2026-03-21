@@ -226,6 +226,9 @@
     "startQuiz": "Spustit kvíz",
     "noSearchResults": "Nebyly nalezeny žádné kvízy odpovídající vyhledávání.",
     "noQuizzes": "Tomuto předmětu zatím nebyly přiřazeny žádné kvízy.",
-    "noQuizzesDesc": "Zkuste to znovu později nebo kontaktujte svého vyučujícího pro více informací."
+    "noQuizzesDesc": "Zkuste to znovu později nebo kontaktujte svého vyučujícího pro více informací.",
+    "retakeQuiz": "Vyplnit znovu",
+    "allQuizzes": "Všechny kvízy",
+    "noGlobalQuizzes": "Ještě nebyl vytvořen žádný kvíz"
   }
 }

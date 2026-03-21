@@ -227,6 +227,9 @@
     "startQuiz": "Start Quiz",
     "noSearchResults": "No quizzes found matching your search.",
     "noQuizzes": "No quizzes have been assigned to this subject yet.",
-    "noQuizzesDesc": "Check back later or contact your teacher for more information."
+    "noQuizzesDesc": "Check back later or contact your teacher for more information.",
+    "retakeQuiz": "Retake quiz",
+    "allQuizzes": "All quizzes",
+    "noGlobalQuizzes": "No quizzes created yet"
   }
 }

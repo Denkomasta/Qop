@@ -5,7 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type GetApiSubjectsSubjectIdQuizzesParams = {
+export type GetApiQuizzesParams = {
   SearchTerm?: string
   IsActive?: boolean
   PublishDate?: string

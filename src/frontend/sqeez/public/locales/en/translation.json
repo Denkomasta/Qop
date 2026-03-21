@@ -62,7 +62,9 @@
     "delete": "Delete",
     "confirmAction": "Are you sure?",
     "noResults": "No results found",
-    "backToProfile": "Back to profile"
+    "backToProfile": "Back to profile",
+    "back": "Back",
+    "status": "Status"
   },
   "dashboard": {
     "administration": "Administration",
@@ -228,8 +230,16 @@
     "noSearchResults": "No quizzes found matching your search.",
     "noQuizzes": "No quizzes have been assigned to this subject yet.",
     "noQuizzesDesc": "Check back later or contact your teacher for more information.",
-    "retakeQuiz": "Retake quiz",
     "allQuizzes": "All quizzes",
-    "noGlobalQuizzes": "No quizzes created yet"
+    "noGlobalQuizzes": "No quizzes created yet",
+    "notFound": "Quiz Not Found",
+    "notFoundDesc": "This quiz might have been removed or you do not have access to it.",
+    "instructions": "Instructions",
+    "quizDetails": "Quiz Details",
+    "attempted": "Attempted",
+    "notStarted": "Not Started",
+    "deadline": "Deadline",
+    "retakeQuiz": "Retake Quiz",
+    "publishDate": "Publish date"
   }
 }

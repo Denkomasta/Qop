@@ -5,10 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface GetQuizDto {
+export type GetApiQuizzesQuizIdParams = {
   /**
-   * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
-  studentId: number | string | null
+  studentId?: number | string
 }

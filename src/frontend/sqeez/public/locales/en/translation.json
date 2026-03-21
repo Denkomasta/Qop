@@ -64,7 +64,10 @@
     "noResults": "No results found",
     "backToProfile": "Back to profile",
     "back": "Back",
-    "status": "Status"
+    "status": "Status",
+    "previous": "Previous",
+    "next": "Next",
+    "continue": "Continue"
   },
   "dashboard": {
     "administration": "Administration",
@@ -240,6 +243,33 @@
     "notStarted": "Not Started",
     "deadline": "Deadline",
     "retakeQuiz": "Retake Quiz",
-    "publishDate": "Publish date"
+    "publishDate": "Publish date",
+    "loadingQuestions": "Preparing your quiz",
+    "noQuestions": "No Questions Found",
+    "noQuestionsDesc": "This quiz does not have any questions yet.",
+    "inProgress": "In Progress",
+    "questionProgress": "Question {{current}} of {{total}}",
+    "answered": "Answered",
+    "submitQuiz": "Submit Quiz",
+    "unansweredWarning": "You have unanswered questions. Are you sure you want to submit?",
+    "readyToStart": "Are you ready?",
+    "startWarning": "Clicking start will immediately consume one of your attempts. Make sure you have a stable connection and enough time to complete it.",
+    "startError": "Failed to start the quiz. Please try again.",
+    "beginAttempt": "Begin Attempt",
+    "cancel": "Cancel",
+    "getReady": "Get Ready!",
+    "correctAnswer": "Correct!",
+    "incorrectAnswer": "Incorrect",
+    "greatJob": "Great job! You nailed it.",
+    "reviewAnswer": "Let's review the correct answer below.",
+    "finishQuiz": "Finish Quiz",
+    "continue": "Continue",
+    "quizComplete": "Quiz Complete!",
+    "finalScore": "Final Score",
+    "correctAnswers": "Correct",
+    "totalQuestions": "Total Questions",
+    "backToQuizzes": "Back to Quizzes",
+    "viewDetails": "View Details",
+    "submitAnswer": "Submit answer"
   }
 }

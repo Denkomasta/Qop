@@ -62,7 +62,9 @@
     "delete": "Vymazat",
     "confirmAction": "Jste si jistý?",
     "noResults": "Nebyly nalezeny žádné výsledky.",
-    "backToProfile": "Zpátky na profil"
+    "backToProfile": "Zpátky na profil",
+    "back": "Zpět",
+    "status": "Stav"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -229,6 +231,14 @@
     "noQuizzesDesc": "Zkuste to znovu později nebo kontaktujte svého vyučujícího pro více informací.",
     "retakeQuiz": "Vyplnit znovu",
     "allQuizzes": "Všechny kvízy",
-    "noGlobalQuizzes": "Ještě nebyl vytvořen žádný kvíz"
+    "noGlobalQuizzes": "Ještě nebyl vytvořen žádný kvíz",
+    "notFound": "Kvíz nebyl nalezen",
+    "notFoundDesc": "Tento kvíz byl pravděpodobně odstraněn nebo k němu nemáte přístup.",
+    "instructions": "Instrukce",
+    "quizDetails": "Detaily kvízu",
+    "attempted": "Zahájeno",
+    "notStarted": "Nezahájeno",
+    "deadline": "Termín odevzdání",
+    "publishDate": "Datum zveřejnění"
   }
 }

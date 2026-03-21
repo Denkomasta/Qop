@@ -24,9 +24,9 @@ import type {
   CreateQuizOptionDto,
   CreateQuizQuestionDto,
   GetApiQuizzesParams,
+  GetApiQuizzesQuizIdParams,
   GetApiQuizzesQuizIdQuestionsParams,
   GetApiQuizzesQuizIdQuestionsQuestionIdOptionsParams,
-  GetQuizDto,
   PagedResponseOfQuizDto,
   PagedResponseOfQuizQuestionDto,
   PatchQuizDto,
@@ -177,26 +177,21 @@ export function useGetApiQuizzes<
 
 export const getApiQuizzesQuizId = (
   quizId: number | string,
-  getQuizDto: GetQuizDto,
+  params?: GetApiQuizzesQuizIdParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   return customInstance<QuizDto>(
-    {
-      url: `/api/quizzes/${quizId}`,
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      signal,
-    },
+    { url: `/api/quizzes/${quizId}`, method: 'GET', params, signal },
     options,
   )
 }
 
 export const getGetApiQuizzesQuizIdQueryKey = (
   quizId: number | string,
-  getQuizDto?: GetQuizDto,
+  params?: GetApiQuizzesQuizIdParams,
 ) => {
-  return [`/api/quizzes/${quizId}`, getQuizDto] as const
+  return [`/api/quizzes/${quizId}`, ...(params ? [params] : [])] as const
 }
 
 export const getGetApiQuizzesQuizIdQueryOptions = <
@@ -204,7 +199,7 @@ export const getGetApiQuizzesQuizIdQueryOptions = <
   TError = ErrorType<unknown>,
 >(
   quizId: number | string,
-  getQuizDto: GetQuizDto,
+  params?: GetApiQuizzesQuizIdParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -219,12 +214,12 @@ export const getGetApiQuizzesQuizIdQueryOptions = <
   const { query: queryOptions, request: requestOptions } = options ?? {}
 
   const queryKey =
-    queryOptions?.queryKey ?? getGetApiQuizzesQuizIdQueryKey(quizId, getQuizDto)
+    queryOptions?.queryKey ?? getGetApiQuizzesQuizIdQueryKey(quizId, params)
 
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof getApiQuizzesQuizId>>
   > = ({ signal }) =>
-    getApiQuizzesQuizId(quizId, getQuizDto, requestOptions, signal)
+    getApiQuizzesQuizId(quizId, params, requestOptions, signal)
 
   return {
     queryKey,
@@ -248,7 +243,7 @@ export function useGetApiQuizzesQuizId<
   TError = ErrorType<unknown>,
 >(
   quizId: number | string,
-  getQuizDto: GetQuizDto,
+  params: undefined | GetApiQuizzesQuizIdParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -276,7 +271,7 @@ export function useGetApiQuizzesQuizId<
   TError = ErrorType<unknown>,
 >(
   quizId: number | string,
-  getQuizDto: GetQuizDto,
+  params?: GetApiQuizzesQuizIdParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -304,7 +299,7 @@ export function useGetApiQuizzesQuizId<
   TError = ErrorType<unknown>,
 >(
   quizId: number | string,
-  getQuizDto: GetQuizDto,
+  params?: GetApiQuizzesQuizIdParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -325,7 +320,7 @@ export function useGetApiQuizzesQuizId<
   TError = ErrorType<unknown>,
 >(
   quizId: number | string,
-  getQuizDto: GetQuizDto,
+  params?: GetApiQuizzesQuizIdParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -342,7 +337,7 @@ export function useGetApiQuizzesQuizId<
 } {
   const queryOptions = getGetApiQuizzesQuizIdQueryOptions(
     quizId,
-    getQuizDto,
+    params,
     options,
   )
 

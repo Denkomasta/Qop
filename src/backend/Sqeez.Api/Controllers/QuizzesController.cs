@@ -33,7 +33,7 @@ namespace Sqeez.Api.Controllers
         }
 
         [HttpGet("{quizId}")]
-        public async Task<ActionResult<QuizDto>> GetQuiz(long quizId, [FromBody] GetQuizDto dto)
+        public async Task<ActionResult<QuizDto>> GetQuiz(long quizId, [FromQuery] GetQuizDto dto)
         {
             var result = await _quizService.GetQuizByIdAsync(quizId, dto);
             return HandleServiceResult(result);

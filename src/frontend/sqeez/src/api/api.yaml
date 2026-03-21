@@ -1076,18 +1076,14 @@ paths:
               - integer
               - string
             format: int64
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/GetQuizDto"
-          text/json:
-            schema:
-              $ref: "#/components/schemas/GetQuizDto"
-          application/*+json:
-            schema:
-              $ref: "#/components/schemas/GetQuizDto"
-        required: true
+        - name: studentId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
       responses:
         "200":
           description: OK
@@ -3218,18 +3214,6 @@ components:
           $ref: "#/components/schemas/StringSegment"
         isWeak:
           type: boolean
-    GetQuizDto:
-      required:
-        - studentId
-      type: object
-      properties:
-        studentId:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - "null"
-            - integer
-            - string
-          format: int64
     GradeQuestionResponseDto:
       required:
         - score

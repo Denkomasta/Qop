@@ -64,7 +64,10 @@
     "noResults": "Nebyly nalezeny žádné výsledky.",
     "backToProfile": "Zpátky na profil",
     "back": "Zpět",
-    "status": "Stav"
+    "status": "Stav",
+    "previous": "Předchozí",
+    "next": "Další",
+    "continue": "Pokračovat"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -239,6 +242,33 @@
     "attempted": "Zahájeno",
     "notStarted": "Nezahájeno",
     "deadline": "Termín odevzdání",
-    "publishDate": "Datum zveřejnění"
+    "publishDate": "Datum zveřejnění",
+    "loadingQuestions": "Připravujeme váš kvíz",
+    "noQuestions": "Nebyly nalezeny žádné otázky",
+    "noQuestionsDesc": "Tento kvíz zatím neobsahuje žádné otázky.",
+    "inProgress": "Probíhá",
+    "questionProgress": "Otázka {{current}} z {{total}}",
+    "answered": "Zodpovězeno",
+    "submitQuiz": "Odevzdat kvíz",
+    "unansweredWarning": "Máte nezodpovězené otázky. Opravdu chcete kvíz odevzdat?",
+    "readyToStart": "Jste připraveni?",
+    "startWarning": "Kliknutím na tlačítko Start se okamžitě spotřebuje jeden z vašich pokusů. Ujistěte se, že máte stabilní připojení a dostatek času na dokončení.",
+    "startError": "Nepodařilo se spustit kvíz. Zkuste to prosím znovu.",
+    "beginAttempt": "Zahájit pokus",
+    "cancel": "Zrušit",
+    "getReady": "Připravte se!",
+    "correctAnswer": "Správně!",
+    "incorrectAnswer": "Nesprávně",
+    "greatJob": "Skvělá práce! Zvládli jste to.",
+    "reviewAnswer": "Níže se podívejte na správnou odpověď.",
+    "finishQuiz": "Dokončit kvíz",
+    "continue": "Pokračovat",
+    "quizComplete": "Kvíz dokončen!",
+    "finalScore": "Konečné skóre",
+    "correctAnswers": "Správně",
+    "totalQuestions": "Celkem otázek",
+    "backToQuizzes": "Zpět na kvízy",
+    "viewDetails": "Zobrazit detaily",
+    "submitAnswer": "Odeslat odpověď"
   }
 }

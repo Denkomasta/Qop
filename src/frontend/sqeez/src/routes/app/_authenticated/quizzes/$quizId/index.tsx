@@ -262,7 +262,7 @@ function QuizDetailsPage() {
                 ) : (
                   <Button className="w-full text-base" size="lg" asChild>
                     <Link
-                      to="/app/quizzes/$quizId/take"
+                      to="/app/quizzes/$quizId/play"
                       params={{ quizId: quizId.toString() }}
                     >
                       <PlayCircle className="mr-2 size-5" />

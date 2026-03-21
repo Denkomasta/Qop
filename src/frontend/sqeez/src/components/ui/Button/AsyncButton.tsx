@@ -40,7 +40,7 @@ export function AsyncButton({
       {...props}
     >
       {(isInternalLoading || isLoading) && <Spinner size={'sm'} />}
-      {(isInternalLoading || isLoading) && loadingText ? loadingText : children}
+      {isInternalLoading || isLoading ? loadingText : children}
     </Button>
   )
 }

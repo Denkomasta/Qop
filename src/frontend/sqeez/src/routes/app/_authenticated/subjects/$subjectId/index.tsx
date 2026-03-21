@@ -19,11 +19,11 @@ import { Badge } from '@/components/ui/Badge/Badge'
 import { Spinner } from '@/components/ui/Spinner'
 import { useGetApiSubjectsId } from '@/api/generated/endpoints/subjects/subjects'
 
-export const Route = createFileRoute('/app/_authenticated/subjects/$subjectId')(
-  {
-    component: SubjectPage,
-  },
-)
+export const Route = createFileRoute(
+  '/app/_authenticated/subjects/$subjectId/',
+)({
+  component: SubjectPage,
+})
 
 function SubjectPage() {
   const { t } = useTranslation()
@@ -179,7 +179,12 @@ function SubjectPage() {
                 <CardTitle className="text-sm font-medium">
                   {t('subject.totalQuizzes')}
                 </CardTitle>
-                <FileText className="h-4 w-4 text-muted-foreground" />
+                <Link
+                  to="/app/subjects/$subjectId/quizzes"
+                  params={{ subjectId }}
+                >
+                  <FileText className="size-4 text-muted-foreground" />
+                </Link>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">

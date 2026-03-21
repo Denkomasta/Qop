@@ -211,5 +211,21 @@
   },
   "system": {
     "name": "Sqeez"
+  },
+  "quiz": {
+    "attempts": "Pokusy",
+    "subjectQuizzes": "Kvízy předmětu",
+    "totalCount": "Celkem kvízů: {{count}}",
+    "search": "Hledat kvízy...",
+    "completed": "Dokončeno",
+    "pending": "K vypracování",
+    "noDescription": "Bez popisu",
+    "due": "Termín",
+    "questions": "otázek",
+    "viewResults": "Zobrazit výsledky",
+    "startQuiz": "Spustit kvíz",
+    "noSearchResults": "Nebyly nalezeny žádné kvízy odpovídající vyhledávání.",
+    "noQuizzes": "Tomuto předmětu zatím nebyly přiřazeny žádné kvízy.",
+    "noQuizzesDesc": "Zkuste to znovu později nebo kontaktujte svého vyučujícího pro více informací."
   }
 }

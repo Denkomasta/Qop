@@ -207,9 +207,26 @@
     "description": "About this Subject",
     "noDescription": "No description has been provided for this subject.",
     "enrolledStudents": "Enrolled Students",
-    "totalQuizzes": "Total Quizzes"
+    "totalQuizzes": "Total Quizzes",
+    "backToSubject": "Back to Subject"
   },
   "system": {
     "name": "Sqeez"
+  },
+  "quiz": {
+    "attempts": "Attempts",
+    "subjectQuizzes": "Subject Quizzes",
+    "totalCount": "{{count}} Quizzes",
+    "search": "Search quizzes...",
+    "completed": "Completed",
+    "pending": "Pending",
+    "noDescription": "No description available",
+    "due": "Due",
+    "questions": "questions",
+    "viewResults": "View Results",
+    "startQuiz": "Start Quiz",
+    "noSearchResults": "No quizzes found matching your search.",
+    "noQuizzes": "No quizzes have been assigned to this subject yet.",
+    "noQuizzesDesc": "Check back later or contact your teacher for more information."
   }
 }

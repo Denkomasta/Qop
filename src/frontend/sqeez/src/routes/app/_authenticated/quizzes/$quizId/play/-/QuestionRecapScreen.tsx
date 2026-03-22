@@ -2,10 +2,10 @@ import { useTranslation } from 'react-i18next'
 import { CheckCircle2, XCircle, ArrowRight } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import type { QuizQuestionDto } from '@/api/generated/model'
+import type { DetailedQuizQuestionDto } from '@/api/generated/model'
 
 interface QuestionRecapScreenProps {
-  question: QuizQuestionDto
+  question: DetailedQuizQuestionDto
   selectedOptionIds: (number | string)[]
   correctOptionIds: (number | string)[]
   onContinue: () => void
@@ -66,7 +66,7 @@ export function QuestionRecapScreen({
       <Card className="mb-8 flex-1 border-primary/10 shadow-md">
         <CardHeader className="border-b bg-muted/20 pb-6">
           <CardTitle className="text-xl leading-relaxed text-muted-foreground md:text-2xl">
-            {question.text}
+            {question.title}
           </CardTitle>
         </CardHeader>
 

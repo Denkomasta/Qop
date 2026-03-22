@@ -1388,6 +1388,42 @@ paths:
             text/json:
               schema:
                 type: boolean
+  /api/quizzes/{quizId}/questions/{questionId}/detailed:
+    get:
+      tags:
+        - Quizzes
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/DetailedQuizQuestionDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetailedQuizQuestionDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/DetailedQuizQuestionDto"
   /api/quizzes/{quizId}/questions/{questionId}/options:
     get:
       tags:
@@ -3052,6 +3088,54 @@ components:
             - integer
             - string
           format: int64
+    DetailedQuizQuestionDto:
+      required:
+        - id
+        - title
+        - difficulty
+        - timeLimit
+        - quizId
+        - mediaAssetId
+        - options
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        title:
+          type: string
+        difficulty:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        timeLimit:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        quizId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        mediaAssetId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/StudentQuizOptionDto"
     DetailedUserDto:
       type: object
       properties:
@@ -4621,6 +4705,40 @@ components:
           type: string
           format: date-time
         schoolClassId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+    StudentQuizOptionDto:
+      required:
+        - id
+        - text
+        - isFreeText
+        - quizQuestionId
+        - mediaAssetId
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        text:
+          type:
+            - "null"
+            - string
+        isFreeText:
+          type: boolean
+        quizQuestionId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        mediaAssetId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - "null"

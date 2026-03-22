@@ -104,5 +104,23 @@
         bool? IsFreeText = null,
         bool? IsCorrect = null,
         long? MediaAssetId = null
-        );
+    );
+
+    public record StudentQuizOptionDto(
+        long Id,
+        string? Text,
+        bool IsFreeText,
+        long QuizQuestionId,
+        long? MediaAssetId
+    );
+
+    public record DetailedQuizQuestionDto(
+        long Id,
+        string Title,
+        int Difficulty,
+        int TimeLimit,
+        long QuizId,
+        long? MediaAssetId,
+        List<StudentQuizOptionDto> Options
+    );
 }

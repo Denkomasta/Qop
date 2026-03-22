@@ -10,5 +10,6 @@ namespace Sqeez.Api.Services.Interfaces
         Task<ServiceResult<QuizQuestionDto>> CreateQuizQuestionAsync(CreateQuizQuestionDto dto);
         Task<ServiceResult<QuizQuestionDto>> PatchQuizQuestionAsync(long id, PatchQuizQuestionDto dto);
         Task<ServiceResult<bool>> DeleteQuizQuestionAsync(long id);
+        Task<ServiceResult<DetailedQuizQuestionDto>> GetDetailedQuizQuestionByIdAsync(long id, long quizId);
     }
 }

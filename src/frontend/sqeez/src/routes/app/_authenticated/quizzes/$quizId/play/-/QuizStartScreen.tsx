@@ -10,15 +10,16 @@ import {
   CardTitle,
 } from '@/components/ui/Card'
 import { AsyncButton, Button } from '@/components/ui/Button'
-
-// Replace with your actual Orval hook
-// import { usePostApiQuizAttemptsStart } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
+import { usePostApiQuizAttemptsStart } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
 
 interface QuizStartScreenProps {
   quizId: number
   quizTitle: string
   enrollmentId: number
-  onAttemptStarted: (attemptId: number) => void
+  onAttemptStarted: (
+    newAttemptId: number,
+    firstQuestionId: number | null,
+  ) => void
   onCancel: () => void
 }
 
@@ -33,27 +34,23 @@ export function QuizStartScreen({
   const [isStarting, setIsStarting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // const startMutation = usePostApiQuizAttemptsStart()
+  const startMutation = usePostApiQuizAttemptsStart()
 
   const handleStartAttempt = async () => {
     setIsStarting(true)
     setError(null)
 
     try {
-      // Replace this mock with your actual mutation
-      /*
       const response = await startMutation.mutateAsync({
         data: {
           quizId: quizId,
           enrollmentId: enrollmentId,
         },
       })
-      onAttemptStarted(Number(response.id))
-      */
-
-      // Mock delay and success for UI testing
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-      onAttemptStarted(999) // Mock Attempt ID
+      onAttemptStarted(
+        Number(response.id),
+        response?.nextQuestionId ? Number(response.nextQuestionId) : null,
+      )
     } catch (err) {
       console.error('Failed to start quiz attempt:', err)
       setError(

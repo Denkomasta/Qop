@@ -1,23 +1,27 @@
 import { useState } from 'react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { CheckCircle2 } from 'lucide-react'
 import { AsyncButton } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { useAuthStore } from '@/store/useAuthStore'
 
-import {
-  QuestionCard,
-  type QuizQuestionDto,
-} from '@/components/quizzes/QuestionCard'
+import { QuestionCard } from '@/components/quizzes/QuestionCard'
 import { QuizStartScreen } from './-/QuizStartScreen'
-import { QuestionTransitionScreen } from './-/QuizTransitionScreen'
 import { QuestionRecapScreen } from './-/QuestionRecapScreen'
 import { QuizRecapScreen } from './-/QuizRecapScreen'
 
-// Import your actual Orval hooks here
-// import { useGetApiQuizzesQuizId } from '@/api/generated/endpoints/quizzes/quizzes'
-// import { usePostApiQuizAttemptsStart, usePostApiQuizAttemptsIdAnswer, usePostApiQuizAttemptsIdComplete } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
+import { toast } from 'sonner'
+import { QuestionTransitionScreen } from './-/QuizTransitionScreen'
+import {
+  useGetApiQuizzesQuizId,
+  useGetApiQuizzesQuizIdQuestionsQuestionIdDetailed,
+} from '@/api/generated/endpoints/quizzes/quizzes'
+import { useGetApiSubjectsSubjectIdEnrollments } from '@/api/generated/endpoints/subjects/subjects'
+import {
+  usePostApiQuizAttemptsIdAnswer,
+  usePostApiQuizAttemptsIdComplete,
+} from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
 
 export const Route = createFileRoute(
   '/app/_authenticated/quizzes/$quizId/play/',
@@ -30,178 +34,191 @@ type QuizPhase = 'start' | 'transition' | 'answering' | 'recap' | 'completed'
 function QuizTakePage() {
   const { t } = useTranslation()
   const { quizId } = Route.useParams()
-  const navigate = useNavigate()
   const { user } = useAuthStore()
+  const userId = user?.id
 
   const [phase, setPhase] = useState<QuizPhase>('start')
   const [attemptId, setAttemptId] = useState<number | null>(null)
-  const [currentIndex, setCurrentIndex] = useState(0)
 
-  const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now())
+  const [currentQuestionId, setCurrentQuestionId] = useState<number | null>(
+    null,
+  )
+  const [nextQuestionId, setNextQuestionId] = useState<number | null>(null)
+
+  const [questionStartTime, setQuestionStartTime] = useState<number>(() =>
+    Date.now(),
+  )
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0)
+  const [questionsAnswered, setQuestionsAnswered] = useState(0)
 
-  const [answers, setAnswers] = useState<
-    Record<
-      number,
-      { selectedOptionIds: (number | string)[]; timeSpentMs: number }
-    >
-  >({})
+  const [selectedOptionIds, setSelectedOptionIds] = useState<
+    (number | string)[]
+  >([])
+  const [freeTextValue, setFreeTextValue] = useState<string>('')
   const [currentCorrectOptionIds, setCurrentCorrectOptionIds] = useState<
     (number | string)[]
   >([])
 
-  // --- MOCKED API DATA (Replace with your actual hooks) ---
-  // const { data: quiz } = useGetApiQuizzesQuizId(Number(quizId))
-  const isLoading = false
-  const quiz = {
-    id: Number(quizId),
-    title: 'Introduction to Computer Science',
-    quizQuestions: [
-      {
-        id: 101,
-        text: 'What does CPU stand for?',
-        options: [
-          { id: 1, text: 'Central Process Unit' },
-          { id: 2, text: 'Computer Personal Unit' },
-          { id: 3, text: 'Central Processing Unit' },
-          { id: 4, text: 'Central Processor Unit' },
-        ],
-      },
-      {
-        id: 102,
-        text: 'Which of the following is not a programming language?',
-        options: [
-          { id: 5, text: 'Python' },
-          { id: 6, text: 'HTML' },
-          { id: 7, text: 'Java' },
-          { id: 8, text: 'C++' },
-        ],
-      },
-    ] as QuizQuestionDto[],
-  }
+  const { data: quizData, isLoading: isQuizLoading } = useGetApiQuizzesQuizId(
+    quizId,
+    { studentId: userId },
+    { query: { enabled: !!userId } },
+  )
 
-  const questions = quiz?.quizQuestions || []
-  const totalQuestions = questions.length
-  const currentQuestion = questions[currentIndex]
+  const subjectId = quizData?.subjectId
 
-  const handleAttemptStarted = (newAttemptId: number) => {
+  const { data: enrollmentData, isLoading: isEnrollmentLoading } =
+    useGetApiSubjectsSubjectIdEnrollments(
+      subjectId!,
+      { StudentId: userId },
+      { query: { enabled: !!subjectId && !!userId } },
+    )
+
+  const { data: currentQuestion, isLoading } =
+    useGetApiQuizzesQuizIdQuestionsQuestionIdDetailed(
+      Number(quizId),
+      Number(currentQuestionId),
+      {
+        query: {
+          enabled: !!currentQuestionId && phase === 'answering',
+          refetchOnWindowFocus: false,
+        },
+      },
+    )
+
+  const answerMutation = usePostApiQuizAttemptsIdAnswer()
+  const completeMutation = usePostApiQuizAttemptsIdComplete()
+
+  const handleAttemptStarted = (
+    newAttemptId: number,
+    firstQuestionId: number | null,
+  ) => {
     setAttemptId(newAttemptId)
-    setPhase('transition')
+
+    if (firstQuestionId) {
+      setCurrentQuestionId(firstQuestionId)
+      setPhase('transition')
+    } else {
+      setPhase('completed')
+    }
   }
 
   const handleTransitionComplete = () => {
     setPhase('answering')
     setQuestionStartTime(Date.now())
+
+    setSelectedOptionIds([])
+    setFreeTextValue('')
+    setCurrentCorrectOptionIds([])
   }
 
   const handleOptionSelect = (
     questionId: number | string,
     optionId: number | string,
   ) => {
-    const timeSpentSoFar = Date.now() - questionStartTime
-
-    setAnswers((prev) => {
-      const existing = prev[Number(questionId)]
-
-      const newSelection = [optionId]
-
-      return {
-        ...prev,
-        [Number(questionId)]: {
-          selectedOptionIds: newSelection,
-          timeSpentMs: (existing?.timeSpentMs || 0) + timeSpentSoFar,
-        },
-      }
-    })
-
+    setSelectedOptionIds([optionId])
     setQuestionStartTime(Date.now())
   }
 
-  const handleAnswerSubmit = async () => {
-    if (!attemptId || !currentQuestion) return
+  const handleFreeTextChange = (questionId: number | string, text: string) => {
+    setFreeTextValue(text)
+  }
 
-    const currentAnswer = answers[Number(currentQuestion.id)]
-    if (!currentAnswer || currentAnswer.selectedOptionIds.length === 0) {
-      alert(
+  const handleAnswerSubmit = async () => {
+    if (!attemptId || !currentQuestionId) return
+
+    const hasSelection =
+      selectedOptionIds.length > 0 || freeTextValue.trim().length > 0
+    if (!hasSelection) {
+      toast.warning(
         t(
           'quiz.selectAnswerWarning',
-          'Please select an answer before continuing.',
+          'Please select or type an answer before continuing.',
         ),
       )
       return
     }
 
     try {
-      const finalTimeSpent =
-        currentAnswer.timeSpentMs + (Date.now() - questionStartTime)
+      const timeSpentMs = Date.now() - questionStartTime
 
-      // 2. Fire your actual API endpoint to save this specific answer
-      /*
       const response = await answerMutation.mutateAsync({
         id: attemptId,
         data: {
-          quizQuestionId: Number(currentQuestion.id),
-          responseTimeMs: finalTimeSpent,
-          freeTextAnswer: null,
-          selectedOptionIds: currentAnswer.selectedOptionIds
-        }
+          quizQuestionId: currentQuestionId,
+          responseTimeMs: timeSpentMs,
+          freeTextAnswer: freeTextValue || null,
+          selectedOptionIds: selectedOptionIds,
+        },
       })
-      // Extract the correct answers from your backend response!
-      const correctIdsFromApi = response.correctOptionIds 
-      */
 
-      await new Promise((r) => setTimeout(r, 800))
-      const correctIdsFromApi = currentIndex === 0 ? [3] : [6]
+      const correctIds = response.correctOptionIds
 
-      setCurrentCorrectOptionIds(correctIdsFromApi)
+      if (!correctIds) {
+        throw new Error('Response did not return correct answers!')
+      }
+
+      setCurrentCorrectOptionIds(correctIds)
+
+      setNextQuestionId(
+        response.nextQuestionId ? Number(response.nextQuestionId) : null,
+      )
 
       const isFullyCorrect =
-        currentAnswer.selectedOptionIds.length === correctIdsFromApi.length &&
-        currentAnswer.selectedOptionIds.every((id) =>
-          correctIdsFromApi.includes(id),
-        )
+        selectedOptionIds.length === correctIds.length &&
+        selectedOptionIds.every((id) => correctIds.includes(id))
 
       if (isFullyCorrect) {
         setCorrectAnswersCount((prev) => prev + 1)
       }
 
+      setQuestionsAnswered((prev) => prev + 1)
       setPhase('recap')
     } catch (error) {
       console.error('Failed to submit answer', error)
-      alert(t('common.error', 'An error occurred. Please try again.'))
+      toast.error(t('common.error'))
     }
   }
 
   const handleRecapContinue = async () => {
-    if (currentIndex < totalQuestions - 1) {
-      setCurrentIndex((prev) => prev + 1)
+    if (nextQuestionId !== null) {
+      setCurrentQuestionId(nextQuestionId)
       setPhase('transition')
     } else {
       try {
-        // await completeMutation.mutateAsync({ id: attemptId! })
-        await new Promise((r) => setTimeout(r, 1000)) // Mock delay
-
+        if (attemptId) {
+          await completeMutation.mutateAsync({ id: attemptId })
+        }
         setPhase('completed')
       } catch (error) {
         console.error('Failed to complete quiz', error)
+        toast.error(t('common.error', 'Failed to finalize quiz.'))
       }
     }
   }
 
-  if (isLoading || !quiz) {
+  if (
+    isQuizLoading ||
+    !quizData ||
+    isEnrollmentLoading ||
+    !enrollmentData?.data
+  ) {
     return (
-      <div className="flex min-h-[80vh] flex-col items-center justify-center gap-4">
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
         <Spinner size="lg" />
       </div>
     )
   }
 
+  const totalQuestions = Number(quizData.quizQuestions)
+  const userEnrollment = enrollmentData.data[0]
+
   if (phase === 'start') {
     return (
       <QuizStartScreen
-        quizId={quiz.id}
-        quizTitle={quiz.title}
-        enrollmentId={123}
+        quizId={Number(quizId)}
+        quizTitle={quizData.title}
+        enrollmentId={Number(userEnrollment.id)}
         onAttemptStarted={handleAttemptStarted}
         onCancel={() => history.back()}
       />
@@ -211,7 +228,7 @@ function QuizTakePage() {
   if (phase === 'transition') {
     return (
       <QuestionTransitionScreen
-        questionNumber={currentIndex + 1}
+        questionNumber={questionsAnswered + 1}
         totalQuestions={totalQuestions}
         onComplete={handleTransitionComplete}
       />
@@ -219,9 +236,16 @@ function QuizTakePage() {
   }
 
   if (phase === 'answering' && currentQuestion) {
-    const currentAnswer = answers[Number(currentQuestion.id)]
-    const hasSelected =
-      currentAnswer && currentAnswer.selectedOptionIds.length > 0
+    if (isLoading) {
+      return (
+        <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+          <Spinner size="lg" />
+        </div>
+      )
+    }
+
+    const hasSelection =
+      selectedOptionIds.length > 0 || freeTextValue.trim().length > 0
 
     return (
       <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-3xl animate-in flex-col p-4 duration-500 fade-in md:p-6 lg:p-8">
@@ -229,7 +253,7 @@ function QuizTakePage() {
           <div className="flex justify-between text-sm font-medium text-muted-foreground">
             <span>
               {t('quiz.questionProgress', {
-                current: currentIndex + 1,
+                current: questionsAnswered + 1,
                 total: totalQuestions,
               })}
             </span>
@@ -237,24 +261,28 @@ function QuizTakePage() {
           <div className="h-2.5 w-full overflow-hidden rounded-full bg-secondary">
             <div
               className="h-full bg-primary transition-all duration-300 ease-in-out"
-              style={{ width: `${(currentIndex / totalQuestions) * 100}%` }}
+              style={{
+                width: `${(questionsAnswered / totalQuestions) * 100}%`,
+              }}
             />
           </div>
         </div>
 
         <QuestionCard
           question={currentQuestion}
-          selectedOptionIds={currentAnswer?.selectedOptionIds || []}
+          selectedOptionIds={selectedOptionIds}
           onSelectOption={handleOptionSelect}
+          freeTextValue={freeTextValue}
+          onChangeFreeText={handleFreeTextChange}
         />
 
         <div className="mt-8 flex justify-end">
           <AsyncButton
             size="lg"
             onClick={handleAnswerSubmit}
-            disabled={!hasSelected}
+            disabled={!hasSelection}
             className="w-full shadow-md sm:w-auto"
-            loadingText={t('quiz.submitAnswer')}
+            loadingText={t('common.submitting', 'Submitting...')}
           >
             <CheckCircle2 className="mr-2 h-5 w-5" />
             {t('quiz.submitAnswer')}
@@ -268,12 +296,10 @@ function QuizTakePage() {
     return (
       <QuestionRecapScreen
         question={currentQuestion}
-        selectedOptionIds={
-          answers[Number(currentQuestion.id)]?.selectedOptionIds || []
-        }
+        selectedOptionIds={selectedOptionIds}
         correctOptionIds={currentCorrectOptionIds}
         onContinue={handleRecapContinue}
-        isLastQuestion={currentIndex === totalQuestions - 1}
+        isLastQuestion={nextQuestionId === null}
       />
     )
   }
@@ -281,9 +307,9 @@ function QuizTakePage() {
   if (phase === 'completed') {
     return (
       <QuizRecapScreen
-        quizId={quiz.id}
-        quizTitle={quiz.title}
-        totalQuestions={totalQuestions}
+        quizId={quizId}
+        quizTitle="Quiz Completed"
+        totalQuestions={questionsAnswered}
         correctCount={correctAnswersCount}
       />
     )

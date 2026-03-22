@@ -180,5 +180,32 @@ namespace Sqeez.Api.Services
                 return ServiceResult<bool>.Failure("Cannot delete this question because students have already submitted responses to it.", ServiceError.Conflict);
             }
         }
+
+        public async Task<ServiceResult<DetailedQuizQuestionDto>> GetDetailedQuizQuestionByIdAsync(long id, long quizId)
+        {
+            var question = await _context.QuizQuestions
+                .Where(q => q.Id == id)
+                .Select(q => new DetailedQuizQuestionDto(
+                    q.Id,
+                    q.Title ?? string.Empty,
+                    q.Difficulty,
+                    q.TimeLimit,
+                    q.QuizId,
+                    q.MediaAssetId,
+                    q.Options.Select(o => new StudentQuizOptionDto(
+                        o.Id,
+                        o.Text,
+                        o.IsFreeText,
+                        o.QuizQuestionId,
+                        o.MediaAssetId
+                    )).ToList()
+                ))
+                .FirstOrDefaultAsync();
+
+            if (question == null || question.QuizId != quizId)
+                return ServiceResult<DetailedQuizQuestionDto>.Failure("Quiz question not found.", ServiceError.NotFound);
+
+            return ServiceResult<DetailedQuizQuestionDto>.Ok(question);
+        }
     }
 }

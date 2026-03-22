@@ -99,6 +99,14 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
+        [Authorize]
+        [HttpGet("{quizId}/questions/{questionId}/detailed")]
+        public async Task<ActionResult<DetailedQuizQuestionDto>> GetDetailedQuestion(long quizId, long questionId)
+        {
+            var result = await _questionService.GetDetailedQuizQuestionByIdAsync(questionId, quizId);
+            return HandleServiceResult(result);
+        }
+
         #endregion
 
         #region --- 3. QUIZ OPTIONS ---

@@ -26,8 +26,8 @@ import type {
   MediaAssetDto,
   PagedResponseOfMediaAssetDto,
   PatchMediaAssetDto,
-  PhysicalFileResult,
   PostApiMediaAssetsUploadBody,
+  ProblemDetails,
 } from '../../model'
 
 import { customInstance } from '../../../custom-axios'
@@ -703,8 +703,13 @@ export const getApiMediaAssetsIdFile = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<PhysicalFileResult>(
-    { url: `/api/media-assets/${id}/file`, method: 'GET', signal },
+  return customInstance<Blob>(
+    {
+      url: `/api/media-assets/${id}/file`,
+      method: 'GET',
+      responseType: 'blob',
+      signal,
+    },
     options,
   )
 }
@@ -715,7 +720,7 @@ export const getGetApiMediaAssetsIdFileQueryKey = (id: number | string) => {
 
 export const getGetApiMediaAssetsIdFileQueryOptions = <
   TData = Awaited<ReturnType<typeof getApiMediaAssetsIdFile>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<ProblemDetails>,
 >(
   id: number | string,
   options?: {
@@ -753,11 +758,11 @@ export const getGetApiMediaAssetsIdFileQueryOptions = <
 export type GetApiMediaAssetsIdFileQueryResult = NonNullable<
   Awaited<ReturnType<typeof getApiMediaAssetsIdFile>>
 >
-export type GetApiMediaAssetsIdFileQueryError = ErrorType<unknown>
+export type GetApiMediaAssetsIdFileQueryError = ErrorType<ProblemDetails>
 
 export function useGetApiMediaAssetsIdFile<
   TData = Awaited<ReturnType<typeof getApiMediaAssetsIdFile>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<ProblemDetails>,
 >(
   id: number | string,
   options: {
@@ -784,7 +789,7 @@ export function useGetApiMediaAssetsIdFile<
 }
 export function useGetApiMediaAssetsIdFile<
   TData = Awaited<ReturnType<typeof getApiMediaAssetsIdFile>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<ProblemDetails>,
 >(
   id: number | string,
   options?: {
@@ -811,7 +816,7 @@ export function useGetApiMediaAssetsIdFile<
 }
 export function useGetApiMediaAssetsIdFile<
   TData = Awaited<ReturnType<typeof getApiMediaAssetsIdFile>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<ProblemDetails>,
 >(
   id: number | string,
   options?: {
@@ -831,7 +836,7 @@ export function useGetApiMediaAssetsIdFile<
 
 export function useGetApiMediaAssetsIdFile<
   TData = Awaited<ReturnType<typeof getApiMediaAssetsIdFile>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<ProblemDetails>,
 >(
   id: number | string,
   options?: {

@@ -139,7 +139,9 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize]
         [HttpGet("{id}/file")]
-        public async Task<ActionResult<PhysicalFileResult>> GetFile(long id)
+        [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK, "application/octet-stream")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetFile(long id)
         {
             var userIdStr = GetUserIdFromClaims();
             var role = GetUserRoleFromClaims() ?? string.Empty;

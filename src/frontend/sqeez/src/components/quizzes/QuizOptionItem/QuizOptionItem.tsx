@@ -39,7 +39,7 @@ export function QuizOptionItem({
         )}
 
         <textarea
-          className="min-h-[120px] w-full resize-y rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="min-h-30 w-full resize-y rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           placeholder={t('quiz.typeAnswerHere', 'Type your answer here...')}
           value={freeTextValue}
           onChange={(e) => onFreeTextChange?.(e.target.value)}

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Sqeez.Api.DTOs;
+﻿using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Services.Interfaces;
 
@@ -118,7 +116,9 @@ namespace Sqeez.Api.Services
 
             if (!File.Exists(fullPhysicalPath))
             {
-                return Task.FromResult(ServiceResult<string>.Failure("The physical file is missing from the server.", ServiceError.NotFound));
+                return Task.FromResult(ServiceResult<string>.Failure(
+                    $"Missing file. Looking in: {fullPhysicalPath}",
+                    ServiceError.NotFound));
             }
 
             return Task.FromResult(ServiceResult<string>.Ok(fullPhysicalPath));

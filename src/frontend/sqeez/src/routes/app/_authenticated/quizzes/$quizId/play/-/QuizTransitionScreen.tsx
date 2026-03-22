@@ -41,7 +41,7 @@ export function QuestionTransitionScreen({
           </div>
 
           <h2 className="mb-2 text-2xl font-bold tracking-tight text-foreground">
-            {t('quiz.getReady', 'Get Ready!')}
+            {t('quiz.getReady')}
           </h2>
           <p className="mb-8 font-medium text-muted-foreground">
             {t('quiz.questionProgress', {

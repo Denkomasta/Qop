@@ -50,11 +50,8 @@ export function QuestionRecapScreen({
     bannerClass =
       'border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-900/20'
     TitleIcon = <Clock className="h-8 w-8 text-amber-600 dark:text-amber-500" />
-    titleText = t('quiz.pendingReviewTitle', 'Pending Manual Review')
-    descText = t(
-      'quiz.pendingReviewDesc',
-      'Your instructor will grade this answer.',
-    )
+    titleText = t('quiz.pendingReviewTitle')
+    descText = t('quiz.pendingReviewDesc')
     titleColor = 'text-amber-700 dark:text-amber-400'
     descColor = 'text-amber-700/80 dark:text-amber-500/80'
   } else if (isFullyCorrect) {
@@ -63,15 +60,15 @@ export function QuestionRecapScreen({
     TitleIcon = (
       <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-500" />
     )
-    titleText = t('quiz.correctAnswer', 'Correct Answer!')
-    descText = t('quiz.greatJob', 'Great job!')
+    titleText = t('quiz.correctAnswer')
+    descText = t('quiz.greatJob')
     titleColor = 'text-green-700 dark:text-green-400'
     descColor = 'text-green-600 dark:text-green-500/80'
   } else {
     bannerClass = 'border-destructive/20 bg-destructive/10'
     TitleIcon = <XCircle className="h-8 w-8 text-destructive" />
-    titleText = t('quiz.incorrectAnswer', 'Incorrect Answer')
-    descText = t('quiz.reviewAnswer', 'Review the correct answer below.')
+    titleText = t('quiz.incorrectAnswer')
+    descText = t('quiz.reviewAnswer')
     titleColor = 'text-destructive'
     descColor = 'text-destructive/80'
   }
@@ -107,7 +104,7 @@ export function QuestionRecapScreen({
             <div className="space-y-6">
               <div className="space-y-2">
                 <p className="text-sm font-medium text-muted-foreground">
-                  {t('quiz.yourAnswer', 'Your Answer')}
+                  {t('quiz.yourAnswer')}
                 </p>
                 <div className="rounded-md border border-border bg-card p-4 text-base text-foreground shadow-sm">
                   {userFreeTextAnswer ? (
@@ -116,7 +113,7 @@ export function QuestionRecapScreen({
                     </span>
                   ) : (
                     <span className="italic opacity-70">
-                      {t('quiz.noAnswerProvided', 'No answer provided')}
+                      {t('quiz.noAnswerProvided')}
                     </span>
                   )}
                 </div>
@@ -125,9 +122,9 @@ export function QuestionRecapScreen({
               {correctFreeTextAnswer && (
                 <div className="space-y-2">
                   <p className="flex items-end justify-between text-sm font-medium text-muted-foreground">
-                    {t('quiz.expectedAnswerLabel', 'Expected Answer')}
+                    {t('quiz.expectedAnswerLabel')}
                     <span className="text-xs font-normal italic opacity-70">
-                      {t('quiz.gradingGuideNote', 'For reference only')}
+                      {t('quiz.gradingGuideNote')}
                     </span>
                   </p>
                   <div className="rounded-md border border-muted-foreground/20 bg-muted/30 p-4 text-base text-muted-foreground">

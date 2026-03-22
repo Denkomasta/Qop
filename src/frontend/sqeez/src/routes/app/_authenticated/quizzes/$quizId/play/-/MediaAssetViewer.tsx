@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { Spinner } from '@/components/ui/Spinner'
 import { useGetApiMediaAssetsIdFile } from '@/api/generated/endpoints/media-assets/media-assets'
+import { useTranslation } from 'react-i18next'
 
 interface MediaAssetViewerProps {
   assetId: number | string
@@ -13,6 +14,7 @@ export function MediaAssetViewer({
   isOption = false,
 }: MediaAssetViewerProps) {
   const [mediaUrl, setMediaUrl] = useState<string | null>(null)
+  const { t } = useTranslation()
 
   const safeId = Number(assetId)
 
@@ -57,7 +59,7 @@ export function MediaAssetViewer({
         className={`flex w-full flex-col items-center justify-center bg-destructive/5 text-muted-foreground ${isOption ? 'h-24 rounded-md' : 'h-48 rounded-xl'}`}
       >
         <AlertCircle className="mb-1 h-6 w-6 text-destructive opacity-50" />
-        <span className="text-xs">Failed to load media</span>
+        <span className="text-xs">{t('media.notFound')}</span>
       </div>
     )
   }

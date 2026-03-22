@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/store/useAuthStore'
 
-// Import all your Orval hooks here
 import {
   useGetApiQuizzesQuizId,
   useGetApiQuizzesQuizIdQuestionsQuestionIdDetailed,
@@ -203,12 +202,7 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
     const hasSelection =
       selectedOptionIds.length > 0 || freeTextValue.trim().length > 0
     if (!hasSelection) {
-      toast.warning(
-        t(
-          'quiz.selectAnswerWarning',
-          'Please select or type an answer before continuing.',
-        ),
-      )
+      toast.warning(t('quiz.selectAnswerWarning'))
       return
     }
 

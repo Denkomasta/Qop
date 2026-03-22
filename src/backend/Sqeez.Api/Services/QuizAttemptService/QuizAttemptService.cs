@@ -13,7 +13,7 @@ namespace Sqeez.Api.Services
 
         public QuizAttemptService(SqeezDbContext context, ILogger<QuizAttemptService> logger, IBadgeService badgeService)
             : base(context, logger)
-        { 
+        {
             _badgeService = badgeService;
         }
 
@@ -249,19 +249,26 @@ namespace Sqeez.Api.Services
                 attempt.EndTime, attempt.Status, attempt.TotalScore, attempt.Mark, responseDtos));
         }
 
-        public async Task<ServiceResult<PagedResponse<QuizAttemptDto>>> GetAttemptsForQuizAsync(long quizId, long teacherId, int pageNumber = 1, int pageSize = 20)
+        public async Task<ServiceResult<PagedResponse<QuizAttemptDto>>> GetAttemptsForQuizAsync(long quizId, long userId, int pageNumber = 1, int pageSize = 20)
         {
-            // Verify the teacher actually owns this quiz via the Subject
             var quiz = await _context.Quizzes
                 .Include(q => q.Subject)
                 .FirstOrDefaultAsync(q => q.Id == quizId);
 
-            if (quiz == null) return ServiceResult<PagedResponse<QuizAttemptDto>>.Failure("Quiz not found.", ServiceError.NotFound);
-            if (quiz.Subject.TeacherId != teacherId) return ServiceResult<PagedResponse<QuizAttemptDto>>.Failure("You do not have permission to view attempts for this quiz.", ServiceError.Forbidden);
+            if (quiz == null)
+                return ServiceResult<PagedResponse<QuizAttemptDto>>.Failure("Quiz not found.", ServiceError.NotFound);
+
+            var isQuizOwner = quiz.Subject.TeacherId == userId;
 
             var query = _context.QuizAttempts
-                .Where(a => a.QuizId == quizId)
-                .OrderByDescending(a => a.StartTime);
+                .Where(a => a.QuizId == quizId);
+
+            if (!isQuizOwner)
+            {
+                query = query.Where(a => a.Enrollment.StudentId == userId);
+            }
+
+            query = query.OrderByDescending(a => a.StartTime);
 
             int totalCount = await query.CountAsync();
 
@@ -269,8 +276,15 @@ namespace Sqeez.Api.Services
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(a => new QuizAttemptDto(
-                    a.Id, a.QuizId, a.EnrollmentId, a.StartTime,
-                    a.EndTime, a.Status, a.TotalScore, a.Mark))
+                    a.Id,
+                    a.QuizId,
+                    a.EnrollmentId,
+                    a.StartTime,
+                    a.EndTime,
+                    a.Status,
+                    a.TotalScore,
+                    a.Mark
+                ))
                 .ToListAsync();
 
             return ServiceResult<PagedResponse<QuizAttemptDto>>.Ok(new PagedResponse<QuizAttemptDto>

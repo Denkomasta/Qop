@@ -1,0 +1,87 @@
+import { useTranslation } from 'react-i18next'
+import { CheckCircle2 } from 'lucide-react'
+import { AsyncButton } from '@/components/ui/Button'
+import { Spinner } from '@/components/ui/Spinner'
+import { QuestionCard } from '@/components/quizzes/QuestionCard'
+
+import type { DetailedQuizQuestionDto } from '@/api/generated/model'
+
+interface ActiveQuestionScreenProps {
+  question: DetailedQuizQuestionDto
+  isLoading: boolean
+  currentNumber: number
+  totalQuestions: number
+  selectedOptionIds: (number | string)[]
+  freeTextValue: string
+  hasSelection: boolean
+  onSelectOption: (qId: number | string, optId: number | string) => void
+  onChangeFreeText: (qId: number | string, text: string) => void
+  onSubmit: () => Promise<void>
+}
+
+export function ActiveQuestionScreen({
+  question,
+  isLoading,
+  currentNumber,
+  totalQuestions,
+  selectedOptionIds,
+  freeTextValue,
+  hasSelection,
+  onSelectOption,
+  onChangeFreeText,
+  onSubmit,
+}: ActiveQuestionScreenProps) {
+  const { t } = useTranslation()
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+        <Spinner size="lg" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-3xl animate-in flex-col p-4 duration-500 fade-in md:p-6 lg:p-8">
+      <div className="mb-6 space-y-2">
+        <div className="flex justify-between text-sm font-medium text-muted-foreground">
+          <span>
+            {t('quiz.questionProgress', {
+              current: currentNumber,
+              total: totalQuestions,
+            })}
+          </span>
+        </div>
+        <div className="h-2.5 w-full overflow-hidden rounded-full bg-secondary">
+          <div
+            className="h-full bg-primary transition-all duration-300 ease-in-out"
+            style={{
+              width: `${((currentNumber - 1) / totalQuestions) * 100}%`,
+            }}
+          />
+        </div>
+      </div>
+
+      <QuestionCard
+        question={question}
+        selectedOptionIds={selectedOptionIds}
+        onSelectOption={onSelectOption}
+        freeTextValue={freeTextValue}
+        onChangeFreeText={onChangeFreeText}
+      />
+
+      <div className="mt-8 flex justify-end">
+        <AsyncButton
+          size="lg"
+          onClick={onSubmit}
+          disabled={!hasSelection}
+          className="w-full shadow-md sm:w-auto"
+          loadingText={t('common.submitting', 'Submitting...')}
+        >
+          <CheckCircle2 className="mr-2 h-5 w-5" />
+          {t('quiz.submitAnswer')}
+        </AsyncButton>
+      </div>
+    </div>
+  )
+}

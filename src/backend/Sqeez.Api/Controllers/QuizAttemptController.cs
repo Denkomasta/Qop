@@ -61,6 +61,12 @@ namespace Sqeez.Api.Controllers
 
             var result = await _quizAttemptService.GetNextPendingQuestionIdAsync(id, studentId);
 
+            // For No Content
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
             return HandleServiceResult(result);
         }
 
@@ -101,7 +107,7 @@ namespace Sqeez.Api.Controllers
         /// GET /api/quiz-attempts/quiz/{quizId}
         /// Gets a paginated list of all attempts for a specific quiz.
         /// </summary>
-        [Authorize(Roles = "Teacher,Admin")]
+        [Authorize]
         [HttpGet("quiz/{quizId}")]
         public async Task<ActionResult<PagedResponse<QuizAttemptDto>>> GetAttemptsForQuiz(long quizId, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20)
         {

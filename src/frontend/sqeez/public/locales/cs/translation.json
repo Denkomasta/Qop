@@ -67,7 +67,8 @@
     "status": "Stav",
     "previous": "Předchozí",
     "next": "Další",
-    "continue": "Pokračovat"
+    "continue": "Pokračovat",
+    "resume": "Pokračovat"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -269,6 +270,24 @@
     "totalQuestions": "Celkem otázek",
     "backToQuizzes": "Zpět na kvízy",
     "viewDetails": "Zobrazit detaily",
-    "submitAnswer": "Odeslat odpověď"
+    "submitAnswer": "Odeslat odpověď",
+    "statusCompleted": "Dokončeno",
+    "statusInProgress": "Probíhá",
+    "noAttemptsTitle": "Nebyly nalezeny žádné pokusy",
+    "noAttemptsDesc": "Tento kvíz jste zatím neabsolvovali.",
+    "takeQuiz": "Spustit kvíz",
+    "attemptsHistory": "Historie pokusů",
+    "reviewPastPerformance": "Prohlédněte si své předchozí výsledky v tomto kvízu.",
+    "latestAttempt": "Nejnovější pokus",
+    "attempt": "Pokus",
+    "totalScore": "Celkové skóre",
+    "finalGrade": "Konečná známka",
+    "duration": "Doba trvání",
+    "resumingAttempt": "Obnovování vašeho pokusu...",
+    "resumeError": "Během obnovení pokusu nastala chyba",
+    "pendingReviewTitle": "Čeká na manuální hodnocení",
+    "pendingReviewDesc": "Vaši odpověď ohodnotí vyučující.",
+    "expectedAnswerLabel": "Očekávaná odpověď",
+    "gradingGuideNote": "Pouze pro informaci"
   }
 }

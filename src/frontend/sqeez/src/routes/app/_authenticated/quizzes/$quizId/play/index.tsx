@@ -8,6 +8,7 @@ import { QuestionRecapScreen } from './-/QuestionRecapScreen'
 import { QuizRecapScreen } from './-/QuizRecapScreen'
 import { ActiveQuestionScreen } from './-/ActiveQuestionScreen'
 import { useQuizEngine } from '@/hooks/useQuizEngine'
+import { MediaAssetViewer } from './-/MediaAssetViewer'
 
 export const Route = createFileRoute(
   '/app/_authenticated/quizzes/$quizId/play/',
@@ -79,6 +80,9 @@ function QuizTakePage() {
           onSelectOption={actions.handleOptionSelect}
           onChangeFreeText={actions.handleFreeTextChange}
           onSubmit={actions.handleAnswerSubmit}
+          renderMediaAsset={(assetId, isOption) => (
+            <MediaAssetViewer assetId={assetId} isOption={isOption} />
+          )}
         />
       )
 

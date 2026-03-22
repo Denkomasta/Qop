@@ -6,8 +6,7 @@
  */
 import type { EntityTagHeaderValue } from './entityTagHeaderValue'
 
-export interface PhysicalFileResult {
-  fileName?: string
+export interface FileResult {
   /** @nullable */
   contentType?: string | null
   /** @nullable */

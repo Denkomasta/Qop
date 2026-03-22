@@ -18,6 +18,10 @@ interface ActiveQuestionScreenProps {
   onSelectOption: (qId: number | string, optId: number | string) => void
   onChangeFreeText: (qId: number | string, text: string) => void
   onSubmit: () => Promise<void>
+  renderMediaAsset?: (
+    assetId: number | string,
+    isOption?: boolean,
+  ) => React.ReactNode
 }
 
 export function ActiveQuestionScreen({
@@ -31,6 +35,7 @@ export function ActiveQuestionScreen({
   onSelectOption,
   onChangeFreeText,
   onSubmit,
+  renderMediaAsset,
 }: ActiveQuestionScreenProps) {
   const { t } = useTranslation()
 
@@ -71,6 +76,7 @@ export function ActiveQuestionScreen({
         onSelectOption={onSelectOption}
         freeTextValue={freeTextValue}
         onChangeFreeText={onChangeFreeText}
+        renderMediaAsset={renderMediaAsset}
       />
 
       <div className="mt-8 flex justify-end">

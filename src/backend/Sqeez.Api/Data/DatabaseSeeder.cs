@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Academics;
+using Sqeez.Api.Models.Gamification; // <-- Added the Gamification namespace!
 using Sqeez.Api.Models.Media;
 using Sqeez.Api.Models.QuizSystem;
 using Sqeez.Api.Models.Users;
-using Sqeez.Api.Models.Gamification; // <-- Added the Gamification namespace!
 using BC = BCrypt.Net.BCrypt;
 
 namespace Sqeez.Api.Data
@@ -198,14 +198,15 @@ namespace Sqeez.Api.Data
             context.Enrollments.AddRange(enrollments);
 
             // --- 7. Physical Media Files & Media Assets ---
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "SecureStorage", "uploads", "media");
-            if (!Directory.Exists(uploadsFolder))
+            var mediaFolder = Path.Combine(Directory.GetCurrentDirectory(), "SecureStorage", "media");
+
+            if (!Directory.Exists(mediaFolder))
             {
-                Directory.CreateDirectory(uploadsFolder);
+                Directory.CreateDirectory(mediaFolder);
             }
 
             var sampleFileName = "seed-sample-image.png";
-            var physicalPath = Path.Combine(uploadsFolder, sampleFileName);
+            var physicalPath = Path.Combine(mediaFolder, sampleFileName);
 
             if (!File.Exists(physicalPath))
             {

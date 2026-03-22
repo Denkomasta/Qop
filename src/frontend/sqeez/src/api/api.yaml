@@ -711,15 +711,21 @@ paths:
         "200":
           description: OK
           content:
+            application/octet-stream:
+              schema:
+                $ref: "#/components/schemas/FileResult"
+        "404":
+          description: Not Found
+          content:
             text/plain:
               schema:
-                $ref: "#/components/schemas/PhysicalFileResult"
+                $ref: "#/components/schemas/ProblemDetails"
             application/json:
               schema:
-                $ref: "#/components/schemas/PhysicalFileResult"
+                $ref: "#/components/schemas/ProblemDetails"
             text/json:
               schema:
-                $ref: "#/components/schemas/PhysicalFileResult"
+                $ref: "#/components/schemas/ProblemDetails"
   /api/quiz-attempts/start:
     post:
       tags:
@@ -3298,6 +3304,28 @@ components:
           $ref: "#/components/schemas/StringSegment"
         isWeak:
           type: boolean
+    FileResult:
+      type: object
+      properties:
+        contentType:
+          type:
+            - "null"
+            - string
+        fileDownloadName:
+          type:
+            - "null"
+            - string
+        lastModified:
+          type:
+            - "null"
+            - string
+          format: date-time
+        entityTag:
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/EntityTagHeaderValue"
+        enableRangeProcessing:
+          type: boolean
     GradeQuestionResponseDto:
       required:
         - score
@@ -3953,30 +3981,32 @@ components:
             - integer
             - string
           format: int64
-    PhysicalFileResult:
+    ProblemDetails:
       type: object
       properties:
-        fileName:
-          type: string
-        contentType:
+        type:
           type:
             - "null"
             - string
-        fileDownloadName:
+        title:
           type:
             - "null"
             - string
-        lastModified:
+        status:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int32
+        detail:
           type:
             - "null"
             - string
-          format: date-time
-        entityTag:
-          oneOf:
-            - type: "null"
-            - $ref: "#/components/schemas/EntityTagHeaderValue"
-        enableRangeProcessing:
-          type: boolean
+        instance:
+          type:
+            - "null"
+            - string
     QuestionAnsweredDto:
       required:
         - id

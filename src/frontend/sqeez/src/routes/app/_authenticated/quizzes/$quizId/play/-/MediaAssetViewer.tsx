@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { Spinner } from '@/components/ui/Spinner'
-
-import { getApiMediaAssetsIdFile } from '@/api/generated/endpoints/media-assets/media-assets'
+import { useGetApiMediaAssetsIdFile } from '@/api/generated/endpoints/media-assets/media-assets'
 
 interface MediaAssetViewerProps {
   assetId: number | string
@@ -14,45 +13,33 @@ export function MediaAssetViewer({
   isOption = false,
 }: MediaAssetViewerProps) {
   const [mediaUrl, setMediaUrl] = useState<string | null>(null)
-  const [mimeType, setMimeType] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [isError, setIsError] = useState(false)
+
+  const safeId = Number(assetId)
+
+  const {
+    data: blob,
+    isLoading,
+    isError,
+  } = useGetApiMediaAssetsIdFile(safeId, {
+    query: {
+      staleTime: 1000 * 60 * 60,
+      refetchOnWindowFocus: false,
+    },
+  })
+
+  const mimeType = blob instanceof Blob ? blob.type : null
 
   useEffect(() => {
-    let objectUrl: string | null = null
+    if (!blob || !(blob instanceof Blob)) return
 
-    const fetchMedia = async () => {
-      try {
-        setIsLoading(true)
-        setIsError(false)
-
-        const blob = await getApiMediaAssetsIdFile(assetId)
-
-        if (!(blob instanceof Blob)) {
-          throw new Error('Expected a Blob, but received something else.')
-        }
-
-        // Save the MIME type (e.g., 'image/png') to determine how to render it
-        setMimeType(blob.type)
-
-        objectUrl = URL.createObjectURL(blob)
-        setMediaUrl(objectUrl)
-      } catch (error) {
-        console.error('Failed to load media asset', error)
-        setIsError(true)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchMedia()
+    const objectUrl = URL.createObjectURL(blob)
+    // eslint-disable-next-line -- OR biome-ignore lint/performance/noSyncSetStateInEffect: Required for memory management
+    setMediaUrl(objectUrl)
 
     return () => {
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl)
-      }
+      URL.revokeObjectURL(objectUrl)
     }
-  }, [assetId])
+  }, [blob])
 
   if (isLoading) {
     return (

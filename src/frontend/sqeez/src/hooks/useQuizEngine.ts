@@ -14,6 +14,11 @@ import {
   usePostApiQuizAttemptsIdAnswer,
   usePostApiQuizAttemptsIdComplete,
 } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
+import { queryClient } from '@/main'
+import {
+  getApiMediaAssetsIdFile,
+  getGetApiMediaAssetsIdFileQueryKey,
+} from '@/api/generated/endpoints/media-assets/media-assets'
 
 export type QuizPhase =
   | 'start'
@@ -79,11 +84,40 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
       Number(currentQuestionId),
       {
         query: {
-          enabled: !!currentQuestionId && phase === 'answering',
+          enabled:
+            !!currentQuestionId &&
+            // prefetches the question
+            (phase === 'transition' || phase === 'answering'),
           refetchOnWindowFocus: false,
+          staleTime: 1000 * 60,
         },
       },
     )
+
+  // prefetches the media for question
+  useEffect(() => {
+    if (currentQuestion && phase === 'transition') {
+      const assetIdsToFetch: (number | string)[] = []
+
+      if (currentQuestion.mediaAssetId) {
+        assetIdsToFetch.push(currentQuestion.mediaAssetId)
+      }
+
+      currentQuestion.options.forEach((option) => {
+        if (option.mediaAssetId) assetIdsToFetch.push(option.mediaAssetId)
+      })
+
+      assetIdsToFetch.forEach((id) => {
+        const assetId = Number(id)
+
+        queryClient.prefetchQuery({
+          queryKey: getGetApiMediaAssetsIdFileQueryKey(assetId),
+          queryFn: () => getApiMediaAssetsIdFile(assetId),
+          staleTime: 1000 * 60 * 60,
+        })
+      })
+    }
+  }, [currentQuestion, phase])
 
   const {
     data: nextPendingQuestionId,

@@ -58,7 +58,7 @@ export function QuizRecapScreen({
         <CardContent className="space-y-8 p-8">
           <div className="flex flex-col items-center justify-center space-y-2">
             <span className="text-sm font-semibold tracking-wider text-muted-foreground uppercase">
-              {t('quiz.finalScore', 'Final Score')}
+              {t('quiz.finalScore')}
             </span>
             <div className="flex items-baseline gap-1">
               <span

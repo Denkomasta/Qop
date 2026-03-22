@@ -68,7 +68,8 @@
     "previous": "Previous",
     "next": "Next",
     "continue": "Continue",
-    "resume": "Resume"
+    "resume": "Resume",
+    "submitting": "Submitting..."
   },
   "dashboard": {
     "administration": "Administration",
@@ -172,6 +173,9 @@
     "description": "Are you sure you want to sign out?",
     "signingOut": "Signing out...",
     "confirm": "Yes, Log out"
+  },
+  "media": {
+    "notFound": "Failed to load media"
   },
   "navbar": {
     "navigation": "Navigation",
@@ -289,6 +293,9 @@
     "pendingReviewTitle": "Pending Manual Review",
     "pendingReviewDesc": "Your instructor will grade this answer.",
     "expectedAnswerLabel": "Expected Answer",
-    "gradingGuideNote": "For reference only"
+    "gradingGuideNote": "For reference only",
+    "selectAnswerWarning": "Please select or type an answer before continuing.",
+    "yourAnswer": "Your Answer",
+    "noAnswerProvided": "No answer provided"
   }
 }

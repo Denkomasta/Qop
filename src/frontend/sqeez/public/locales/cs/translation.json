@@ -68,7 +68,8 @@
     "previous": "Předchozí",
     "next": "Další",
     "continue": "Pokračovat",
-    "resume": "Pokračovat"
+    "resume": "Pokračovat",
+    "submitting": "Odesílání..."
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -172,6 +173,9 @@
     "description": "Jste si jisti, že se chcete odhlásit?",
     "signingOut": "Odhlašuji...",
     "confirm": "Ano, odhlásit se"
+  },
+  "media": {
+    "notFound": "Nepovedlo se načíst média"
   },
   "navbar": {
     "navigation": "Navigace",
@@ -288,6 +292,9 @@
     "pendingReviewTitle": "Čeká na manuální hodnocení",
     "pendingReviewDesc": "Vaši odpověď ohodnotí vyučující.",
     "expectedAnswerLabel": "Očekávaná odpověď",
-    "gradingGuideNote": "Pouze pro informaci"
+    "gradingGuideNote": "Pouze pro informaci",
+    "selectAnswerWarning": "Prosím vyberte nebo vypiště odpověď před pokračovaním.",
+    "yourAnswer": "Tvá odpověď",
+    "noAnswerProvided": "Neodpovězeno"
   }
 }

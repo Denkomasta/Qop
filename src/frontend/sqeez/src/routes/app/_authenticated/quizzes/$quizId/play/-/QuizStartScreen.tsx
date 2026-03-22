@@ -53,9 +53,7 @@ export function QuizStartScreen({
       )
     } catch (err) {
       console.error('Failed to start quiz attempt:', err)
-      setError(
-        t('quiz.startError', 'Failed to start the quiz. Please try again.'),
-      )
+      setError(t('quiz.startError'))
     } finally {
       setIsStarting(false)
     }
@@ -69,7 +67,7 @@ export function QuizStartScreen({
             <Rocket className="h-10 w-10 text-primary" />
           </div>
           <CardTitle className="text-2xl font-bold">
-            {t('quiz.readyToStart', 'Are you ready?')}
+            {t('quiz.readyToStart')}
           </CardTitle>
           <CardDescription className="mt-2 text-base">
             {quizTitle}
@@ -80,12 +78,7 @@ export function QuizStartScreen({
           <div className="rounded-lg bg-amber-500/10 p-4 text-amber-600 dark:text-amber-500">
             <div className="flex items-start gap-3 text-left text-sm font-medium">
               <AlertTriangle className="h-5 w-5 shrink-0" />
-              <p>
-                {t(
-                  'quiz.startWarning',
-                  'Clicking start will immediately consume one of your attempts. Make sure you have a stable connection and enough time to complete it.',
-                )}
-              </p>
+              <p>{t('quiz.startWarning')}</p>
             </div>
           </div>
 
@@ -101,7 +94,7 @@ export function QuizStartScreen({
             disabled={isStarting}
             className="w-full sm:w-fit"
           >
-            {t('common.cancel', 'Cancel')}
+            {t('common.cancel')}
           </Button>
           <AsyncButton
             size="lg"

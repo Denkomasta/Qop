@@ -85,7 +85,7 @@ export function ActiveQuestionScreen({
           onClick={onSubmit}
           disabled={!hasSelection}
           className="w-full shadow-md sm:w-auto"
-          loadingText={t('common.submitting', 'Submitting...')}
+          loadingText={t('common.submitting')}
         >
           <CheckCircle2 className="mr-2 h-5 w-5" />
           {t('quiz.submitAnswer')}

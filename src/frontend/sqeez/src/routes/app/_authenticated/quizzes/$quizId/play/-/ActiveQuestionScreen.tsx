@@ -5,6 +5,7 @@ import { Spinner } from '@/components/ui/Spinner'
 import { QuestionCard } from '@/components/quizzes/QuestionCard'
 
 import type { DetailedQuizQuestionDto } from '@/api/generated/model'
+import { LiveTimer } from './LiveTimer'
 
 interface ActiveQuestionScreenProps {
   question: DetailedQuizQuestionDto
@@ -51,7 +52,9 @@ export function ActiveQuestionScreen({
               total: totalQuestions,
             })}
           </span>
+          <LiveTimer key={question.id} />
         </div>
+
         <div className="h-2.5 w-full overflow-hidden rounded-full bg-secondary">
           <div
             className="h-full bg-primary transition-all duration-300 ease-in-out"

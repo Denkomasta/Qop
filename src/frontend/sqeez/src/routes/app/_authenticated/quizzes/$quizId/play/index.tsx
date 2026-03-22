@@ -90,6 +90,7 @@ function QuizTakePage() {
           correctOptionIds={state.currentCorrectOptionIds}
           userFreeTextAnswer={state.freeTextValue}
           correctFreeTextAnswer={state.correctFreeTextAnswer}
+          timeSpentMs={state.lastResponseTimeMs}
           onContinue={actions.handleRecapContinue}
           isLastQuestion={state.nextQuestionId === null}
         />

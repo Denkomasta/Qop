@@ -67,7 +67,8 @@
     "status": "Status",
     "previous": "Previous",
     "next": "Next",
-    "continue": "Continue"
+    "continue": "Continue",
+    "resume": "Resume"
   },
   "dashboard": {
     "administration": "Administration",
@@ -270,6 +271,24 @@
     "totalQuestions": "Total Questions",
     "backToQuizzes": "Back to Quizzes",
     "viewDetails": "View Details",
-    "submitAnswer": "Submit answer"
+    "submitAnswer": "Submit answer",
+    "statusCompleted": "Completed",
+    "statusInProgress": "In Progress",
+    "noAttemptsTitle": "No Attempts Found",
+    "noAttemptsDesc": "You have not taken this quiz yet.",
+    "takeQuiz": "Take Quiz",
+    "attemptsHistory": "Attempts History",
+    "reviewPastPerformance": "Review your past performance for this quiz.",
+    "latestAttempt": "Latest Attempt",
+    "attempt": "Attempt",
+    "totalScore": "Total Score",
+    "finalGrade": "Final Grade",
+    "duration": "Duration",
+    "resumingAttempt": "Resuming your attempt...",
+    "resumeError": "Error occured during attempt resuming",
+    "pendingReviewTitle": "Pending Manual Review",
+    "pendingReviewDesc": "Your instructor will grade this answer.",
+    "expectedAnswerLabel": "Expected Answer",
+    "gradingGuideNote": "For reference only"
   }
 }

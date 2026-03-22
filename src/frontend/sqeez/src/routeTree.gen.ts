@@ -25,6 +25,7 @@ import { Route as AppAuthenticatedBadgesUserIdRouteImport } from './routes/app/_
 import { Route as AppAuthenticatedSubjectsSubjectIdIndexRouteImport } from './routes/app/_authenticated/subjects/$subjectId/index'
 import { Route as AppAuthenticatedQuizzesQuizIdIndexRouteImport } from './routes/app/_authenticated/quizzes/$quizId/index'
 import { Route as AppAuthenticatedSubjectsSubjectIdQuizzesIndexRouteImport } from './routes/app/_authenticated/subjects/$subjectId/quizzes/index'
+import { Route as AppAuthenticatedQuizzesQuizIdResultsIndexRouteImport } from './routes/app/_authenticated/quizzes/$quizId/results/index'
 import { Route as AppAuthenticatedQuizzesQuizIdPlayIndexRouteImport } from './routes/app/_authenticated/quizzes/$quizId/play/index'
 
 const IndexRoute = IndexRouteImport.update({
@@ -117,6 +118,12 @@ const AppAuthenticatedSubjectsSubjectIdQuizzesIndexRoute =
     path: '/subjects/$subjectId/quizzes/',
     getParentRoute: () => AppAuthenticatedRoute,
   } as any)
+const AppAuthenticatedQuizzesQuizIdResultsIndexRoute =
+  AppAuthenticatedQuizzesQuizIdResultsIndexRouteImport.update({
+    id: '/quizzes/$quizId/results/',
+    path: '/quizzes/$quizId/results/',
+    getParentRoute: () => AppAuthenticatedRoute,
+  } as any)
 const AppAuthenticatedQuizzesQuizIdPlayIndexRoute =
   AppAuthenticatedQuizzesQuizIdPlayIndexRouteImport.update({
     id: '/quizzes/$quizId/play/',
@@ -141,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/app/quizzes/$quizId/': typeof AppAuthenticatedQuizzesQuizIdIndexRoute
   '/app/subjects/$subjectId/': typeof AppAuthenticatedSubjectsSubjectIdIndexRoute
   '/app/quizzes/$quizId/play/': typeof AppAuthenticatedQuizzesQuizIdPlayIndexRoute
+  '/app/quizzes/$quizId/results/': typeof AppAuthenticatedQuizzesQuizIdResultsIndexRoute
   '/app/subjects/$subjectId/quizzes/': typeof AppAuthenticatedSubjectsSubjectIdQuizzesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -159,6 +167,7 @@ export interface FileRoutesByTo {
   '/app/quizzes/$quizId': typeof AppAuthenticatedQuizzesQuizIdIndexRoute
   '/app/subjects/$subjectId': typeof AppAuthenticatedSubjectsSubjectIdIndexRoute
   '/app/quizzes/$quizId/play': typeof AppAuthenticatedQuizzesQuizIdPlayIndexRoute
+  '/app/quizzes/$quizId/results': typeof AppAuthenticatedQuizzesQuizIdResultsIndexRoute
   '/app/subjects/$subjectId/quizzes': typeof AppAuthenticatedSubjectsSubjectIdQuizzesIndexRoute
 }
 export interface FileRoutesById {
@@ -179,6 +188,7 @@ export interface FileRoutesById {
   '/app/_authenticated/quizzes/$quizId/': typeof AppAuthenticatedQuizzesQuizIdIndexRoute
   '/app/_authenticated/subjects/$subjectId/': typeof AppAuthenticatedSubjectsSubjectIdIndexRoute
   '/app/_authenticated/quizzes/$quizId/play/': typeof AppAuthenticatedQuizzesQuizIdPlayIndexRoute
+  '/app/_authenticated/quizzes/$quizId/results/': typeof AppAuthenticatedQuizzesQuizIdResultsIndexRoute
   '/app/_authenticated/subjects/$subjectId/quizzes/': typeof AppAuthenticatedSubjectsSubjectIdQuizzesIndexRoute
 }
 export interface FileRouteTypes {
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/app/quizzes/$quizId/'
     | '/app/subjects/$subjectId/'
     | '/app/quizzes/$quizId/play/'
+    | '/app/quizzes/$quizId/results/'
     | '/app/subjects/$subjectId/quizzes/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/app/quizzes/$quizId'
     | '/app/subjects/$subjectId'
     | '/app/quizzes/$quizId/play'
+    | '/app/quizzes/$quizId/results'
     | '/app/subjects/$subjectId/quizzes'
   id:
     | '__root__'
@@ -237,6 +249,7 @@ export interface FileRouteTypes {
     | '/app/_authenticated/quizzes/$quizId/'
     | '/app/_authenticated/subjects/$subjectId/'
     | '/app/_authenticated/quizzes/$quizId/play/'
+    | '/app/_authenticated/quizzes/$quizId/results/'
     | '/app/_authenticated/subjects/$subjectId/quizzes/'
   fileRoutesById: FileRoutesById
 }
@@ -362,6 +375,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAuthenticatedSubjectsSubjectIdQuizzesIndexRouteImport
       parentRoute: typeof AppAuthenticatedRoute
     }
+    '/app/_authenticated/quizzes/$quizId/results/': {
+      id: '/app/_authenticated/quizzes/$quizId/results/'
+      path: '/quizzes/$quizId/results'
+      fullPath: '/app/quizzes/$quizId/results/'
+      preLoaderRoute: typeof AppAuthenticatedQuizzesQuizIdResultsIndexRouteImport
+      parentRoute: typeof AppAuthenticatedRoute
+    }
     '/app/_authenticated/quizzes/$quizId/play/': {
       id: '/app/_authenticated/quizzes/$quizId/play/'
       path: '/quizzes/$quizId/play'
@@ -384,6 +404,7 @@ interface AppAuthenticatedRouteChildren {
   AppAuthenticatedQuizzesQuizIdIndexRoute: typeof AppAuthenticatedQuizzesQuizIdIndexRoute
   AppAuthenticatedSubjectsSubjectIdIndexRoute: typeof AppAuthenticatedSubjectsSubjectIdIndexRoute
   AppAuthenticatedQuizzesQuizIdPlayIndexRoute: typeof AppAuthenticatedQuizzesQuizIdPlayIndexRoute
+  AppAuthenticatedQuizzesQuizIdResultsIndexRoute: typeof AppAuthenticatedQuizzesQuizIdResultsIndexRoute
   AppAuthenticatedSubjectsSubjectIdQuizzesIndexRoute: typeof AppAuthenticatedSubjectsSubjectIdQuizzesIndexRoute
 }
 
@@ -402,6 +423,8 @@ const AppAuthenticatedRouteChildren: AppAuthenticatedRouteChildren = {
     AppAuthenticatedSubjectsSubjectIdIndexRoute,
   AppAuthenticatedQuizzesQuizIdPlayIndexRoute:
     AppAuthenticatedQuizzesQuizIdPlayIndexRoute,
+  AppAuthenticatedQuizzesQuizIdResultsIndexRoute:
+    AppAuthenticatedQuizzesQuizIdResultsIndexRoute,
   AppAuthenticatedSubjectsSubjectIdQuizzesIndexRoute:
     AppAuthenticatedSubjectsSubjectIdQuizzesIndexRoute,
 }

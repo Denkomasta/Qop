@@ -36,3 +36,19 @@ export const formatDateOnly = (dateString?: string | null): string | null => {
     dateStyle: 'medium',
   })
 }
+
+export const formatDuration = (start: string | null, end: string | null) => {
+  if (!start || !end) return '-'
+
+  const startTime = new Date(start).getTime()
+  const endTime = new Date(end).getTime()
+
+  const diffInSeconds = Math.floor((endTime - startTime) / 1000)
+
+  if (diffInSeconds < 0) return '-'
+
+  const minutes = Math.floor(diffInSeconds / 60)
+  const seconds = diffInSeconds % 60
+
+  return minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`
+}

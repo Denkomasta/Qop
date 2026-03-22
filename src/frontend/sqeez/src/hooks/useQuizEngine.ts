@@ -41,6 +41,9 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
   const [questionStartTime, setQuestionStartTime] = useState<number>(() =>
     Date.now(),
   )
+  const [lastResponseTimeMs, setLastResponseTimeMs] = useState<number | null>(
+    null,
+  )
   const [correctFreeTextAnswer, setCorrectFreeTextAnswer] = useState<
     string | null
   >(null)
@@ -189,6 +192,7 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
 
       const correctIds = response.correctOptionIds || []
 
+      setLastResponseTimeMs(Number(response.responseTimeMs))
       setCurrentCorrectOptionIds(correctIds)
       setCorrectFreeTextAnswer(response.freeTextAnswer || null)
       if (!correctIds)
@@ -246,6 +250,7 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
       freeTextValue,
       correctFreeTextAnswer,
       currentCorrectOptionIds,
+      lastResponseTimeMs,
       nextQuestionId,
       hasSelection:
         selectedOptionIds.length > 0 || freeTextValue.trim().length > 0,

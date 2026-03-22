@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { CheckCircle2, XCircle, ArrowRight, Clock } from 'lucide-react'
+import { CheckCircle2, XCircle, ArrowRight, Clock, Timer } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import type { DetailedQuizQuestionDto } from '@/api/generated/model'
@@ -10,6 +10,7 @@ interface QuestionRecapScreenProps {
   correctOptionIds: (number | string)[]
   userFreeTextAnswer?: string
   correctFreeTextAnswer?: string | null
+  timeSpentMs?: number | null
   onContinue: () => void
   isLastQuestion: boolean
 }
@@ -20,6 +21,7 @@ export function QuestionRecapScreen({
   correctOptionIds,
   userFreeTextAnswer = '',
   correctFreeTextAnswer,
+  timeSpentMs,
   onContinue,
   isLastQuestion,
 }: QuestionRecapScreenProps) {
@@ -32,6 +34,10 @@ export function QuestionRecapScreen({
     selectedOptionIds.length > 0 &&
     selectedOptionIds.length === correctOptionIds.length &&
     selectedOptionIds.every((id) => correctOptionIds.includes(id))
+
+  const formattedTime = timeSpentMs
+    ? `${(timeSpentMs / 1000).toFixed(1)}s`
+    : null
 
   let bannerClass = ''
   let TitleIcon = null
@@ -80,6 +86,13 @@ export function QuestionRecapScreen({
           <h2 className={`text-xl font-bold ${titleColor}`}>{titleText}</h2>
           <p className={`text-sm ${descColor}`}>{descText}</p>
         </div>
+
+        {formattedTime && (
+          <div className="ml-auto flex items-center gap-1.5 rounded-full border border-border/50 bg-background/60 px-3 py-1 text-sm font-semibold shadow-sm">
+            <Timer className="h-4 w-4 opacity-70" />
+            <span>{formattedTime}</span>
+          </div>
+        )}
       </div>
 
       <Card className="mb-8 flex-1 border-primary/10 shadow-md">

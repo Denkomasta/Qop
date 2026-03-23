@@ -70,7 +70,8 @@
     "continue": "Continue",
     "resume": "Resume",
     "submitting": "Submitting...",
-    "confirmDelete": "Are you sure you want to delete this? This action cannot be undone."
+    "confirmDelete": "Are you sure you want to delete this? This action cannot be undone.",
+    "remove": "Remove"
   },
   "dashboard": {
     "administration": "Administration",

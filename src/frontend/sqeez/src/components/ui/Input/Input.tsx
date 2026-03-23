@@ -8,6 +8,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   rightTopChip?: React.ReactNode
   containerClassName?: string
   ref?: React.Ref<HTMLInputElement>
+  hideErrors?: boolean
 }
 
 const Input = ({
@@ -19,6 +20,7 @@ const Input = ({
   className,
   id,
   ref,
+  hideErrors = false,
   ...props
 }: InputProps) => {
   return (
@@ -60,13 +62,15 @@ const Input = ({
         />
       </div>
 
-      <div className="min-h-5 pt-1">
-        {error && (
-          <p className="animate-in text-xs font-medium text-destructive fade-in slide-in-from-top-1">
-            {error}
-          </p>
-        )}
-      </div>
+      {!hideErrors && (
+        <div className="min-h-5 pt-1">
+          {error && (
+            <p className="animate-in text-xs font-medium text-destructive fade-in slide-in-from-top-1">
+              {error}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   )
 }

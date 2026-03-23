@@ -70,7 +70,8 @@
     "continue": "Pokračovat",
     "resume": "Pokračovat",
     "submitting": "Odesílání...",
-    "confirmDelete": "Opravdu chcete tuto položku smazat? Tuto akci nelze vzít zpět."
+    "confirmDelete": "Opravdu chcete tuto položku smazat? Tuto akci nelze vzít zpět.",
+    "remove": "Odstranit"
   },
   "dashboard": {
     "administration": "Administrativa",

@@ -263,10 +263,9 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
       ) => actions.startAttempt(attemptId, firstQuestionId),
       handleTransitionComplete: () => actions.finishTransition(),
       resetEngine: () => actions.resetQuiz(),
-      handleOptionSelect: (qId: number | string, optId: number | string) =>
+      handleOptionSelect: (optId: number | string) =>
         actions.selectOption(optId),
-      handleFreeTextChange: (qId: number | string, text: string) =>
-        actions.setFreeText(text),
+      handleFreeTextChange: (text: string) => actions.setFreeText(text),
       handleAnswerSubmit,
       handleRecapContinue,
     },

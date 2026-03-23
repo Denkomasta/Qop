@@ -39,7 +39,7 @@ namespace Sqeez.Api.Tests.Services
 
             var service = CreateService(context);
 
-            var result = await service.GetQuizByIdAsync(quiz.Id);
+            var result = await service.GetQuizByIdAsync(quiz.Id, new GetQuizDto(null));
 
             Assert.True(result.Success);
             Assert.NotNull(result.Data);

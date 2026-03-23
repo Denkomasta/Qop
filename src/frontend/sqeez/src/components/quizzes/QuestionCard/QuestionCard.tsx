@@ -14,7 +14,7 @@ interface QuestionCardProps {
     isOption?: boolean,
   ) => React.ReactNode
   freeTextValue?: string
-  onChangeFreeText?: (questionId: number | string, text: string) => void
+  onChangeFreeText?: (text: string) => void
 }
 
 export function QuestionCard({
@@ -48,7 +48,7 @@ export function QuestionCard({
               isSelected={selectedOptionIds.includes(option.id)}
               onSelect={() => onSelectOption(question.id, option.id)}
               freeTextValue={freeTextValue}
-              onFreeTextChange={(text) => onChangeFreeText?.(question.id, text)}
+              onFreeTextChange={(text) => onChangeFreeText?.(text)}
               mediaNode={
                 option.mediaAssetId && renderMediaAsset
                   ? renderMediaAsset(option.mediaAssetId, true)

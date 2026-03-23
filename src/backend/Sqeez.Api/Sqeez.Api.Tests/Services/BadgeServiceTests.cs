@@ -9,7 +9,6 @@ using Sqeez.Api.Models.Gamification;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services;
 using Sqeez.Api.Services.Interfaces;
-using Xunit;
 
 namespace Sqeez.Api.Tests.Services
 {
@@ -183,7 +182,7 @@ namespace Sqeez.Api.Tests.Services
             var service = new BadgeService(context, _mockLogger.Object, _mockFileStorage.Object);
 
             // Student scores exactly 100% and 60 Total Points
-            var metrics = new BadgeEvaluationMetrics(ScorePercentage: 100m, TotalScore: 60);
+            var metrics = new BadgeEvaluationMetrics(ScorePercentage: 100m, TotalScore: 60, 0, 0);
 
             await service.EvaluateAndAwardBadgesAsync(1, metrics);
 
@@ -202,7 +201,7 @@ namespace Sqeez.Api.Tests.Services
             var service = new BadgeService(context, _mockLogger.Object, _mockFileStorage.Object);
 
             // Student scores 90% and 40 Total Points (Fails both conditions)
-            var metrics = new BadgeEvaluationMetrics(ScorePercentage: 90m, TotalScore: 40);
+            var metrics = new BadgeEvaluationMetrics(ScorePercentage: 90m, TotalScore: 40, 0, 0);
 
             await service.EvaluateAndAwardBadgesAsync(1, metrics);
 
@@ -223,7 +222,7 @@ namespace Sqeez.Api.Tests.Services
             var service = new BadgeService(context, _mockLogger.Object, _mockFileStorage.Object);
 
             // Metrics perfect for Badge 1, but they already have it!
-            var metrics = new BadgeEvaluationMetrics(ScorePercentage: 100m, TotalScore: 0);
+            var metrics = new BadgeEvaluationMetrics(ScorePercentage: 100m, TotalScore: 0, 0, 0);
 
             await service.EvaluateAndAwardBadgesAsync(1, metrics);
 

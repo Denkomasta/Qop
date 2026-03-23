@@ -108,6 +108,7 @@ function QuizTakePage() {
           totalQuestions={state.questionsAnswered}
           correctCount={state.correctAnswersCount}
           badges={state.earnedBadges}
+          resetQuiz={actions.resetEngine}
         />
       )
 

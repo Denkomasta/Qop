@@ -9,7 +9,8 @@ import {
 } from '@/api/generated/endpoints/quizzes/quizzes'
 import { useGetApiSubjectsSubjectIdEnrollments } from '@/api/generated/endpoints/subjects/subjects'
 import {
-  useGetApiQuizAttemptsIdNextQuestion,
+  getApiQuizAttemptsIdNextQuestion,
+  getGetApiQuizAttemptsIdNextQuestionQueryKey,
   usePostApiQuizAttemptsIdAnswer,
   usePostApiQuizAttemptsIdComplete,
 } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
@@ -34,14 +35,6 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
 
   const state = useQuizStore()
   const { actions } = state
-
-  console.log(state.phase)
-
-  useEffect(() => {
-    if (initialAttemptId && state.attemptId !== initialAttemptId) {
-      actions.initResume(initialAttemptId)
-    }
-  }, [initialAttemptId, actions, state.attemptId])
 
   const { data: quizData, isLoading: isQuizLoading } = useGetApiQuizzesQuizId(
     quizId,
@@ -86,10 +79,48 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
   }, [quizId, state.activeQuizId, actions])
 
   useEffect(() => {
-    if (initialAttemptId && state.attemptId !== initialAttemptId) {
-      actions.initResume(initialAttemptId)
+    if (!initialAttemptId || state.attemptId === initialAttemptId) return
+
+    let isMounted = true
+
+    const executeStrictResume = async () => {
+      try {
+        actions.initResume(initialAttemptId)
+
+        const nextQuestionId = await queryClient.fetchQuery({
+          queryKey:
+            getGetApiQuizAttemptsIdNextQuestionQueryKey(initialAttemptId),
+          queryFn: () => getApiQuizAttemptsIdNextQuestion(initialAttemptId),
+          staleTime: 0,
+        })
+
+        if (!isMounted) return
+
+        if (nextQuestionId) {
+          actions.startAttempt(initialAttemptId, Number(nextQuestionId))
+        } else {
+          const response = await completeMutation.mutateAsync({
+            id: initialAttemptId,
+          })
+          actions.completeQuiz(
+            !response.earnedBadges ? undefined : response.earnedBadges,
+          )
+        }
+      } catch (error) {
+        if (!isMounted) return
+        console.error('Strict resume failed:', error)
+        toast.error(t('quiz.resumeError'))
+        history.back()
+      }
     }
-  }, [initialAttemptId, actions, state.attemptId])
+
+    executeStrictResume()
+
+    return () => {
+      isMounted = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialAttemptId])
 
   useEffect(() => {
     if (currentQuestion && state.phase === 'transition') {
@@ -115,60 +146,8 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
     }
   }, [currentQuestion, state.phase])
 
-  const {
-    data: nextPendingQuestionId,
-    isSuccess: isResumingSuccess,
-    isError: isResumingError,
-  } = useGetApiQuizAttemptsIdNextQuestion(Number(state.attemptId), {
-    query: {
-      enabled: state.phase === 'resuming' && !!state.attemptId,
-      refetchOnWindowFocus: false,
-    },
-  })
-
   const answerMutation = usePostApiQuizAttemptsIdAnswer()
   const completeMutation = usePostApiQuizAttemptsIdComplete()
-
-  useEffect(() => {
-    if (state.phase === 'resuming') {
-      if (isResumingError) {
-        toast.error(t('quiz.resumeError'))
-        history.back()
-        return
-      }
-
-      if (isResumingSuccess) {
-        if (nextPendingQuestionId) {
-          actions.startAttempt(state.attemptId!, Number(nextPendingQuestionId))
-        } else {
-          if (state.attemptId) {
-            completeMutation
-              .mutateAsync({ id: Number(state.attemptId) })
-              .then((response) => {
-                actions.completeQuiz(
-                  !response.earnedBadges ? undefined : response.earnedBadges,
-                )
-              })
-              .catch((error) => {
-                console.error('Failed to auto-complete attempt', error)
-                actions.completeQuiz()
-              })
-          } else {
-            actions.completeQuiz()
-          }
-        }
-      }
-    }
-  }, [
-    state.phase,
-    isResumingSuccess,
-    isResumingError,
-    nextPendingQuestionId,
-    state.attemptId,
-    completeMutation,
-    actions,
-    t,
-  ])
 
   const handleAnswerSubmit = async () => {
     if (!state.attemptId || !state.currentQuestionId) return

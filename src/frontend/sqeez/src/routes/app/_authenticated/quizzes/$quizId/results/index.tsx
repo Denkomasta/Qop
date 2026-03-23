@@ -158,7 +158,8 @@ function QuizResultsSummaryPage() {
                     </CardDescription>
                   </div>
 
-                  {attempt.status === 'Started' && (
+                  {(attempt.status === 'Started' ||
+                    attempt.status === 'Created') && (
                     <Button size="sm" asChild>
                       <Link
                         to={'/app/quizzes/$quizId/play'}

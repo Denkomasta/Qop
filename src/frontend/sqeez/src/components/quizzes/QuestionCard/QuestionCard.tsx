@@ -5,10 +5,7 @@ import { QuizOptionItem } from '../QuizOptionItem'
 interface QuestionCardProps {
   question: DetailedQuizQuestionDto
   selectedOptionIds: (number | string)[]
-  onSelectOption: (
-    questionId: number | string,
-    optionId: number | string,
-  ) => void
+  onSelectOption: (optionId: number | string) => void
   renderMediaAsset?: (
     assetId: number | string,
     isOption?: boolean,
@@ -46,7 +43,7 @@ export function QuestionCard({
               key={option.id}
               option={option}
               isSelected={selectedOptionIds.includes(option.id)}
-              onSelect={() => onSelectOption(question.id, option.id)}
+              onSelect={() => onSelectOption(option.id)}
               freeTextValue={freeTextValue}
               onFreeTextChange={(text) => onChangeFreeText?.(text)}
               mediaNode={

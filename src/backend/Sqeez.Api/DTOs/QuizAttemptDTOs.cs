@@ -11,7 +11,8 @@ namespace Sqeez.Api.DTOs
         AttemptStatus Status,
         int TotalScore,
         int? Mark,
-        long? NextQuestionId = null
+        long? NextQuestionId = null,
+        List<StudentBadgeBasicDto>? EarnedBadges = null
     );
 
     public record QuestionResponseDto(

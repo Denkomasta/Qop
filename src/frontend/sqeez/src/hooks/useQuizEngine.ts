@@ -18,6 +18,7 @@ import {
   getApiMediaAssetsIdFile,
   getGetApiMediaAssetsIdFileQueryKey,
 } from '@/api/generated/endpoints/media-assets/media-assets'
+import type { StudentBadgeBasicDto } from '@/api/generated/model'
 
 export type QuizPhase =
   | 'start'
@@ -58,6 +59,7 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
     (number | string)[]
   >([])
   const [freeTextValue, setFreeTextValue] = useState<string>('')
+  const [earnedBadges, setEarnedBadges] = useState<StudentBadgeBasicDto[]>([])
   const [currentCorrectOptionIds, setCurrentCorrectOptionIds] = useState<
     (number | string)[]
   >([])
@@ -149,6 +151,11 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
           if (attemptId) {
             completeMutation
               .mutateAsync({ id: Number(attemptId) })
+              .then((response) => {
+                if (response.earnedBadges) {
+                  setEarnedBadges(response.earnedBadges)
+                }
+              })
               .catch((error) =>
                 console.error('Failed to auto-complete attempt', error),
               )
@@ -189,7 +196,6 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
 
   const handleOptionSelect = (qId: number | string, optId: number | string) => {
     setSelectedOptionIds([optId])
-    setQuestionStartTime(Date.now())
   }
 
   const handleFreeTextChange = (qId: number | string, text: string) => {
@@ -218,13 +224,14 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
         },
       })
 
+      if (!response.correctOptionIds)
+        throw new Error('Response did not return correct answers!')
+
       const correctIds = response.correctOptionIds || []
 
       setLastResponseTimeMs(Number(response.responseTimeMs))
       setCurrentCorrectOptionIds(correctIds)
       setCorrectFreeTextAnswer(response.freeTextAnswer || null)
-      if (!correctIds)
-        throw new Error('Response did not return correct answers!')
 
       setCurrentCorrectOptionIds(correctIds)
       setNextQuestionId(
@@ -251,7 +258,13 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
       setPhase('transition')
     } else {
       try {
-        if (attemptId) await completeMutation.mutateAsync({ id: attemptId })
+        if (attemptId) {
+          const response = await completeMutation.mutateAsync({ id: attemptId })
+
+          if (response.earnedBadges) {
+            setEarnedBadges(response.earnedBadges)
+          }
+        }
         setPhase('completed')
       } catch (error) {
         console.error('Failed to complete quiz', error)
@@ -282,6 +295,7 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
       nextQuestionId,
       hasSelection:
         selectedOptionIds.length > 0 || freeTextValue.trim().length > 0,
+      earnedBadges,
     },
     actions: {
       handleAttemptStarted,

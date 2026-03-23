@@ -214,13 +214,32 @@ namespace Sqeez.Api.Services
                 .SumAsync(q => q.Difficulty);
 
             decimal scorePercentage = maxPossibleScore > 0 ? ((decimal)attempt.TotalScore / maxPossibleScore) * 100 : 0;
-            var metrics = new BadgeEvaluationMetrics(scorePercentage, attempt.TotalScore);
 
-            _ = _badgeService.EvaluateAndAwardBadgesAsync(studentId, metrics);
+            // Calculate Total Attempts
+            int totalAttempts = await _context.QuizAttempts
+                .CountAsync(a => a.QuizId == attempt.QuizId &&
+                                 a.Enrollment.StudentId == studentId &&
+                                 a.Status == AttemptStatus.Completed);
+
+            int perfectAnswersCount = attempt.Responses.Count(r => r.Score > 0);
+
+            var metrics = new BadgeEvaluationMetrics(
+                ScorePercentage: scorePercentage,
+                TotalScore: attempt.TotalScore,
+                PerfectAnswersCount: perfectAnswersCount,
+                TotalAttempts: totalAttempts
+            );
+
+            var newBadges = await _badgeService.EvaluateAndAwardBadgesAsync(studentId, metrics);
+
+            if (!newBadges.Success)
+            {
+                return ServiceResult<QuizAttemptDto>.Failure(newBadges.ErrorMessage ?? "Badge evaluation failed", ServiceError.InternalError);
+            }
 
             return ServiceResult<QuizAttemptDto>.Ok(new QuizAttemptDto(
                 attempt.Id, attempt.QuizId, attempt.EnrollmentId, attempt.StartTime,
-                attempt.EndTime, attempt.Status, attempt.TotalScore, attempt.Mark));
+                attempt.EndTime, attempt.Status, attempt.TotalScore, attempt.Mark, EarnedBadges: newBadges.Data));
         }
 
         public async Task<ServiceResult<QuizAttemptDetailDto>> GetAttemptDetailsAsync(long attemptId, long currentUserId, string currentUserRole)

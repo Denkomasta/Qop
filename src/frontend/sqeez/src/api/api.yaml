@@ -4248,6 +4248,12 @@ components:
             - integer
             - string
           format: int64
+        earnedBadges:
+          type:
+            - "null"
+            - array
+          items:
+            $ref: "#/components/schemas/StudentBadgeBasicDto"
     QuizDto:
       required:
         - id

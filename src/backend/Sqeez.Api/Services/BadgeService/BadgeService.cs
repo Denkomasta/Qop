@@ -218,19 +218,19 @@ namespace Sqeez.Api.Services
             return ServiceResult<IEnumerable<StudentBadgeDto>>.Ok(earnedBadges);
         }
 
-        public async Task<ServiceResult<bool>> AwardBadgeToStudentAsync(long studentId, long badgeId)
+        public async Task<ServiceResult<StudentBadgeBasicDto>> AwardBadgeToStudentAsync(long studentId, long badgeId)
         {
             var student = await _context.Students.FindAsync(studentId);
-            if (student == null) return ServiceResult<bool>.Failure("Student not found.", ServiceError.NotFound);
+            if (student == null) return ServiceResult<StudentBadgeBasicDto>.Failure("Student not found.", ServiceError.NotFound);
 
             var badge = await _context.Badges.FindAsync(badgeId);
-            if (badge == null) return ServiceResult<bool>.Failure("Badge not found.", ServiceError.NotFound);
+            if (badge == null) return ServiceResult<StudentBadgeBasicDto>.Failure("Badge not found.", ServiceError.NotFound);
 
             bool alreadyEarned = await _context.StudentBadges
                 .AnyAsync(sb => sb.StudentId == studentId && sb.BadgeId == badgeId);
 
             if (alreadyEarned)
-                return ServiceResult<bool>.Failure("Student has already earned this badge.", ServiceError.Conflict);
+                return ServiceResult<StudentBadgeBasicDto>.Failure("Student has already earned this badge.", ServiceError.Conflict);
 
             var studentBadge = new StudentBadge
             {
@@ -244,10 +244,18 @@ namespace Sqeez.Api.Services
 
             await _context.SaveChangesAsync();
 
-            return ServiceResult<bool>.Ok(true);
+            var resultDto = new StudentBadgeBasicDto
+            {
+                BadgeId = badge.Id,
+                Name = badge.Name,
+                IconUrl = badge.IconUrl,
+                EarnedAt = studentBadge.EarnedAt
+            };
+
+            return ServiceResult<StudentBadgeBasicDto>.Ok(resultDto);
         }
 
-        public async Task EvaluateAndAwardBadgesAsync(long studentId, BadgeEvaluationMetrics metrics)
+        public async Task<ServiceResult<List<StudentBadgeBasicDto>>> EvaluateAndAwardBadgesAsync(long studentId, BadgeEvaluationMetrics metrics)
         {
             var earnedBadgeIds = await _context.StudentBadges
                 .Where(sb => sb.StudentId == studentId)
@@ -258,6 +266,10 @@ namespace Sqeez.Api.Services
                 .Include(b => b.Rules)
                 .Where(b => !earnedBadgeIds.Contains(b.Id))
                 .ToListAsync();
+
+            var newlyAwardedDtos = new List<StudentBadgeBasicDto>();
+            var studentBadgesToInsert = new List<StudentBadge>();
+            int totalXpBonus = 0;
 
             foreach (var badge in availableBadges)
             {
@@ -274,11 +286,7 @@ namespace Sqeez.Api.Services
                         _ => -1
                     };
 
-                    if (metricValue == -1)
-                    {
-                        meetsAllRules = false;
-                        break;
-                    }
+                    if (metricValue == -1) { meetsAllRules = false; break; }
 
                     bool ruleMet = rule.Operator switch
                     {
@@ -290,18 +298,46 @@ namespace Sqeez.Api.Services
                         _ => false
                     };
 
-                    if (!ruleMet)
-                    {
-                        meetsAllRules = false;
-                        break;
-                    }
+                    if (!ruleMet) { meetsAllRules = false; break; }
                 }
 
                 if (meetsAllRules)
                 {
-                    await AwardBadgeToStudentAsync(studentId, badge.Id);
+                    var earnedAt = DateTime.UtcNow;
+
+                    studentBadgesToInsert.Add(new StudentBadge
+                    {
+                        StudentId = studentId,
+                        BadgeId = badge.Id,
+                        EarnedAt = earnedAt
+                    });
+
+                    totalXpBonus += badge.XpBonus;
+
+                    newlyAwardedDtos.Add(new StudentBadgeBasicDto
+                    {
+                        BadgeId = badge.Id,
+                        Name = badge.Name,
+                        IconUrl = badge.IconUrl,
+                        EarnedAt = earnedAt
+                    });
                 }
             }
+
+            if (studentBadgesToInsert.Any())
+            {
+                var student = await _context.Students.FindAsync(studentId);
+                if (student != null)
+                {
+                    _context.StudentBadges.AddRange(studentBadgesToInsert);
+
+                    student.CurrentXP += totalXpBonus;
+
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            return ServiceResult<List<StudentBadgeBasicDto>>.Ok(newlyAwardedDtos);
         }
     }
 }

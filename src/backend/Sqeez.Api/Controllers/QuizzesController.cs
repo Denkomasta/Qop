@@ -112,7 +112,7 @@ namespace Sqeez.Api.Controllers
         #region --- 3. QUIZ OPTIONS ---
 
         [HttpGet("{quizId}/questions/{questionId}/options")]
-        public async Task<ActionResult> GetOptions(long quizId, long questionId, [FromQuery] QuizOptionFilterDto filter)
+        public async Task<ActionResult<PagedResponse<QuizOptionDto>>> GetOptions(long quizId, long questionId, [FromQuery] QuizOptionFilterDto filter)
         {
             filter.QuizQuestionId = questionId;
             var result = await _optionService.GetAllQuizOptionsAsync(filter);
@@ -120,7 +120,7 @@ namespace Sqeez.Api.Controllers
         }
 
         [HttpGet("{quizId}/questions/{questionId}/options/{optionId}")]
-        public async Task<ActionResult> GetOption(long quizId, long questionId, long optionId)
+        public async Task<ActionResult<QuizOptionDto>> GetOption(long quizId, long questionId, long optionId)
         {
             var result = await _optionService.GetQuizOptionByIdAsync(optionId);
             return HandleServiceResult(result);
@@ -128,7 +128,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPost("{quizId}/questions/{questionId}/options")]
-        public async Task<ActionResult> CreateOption(long quizId, long questionId, [FromBody] CreateQuizOptionDto dto)
+        public async Task<ActionResult<QuizOptionDto>> CreateOption(long quizId, long questionId, [FromBody] CreateQuizOptionDto dto)
         {
             var safeDto = dto with { QuizQuestionID = questionId };
             var result = await _optionService.CreateQuizOptionAsync(safeDto);
@@ -137,7 +137,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPatch("{quizId}/questions/{questionId}/options/{optionId}")]
-        public async Task<ActionResult> PatchOption(long quizId, long questionId, long optionId, [FromBody] PatchQuizOptionDto dto)
+        public async Task<ActionResult<QuizOptionDto>> PatchOption(long quizId, long questionId, long optionId, [FromBody] PatchQuizOptionDto dto)
         {
             var result = await _optionService.PatchQuizOptionAsync(optionId, dto);
             return HandleServiceResult(result);
@@ -145,7 +145,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize(Roles = "Admin,Teacher")]
         [HttpDelete("{quizId}/questions/{questionId}/options/{optionId}")]
-        public async Task<ActionResult> DeleteOption(long quizId, long questionId, long optionId)
+        public async Task<ActionResult<bool>> DeleteOption(long quizId, long questionId, long optionId)
         {
             var result = await _optionService.DeleteQuizOptionAsync(optionId);
             return HandleServiceResult(result);

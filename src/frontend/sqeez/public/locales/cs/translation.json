@@ -69,7 +69,8 @@
     "next": "Další",
     "continue": "Pokračovat",
     "resume": "Pokračovat",
-    "submitting": "Odesílání..."
+    "submitting": "Odesílání...",
+    "confirmDelete": "Opravdu chcete tuto položku smazat? Tuto akci nelze vzít zpět."
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -298,5 +299,43 @@
     "noAnswerProvided": "Neodpovězeno",
     "quizRecapTitle": "Kvíz dokončen",
     "achievementUnlocked": "Úspěch Odemčen!"
+  },
+  "editor": {
+    "questionsTitle": "Otázky",
+    "addQuestion": "Přidat novou otázku",
+    "newQuestionDefault": "Sem napište text otázky...",
+    "noQuestionsYet": "Tento kvíz je zatím prázdný. Klikněte na tlačítko plus a přidejte svou první otázku.",
+    "untitledQuestion": "Nepojmenovaná otázka",
+    "saving": "Ukládání...",
+    "saved": "Uloženo",
+    "error": "Chyba při ukládání",
+    "deleteQuestion": "Smazat otázku",
+    "difficulty": "Obtížnost",
+    "options": "Možnosti odpovědí",
+    "addOption": "Přidat odpověď",
+    "correct": "Správná",
+    "incorrect": "Nesprávná",
+    "title": "Editor kvízu",
+    "preview": "Náhled",
+    "settings": "Nastavení kvízu",
+    "questionText": "Nadpis otázky:",
+    "timeLimit": "Časový limit",
+    "timeLimitHint": "Jak dlouho můžou studenti na otázku odpovídat.",
+    "mediaAsset": "Média otázky",
+    "uploadMediaHint": "Klikněte pro nahrátí obrázku či videa",
+    "mediaUploaded": "Nahrátí média proběhlo úspěšně",
+    "removeMedia": "Odstranit médium",
+    "newOptionDefault": "Nová odpověď",
+    "noOptionsYet": "Zatím nebyly přidány žádné možnosti. Klikněte na 'Přidat odpověď'.",
+    "markCorrect": "Označit jako správnou odpověď",
+    "optionTextHint": "Zadejte text možnosti nebo popis...",
+    "freeTextAnswerHint": "Zadejte přesné znění odpovědi...",
+    "toggleFreeText": "Přepnout na přesnou textovou shodu",
+    "manageOptionMedia": "Spravovat média odpovědi",
+    "optionMediaTitle": "Média k odpovědi",
+    "optionMediaDescription": "Nahrajte obrázek, video nebo zvukový soubor pro tuto možnost.",
+    "changeMedia": "Změnit média",
+    "clickToSelectMedia": "Kliknutím vyberte média",
+    "mediaRemoved": "Média byla úspěšně odstraněna"
   }
 }

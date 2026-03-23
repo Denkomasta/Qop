@@ -1500,6 +1500,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfQuizOptionDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfQuizOptionDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponseOfQuizOptionDto"
     post:
       tags:
         - Quizzes
@@ -1537,6 +1547,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/QuizOptionDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizOptionDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/QuizOptionDto"
   /api/quizzes/{quizId}/questions/{questionId}/options/{optionId}:
     get:
       tags:
@@ -1572,6 +1592,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/QuizOptionDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizOptionDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/QuizOptionDto"
     patch:
       tags:
         - Quizzes
@@ -1618,6 +1648,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/QuizOptionDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizOptionDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/QuizOptionDto"
     delete:
       tags:
         - Quizzes
@@ -1652,6 +1692,16 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/classes:
     get:
       tags:
@@ -3554,6 +3604,37 @@ components:
             - integer
             - string
           format: int32
+    PagedResponseOfQuizOptionDto:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuizOptionDto"
+        totalCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageNumber:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalPages:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
     PagedResponseOfQuizQuestionDto:
       type: object
       properties:
@@ -4310,6 +4391,50 @@ components:
             - string
           format: int32
         quizAttempts:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    QuizOptionDto:
+      required:
+        - id
+        - text
+        - isFreeText
+        - isCorrect
+        - quizQuestionId
+        - mediaAssetId
+        - responses
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        text:
+          type:
+            - "null"
+            - string
+        isFreeText:
+          type: boolean
+        isCorrect:
+          type: boolean
+        quizQuestionId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        mediaAssetId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        responses:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer

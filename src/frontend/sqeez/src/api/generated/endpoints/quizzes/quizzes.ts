@@ -29,11 +29,13 @@ import type {
   GetApiQuizzesQuizIdQuestionsParams,
   GetApiQuizzesQuizIdQuestionsQuestionIdOptionsParams,
   PagedResponseOfQuizDto,
+  PagedResponseOfQuizOptionDto,
   PagedResponseOfQuizQuestionDto,
   PatchQuizDto,
   PatchQuizOptionDto,
   PatchQuizQuestionDto,
   QuizDto,
+  QuizOptionDto,
   QuizQuestionDto,
 } from '../../model'
 
@@ -1399,7 +1401,7 @@ export const getApiQuizzesQuizIdQuestionsQuestionIdOptions = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<PagedResponseOfQuizOptionDto>(
     {
       url: `/api/quizzes/${quizId}/questions/${questionId}/options`,
       method: 'GET',
@@ -1631,7 +1633,7 @@ export const postApiQuizzesQuizIdQuestionsQuestionIdOptions = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<QuizOptionDto>(
     {
       url: `/api/quizzes/${quizId}/questions/${questionId}/options`,
       method: 'POST',
@@ -1751,7 +1753,7 @@ export const getApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<QuizOptionDto>(
     {
       url: `/api/quizzes/${quizId}/questions/${questionId}/options/${optionId}`,
       method: 'GET',
@@ -2008,7 +2010,7 @@ export const patchApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<QuizOptionDto>(
     {
       url: `/api/quizzes/${quizId}/questions/${questionId}/options/${optionId}`,
       method: 'PATCH',
@@ -2150,7 +2152,7 @@ export const deleteApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionId = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
+  return customInstance<boolean>(
     {
       url: `/api/quizzes/${quizId}/questions/${questionId}/options/${optionId}`,
       method: 'DELETE',

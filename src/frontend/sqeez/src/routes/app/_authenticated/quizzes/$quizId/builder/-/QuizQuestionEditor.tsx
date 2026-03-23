@@ -1,0 +1,105 @@
+import { useTranslation } from 'react-i18next'
+import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
+import {
+  useGetApiQuizzesQuizIdQuestionsQuestionId,
+  usePatchApiQuizzesQuizIdQuestionsQuestionId,
+} from '@/api/generated/endpoints/quizzes/quizzes'
+import { Loader2 } from 'lucide-react'
+import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
+import { QuestionDifficultyEditor } from './QuestionDifficultyEditor'
+import { QuestionTimeLimitEditor } from './QuestionTimeLimitEditor'
+import { QuestionMediaEditor } from './QuestionMediaEditor'
+import { QuizOptionsEditor } from './QuizOptionsEditor'
+
+interface QuizQuestionEditorProps {
+  quizId: string
+}
+
+export function QuizQuestionEditor({ quizId }: QuizQuestionEditorProps) {
+  const { t } = useTranslation()
+  const activeQuestionId = useQuizEditorUIStore((s) => s.activeQuestionId)
+
+  const { data: question, isLoading } =
+    useGetApiQuizzesQuizIdQuestionsQuestionId(
+      quizId,
+      activeQuestionId?.toString() ?? '',
+      { query: { enabled: !!activeQuestionId } },
+    )
+
+  const updateMutation = usePatchApiQuizzesQuizIdQuestionsQuestionId()
+
+  const handleUpdateTitle = async (title: string) => {
+    if (!activeQuestionId) return
+
+    await updateMutation.mutateAsync({
+      quizId,
+      questionId: activeQuestionId.toString(),
+      data: { title },
+    })
+  }
+
+  if (!activeQuestionId) {
+    return (
+      <div className="flex flex-1 items-center justify-center bg-muted/5 p-8 text-center text-muted-foreground">
+        <div className="max-w-xs">
+          <p className="text-sm italic">{t('editor.selectToEdit')}</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-1 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary/30" />
+      </div>
+    )
+  }
+
+  return (
+    <main className="flex-1 overflow-y-auto bg-background p-8 lg:p-12">
+      <div className="mx-auto max-w-3xl space-y-12">
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-black tracking-widest text-muted-foreground uppercase">
+            {t('editor.questionText')}
+          </label>
+          <DebouncedInput
+            value={question?.title ?? ''}
+            onChange={handleUpdateTitle}
+            placeholder={t('editor.newQuestionDefault')}
+            className="text-lg font-semibold"
+            debounceTime={800}
+          />
+        </div>
+
+        <QuestionMediaEditor
+          quizId={quizId}
+          questionId={activeQuestionId.toString()}
+          currentMediaAssetId={question?.mediaAssetId ?? null}
+        />
+
+        <div className="grid grid-cols-1 gap-12 rounded-xl border bg-muted/5 p-6 md:grid-cols-2">
+          <QuestionDifficultyEditor
+            key={question?.difficulty}
+            quizId={quizId}
+            questionId={activeQuestionId.toString()}
+            currentDifficulty={Number(question?.difficulty ?? 1)}
+          />
+
+          <QuestionTimeLimitEditor
+            quizId={quizId}
+            questionId={activeQuestionId.toString()}
+            currentTimeLimit={Number(question?.timeLimit ?? 30)}
+          />
+        </div>
+
+        <hr className="border-muted" />
+
+        <QuizOptionsEditor
+          quizId={quizId}
+          questionId={activeQuestionId.toString()}
+        />
+      </div>
+    </main>
+  )
+}

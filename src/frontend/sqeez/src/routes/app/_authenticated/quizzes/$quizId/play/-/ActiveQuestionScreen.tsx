@@ -15,7 +15,7 @@ interface ActiveQuestionScreenProps {
   selectedOptionIds: (number | string)[]
   freeTextValue: string
   hasSelection: boolean
-  onSelectOption: (qId: number | string, optId: number | string) => void
+  onSelectOption: (optId: number | string) => void
   onChangeFreeText: (text: string) => void
   onSubmit: () => Promise<void>
   renderMediaAsset?: (

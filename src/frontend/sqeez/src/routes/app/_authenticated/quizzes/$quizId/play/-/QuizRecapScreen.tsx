@@ -18,6 +18,7 @@ interface QuizRecapScreenProps {
   totalQuestions: number
   correctCount: number
   badges?: StudentBadgeBasicDto[]
+  resetQuiz: () => void
   // Optional: If you track total time spent across all questions
   // totalTimeMs?: number
 }
@@ -28,6 +29,7 @@ export function QuizRecapScreen({
   totalQuestions,
   correctCount,
   badges,
+  resetQuiz,
 }: QuizRecapScreenProps) {
   const { t } = useTranslation()
 
@@ -98,11 +100,17 @@ export function QuizRecapScreen({
             size="lg"
             className="w-full sm:w-1/2"
             asChild
+            onClick={() => resetQuiz()}
           >
             <Link to="/app/quizzes">{t('quiz.backToQuizzes')}</Link>
           </Button>
 
-          <Button size="lg" className="w-full sm:w-1/2" asChild>
+          <Button
+            size="lg"
+            className="w-full sm:w-1/2"
+            asChild
+            onClick={() => resetQuiz()}
+          >
             <Link
               to="/app/quizzes/$quizId/results"
               params={{ quizId: quizId.toString() }}

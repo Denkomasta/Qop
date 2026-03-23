@@ -70,7 +70,9 @@ namespace Sqeez.Api.DTOs
 
     public record BadgeEvaluationMetrics(
         decimal ScorePercentage,
-        int TotalScore
+        int TotalScore,
+        int PerfectAnswersCount,
+        int TotalAttempts
     );
 
     public class BadgeFilterDto : PagedFilterDto

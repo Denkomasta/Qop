@@ -104,9 +104,10 @@ function QuizTakePage() {
       return (
         <QuizRecapScreen
           quizId={quizId}
-          quizTitle="Quiz Completed"
+          quizTitle={t('quiz.quizRecapTitle')}
           totalQuestions={state.questionsAnswered}
           correctCount={state.correctAnswersCount}
+          badges={state.earnedBadges}
         />
       )
 

@@ -295,6 +295,8 @@
     "gradingGuideNote": "Pouze pro informaci",
     "selectAnswerWarning": "Prosím vyberte nebo vypiště odpověď před pokračovaním.",
     "yourAnswer": "Tvá odpověď",
-    "noAnswerProvided": "Neodpovězeno"
+    "noAnswerProvided": "Neodpovězeno",
+    "quizRecapTitle": "Kvíz dokončen",
+    "achievementUnlocked": "Úspěch Odemčen!"
   }
 }

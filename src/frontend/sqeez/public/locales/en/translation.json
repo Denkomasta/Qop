@@ -296,6 +296,8 @@
     "gradingGuideNote": "For reference only",
     "selectAnswerWarning": "Please select or type an answer before continuing.",
     "yourAnswer": "Your Answer",
-    "noAnswerProvided": "No answer provided"
+    "noAnswerProvided": "No answer provided",
+    "quizRecapTitle": "Quiz Completed",
+    "achievementUnlocked": "Achievement Unlocked!"
   }
 }

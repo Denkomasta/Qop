@@ -9,12 +9,15 @@ import {
   CardTitle,
 } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { BadgeUnlockNotification } from '@/components/quizzes/BadgeUnlockNotification'
+import type { StudentBadgeBasicDto } from '@/api/generated/model'
 
 interface QuizRecapScreenProps {
   quizId: number | string
   quizTitle: string
   totalQuestions: number
   correctCount: number
+  badges?: StudentBadgeBasicDto[]
   // Optional: If you track total time spent across all questions
   // totalTimeMs?: number
 }
@@ -24,6 +27,7 @@ export function QuizRecapScreen({
   quizTitle,
   totalQuestions,
   correctCount,
+  badges,
 }: QuizRecapScreenProps) {
   const { t } = useTranslation()
 
@@ -110,6 +114,11 @@ export function QuizRecapScreen({
           </Button>
         </CardFooter>
       </Card>
+
+      <BadgeUnlockNotification
+        badges={badges}
+        achievementText={t('quiz.achievementUnlocked')}
+      />
     </div>
   )
 }

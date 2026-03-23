@@ -5,6 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { AttemptStatus } from './attemptStatus'
+import type { StudentBadgeBasicDto } from './studentBadgeBasicDto'
 
 export interface QuizAttemptDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
@@ -30,4 +31,6 @@ export interface QuizAttemptDto {
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   nextQuestionId?: number | string | null
+  /** @nullable */
+  earnedBadges?: StudentBadgeBasicDto[] | null
 }

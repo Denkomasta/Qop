@@ -9,7 +9,6 @@ using Sqeez.Api.Models.QuizSystem;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services;
 using Sqeez.Api.Services.Interfaces;
-using Xunit;
 
 namespace Sqeez.Api.Tests.Services
 {
@@ -330,6 +329,9 @@ namespace Sqeez.Api.Tests.Services
             context.QuizAttempts.Add(attempt);
             await context.SaveChangesAsync();
 
+            _mockBadgeService
+                .Setup(b => b.EvaluateAndAwardBadgesAsync(It.IsAny<long>(), It.IsAny<BadgeEvaluationMetrics>()))
+                .ReturnsAsync(ServiceResult<List<StudentBadgeBasicDto>>.Ok(new List<StudentBadgeBasicDto>()));
             var service = new QuizAttemptService(context, _mockLogger.Object, _mockBadgeService.Object);
             var result = await service.CompleteAttemptAsync(attempt.Id, 1);
 
@@ -365,9 +367,13 @@ namespace Sqeez.Api.Tests.Services
             context.QuizAttempts.Add(newAttempt);
             await context.SaveChangesAsync();
 
+            _mockBadgeService
+                .Setup(b => b.EvaluateAndAwardBadgesAsync(It.IsAny<long>(), It.IsAny<BadgeEvaluationMetrics>()))
+                .ReturnsAsync(ServiceResult<List<StudentBadgeBasicDto>>.Ok(new List<StudentBadgeBasicDto>()));
+
             var service = new QuizAttemptService(context, _mockLogger.Object, _mockBadgeService.Object);
 
-            await service.CompleteAttemptAsync(newAttempt.Id, 1);
+            await service.CompleteAttemptAsync(newAttempt.Id, 1L);
 
             var student = await context.Students.FindAsync(1L);
             // Student would normally have 15 points, the 5 points from original are not set so the service correctly adds 10 points.
@@ -397,6 +403,10 @@ namespace Sqeez.Api.Tests.Services
             var student = await context.Students.FindAsync(1L);
             student!.CurrentXP = 15;
             await context.SaveChangesAsync();
+
+            _mockBadgeService
+                .Setup(b => b.EvaluateAndAwardBadgesAsync(It.IsAny<long>(), It.IsAny<BadgeEvaluationMetrics>()))
+                .ReturnsAsync(ServiceResult<List<StudentBadgeBasicDto>>.Ok(new List<StudentBadgeBasicDto>()));
 
             var service = new QuizAttemptService(context, _mockLogger.Object, _mockBadgeService.Object);
 

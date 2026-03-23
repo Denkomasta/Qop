@@ -264,6 +264,7 @@ function QuizDetailsPage() {
                     <Link
                       to="/app/quizzes/$quizId/play"
                       params={{ quizId: quizId.toString() }}
+                      search={{ attemptId: undefined }}
                     >
                       <PlayCircle className="mr-2 size-5" />
                       {hasAttempts ? t('quiz.retakeQuiz') : t('quiz.startQuiz')}

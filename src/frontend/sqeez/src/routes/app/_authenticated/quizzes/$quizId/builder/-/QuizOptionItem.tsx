@@ -18,7 +18,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { OptionMediaModal } from './OptionMediaModal'
-import type { QuizOptionDto } from '@/api/generated/model'
+import type { PatchQuizOptionDto, QuizOptionDto } from '@/api/generated/model'
 
 interface QuizOptionItemProps {
   quizId: string
@@ -63,7 +63,7 @@ export function QuizOptionItem({
       },
     })
 
-  const handleUpdate = async (data: any) => {
+  const handleUpdate = async (data: PatchQuizOptionDto) => {
     try {
       await patchOption.mutateAsync({
         quizId,
@@ -124,6 +124,7 @@ export function QuizOptionItem({
               'border-none bg-transparent shadow-none focus-visible:ring-1',
               option.isFreeText && 'font-mono text-primary',
             )}
+            hideErrors
           />
         </div>
 

@@ -46,6 +46,7 @@ export function QuizOptionsEditor({
       data: {
         text: t('editor.newOptionDefault'),
         isCorrect: false,
+        quizQuestionID: questionId,
         isFreeText: false,
       },
     })

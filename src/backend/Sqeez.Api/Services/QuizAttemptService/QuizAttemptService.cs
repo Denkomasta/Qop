@@ -41,6 +41,15 @@ namespace Sqeez.Api.Services
             if (quiz == null || quiz.SubjectId != enrollment.SubjectId)
                 return ServiceResult<QuizAttemptDto>.Failure("Quiz not found.", ServiceError.NotFound);
 
+            var now = DateTime.UtcNow;
+            // If there's no publish date, it's a draft. If the date is in the future, it's scheduled.
+            if (!quiz.PublishDate.HasValue || now < quiz.PublishDate.Value)
+                return ServiceResult<QuizAttemptDto>.Failure("This quiz is not published yet.", ServiceError.ValidationFailed);
+
+            // If there is a closing date and we are past it, lock it down.
+            if (quiz.ClosingDate.HasValue && now > quiz.ClosingDate.Value)
+                return ServiceResult<QuizAttemptDto>.Failure("This quiz has already closed.", ServiceError.ValidationFailed);
+
             // Max Retries Business Rule
             if (quiz.MaxRetries > 0)
             {
@@ -332,11 +341,11 @@ namespace Sqeez.Api.Services
             if (response.QuizAttempt.Quiz.Subject.TeacherId != teacherId)
                 return ServiceResult<QuestionResponseDto>.Failure("You can only grade responses for your own subjects.", ServiceError.Forbidden);
 
-            // 1. Update the manual grade and like status
+            // Update the manual grade and like status
             response.Score = dto.Score;
             response.IsLiked = dto.IsLiked;
 
-            // 2. Recalculate the overall QuizAttempt TotalScore since the teacher changed a grade!
+            // Recalculate the overall QuizAttempt TotalScore since the teacher changed a grade!
             response.QuizAttempt.TotalScore = response.QuizAttempt.Responses.Sum(r => r.Score);
 
             await _context.SaveChangesAsync();

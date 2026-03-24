@@ -17,6 +17,9 @@ import {
   Library,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useGetApiUsersId } from '@/api/generated/endpoints/user/user'
+import { Spinner } from '@/components/ui/Spinner'
+import type { StudentDtoTeacherDto } from '@/api/generated/model'
 
 export const Route = createFileRoute('/app/_authenticated/')({
   component: DashboardLaunchpad,
@@ -27,16 +30,17 @@ type NavCard = {
   description: string
   icon: React.ReactNode
   href: string
+  params?: Record<string, string | number>
   colorClass: string
 }
 
-// 1. Move NavCardGrid HERE (outside the main component)
 const NavCardGrid = ({ items }: { items: NavCard[] }) => (
   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
     {items.map((item) => (
       <Link
         key={item.href}
         to={item.href}
+        params={item.params}
         className="block rounded-xl ring-primary outline-none focus-visible:ring-2"
       >
         <Card className="group h-full cursor-pointer transition-all hover:border-primary hover:shadow-md">
@@ -57,15 +61,29 @@ const NavCardGrid = ({ items }: { items: NavCard[] }) => (
   </div>
 )
 
-// 2. Main Component
 function DashboardLaunchpad() {
   const { t } = useTranslation()
   const user = useAuthStore((s) => s.user)
 
+  const userId = user?.id
+  const isTeacher = user?.role === 'Teacher' || user?.role === 'Admin'
+  const isAdmin = user?.role === 'Admin'
+
+  const { data, isLoading } = useGetApiUsersId(Number(userId), {
+    query: { enabled: !!userId && isTeacher },
+  })
+
   if (!user) return null
 
-  const isTeacher = user.role === 'Teacher' || user.role === 'Admin'
-  const isAdmin = user.role === 'Admin'
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+        <Spinner size="lg" />
+      </div>
+    )
+  }
+
+  const teacherData = data as StudentDtoTeacherDto | undefined
 
   const studentLinks: NavCard[] = [
     {
@@ -106,13 +124,18 @@ function DashboardLaunchpad() {
       href: '/app/teacher/quizzes',
       colorClass: 'bg-orange-500/10 text-orange-500',
     },
-    {
-      title: t('dashboard.classManagement'),
-      description: t('dashboard.classManagementDescription'),
-      icon: <BookOpen className="h-8 w-8" />,
-      href: '/app/teacher/classes',
-      colorClass: 'bg-teal-500/10 text-teal-500',
-    },
+    ...(teacherData?.managedClassId
+      ? [
+          {
+            title: t('dashboard.classManagement'),
+            description: t('dashboard.classManagementDescription'),
+            icon: <BookOpen className="h-8 w-8" />,
+            href: '/app/class/$classId',
+            params: { classId: String(teacherData.managedClassId) },
+            colorClass: 'bg-teal-500/10 text-teal-500',
+          },
+        ]
+      : []),
   ]
 
   const adminLinks: NavCard[] = [

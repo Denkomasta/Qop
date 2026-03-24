@@ -41,6 +41,7 @@ function SubjectQuizzesPage() {
     {
       SearchTerm: searchQuery,
       StudentId: user?.id,
+      IsActive: true,
       PageNumber: pageNumber,
       PageSize: PAGE_SIZE,
     },

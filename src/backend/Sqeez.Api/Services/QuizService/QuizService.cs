@@ -22,6 +22,11 @@ namespace Sqeez.Api.Services
                                          q.Description.ToLower().Contains(search));
             }
 
+            if (filter.TeacherId.HasValue)
+            {
+                query = query.Where(q => q.Subject.TeacherId == filter.TeacherId.Value);
+            }
+
             if (filter.SubjectId.HasValue)
             {
                 query = query.Where(q => q.SubjectId == filter.SubjectId.Value);

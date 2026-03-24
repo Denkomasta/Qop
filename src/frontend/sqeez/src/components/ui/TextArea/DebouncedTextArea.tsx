@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Check, CloudUpload, AlertCircle } from 'lucide-react'
-import { Textarea } from '@/components/ui/TextArea'
+import { TextArea } from '@/components/ui/TextArea'
 
 interface DebouncedTextAreaProps {
   initialValue: string
@@ -47,11 +47,12 @@ export function DebouncedTextArea({
 
   return (
     <div className="group relative">
-      <Textarea
+      <TextArea
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
         className="min-h-30 resize-none p-4 text-lg font-medium transition-all focus:ring-2 focus:ring-primary/20"
+        hideErrors
       />
 
       <div className="absolute right-3 bottom-3 flex items-center gap-1.5 rounded border bg-background/80 px-2 py-1 text-[10px] font-bold tracking-tight uppercase shadow-sm backdrop-blur transition-opacity">

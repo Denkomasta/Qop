@@ -20,6 +20,7 @@
         public DateTime? ClosingDate { get; set; }
         public long? SubjectId { get; set; }
         public long? StudentId { get; set; }
+        public long? TeacherId { get; set; }
     }
 
     public record GetQuizDto(

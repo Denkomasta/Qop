@@ -6,7 +6,7 @@ import { BaseModal } from '@/components/ui/Modal'
 import { AsyncButton, Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { usePostApiSubjectsSubjectIdQuizzes } from '@/api/generated/endpoints/subjects/subjects'
-import { Textarea } from '@/components/ui/TextArea'
+import { TextArea } from '@/components/ui/TextArea'
 
 interface CreateQuizModalProps {
   isOpen: boolean
@@ -95,24 +95,21 @@ export function CreateQuizModal({
           autoFocus
         />
 
-        <div className="space-y-2">
-          <label className="text-xs font-black tracking-widest text-muted-foreground uppercase">
-            {t('dashboard.quizDescriptionLabel')}
-          </label>
-          <Textarea
-            value={newQuizDescription}
-            onChange={(e) => setNewQuizDescription(e.target.value)}
-            placeholder={t('dashboard.quizDescriptionPlaceholder')}
-            className="flex min-h-20 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-                if (newQuizTitle.trim() && newQuizDescription.trim()) {
-                  handleCreateQuiz()
-                }
+        <TextArea
+          value={newQuizDescription}
+          label={t('dashboard.quizDescriptionLabel')}
+          onChange={(e) => setNewQuizDescription(e.target.value)}
+          placeholder={t('dashboard.quizDescriptionPlaceholder')}
+          className="flex min-h-20 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+              if (newQuizTitle.trim() && newQuizDescription.trim()) {
+                handleCreateQuiz()
               }
-            }}
-          />
-        </div>
+            }
+          }}
+          hideErrors
+        />
       </div>
     </BaseModal>
   )

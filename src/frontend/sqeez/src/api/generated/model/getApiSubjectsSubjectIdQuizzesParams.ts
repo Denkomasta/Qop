@@ -21,6 +21,10 @@ export type GetApiSubjectsSubjectIdQuizzesParams = {
   /**
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
+  TeacherId?: number | string
+  /**
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   PageNumber?: number | string
   /**
    * @pattern ^-?(?:0|[1-9]\d*)$

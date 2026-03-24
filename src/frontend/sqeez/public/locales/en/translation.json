@@ -93,7 +93,23 @@
     "userManagement": "User Management",
     "userManagementDescription": "Manage classes, subjects, users and their roles.",
     "systemSettings": "System Settings",
-    "systemSettingsDescription": "Global app configurations and subject creation."
+    "systemSettingsDescription": "Global app configurations and subject creation.",
+    "myQuizzes": "My Quizzes",
+    "createNewQuiz": "Create Quiz",
+    "filterBySubject": "Filter by subject",
+    "allSubjects": "All Subjects",
+    "noSubjectsFound": "No subjects found.",
+    "createFirstQuizPrompt": "You haven't created any quizzes yet. Click 'Create Quiz' to get started.",
+    "editQuiz": "Edit Quiz",
+    "totalAttempts": "Total Attempts",
+    "selectSubjectToCreate": "Please select a specific subject from the sidebar first.",
+    "createQuizTitle": "Create New Quiz",
+    "createQuizDescription": "Give your new quiz a name. You can change this later in the editor.",
+    "quizNameLabel": "Quiz Title",
+    "quizNamePlaceholder": "e.g., Midterm Exam, Chapter 4 Review...",
+    "quizCreatedSuccess": "Quiz created successfully!",
+    "quizDescriptionLabel": "Short Description",
+    "quizDescriptionPlaceholder": "What is this quiz about? (e.g., A quick review of chapters 1-3...)"
   },
   "enrollments": {
     "confirmDelete": "Are you sure you want to unenroll from this subject? This action cannot be undone.",
@@ -300,7 +316,9 @@
     "yourAnswer": "Your Answer",
     "noAnswerProvided": "No answer provided",
     "quizRecapTitle": "Quiz Completed",
-    "achievementUnlocked": "Achievement Unlocked!"
+    "achievementUnlocked": "Achievement Unlocked!",
+    "published": "Published",
+    "draft": "Draft"
   },
   "editor": {
     "questionsTitle": "Questions",

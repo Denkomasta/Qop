@@ -93,7 +93,23 @@
     "userManagement": "Správa uživatelů",
     "userManagementDescription": "Spravujte třídy, předměty, uživatele a jejich role.",
     "systemSettings": "Nastavení",
-    "systemSettingsDescription": "Globální nastavení systému."
+    "systemSettingsDescription": "Globální nastavení systému.",
+    "myQuizzes": "Moje kvízy",
+    "createNewQuiz": "Vytvořit kvíz",
+    "filterBySubject": "Filtrovat podle předmětu",
+    "allSubjects": "Všechny předměty",
+    "noSubjectsFound": "Nebyly nalezeny žádné předměty.",
+    "createFirstQuizPrompt": "Zatím jste nevytvořili žádné kvízy. Začněte kliknutím na 'Vytvořit kvíz'.",
+    "editQuiz": "Upravit kvíz",
+    "totalAttempts": "Celkem pokusů",
+    "selectSubjectToCreate": "Nejprve prosím vyberte konkrétní předmět v postranním panelu.",
+    "createQuizTitle": "Vytvořit nový kvíz",
+    "createQuizDescription": "Pojmenujte svůj nový kvíz. Název můžete později změnit v editoru.",
+    "quizNameLabel": "Název kvízu",
+    "quizNamePlaceholder": "např. Pololetní test, Opakování 4. kapitoly...",
+    "quizCreatedSuccess": "Kvíz byl úspěšně vytvořen!",
+    "quizDescriptionLabel": "Stručný popis",
+    "quizDescriptionPlaceholder": "O čem je tento kvíz? (např. Rychlé opakování kapitol 1-3...)"
   },
   "error": {
     "generic": "Nastala chyba. Prosím zkuste to později.",
@@ -299,7 +315,9 @@
     "yourAnswer": "Tvá odpověď",
     "noAnswerProvided": "Neodpovězeno",
     "quizRecapTitle": "Kvíz dokončen",
-    "achievementUnlocked": "Úspěch Odemčen!"
+    "achievementUnlocked": "Úspěch Odemčen!",
+    "published": "Publikováno",
+    "draft": "Koncept"
   },
   "editor": {
     "questionsTitle": "Otázky",

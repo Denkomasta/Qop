@@ -8,6 +8,7 @@ import {
   Search,
   History,
   BookOpen,
+  Edit,
 } from 'lucide-react'
 import {
   Card,
@@ -21,7 +22,7 @@ import { Badge } from '@/components/ui/Badge/Badge'
 import { Spinner } from '@/components/ui/Spinner'
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { Pagination } from '@/components/ui/Pagination'
-import type { QuizDto, SubjectDto } from '@/api/generated/model'
+import type { QuizDto, SubjectDto, UserRole } from '@/api/generated/model'
 
 interface QuizListViewProps {
   titleNode: React.ReactNode
@@ -37,6 +38,7 @@ interface QuizListViewProps {
   setPageNumber: (page: number) => void
   emptyStateMessage: string
   subject?: SubjectDto
+  role?: UserRole
 }
 
 export function QuizListView({
@@ -53,6 +55,7 @@ export function QuizListView({
   setPageNumber,
   emptyStateMessage,
   subject,
+  role = 'Student',
 }: QuizListViewProps) {
   const { t } = useTranslation()
 
@@ -120,11 +123,18 @@ export function QuizListView({
                       <CardTitle className="line-clamp-2 text-lg">
                         {quiz.title}
                       </CardTitle>
+
                       <Badge
                         variant={hasAttempts ? 'default' : 'secondary'}
                         className="shrink-0"
                       >
-                        {hasAttempts ? t('quiz.completed') : t('quiz.pending')}
+                        {role === 'Teacher'
+                          ? quiz.publishDate
+                            ? t('quiz.published')
+                            : t('quiz.draft')
+                          : hasAttempts
+                            ? t('quiz.completed')
+                            : t('quiz.pending')}
                       </Badge>
                     </div>
                     <CardDescription className="mt-1 line-clamp-2">
@@ -164,10 +174,12 @@ export function QuizListView({
                           <History className="h-4 w-4" />
                           <span>
                             {quiz.quizAttempts}
-                            {quiz.maxRetries
+                            {role === 'Student' && quiz.maxRetries
                               ? ` / ${quiz.maxRetries}`
                               : ''}{' '}
-                            {t('quiz.attempts')}
+                            {role === 'Teacher'
+                              ? t('dashboard.totalAttempts')
+                              : t('quiz.attempts')}
                           </span>
                         </div>
                       )}
@@ -176,17 +188,30 @@ export function QuizListView({
 
                   <CardFooter className="pt-3">
                     <Link
-                      to="/app/quizzes/$quizId"
+                      to={
+                        role === 'Teacher'
+                          ? '/app/quizzes/$quizId/builder'
+                          : '/app/quizzes/$quizId'
+                      }
                       params={{ quizId: quiz.id.toString() }}
                       className="group flex w-full items-center justify-center gap-2 rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
                     >
-                      <PlayCircle className="h-4 w-4" />
-                      {hasAttempts
-                        ? quiz.maxRetries &&
-                          quiz.quizAttempts >= quiz.maxRetries
-                          ? t('quiz.viewResults')
-                          : t('quiz.retakeQuiz')
-                        : t('quiz.startQuiz')}
+                      {role === 'Teacher' ? (
+                        <>
+                          <Edit className="h-4 w-4" />
+                          {t('dashboard.editQuiz')}
+                        </>
+                      ) : (
+                        <>
+                          <PlayCircle className="h-4 w-4" />
+                          {hasAttempts
+                            ? quiz.maxRetries &&
+                              quiz.quizAttempts >= quiz.maxRetries
+                              ? t('quiz.viewResults')
+                              : t('quiz.retakeQuiz')
+                            : t('quiz.startQuiz')}
+                        </>
+                      )}
                       <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                   </CardFooter>

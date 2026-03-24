@@ -1039,6 +1039,14 @@ paths:
               - integer
               - string
             format: int64
+        - name: TeacherId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
         - name: PageNumber
           in: query
           schema:
@@ -2331,6 +2339,14 @@ paths:
               - string
             format: int64
         - name: StudentId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: TeacherId
           in: query
           schema:
             pattern: ^-?(?:0|[1-9]\d*)$

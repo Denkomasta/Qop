@@ -15,7 +15,7 @@ interface ScrollableSelectListProps {
   loadingText?: string
   emptyText?: string
   maxHeight?: string
-
+  laodMoreText?: string
   hasMore?: boolean
   onLoadMore?: () => void
   isFetchingNextPage?: boolean
@@ -30,6 +30,7 @@ export function ScrollableSelectList({
   emptyText = 'No options found.',
   maxHeight = 'max-h-[240px]',
   hasMore = false,
+  laodMoreText,
   onLoadMore,
   isFetchingNextPage = false,
 }: ScrollableSelectListProps) {
@@ -71,7 +72,7 @@ export function ScrollableSelectList({
                   )}
                 </span>
                 <div
-                  className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border ${isSelected ? 'border-primary bg-primary' : 'border-input'}`}
+                  className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${isSelected ? 'border-primary bg-primary' : 'border-input'}`}
                 >
                   {isSelected && (
                     <div className="h-1.5 w-1.5 rounded-full bg-white" />
@@ -90,7 +91,7 @@ export function ScrollableSelectList({
                 isLoading={isFetchingNextPage}
                 className="w-full text-xs"
               >
-                Load More
+                {laodMoreText ?? 'Load More'}
               </AsyncButton>
             </div>
           )}

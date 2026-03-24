@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next'
 
 const RootLayout = () => {
   const { t } = useTranslation()
-  const { isAuthenticated, setUser, logout } = useAuthStore()
+  const { setUser, logout } = useAuthStore()
   const currentYear = new Date().getFullYear()
 
   const {
@@ -61,7 +61,7 @@ const RootLayout = () => {
           registerButtonText={t('common.register')}
           navigationText={t('navbar.navigation')}
           logoutButtonText={t('navbar.logout')}
-          isAuthenticated={isAuthenticated}
+          isAuthenticated={!!user}
           user={user}
         />
 

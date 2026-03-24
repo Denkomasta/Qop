@@ -4,10 +4,12 @@ import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
 import { useEffect } from 'react'
 import { QuizEditorSidebar } from './-/QuizEditorSidebar'
 import { QuizQuestionEditor } from './-/QuizQuestionEditor'
+import { teacherRouteGuard } from '@/lib/routeGuards'
 
 export const Route = createFileRoute(
   '/app/_authenticated/quizzes/$quizId/builder/',
 )({
+  beforeLoad: teacherRouteGuard,
   component: QuizEditorPage,
 })
 

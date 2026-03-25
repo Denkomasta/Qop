@@ -14,7 +14,7 @@ export const Route = createFileRoute('/login/')({
 function Login() {
   return (
     <>
-      <main className="flex min-h-screen">
+      <div className="flex min-h-screen">
         <div className="hidden lg:flex lg:w-1/2">
           <BrandingPanel />
         </div>
@@ -22,7 +22,7 @@ function Login() {
         <div className="flex w-full flex-col items-center justify-center bg-background px-6 py-12 lg:w-1/2 lg:px-16">
           <LoginForm />
         </div>
-      </main>
+      </div>
     </>
   )
 }

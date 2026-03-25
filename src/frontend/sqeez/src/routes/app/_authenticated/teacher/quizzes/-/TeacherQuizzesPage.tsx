@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Plus } from 'lucide-react'
+import { Plus, Filter } from 'lucide-react'
 import { useGetApiQuizzes } from '@/api/generated/endpoints/quizzes/quizzes'
 import { useGetApiSubjects } from '@/api/generated/endpoints/subjects/subjects'
 import { Button } from '@/components/ui/Button'
@@ -8,6 +8,7 @@ import { ScrollableSelectList } from '@/components/ui/ScrollableSelectList/Scrol
 import { QuizListView } from '../../../quizzes/-/QuizListView'
 import { useAuthStore } from '@/store/useAuthStore'
 import { CreateQuizModal } from './CreateQuizModal'
+import { CollapsibleSidebar } from '@/components/ui/CollapsibleSidebar'
 
 export function TeacherQuizzesPage() {
   const { t } = useTranslation()
@@ -82,12 +83,16 @@ export function TeacherQuizzesPage() {
   )
 
   return (
-    <main className="flex w-full flex-1 flex-col overflow-hidden bg-background lg:flex-row">
-      <aside className="w-full border-b border-border bg-muted/5 p-6 lg:w-75 lg:shrink-0 lg:border-r lg:border-b-0">
-        <div className="sticky top-6">
-          <h2 className="mb-4 text-sm font-black tracking-widest text-muted-foreground uppercase">
-            {t('dashboard.filterBySubject')}
-          </h2>
+    <div className="flex h-full w-full flex-1 flex-col overflow-hidden bg-background lg:flex-row">
+      <CollapsibleSidebar
+        title={t('dashboard.filterBySubject')}
+        icon={<Filter className="h-4 w-4 text-primary" />}
+        expandedWidth="w-full lg:w-75"
+        expandTooltip={t('dashboard.showFilters', 'Show filters')}
+        collapseTooltip={t('dashboard.hideFilters', 'Hide filters')}
+        className="border-b lg:border-r lg:border-b-0"
+      >
+        <div className="sticky top-6 px-3">
           <ScrollableSelectList
             options={subjectOptions}
             selectedId={selectedSubjectId}
@@ -101,7 +106,7 @@ export function TeacherQuizzesPage() {
             maxHeight="max-h-[60vh]"
           />
         </div>
-      </aside>
+      </CollapsibleSidebar>
 
       <section className="flex-1 overflow-y-auto">
         <QuizListView
@@ -129,6 +134,6 @@ export function TeacherQuizzesPage() {
         onClose={() => setIsCreateModalOpen(false)}
         subjectId={selectedSubjectId}
       />
-    </main>
+    </div>
   )
 }

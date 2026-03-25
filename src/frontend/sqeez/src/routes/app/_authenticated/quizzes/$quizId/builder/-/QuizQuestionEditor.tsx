@@ -57,7 +57,7 @@ export function QuizQuestionEditor({ quizId }: QuizQuestionEditorProps) {
   }
 
   return (
-    <main className="flex-1 overflow-y-auto bg-background p-8 lg:p-12">
+    <div className="flex-1 overflow-y-auto bg-background p-8 lg:p-12">
       <div className="mx-auto max-w-3xl space-y-12">
         <div className="flex flex-col gap-2">
           <label className="text-xs font-black tracking-widest text-muted-foreground uppercase">
@@ -100,6 +100,6 @@ export function QuizQuestionEditor({ quizId }: QuizQuestionEditorProps) {
           questionId={activeQuestionId.toString()}
         />
       </div>
-    </main>
+    </div>
   )
 }

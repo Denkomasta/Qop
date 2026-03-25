@@ -22,7 +22,7 @@ export function QuizEditorPage() {
   }, [actions])
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex w-full flex-1 flex-col overflow-hidden bg-background">
       <div className="flex flex-1 overflow-hidden">
         <QuizEditorSidebar quizId={quizId} />
 

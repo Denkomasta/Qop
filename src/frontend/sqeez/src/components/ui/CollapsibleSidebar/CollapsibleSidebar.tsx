@@ -1,0 +1,92 @@
+import { useState } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
+import { cn } from '@/lib/utils'
+
+interface CollapsibleSidebarProps {
+  title?: React.ReactNode
+  icon?: React.ReactNode
+  actions?: React.ReactNode
+  children: React.ReactNode
+  defaultExpanded?: boolean
+  expandedWidth?: string
+  collapsedWidth?: string
+  expandTooltip?: string
+  collapseTooltip?: string
+  className?: string
+}
+
+export function CollapsibleSidebar({
+  title,
+  icon,
+  actions,
+  children,
+  defaultExpanded = true,
+  expandedWidth = 'w-80',
+  collapsedWidth = 'w-14',
+  expandTooltip = 'Expand',
+  collapseTooltip = 'Collapse',
+  className,
+}: CollapsibleSidebarProps) {
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded)
+
+  if (!isExpanded) {
+    return (
+      <aside
+        className={cn(
+          'flex shrink-0 flex-col items-center border-r bg-muted/5 py-4 transition-all duration-300',
+          collapsedWidth,
+          className,
+        )}
+      >
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          onClick={() => setIsExpanded(true)}
+          title={expandTooltip}
+        >
+          <ChevronRight className="h-5 w-5" />
+        </Button>
+      </aside>
+    )
+  }
+
+  return (
+    <aside
+      className={cn(
+        'flex shrink-0 flex-col overflow-hidden border-r bg-muted/5 transition-all duration-300',
+        expandedWidth,
+        className,
+      )}
+    >
+      <div className="flex items-center justify-between border-b bg-background p-4 shadow-sm">
+        <div className="flex items-center gap-2">
+          {icon}
+          {typeof title === 'string' ? (
+            <h2 className="text-xs font-bold tracking-widest text-foreground uppercase">
+              {title}
+            </h2>
+          ) : (
+            title
+          )}
+        </div>
+
+        <div className="flex items-center gap-1">
+          {actions}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+            onClick={() => setIsExpanded(false)}
+            title={collapseTooltip}
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex-1 space-y-2 overflow-y-auto p-3">{children}</div>
+    </aside>
+  )
+}

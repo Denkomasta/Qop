@@ -9,7 +9,7 @@ export const Route = createFileRoute('/register/')({
 function Register() {
   return (
     <>
-      <main className="flex min-h-screen">
+      <div className="flex min-h-screen">
         <div className="hidden lg:flex lg:w-1/2">
           <BrandingPanel />
         </div>
@@ -17,7 +17,7 @@ function Register() {
         <div className="flex w-full flex-col items-center justify-center bg-background px-6 py-12 lg:w-1/2 lg:px-16">
           <RegisterForm />
         </div>
-      </main>
+      </div>
     </>
   )
 }

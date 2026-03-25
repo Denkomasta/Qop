@@ -8,6 +8,7 @@ import {
 } from '@/api/generated/endpoints/quizzes/quizzes'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
+import { CollapsibleSidebar } from '@/components/ui/CollapsibleSidebar'
 
 interface QuizEditorSidebarProps {
   quizId: string
@@ -24,8 +25,8 @@ export function QuizEditorSidebar({ quizId }: QuizEditorSidebarProps) {
   } = useGetApiQuizzesQuizIdQuestions(quizId)
 
   const questions = pagedResponse?.data ?? []
-
   const createQuestion = usePostApiQuizzesQuizIdQuestions()
+  const deleteQuestion = useDeleteApiQuizzesQuizIdQuestionsQuestionId()
 
   const handleAddQuestion = async () => {
     try {
@@ -48,8 +49,6 @@ export function QuizEditorSidebar({ quizId }: QuizEditorSidebarProps) {
       console.error('Failed to create question', error)
     }
   }
-
-  const deleteQuestion = useDeleteApiQuizzesQuizIdQuestionsQuestionId()
 
   const handleDeleteQuestion = async (
     e: React.MouseEvent,
@@ -77,14 +76,12 @@ export function QuizEditorSidebar({ quizId }: QuizEditorSidebarProps) {
   }
 
   return (
-    <aside className="flex h-full w-80 flex-col overflow-hidden border-r bg-muted/5">
-      <div className="flex items-center justify-between border-b bg-background p-4 shadow-sm">
-        <div className="flex items-center gap-2">
-          <List className="h-4 w-4 text-primary" />
-          <h2 className="text-xs font-bold tracking-widest text-foreground uppercase">
-            {t('editor.questionsTitle')}
-          </h2>
-        </div>
+    <CollapsibleSidebar
+      title={t('editor.questionsTitle')}
+      icon={<List className="h-4 w-4 text-primary" />}
+      expandTooltip={t('editor.showSidebar', 'Show sidebar')}
+      collapseTooltip={t('editor.hideSidebar', 'Hide sidebar')}
+      actions={
         <Button
           variant="outline"
           size="sm"
@@ -99,71 +96,69 @@ export function QuizEditorSidebar({ quizId }: QuizEditorSidebarProps) {
             <Plus className="h-4 w-4" />
           )}
         </Button>
-      </div>
-
-      <div className="flex-1 space-y-2 overflow-y-auto p-3">
-        {isLoading ? (
-          <div className="flex flex-col items-center gap-2 py-10 opacity-50">
-            <Loader2 className="h-5 w-5 animate-spin text-primary" />
-            <span>{t('common.loading')}</span>
-          </div>
-        ) : questions.length === 0 ? (
-          <div className="rounded-xl border-2 border-dashed border-muted/50 px-6 py-12 text-center">
-            <p className="text-xs font-medium text-muted-foreground">
-              {t('editor.noQuestionsYet')}
-            </p>
-          </div>
-        ) : (
-          questions.map((q, index) => (
-            <div key={q.id} className="group relative w-full">
-              <button
-                onClick={() => actions.selectQuestion(Number(q.id))}
+      }
+    >
+      {isLoading ? (
+        <div className="flex flex-col items-center gap-2 py-10 opacity-50">
+          <Loader2 className="h-5 w-5 animate-spin text-primary" />
+          <span>{t('common.loading')}</span>
+        </div>
+      ) : questions.length === 0 ? (
+        <div className="rounded-xl border-2 border-dashed border-muted/50 px-6 py-12 text-center">
+          <p className="text-xs font-medium text-muted-foreground">
+            {t('editor.noQuestionsYet')}
+          </p>
+        </div>
+      ) : (
+        questions.map((q, index) => (
+          <div key={q.id} className="group relative mb-2 w-full last:mb-0">
+            <button
+              onClick={() => actions.selectQuestion(Number(q.id))}
+              className={cn(
+                'flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-all',
+                activeQuestionId === q.id
+                  ? 'border-primary bg-primary text-primary-foreground shadow-lg'
+                  : 'border-transparent bg-background text-foreground hover:border-muted-foreground/20 hover:bg-muted/50',
+              )}
+            >
+              <div
                 className={cn(
-                  'flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-all',
+                  'flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border text-xs font-black',
                   activeQuestionId === q.id
-                    ? 'border-primary bg-primary text-primary-foreground shadow-lg'
-                    : 'border-transparent bg-background text-foreground hover:border-muted-foreground/20 hover:bg-muted/50',
+                    ? 'border-primary-foreground/40 bg-primary-foreground/20'
+                    : 'bg-muted text-muted-foreground',
                 )}
               >
-                <div
-                  className={cn(
-                    'flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border text-xs font-black',
-                    activeQuestionId === q.id
-                      ? 'border-primary-foreground/40 bg-primary-foreground/20'
-                      : 'bg-muted text-muted-foreground',
-                  )}
-                >
-                  {index + 1}
-                </div>
+                {index + 1}
+              </div>
 
-                <div className="flex flex-1 flex-col truncate pr-6">
-                  <span className="truncate text-sm font-semibold">
-                    {q.title || t('editor.untitledQuestion')}
-                  </span>
-                </div>
-              </button>
+              <div className="flex flex-1 flex-col truncate pr-6">
+                <span className="truncate text-sm font-semibold">
+                  {q.title || t('editor.untitledQuestion')}
+                </span>
+              </div>
+            </button>
 
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  'absolute top-1/2 right-2 h-7 w-7 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100',
-                  activeQuestionId === q.id
-                    ? 'text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground'
-                    : 'text-muted-foreground hover:bg-destructive/10 hover:text-destructive',
-                )}
-                onClick={(e) => handleDeleteQuestion(e, q.id)}
-              >
-                {deleteQuestion.isPending ? (
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                ) : (
-                  <Trash2 className="h-3 w-3" />
-                )}
-              </Button>
-            </div>
-          ))
-        )}
-      </div>
-    </aside>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                'absolute top-1/2 right-2 h-7 w-7 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100',
+                activeQuestionId === q.id
+                  ? 'text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground'
+                  : 'text-muted-foreground hover:bg-destructive/10 hover:text-destructive',
+              )}
+              onClick={(e) => handleDeleteQuestion(e, q.id)}
+            >
+              {deleteQuestion.isPending ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                <Trash2 className="h-3 w-3" />
+              )}
+            </Button>
+          </div>
+        ))
+      )}
+    </CollapsibleSidebar>
   )
 }

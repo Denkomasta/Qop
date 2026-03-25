@@ -27,6 +27,7 @@ export function OptionMediaModal({
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [isConfirmingRemove, setIsConfirmingRemove] = useState(false)
 
   const uploadMedia = usePostApiMediaAssetsUpload()
 
@@ -38,6 +39,7 @@ export function OptionMediaModal({
 
   const handleClose = () => {
     setSelectedFile(null)
+    setIsConfirmingRemove(false)
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl)
       setPreviewUrl(null)
@@ -81,7 +83,7 @@ export function OptionMediaModal({
 
   const handleRemoveCurrentMedia = async () => {
     try {
-      await onSave(null)
+      await onSave(0) // never existing id
       toast.success(t('editor.mediaRemoved'))
       handleClose()
     } catch {
@@ -127,40 +129,61 @@ export function OptionMediaModal({
       title={t('editor.optionMediaTitle')}
       description={t('editor.optionMediaDescription')}
       footer={
-        <div className="flex w-full justify-between gap-4 sm:space-x-0">
-          {currentMediaAssetId && !selectedFile ? (
-            <AsyncButton
-              variant="destructive"
-              size="lg"
-              onClick={handleRemoveCurrentMedia}
-              className="min-w-32"
-            >
-              {t('common.remove')}
-            </AsyncButton>
-          ) : (
-            <div />
-          )}
-
-          <div className="flex gap-2">
+        isConfirmingRemove ? (
+          <div className="flex w-full animate-in flex-col items-center justify-evenly gap-4 fade-in slide-in-from-bottom-2 sm:flex-row">
             <Button
               variant="outline"
               size="lg"
-              onClick={handleClose}
-              className="min-w-32"
+              onClick={() => setIsConfirmingRemove(false)}
+              className="flex-1 sm:min-w-32 sm:flex-none"
             >
               {t('common.cancel')}
             </Button>
             <AsyncButton
+              variant="destructive"
               size="lg"
-              onClick={handleConfirmSave}
-              disabled={!selectedFile}
-              loadingText={t('common.saving') + '...'}
-              className="min-w-32"
+              onClick={handleRemoveCurrentMedia}
+              className="flex-1 sm:min-w-32 sm:flex-none"
             >
-              {t('common.save')}
+              {t('common.remove')}
             </AsyncButton>
           </div>
-        </div>
+        ) : (
+          <div className="flex w-full animate-in justify-between gap-4 fade-in sm:space-x-0">
+            {currentMediaAssetId && !selectedFile ? (
+              <Button
+                variant="destructive"
+                size="lg"
+                onClick={() => setIsConfirmingRemove(true)}
+                className="min-w-32"
+              >
+                {t('common.remove')}
+              </Button>
+            ) : (
+              <div />
+            )}
+
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={handleClose}
+                className="min-w-32"
+              >
+                {t('common.cancel')}
+              </Button>
+              <AsyncButton
+                size="lg"
+                onClick={handleConfirmSave}
+                disabled={!selectedFile}
+                loadingText={t('common.saving') + '...'}
+                className="min-w-32"
+              >
+                {t('common.save')}
+              </AsyncButton>
+            </div>
+          </div>
+        )
       }
     >
       <div className="flex w-full flex-col items-center gap-6 py-4">

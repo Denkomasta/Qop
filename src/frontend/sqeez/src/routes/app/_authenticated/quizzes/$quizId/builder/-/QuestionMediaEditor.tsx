@@ -79,7 +79,7 @@ export function QuestionMediaEditor({
       await updateMutation.mutateAsync({
         quizId,
         questionId,
-        data: { mediaAssetId: null },
+        data: { mediaAssetId: 0 }, // never existing id
       })
       setIsRemoveModalOpen(false)
       toast.success(t('editor.mediaRemoved'))

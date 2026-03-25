@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
 import {
+  getGetApiQuizzesQuizIdQuestionsQueryKey,
+  getGetApiQuizzesQuizIdQuestionsQuestionIdQueryKey,
   useGetApiQuizzesQuizIdQuestionsQuestionId,
   usePatchApiQuizzesQuizIdQuestionsQuestionId,
 } from '@/api/generated/endpoints/quizzes/quizzes'
@@ -11,6 +13,7 @@ import { QuestionTimeLimitEditor } from './QuestionTimeLimitEditor'
 import { QuestionMediaEditor } from './QuestionMediaEditor'
 import { QuizOptionsEditor } from './QuizOptionsEditor'
 import { QuizSettingsEditor } from './QuizSettingsEditor'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface QuizQuestionEditorProps {
   quizId: string
@@ -18,6 +21,7 @@ interface QuizQuestionEditorProps {
 
 export function QuizQuestionEditor({ quizId }: QuizQuestionEditorProps) {
   const { t } = useTranslation()
+  const queryClient = useQueryClient()
   const activeQuestionId = useQuizEditorUIStore((s) => s.activeQuestionId)
 
   const { data: question, isLoading } =
@@ -27,7 +31,19 @@ export function QuizQuestionEditor({ quizId }: QuizQuestionEditorProps) {
       { query: { enabled: !!activeQuestionId } },
     )
 
-  const updateMutation = usePatchApiQuizzesQuizIdQuestionsQuestionId()
+  const updateMutation = usePatchApiQuizzesQuizIdQuestionsQuestionId({
+    mutation: {
+      onSuccess: (updatedQuizData) => {
+        queryClient.setQueryData(
+          getGetApiQuizzesQuizIdQuestionsQuestionIdQueryKey(
+            quizId,
+            activeQuestionId?.toString() ?? '',
+          ),
+          updatedQuizData,
+        )
+      },
+    },
+  })
 
   const handleUpdateTitle = async (title: string) => {
     if (!activeQuestionId) return
@@ -36,6 +52,10 @@ export function QuizQuestionEditor({ quizId }: QuizQuestionEditorProps) {
       quizId,
       questionId: activeQuestionId.toString(),
       data: { title },
+    })
+
+    queryClient.invalidateQueries({
+      queryKey: getGetApiQuizzesQuizIdQuestionsQueryKey(quizId),
     })
   }
 

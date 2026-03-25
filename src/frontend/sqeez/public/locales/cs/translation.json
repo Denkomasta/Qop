@@ -373,6 +373,8 @@
     "maxRetries": "Maximální počet pokusů",
     "maxRetriesHelp": "Nastavte na 0 pro neomezený počet pokusů.",
     "closingDate": "Datum uzávěrky",
-    "closingDateHelp": "Ponechte prázdné, pokud kvíz nemá termín."
+    "closingDateHelp": "Ponechte prázdné, pokud kvíz nemá termín.",
+    "removeMediaTitle": "Odstranění mediálního obsahu",
+    "removeMediaDesc": "Jste si jistý, že chcete odstranit tento mediální obsah? Musí být nahrán znovu, pokud změníte názor."
   }
 }

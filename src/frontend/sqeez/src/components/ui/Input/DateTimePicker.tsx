@@ -4,15 +4,19 @@ import { Input } from '@/components/ui/Input'
 
 interface DateTimePickerProps extends Omit<
   React.ComponentProps<typeof Input>,
-  'value' | 'onChange'
+  'value' | 'onChange' | 'min' | 'max'
 > {
   value?: string | null
+  min?: string | null
+  max?: string | null
   onChange: (isoString: string | null) => void
 }
 
 export function DateTimePicker({
   value,
   onChange,
+  min,
+  max,
   icon = <Calendar className="h-4 w-4" />,
   ...props
 }: DateTimePickerProps) {
@@ -59,6 +63,8 @@ export function DateTimePicker({
       value={localValue}
       onChange={(e) => setLocalValue(e.target.value)}
       onBlur={handleBlur}
+      min={min ? toLocalDatetimeString(min) : undefined}
+      max={max ? toLocalDatetimeString(max) : undefined}
       {...props}
     />
   )

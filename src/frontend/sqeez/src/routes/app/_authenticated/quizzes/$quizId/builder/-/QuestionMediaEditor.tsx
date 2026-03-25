@@ -1,11 +1,15 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { usePatchApiQuizzesQuizIdQuestionsQuestionId } from '@/api/generated/endpoints/quizzes/quizzes'
+import {
+  getGetApiQuizzesQuizIdQuestionsQuestionIdQueryKey,
+  usePatchApiQuizzesQuizIdQuestionsQuestionId,
+} from '@/api/generated/endpoints/quizzes/quizzes'
 import { usePostApiMediaAssetsUpload } from '@/api/generated/endpoints/media-assets/media-assets'
 import { Image as ImageIcon, UploadCloud, X, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { MediaAssetViewer } from '../../play/-/MediaAssetViewer'
-import { AsyncButton } from '@/components/ui'
+import { AsyncButton, ConfirmModal } from '@/components/ui'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface QuestionMediaEditorProps {
   quizId: string
@@ -19,9 +23,21 @@ export function QuestionMediaEditor({
   currentMediaAssetId,
 }: QuestionMediaEditorProps) {
   const { t } = useTranslation()
-  const [isUploading, setIsUploading] = useState(false)
+  const queryClient = useQueryClient()
 
-  const updateMutation = usePatchApiQuizzesQuizIdQuestionsQuestionId()
+  const [isUploading, setIsUploading] = useState(false)
+  const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false)
+
+  const updateMutation = usePatchApiQuizzesQuizIdQuestionsQuestionId({
+    mutation: {
+      onSuccess: (updatedQuizData) => {
+        queryClient.setQueryData(
+          getGetApiQuizzesQuizIdQuestionsQuestionIdQueryKey(quizId, questionId),
+          updatedQuizData,
+        )
+      },
+    },
+  })
 
   const uploadMutation = usePostApiMediaAssetsUpload()
 
@@ -34,7 +50,7 @@ export function QuestionMediaEditor({
       const uploadResponse = await uploadMutation.mutateAsync({
         data: {
           File: file,
-          IsPrivate: false, // For now everything is public to use
+          IsPrivate: false,
         },
       })
 
@@ -65,6 +81,8 @@ export function QuestionMediaEditor({
         questionId,
         data: { mediaAssetId: null },
       })
+      setIsRemoveModalOpen(false)
+      toast.success(t('editor.mediaRemoved'))
     } catch {
       toast.error(t('common.error'))
     }
@@ -81,9 +99,8 @@ export function QuestionMediaEditor({
           <MediaAssetViewer assetId={currentMediaAssetId} />
 
           <AsyncButton
-            onClick={handleRemoveMedia}
-            disabled={updateMutation.isPending}
-            className="hover:text-destructive-foreground rounded-md bg-background/80 p-2 text-destructive opacity-0 backdrop-blur transition-all group-hover:opacity-100 hover:bg-destructive"
+            onClick={() => setIsRemoveModalOpen(true)}
+            className="hover:text-destructive-foreground absolute top-2 right-2 rounded-md bg-background/80 p-2 text-destructive opacity-0 backdrop-blur transition-all group-hover:opacity-100 hover:bg-destructive"
             title={t('editor.removeMedia')}
           >
             <X className="size-4" />
@@ -115,6 +132,16 @@ export function QuestionMediaEditor({
           )}
         </label>
       )}
+
+      <ConfirmModal
+        isOpen={isRemoveModalOpen}
+        onClose={() => setIsRemoveModalOpen(false)}
+        onConfirm={handleRemoveMedia}
+        title={t('editor.removeMediaTitle')}
+        description={t('editor.removeMediaDesc')}
+        isDestructive={true}
+        confirmText={t('common.remove')}
+      />
     </div>
   )
 }

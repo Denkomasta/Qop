@@ -129,6 +129,7 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
             label={t('editor.closingDate')}
             helpText={t('editor.closingDateHelp')}
             value={quiz?.closingDate}
+            min={new Date().toISOString()}
             onChange={(isoString) => handleUpdate('closingDate', isoString)}
           />
         </div>

@@ -374,6 +374,8 @@
     "maxRetries": "Max Retries",
     "maxRetriesHelp": "Set to 0 for unlimited retries.",
     "closingDate": "Closing Date",
-    "closingDateHelp": "Leave blank for no deadline."
+    "closingDateHelp": "Leave blank for no deadline.",
+    "removeMediaTitle": "Remove Media Asset",
+    "removeMediaDesc": "Are you sure you want to remove this media asset? You will need to upload it again if you change your mind."
   }
 }

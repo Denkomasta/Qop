@@ -9,6 +9,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   containerClassName?: string
   ref?: React.Ref<HTMLInputElement>
   hideErrors?: boolean
+  helpText?: string
 }
 
 const Input = ({
@@ -21,6 +22,7 @@ const Input = ({
   id,
   ref,
   hideErrors = false,
+  helpText,
   ...props
 }: InputProps) => {
   return (
@@ -61,6 +63,8 @@ const Input = ({
           )}
         />
       </div>
+
+      {helpText && <p className="text-xs text-muted-foreground">{helpText}</p>}
 
       {!hideErrors && (
         <div className="min-h-5 pt-1">

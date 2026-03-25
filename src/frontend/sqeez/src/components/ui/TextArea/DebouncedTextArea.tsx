@@ -9,6 +9,7 @@ interface DebouncedTextAreaProps {
   savingText?: string
   savedText?: string
   errorText?: string
+  label?: string
 }
 
 export function DebouncedTextArea({
@@ -18,6 +19,7 @@ export function DebouncedTextArea({
   savingText = 'Saving...',
   savedText = 'Saved',
   errorText = 'Error',
+  label,
 }: DebouncedTextAreaProps) {
   const [value, setValue] = useState(initialValue)
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>(
@@ -48,6 +50,7 @@ export function DebouncedTextArea({
   return (
     <div className="group relative">
       <TextArea
+        label={label}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}

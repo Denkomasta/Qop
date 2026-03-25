@@ -71,7 +71,8 @@
     "resume": "Pokračovat",
     "submitting": "Odesílání...",
     "confirmDelete": "Opravdu chcete tuto položku smazat? Tuto akci nelze vzít zpět.",
-    "remove": "Odstranit"
+    "remove": "Odstranit",
+    "saved": "Uloženo"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -109,7 +110,9 @@
     "quizNamePlaceholder": "např. Pololetní test, Opakování 4. kapitoly...",
     "quizCreatedSuccess": "Kvíz byl úspěšně vytvořen!",
     "quizDescriptionLabel": "Stručný popis",
-    "quizDescriptionPlaceholder": "O čem je tento kvíz? (např. Rychlé opakování kapitol 1-3...)"
+    "quizDescriptionPlaceholder": "O čem je tento kvíz? (např. Rychlé opakování kapitol 1-3...)",
+    "showFilters": "Zobrazit filtry",
+    "hideFilters": "Skrýt filtry"
   },
   "error": {
     "generic": "Nastala chyba. Prosím zkuste to později.",
@@ -355,6 +358,21 @@
     "optionMediaDescription": "Nahrajte obrázek, video nebo zvukový soubor pro tuto možnost.",
     "changeMedia": "Změnit média",
     "clickToSelectMedia": "Kliknutím vyberte média",
-    "mediaRemoved": "Média byla úspěšně odstraněna"
+    "mediaRemoved": "Média byla úspěšně odstraněna",
+    "showSidebar": "Zobrazit postranní panel",
+    "hideSidebar": "Skrýt postranní panel",
+    "quizSettings": "Nastavení kvízu",
+    "questionsListTitle": "Seznam otázek",
+    "selectToEdit": "Vyberte otázku nebo nastavení k úpravě",
+    "unpublish": "Zrušit publikování",
+    "publish": "Publikovat kvíz",
+    "quizTitle": "Název kvízu",
+    "untitledQuiz": "Kvíz bez názvu",
+    "quizDescription": "Popis",
+    "descriptionPlaceholder": "Zadejte popis...",
+    "maxRetries": "Maximální počet pokusů",
+    "maxRetriesHelp": "Nastavte na 0 pro neomezený počet pokusů.",
+    "closingDate": "Datum uzávěrky",
+    "closingDateHelp": "Ponechte prázdné, pokud kvíz nemá termín."
   }
 }

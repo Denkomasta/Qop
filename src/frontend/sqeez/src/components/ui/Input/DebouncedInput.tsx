@@ -11,6 +11,7 @@ interface DebouncedInputProps extends Omit<
   icon?: React.ReactNode
   label?: string
   hideErrors?: boolean
+  helpText?: string
 }
 
 export function DebouncedInput({
@@ -21,6 +22,7 @@ export function DebouncedInput({
   className = '',
   label,
   hideErrors,
+  helpText,
   ...props
 }: DebouncedInputProps) {
   const [localValue, setLocalValue] = useState(initialValue)
@@ -49,6 +51,7 @@ export function DebouncedInput({
         onChange={(e) => setLocalValue(e.target.value)}
         className={`${icon ? 'pl-9' : ''} w-full`}
         hideErrors={hideErrors}
+        helpText={helpText}
       />
     </div>
   )

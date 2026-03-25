@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Plus, Loader2, List, Trash2 } from 'lucide-react'
+import { Plus, Loader2, List, Trash2, Settings } from 'lucide-react'
 import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
 import {
   useDeleteApiQuizzesQuizIdQuestionsQuestionId,
@@ -79,8 +79,8 @@ export function QuizEditorSidebar({ quizId }: QuizEditorSidebarProps) {
     <CollapsibleSidebar
       title={t('editor.questionsTitle')}
       icon={<List className="h-4 w-4 text-primary" />}
-      expandTooltip={t('editor.showSidebar', 'Show sidebar')}
-      collapseTooltip={t('editor.hideSidebar', 'Hide sidebar')}
+      expandTooltip={t('editor.showSidebar')}
+      collapseTooltip={t('editor.hideSidebar')}
       actions={
         <Button
           variant="outline"
@@ -98,6 +98,39 @@ export function QuizEditorSidebar({ quizId }: QuizEditorSidebarProps) {
         </Button>
       }
     >
+      <div className="mb-4">
+        <button
+          onClick={() => actions.selectQuestion(null)}
+          className={cn(
+            'flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-all',
+            activeQuestionId === null
+              ? 'border-primary bg-primary text-primary-foreground shadow-lg'
+              : 'border-transparent bg-background text-foreground hover:border-muted-foreground/20 hover:bg-muted/50',
+          )}
+        >
+          <div
+            className={cn(
+              'flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border text-xs font-black',
+              activeQuestionId === null
+                ? 'border-primary-foreground/40 bg-primary-foreground/20'
+                : 'bg-muted text-muted-foreground',
+            )}
+          >
+            <Settings className="h-4 w-4" />
+          </div>
+          <div className="flex flex-1 flex-col truncate pr-6">
+            <span className="truncate text-sm font-semibold">
+              {t('editor.quizSettings')}
+            </span>
+          </div>
+        </button>
+      </div>
+
+      <div className="my-2 h-px bg-border/50" />
+      <h3 className="mb-2 px-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+        {t('editor.questionsListTitle')}
+      </h3>
+
       {isLoading ? (
         <div className="flex flex-col items-center gap-2 py-10 opacity-50">
           <Loader2 className="h-5 w-5 animate-spin text-primary" />

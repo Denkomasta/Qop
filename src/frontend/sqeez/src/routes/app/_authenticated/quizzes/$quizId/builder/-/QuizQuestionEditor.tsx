@@ -10,6 +10,7 @@ import { QuestionDifficultyEditor } from './QuestionDifficultyEditor'
 import { QuestionTimeLimitEditor } from './QuestionTimeLimitEditor'
 import { QuestionMediaEditor } from './QuestionMediaEditor'
 import { QuizOptionsEditor } from './QuizOptionsEditor'
+import { QuizSettingsEditor } from './QuizSettingsEditor'
 
 interface QuizQuestionEditorProps {
   quizId: string
@@ -38,22 +39,16 @@ export function QuizQuestionEditor({ quizId }: QuizQuestionEditorProps) {
     })
   }
 
-  if (!activeQuestionId) {
-    return (
-      <div className="flex flex-1 items-center justify-center bg-muted/5 p-8 text-center text-muted-foreground">
-        <div className="max-w-xs">
-          <p className="text-sm italic">{t('editor.selectToEdit')}</p>
-        </div>
-      </div>
-    )
-  }
-
   if (isLoading) {
     return (
       <div className="flex flex-1 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary/30" />
       </div>
     )
+  }
+
+  if (activeQuestionId === null) {
+    return <QuizSettingsEditor quizId={quizId} />
   }
 
   return (

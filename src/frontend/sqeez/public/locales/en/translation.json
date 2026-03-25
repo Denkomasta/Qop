@@ -71,7 +71,8 @@
     "resume": "Resume",
     "submitting": "Submitting...",
     "confirmDelete": "Are you sure you want to delete this? This action cannot be undone.",
-    "remove": "Remove"
+    "remove": "Remove",
+    "saved": "Saved"
   },
   "dashboard": {
     "administration": "Administration",
@@ -109,7 +110,9 @@
     "quizNamePlaceholder": "e.g., Midterm Exam, Chapter 4 Review...",
     "quizCreatedSuccess": "Quiz created successfully!",
     "quizDescriptionLabel": "Short Description",
-    "quizDescriptionPlaceholder": "What is this quiz about? (e.g., A quick review of chapters 1-3...)"
+    "quizDescriptionPlaceholder": "What is this quiz about? (e.g., A quick review of chapters 1-3...)",
+    "showFilters": "Show filters",
+    "hideFilters": "Hide filters"
   },
   "enrollments": {
     "confirmDelete": "Are you sure you want to unenroll from this subject? This action cannot be undone.",
@@ -357,6 +360,20 @@
     "changeMedia": "Change Media",
     "clickToSelectMedia": "Click to select media",
     "mediaUploaded": "Media uploaded successfully",
-    "mediaRemoved": "Media removed successfully"
+    "mediaRemoved": "Media removed successfully",
+    "showSidebar": "Show sidebar",
+    "hideSidebar": "Hide sidebar",
+    "quizSettings": "Quiz Settings",
+    "questionsListTitle": "Questions",
+    "unpublish": "Unpublish",
+    "publish": "Publish Quiz",
+    "quizTitle": "Quiz Title",
+    "untitledQuiz": "Untitled Quiz",
+    "quizDescription": "Description",
+    "descriptionPlaceholder": "Enter a description...",
+    "maxRetries": "Max Retries",
+    "maxRetriesHelp": "Set to 0 for unlimited retries.",
+    "closingDate": "Closing Date",
+    "closingDateHelp": "Leave blank for no deadline."
   }
 }

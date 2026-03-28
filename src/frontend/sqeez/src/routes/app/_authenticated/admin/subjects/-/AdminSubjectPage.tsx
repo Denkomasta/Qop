@@ -11,6 +11,7 @@ import type { SubjectDto } from '@/api/generated/model'
 import { AdminSubjectsTable } from './AdminSubjectsTable'
 import { CreateSubjectModal } from './CreateSubjectModal'
 import { EditSubjectModal } from './EditSubjectModal'
+import { DeleteSubjectModal } from './DeleteSubjectModal'
 
 export function AdminSubjectsPage() {
   const { t } = useTranslation()
@@ -125,7 +126,11 @@ export function AdminSubjectsPage() {
         subject={subjectToEdit}
         onClose={() => setSubjectToEdit(null)}
       />
-      {/* <DeleteSubjectModal subject={subjectToDelete} onClose={() => setSubjectToDelete(null)} /> */}
+      <DeleteSubjectModal
+        isOpen={!!subjectToDelete}
+        subject={subjectToDelete}
+        onClose={() => setSubjectToDelete(null)}
+      />
     </div>
   )
 }

@@ -19,6 +19,10 @@
     "academicYear": "Academic Year",
     "section": "Section",
     "unassigned": "Unassigned",
+    "unassignedTeacher": "No Teacher",
+    "unassignedClass": "No Class",
+    "schoolClass": "School Class",
+    "searchClasses": "Search classes...",
     "class": {
       "backToClasses": "Back to Classes",
       "enrolledStudents": "Enrolled Students",
@@ -68,6 +72,31 @@
       "deleteClassDesc": "Are you sure you want to delete the class \"{{className}}\"? This action cannot be undone and may affect enrolled students and subjects.",
       "classDeleted": "School class deleted successfully",
       "cannotDelete": "Cannot delete class with enrolled students or assigned teacher."
+    },
+    "subjects": {
+      "subjectManagement": "Subject Management",
+      "totalSubjects": "Total Subjects",
+      "createSubject": "Create Subject",
+      "subjectDetails": "Subject Details",
+      "schedule": "Schedule",
+      "assignments": "Assignments",
+      "enrollments": "Enrollments",
+      "quizzes": "Quizzes",
+      "noSubjectsFound": "No subjects found.",
+      "cannotDelete": "Cannot delete a subject with active enrollments or quizzes.",
+      "searchPlaceholder": "Search by name or description...",
+      "filterCode": "Filter by Code (e.g. MAT101)",
+      "createSubjectTitle": "Create Subject",
+      "createSubjectDesc": "Add a new subject and optionally assign it to a teacher and class.",
+      "nameLabel": "Subject Name",
+      "namePlaceholder": "e.g. Advanced Mathematics",
+      "codeLabel": "Subject Code",
+      "codePlaceholder": "e.g. MAT201",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Brief overview of the subject...",
+      "startDateLabel": "Start Date",
+      "endDateLabel": "End Date",
+      "subjectCreated": "Subject created successfully"
     }
   },
   "badges": {
@@ -158,7 +187,8 @@
     "admins": "Admins",
     "user": "User",
     "contact": "Contact",
-    "actions": "Actions"
+    "actions": "Actions",
+    "leaveEmpty": "Leave empty"
   },
   "dashboard": {
     "administration": "Administration",

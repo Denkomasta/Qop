@@ -8,13 +8,6 @@
     "totalUsers": "Total Users",
     "searchUsers": "Search by name, username, or email...",
     "allRoles": "All Roles",
-    "students": "Students",
-    "teachers": "Teachers",
-    "admins": "Admins",
-    "user": "User",
-    "contact": "Contact",
-    "role": "Role",
-    "actions": "Actions",
     "noUsersFound": "No users found matching your filters.",
     "clickToEditRole": "Click to edit role",
     "roleUpdated": "User role updated successfully",
@@ -22,6 +15,24 @@
     "modifyRoleDesc": "Change access permissions for {{name}}.",
     "warning": "Warning",
     "adminWarningDesc": "Giving this user Admin privileges grants them full access to all system settings, user management, and destructive actions.",
+    "searchStudents": "Search students...",
+    "academicYear": "Academic Year",
+    "section": "Section",
+    "unassigned": "Unassigned",
+    "class": {
+      "backToClasses": "Back to Classes",
+      "enrolledStudents": "Enrolled Students",
+      "addStudent": "Add Student",
+      "addStudentTitle": "Add Student to Class",
+      "addStudentDesc": "Search and select a student to enroll them in {{className}}.",
+      "searchStudentsPlaceholder": "Search by name or username...",
+      "selectStudent": "Select Student",
+      "studentAdded": "Student added to class successfully",
+      "removeFromClass": "Remove from class",
+      "removeConfirmDesc": "Are you sure you want to remove {{studentName}} from this class?",
+      "studentRemoved": "Student removed from class successfully",
+      "noStudentsInClass": "No students currently in this class."
+    },
     "classes": {
       "classManagement": "School Classes",
       "totalClasses": "Total Classes",
@@ -56,7 +67,7 @@
       "deleteClassTitle": "Delete School Class",
       "deleteClassDesc": "Are you sure you want to delete the class \"{{className}}\"? This action cannot be undone and may affect enrolled students and subjects.",
       "classDeleted": "School class deleted successfully",
-      "cannotDelete": "Cannot delete class with enrolled students or an assigned teacher."
+      "cannotDelete": "Cannot delete class with enrolled students or assigned teacher."
     }
   },
   "badges": {
@@ -137,7 +148,17 @@
     "noDataFound": "No data found.",
     "create": "Create",
     "optional": "Optional",
-    "required": "This field is required."
+    "required": "This field is required.",
+    "add": "Add",
+    "student": "Student",
+    "students": "Students",
+    "teacher": "Teacher",
+    "teachers": "Teachers",
+    "admin": "Admin",
+    "admins": "Admins",
+    "user": "User",
+    "contact": "Contact",
+    "actions": "Actions"
   },
   "dashboard": {
     "administration": "Administration",

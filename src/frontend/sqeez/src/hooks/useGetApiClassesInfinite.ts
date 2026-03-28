@@ -1,0 +1,56 @@
+import {
+  useInfiniteQuery,
+  type InfiniteData,
+  type QueryKey,
+  type UseInfiniteQueryOptions,
+} from '@tanstack/react-query'
+
+import { getApiClasses } from '@/api/generated/endpoints/school-classes/school-classes'
+import type {
+  GetApiClassesParams,
+  PagedResponseOfSchoolClassDto,
+} from '@/api/generated/model'
+
+type CustomQueryOptions = Omit<
+  UseInfiniteQueryOptions<
+    PagedResponseOfSchoolClassDto,
+    Error,
+    InfiniteData<PagedResponseOfSchoolClassDto>,
+    QueryKey,
+    number
+  >,
+  'queryKey' | 'queryFn' | 'initialPageParam' | 'getNextPageParam'
+>
+
+export const useGetApiClassesInfinite = (
+  params?: GetApiClassesParams,
+  options?: CustomQueryOptions,
+) => {
+  const pageSize = Number(params?.PageSize) || 20
+
+  return useInfiniteQuery({
+    queryKey: ['classes', 'infinite', params],
+    initialPageParam: 1,
+    queryFn: async ({ pageParam, signal }) => {
+      return getApiClasses(
+        {
+          ...params,
+          PageNumber: pageParam,
+          PageSize: pageSize,
+        },
+        undefined,
+        signal,
+      )
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      const currentItems = lastPage?.data || []
+
+      if (currentItems.length < pageSize) {
+        return undefined
+      }
+
+      return allPages.length + 1
+    },
+    ...options,
+  })
+}

@@ -19,6 +19,10 @@
     "academicYear": "Školní rok",
     "section": "Sekce",
     "unassigned": "Nepřiřazeno",
+    "unassignedTeacher": "Bez učitele",
+    "unassignedClass": "Bez třídy",
+    "schoolClass": "Školní třída",
+    "searchClasses": "Search classes...",
     "class": {
       "backToClasses": "Zpět na třídy",
       "enrolledStudents": "Zapsaní studenti",
@@ -68,6 +72,31 @@
       "deleteClassDesc": "Opravdu chcete smazat třídu \"{{className}}\"? Tuto akci nelze vrátit zpět a může ovlivnit zapsané studenty a předměty.",
       "classDeleted": "Školní třída byla úspěšně smazána",
       "cannotDelete": "Nelze smazat třídu se zapsanými studenty nebo přiřazeným učitelem."
+    },
+    "subjects": {
+      "subjectManagement": "Správa předmětů",
+      "totalSubjects": "Celkem předmětů",
+      "createSubject": "Vytvořit předmět",
+      "subjectDetails": "Detaily předmětu",
+      "schedule": "Rozvrh",
+      "assignments": "Přiřazení",
+      "enrollments": "Zápisy",
+      "quizzes": "Kvízy",
+      "noSubjectsFound": "Nebyly nalezeny žádné předměty.",
+      "cannotDelete": "Nelze smazat předmět s aktivními zápisy nebo kvízy.",
+      "searchPlaceholder": "Hledat podle názvu nebo popisu...",
+      "filterCode": "Filtrovat podle kódu (např. MAT101)",
+      "createSubjectTitle": "Vytvořit předmět",
+      "createSubjectDesc": "Přidejte nový předmět a volitelně ho přiřaďte učiteli a třídě.",
+      "nameLabel": "Název předmětu",
+      "namePlaceholder": "např. Pokročilá matematika",
+      "codeLabel": "Kód předmětu",
+      "codePlaceholder": "např. MAT201",
+      "descriptionLabel": "Popis",
+      "descriptionPlaceholder": "Stručný přehled předmětu...",
+      "startDateLabel": "Datum zahájení",
+      "endDateLabel": "Datum ukončení",
+      "subjectCreated": "Předmět byl úspěšně vytvořen"
     }
   },
   "badges": {
@@ -158,7 +187,8 @@
     "admins": "Admini",
     "user": "Uživatel",
     "contact": "Kontakt",
-    "actions": "Akce"
+    "actions": "Akce",
+    "leaveEmpty": "Ponechat prázdné"
   },
   "dashboard": {
     "administration": "Administrativa",

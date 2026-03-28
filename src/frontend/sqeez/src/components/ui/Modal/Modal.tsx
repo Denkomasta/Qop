@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui'
+import { cn } from '@/lib/utils'
 
 interface BaseModalProps {
   isOpen: boolean
@@ -15,6 +16,7 @@ interface BaseModalProps {
   description?: string
   children: ReactNode
   footer?: ReactNode
+  className?: string
 }
 
 export function BaseModal({
@@ -24,10 +26,11 @@ export function BaseModal({
   description,
   children,
   footer,
+  className,
 }: BaseModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-106.25">
+      <DialogContent className={cn('sm:max-w-106.25', className)}>
         {(title || description) && (
           <DialogHeader>
             {title && <DialogTitle>{title}</DialogTitle>}

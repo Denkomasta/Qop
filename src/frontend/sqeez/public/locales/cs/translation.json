@@ -39,7 +39,8 @@
       "assignTeacherTitle": "Přiřadit učitele",
       "assignTeacherDesc": "Vyberte třídního učitele pro {{className}}.",
       "selectTeacher": "Vybrat učitele",
-      "teacherUpdated": "Třídní učitel byl úspěšně aktualizován"
+      "teacherUpdated": "Třídní učitel byl úspěšně aktualizován",
+      "searchTeachersPlaceholder": "Vyhledejte učitele podle jména nebo přezdívky..."
     }
   },
   "badges": {

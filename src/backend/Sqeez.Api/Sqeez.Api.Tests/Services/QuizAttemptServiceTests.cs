@@ -61,12 +61,18 @@ namespace Sqeez.Api.Tests.Services
         public async Task StartAttemptAsync_WhenValid_CreatesAttemptAndReturnsFirstQuestionId()
         {
             await using var context = await GetSeededContextAsync();
+
+            var quiz = await context.Quizzes.FindAsync(1L);
+            quiz!.PublishDate = DateTime.UtcNow.AddDays(-1);
+            quiz.ClosingDate = null;
+            await context.SaveChangesAsync();
+
             var service = new QuizAttemptService(context, _mockLogger.Object, _mockBadgeService.Object);
             var dto = new StartQuizAttemptDto(QuizId: 1, EnrollmentId: 1);
 
             var result = await service.StartAttemptAsync(1, dto);
 
-            Assert.True(result.Success);
+            Assert.True(result.Success, result.ErrorMessage);
             Assert.Equal(AttemptStatus.Created, result.Data!.Status);
             Assert.Equal(0, result.Data.TotalScore);
             Assert.Equal(1, await context.QuizAttempts.CountAsync());
@@ -81,7 +87,11 @@ namespace Sqeez.Api.Tests.Services
             await using var context = await GetSeededContextAsync();
 
             var quiz = await context.Quizzes.FirstAsync();
+
+            quiz.PublishDate = DateTime.UtcNow.AddDays(-1);
+            quiz.ClosingDate = null;
             quiz.MaxRetries = 1;
+
             context.QuizAttempts.Add(new QuizAttempt { QuizId = 1, EnrollmentId = 1 });
             await context.SaveChangesAsync();
 

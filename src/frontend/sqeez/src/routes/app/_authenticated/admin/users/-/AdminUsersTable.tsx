@@ -55,7 +55,7 @@ export function AdminUsersTable({
 
   const columns: ColumnDef<StudentDto>[] = [
     {
-      header: t('admin.user'),
+      header: t('common.user'),
       cell: (user) => (
         <div className="flex items-center gap-3">
           <SimpleAvatar
@@ -80,13 +80,13 @@ export function AdminUsersTable({
       ),
     },
     {
-      header: t('admin.contact'),
+      header: t('common.contact'),
       cell: (user) => (
         <span className="text-muted-foreground">{user.email}</span>
       ),
     },
     {
-      header: t('admin.role'),
+      header: t('common.role'),
       cell: (user) => (
         <button
           onClick={() =>

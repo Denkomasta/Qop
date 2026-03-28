@@ -75,9 +75,9 @@ export function AdminUsersPage() {
               }}
             >
               <option value="">{t('admin.allRoles')}</option>
-              <option value="Student">{t('admin.students')}</option>
-              <option value="Teacher">{t('admin.teachers')}</option>
-              <option value="Admin">{t('admin.admins')}</option>
+              <option value="Student">{t('common.students')}</option>
+              <option value="Teacher">{t('common.teachers')}</option>
+              <option value="Admin">{t('common.admins')}</option>
             </select>
           </div>
         </div>

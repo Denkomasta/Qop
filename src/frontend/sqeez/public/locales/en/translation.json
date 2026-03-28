@@ -198,7 +198,11 @@
     "quizDescriptionLabel": "Short Description",
     "quizDescriptionPlaceholder": "What is this quiz about? (e.g., A quick review of chapters 1-3...)",
     "showFilters": "Show filters",
-    "hideFilters": "Hide filters"
+    "hideFilters": "Hide filters",
+    "adminClasses": "School Classes",
+    "adminClassesDescription": "Create, edit, and manage school classes and their students.",
+    "adminSubjects": "Subjects",
+    "adminSubjectsDescription": "Manage global subject catalogs, codes, and details."
   },
   "enrollments": {
     "confirmDelete": "Are you sure you want to unenroll from this subject? This action cannot be undone.",

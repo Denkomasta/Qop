@@ -15,6 +15,8 @@ import {
   Settings,
   ShieldAlert,
   Library,
+  School,
+  BookCopy,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useGetApiUsersId } from '@/api/generated/endpoints/user/user'
@@ -145,6 +147,20 @@ function DashboardLaunchpad() {
       icon: <ShieldAlert className="h-8 w-8" />,
       href: '/app/admin/users',
       colorClass: 'bg-destructive/10 text-destructive',
+    },
+    {
+      title: t('dashboard.adminClasses'),
+      description: t('dashboard.adminClassesDescription'),
+      icon: <School className="h-8 w-8" />,
+      href: '/app/admin/classes',
+      colorClass: 'bg-indigo-500/10 text-indigo-500',
+    },
+    {
+      title: t('dashboard.adminSubjects'),
+      description: t('dashboard.adminSubjectsDescription'),
+      icon: <BookCopy className="h-8 w-8" />,
+      href: '/app/admin/subjects',
+      colorClass: 'bg-cyan-500/10 text-cyan-500',
     },
     {
       title: t('dashboard.systemSettings'),

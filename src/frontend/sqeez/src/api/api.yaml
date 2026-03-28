@@ -2515,6 +2515,10 @@ paths:
           in: query
           schema:
             type: boolean
+        - name: HasAssignedClass
+          in: query
+          schema:
+            type: boolean
         - name: PageNumber
           in: query
           schema:

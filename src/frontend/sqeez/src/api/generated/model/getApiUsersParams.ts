@@ -21,6 +21,7 @@ export type GetApiUsersParams = {
   PhoneNumber?: string
   SortBy?: UserSortField
   IsDescending?: boolean
+  HasAssignedClass?: boolean
   /**
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

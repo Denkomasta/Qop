@@ -70,6 +70,7 @@ export function CreateSchoolClassModal({
   } = useGetApiUsersInfinite(
     {
       Role: 'Teacher',
+      HasAssignedClass: false,
       ...(teacherSearch ? { SearchTerm: teacherSearch } : {}),
       PageSize: 20,
     },

@@ -198,7 +198,11 @@
     "quizDescriptionLabel": "Stručný popis",
     "quizDescriptionPlaceholder": "O čem je tento kvíz? (např. Rychlé opakování kapitol 1-3...)",
     "showFilters": "Zobrazit filtry",
-    "hideFilters": "Skrýt filtry"
+    "hideFilters": "Skrýt filtry",
+    "adminClasses": "Školní třídy",
+    "adminClassesDescription": "Vytvářejte, upravujte a spravujte školní třídy a jejich studenty.",
+    "adminSubjects": "Předměty",
+    "adminSubjectsDescription": "Spravujte globální katalog předmětů, kódy a detaily."
   },
   "error": {
     "generic": "Nastala chyba. Prosím zkuste to později.",

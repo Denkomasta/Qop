@@ -3,6 +3,26 @@
     "label": "Čeština",
     "flag": "🇨🇿"
   },
+  "admin": {
+    "userManagement": "Správa uživatelů",
+    "totalUsers": "Celkem uživatelů",
+    "searchUsers": "Hledat podle jména, uživatelského jména nebo e-mailu...",
+    "allRoles": "Všechny role",
+    "students": "Studenti",
+    "teachers": "Učitelé",
+    "admins": "Administrátoři",
+    "user": "Uživatel",
+    "contact": "Kontakt",
+    "role": "Role",
+    "actions": "Akce",
+    "noUsersFound": "Nenalezeni žádní uživatelé odpovídající vašim filtrům.",
+    "clickToEditRole": "Klikněte pro úpravu role",
+    "roleUpdated": "Role uživatele byla úspěšně aktualizována",
+    "modifyRoleTitle": "Upravit roli uživatele",
+    "modifyRoleDesc": "Změnit přístupová práva pro {{name}}.",
+    "warning": "Varování",
+    "adminWarningDesc": "Přidělením administrátorských práv získá tento uživatel plný přístup ke všem systémovým nastavením, správě uživatelů a k nevratným akcím."
+  },
   "badges": {
     "earned": "Získáno",
     "earnedOn": "Získáno",
@@ -72,7 +92,12 @@
     "submitting": "Odesílání...",
     "confirmDelete": "Opravdu chcete tuto položku smazat? Tuto akci nelze vzít zpět.",
     "remove": "Odstranit",
-    "saved": "Uloženo"
+    "saved": "Uloženo",
+    "page": "Strana",
+    "of": "z",
+    "areYouSure": "Jste si jisti?",
+    "yes": "Ano",
+    "no": "Ne"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -173,6 +198,13 @@
     "help": "Nápověda",
     "privacy": "Soukromí",
     "terms": "Podmínky"
+  },
+  "leaderboard": {
+    "title": "Žebříček",
+    "subtitle": "Nejlepší studenti podle XP",
+    "searchPlaceholder": "Hledat studenty...",
+    "noStudentsFound": "Nebyli nalezeni žádní studenti",
+    "tryDifferentSearch": "Zkuste upravit filtry vyhledávání."
   },
   "login": {
     "welcomeBack": "Vítejte zpět!",

@@ -4,7 +4,10 @@ import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
 import { Search } from 'lucide-react'
 
-import { usePostApiClassesIdStudents } from '@/api/generated/endpoints/school-classes/school-classes'
+import {
+  getGetApiClassesIdQueryKey,
+  usePostApiClassesIdStudents,
+} from '@/api/generated/endpoints/school-classes/school-classes'
 import { useGetApiUsersInfinite } from '@/hooks/useGetApiUsersInfinite'
 
 import { BaseModal } from '@/components/ui/Modal'
@@ -13,6 +16,7 @@ import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { ScrollableSelectList } from '@/components/ui/ScrollableSelectList/ScrollableSelectList'
 import { formatName } from '@/lib/userHelpers'
 import type { SchoolClassDetailDto } from '@/api/generated/model'
+import { getGetApiUsersQueryKey } from '@/api/generated/endpoints/user/user'
 
 interface AddStudentToClassModalProps {
   isOpen: boolean
@@ -51,15 +55,12 @@ export function AddStudentToClassModal({
   const addStudentMutation = usePostApiClassesIdStudents({
     mutation: {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['users'] })
-        queryClient.invalidateQueries({ queryKey: ['classes'] })
+        queryClient.invalidateQueries({
+          queryKey: getGetApiClassesIdQueryKey(Number(schoolClass?.id)),
+        })
+        queryClient.invalidateQueries({ queryKey: getGetApiUsersQueryKey() })
 
-        toast.success(
-          t(
-            'admin.classes.studentAdded',
-            'Student added to class successfully',
-          ),
-        )
+        toast.success(t('admin.class.studentAdded'))
         handleClose()
       },
       onError: () => toast.error(t('common.error')),

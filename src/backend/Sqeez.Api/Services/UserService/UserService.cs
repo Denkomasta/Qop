@@ -135,6 +135,18 @@ namespace Sqeez.Api.Services.UserService
                 query = query.OfType<Admin>().Where(a => a.PhoneNumber == filter.PhoneNumber).Cast<Student>();
             }
 
+            if (filter.HasAssignedClass.HasValue)
+            {
+                if (filter.HasAssignedClass.Value)
+                {
+                    query = query.Where(u => u is Teacher && ((Teacher)u).ManagedClassId != null);
+                }
+                else
+                {
+                    query = query.Where(u => u is Teacher && ((Teacher)u).ManagedClassId == null);
+                }
+            }
+
             int totalCount = await query.CountAsync();
 
             query = filter.SortBy switch

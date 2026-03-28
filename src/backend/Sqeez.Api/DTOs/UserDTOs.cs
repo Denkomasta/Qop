@@ -116,6 +116,7 @@ namespace Sqeez.Api.DTOs
         public string? PhoneNumber { get; init; }
         public UserSortField? SortBy { get; init; }
         public bool IsDescending { get; init; } = false;
+        public bool? HasAssignedClass { get; init; }
     }
 
     public record AvatarUploadResponseDto(string Message, string AvatarUrl);

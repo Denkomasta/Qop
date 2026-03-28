@@ -43,6 +43,7 @@ export function TeacherModificationModal({
   } = useGetApiUsersInfinite(
     {
       Role: 'Teacher',
+      HasAssignedClass: false,
       ...(searchTerm ? { SearchTerm: searchTerm } : {}),
       PageSize: 20,
     },
@@ -75,8 +76,7 @@ export function TeacherModificationModal({
       await updateClassMutation.mutateAsync({
         id: schoolClass.id.toString(),
         data: {
-          teacherId:
-            selectedTeacherId === '' ? null : Number(selectedTeacherId),
+          teacherId: selectedTeacherId === '' ? 0 : Number(selectedTeacherId),
         },
       })
       console.log(

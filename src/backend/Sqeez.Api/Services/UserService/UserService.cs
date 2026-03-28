@@ -137,8 +137,22 @@ namespace Sqeez.Api.Services.UserService
 
             int totalCount = await query.CountAsync();
 
+            query = filter.SortBy switch
+            {
+                UserSortField.XP => filter.IsDescending
+                    ? query.OrderByDescending(u => u.CurrentXP).ThenBy(u => u.Username)
+                    : query.OrderBy(u => u.CurrentXP).ThenBy(u => u.Username),
+
+                UserSortField.LastSeen => filter.IsDescending
+                    ? query.OrderByDescending(u => u.LastSeen).ThenBy(u => u.Username)
+                    : query.OrderBy(u => u.LastSeen).ThenBy(u => u.Username),
+
+                _ => filter.IsDescending
+                    ? query.OrderByDescending(u => u.Username)
+                    : query.OrderBy(u => u.Username)
+            };
+
             var users = await query
-                .OrderBy(u => u.Username)
                 .Skip((filter.PageNumber - 1) * filter.PageSize)
                 .Take(filter.PageSize)
                 .ToListAsync();

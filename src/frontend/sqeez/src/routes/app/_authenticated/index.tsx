@@ -111,7 +111,7 @@ function DashboardLaunchpad() {
       title: t('dashboard.leaderboards'),
       description: t('dashboard.leaderboardsDescription'),
       icon: <Trophy className="h-8 w-8" />,
-      href: '/app/leaderboard',
+      href: '/app/leaderboards',
       colorClass: 'bg-yellow-500/10 text-yellow-500',
     },
   ]

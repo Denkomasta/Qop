@@ -5,6 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { UserRole } from './userRole'
+import type { UserSortField } from './userSortField'
 
 export type GetApiUsersParams = {
   SearchTerm?: string
@@ -18,6 +19,8 @@ export type GetApiUsersParams = {
   StrictRoleOnly?: boolean
   Department?: string
   PhoneNumber?: string
+  SortBy?: UserSortField
+  IsDescending?: boolean
   /**
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

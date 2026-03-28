@@ -2507,6 +2507,14 @@ paths:
           in: query
           schema:
             type: string
+        - name: SortBy
+          in: query
+          schema:
+            $ref: "#/components/schemas/UserSortField"
+        - name: IsDescending
+          in: query
+          schema:
+            type: boolean
         - name: PageNumber
           in: query
           schema:
@@ -5232,6 +5240,12 @@ components:
         - Student
         - Teacher
         - Admin
+    UserSortField:
+      enum:
+        - Username
+        - XP
+        - LastSeen
+        - null
 tags:
   - name: Auth
   - name: Badges

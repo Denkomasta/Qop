@@ -39,7 +39,8 @@
       "assignTeacherTitle": "Assign Teacher",
       "assignTeacherDesc": "Select a primary teacher for {{className}}.",
       "selectTeacher": "Select Teacher",
-      "teacherUpdated": "Class teacher updated successfully"
+      "teacherUpdated": "Class teacher updated successfully",
+      "searchTeachersPlaceholder": "Search by name or username..."
     }
   },
   "badges": {

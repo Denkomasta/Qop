@@ -2,15 +2,18 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
+import { Search } from 'lucide-react'
 
 import { usePatchApiClassesId } from '@/api/generated/endpoints/school-classes/school-classes'
 import { getGetApiClassesQueryKey } from '@/api/generated/endpoints/school-classes/school-classes'
+import { useGetApiUsersInfinite } from '@/hooks/useGetApiUsersInfinite'
 
 import { BaseModal } from '@/components/ui/Modal'
 import { Button, AsyncButton } from '@/components/ui/Button'
+import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
+import { ScrollableSelectList } from '@/components/ui/ScrollableSelectList/ScrollableSelectList'
 import { formatName } from '@/lib/userHelpers'
 import type { SchoolClassDto } from '@/api/generated/model'
-import { useGetApiUsers } from '@/api/generated/endpoints/user/user'
 
 interface TeacherModificationModalProps {
   isOpen: boolean
@@ -26,27 +29,44 @@ export function TeacherModificationModal({
   const { t } = useTranslation()
   const queryClient = useQueryClient()
 
-  const [selectedTeacherId, setSelectedTeacherId] = useState<
-    string | number | ''
-  >(schoolClass?.teacherId ?? '')
+  const [selectedTeacherId, setSelectedTeacherId] = useState<number | ''>(
+    schoolClass?.teacherId ? Number(schoolClass.teacherId) : '',
+  )
+  const [searchTerm, setSearchTerm] = useState('')
 
-  const { data: teachersResponse, isLoading: isLoadingTeachers } =
-    useGetApiUsers(
-      { Role: 'Teacher', PageSize: 100 },
-      { query: { enabled: isOpen } },
-    )
-  const teachers = teachersResponse?.data || []
+  const {
+    data: infiniteData,
+    isLoading: isLoadingTeachers,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useGetApiUsersInfinite(
+    {
+      Role: 'Teacher',
+      ...(searchTerm ? { SearchTerm: searchTerm } : {}),
+      PageSize: 20,
+    },
+    {
+      enabled: isOpen,
+    },
+  )
 
   const updateClassMutation = usePatchApiClassesId({
     mutation: {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getGetApiClassesQueryKey() })
         toast.success(t('admin.classes.teacherUpdated'))
-        onClose()
+        handleClose()
       },
       onError: () => toast.error(t('common.error')),
     },
   })
+
+  const handleClose = () => {
+    setSearchTerm('')
+    setSelectedTeacherId('')
+    onClose()
+  }
 
   const handleSave = async () => {
     if (!schoolClass) return
@@ -62,26 +82,44 @@ export function TeacherModificationModal({
       console.log(
         `Assigned teacher ID ${selectedTeacherId} to class ${schoolClass.name}`,
       )
-      onClose()
     } catch (error) {
       console.error('Failed to assign teacher:', error)
     }
   }
 
+  const teachers = infiniteData?.pages.flatMap((page) => page.data || []) || []
+
+  const teacherOptions = [
+    {
+      id: '',
+      title: t('admin.classes.unassigned'),
+      subtitle: t('admin.classes.removeTeacher', 'Remove current teacher'),
+    },
+    ...teachers.map((teacher) => ({
+      id: Number(teacher.id),
+      title: formatName(teacher.firstName, teacher.lastName),
+      subtitle: `@${teacher.username}`,
+    })),
+  ]
+
+  const isSaveDisabled =
+    (selectedTeacherId === '' && !schoolClass?.teacherId) ||
+    selectedTeacherId === Number(schoolClass?.teacherId)
+
   return (
     <BaseModal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       title={t('admin.classes.assignTeacherTitle')}
       description={t('admin.classes.assignTeacherDesc', {
         className: schoolClass?.name,
       })}
       footer={
-        <div className="flex w-full justify-between gap-4">
+        <div className="flex w-full justify-center gap-4 sm:space-x-0">
           <Button
             variant="outline"
             size="lg"
-            onClick={onClose}
+            onClick={handleClose}
             className="min-w-32"
           >
             {t('common.cancel')}
@@ -89,7 +127,7 @@ export function TeacherModificationModal({
           <AsyncButton
             size="lg"
             onClick={handleSave}
-            disabled={selectedTeacherId === (schoolClass?.teacherId ?? '')}
+            disabled={isSaveDisabled}
             isLoading={updateClassMutation.isPending}
             loadingText={t('common.saving') + '...'}
             className="min-w-32"
@@ -99,24 +137,40 @@ export function TeacherModificationModal({
         </div>
       }
     >
-      <div className="flex flex-col gap-2 py-4">
-        <label className="text-sm font-medium text-foreground">
-          {t('admin.classes.selectTeacher')}
-        </label>
-        <select
-          className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-          value={selectedTeacherId}
-          onChange={(e) => setSelectedTeacherId(e.target.value)}
-          disabled={isLoadingTeachers}
-        >
-          <option value="">-- {t('admin.classes.unassigned')} --</option>
-          {teachers.map((teacher) => (
-            <option key={teacher.id} value={teacher.id}>
-              {formatName(teacher.firstName, teacher.lastName)} (@
-              {teacher.username})
-            </option>
-          ))}
-        </select>
+      <div className="flex flex-col gap-5 py-4">
+        <div className="flex flex-col gap-3">
+          <DebouncedInput
+            id="teacher-search"
+            value={searchTerm}
+            onChange={setSearchTerm}
+            placeholder={t('admin.classes.searchTeachersPlaceholder')}
+            icon={<Search className="size-4" />}
+            label={t('common.search', 'Search')}
+            hideErrors
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label className="mb-2 block text-sm font-medium">
+            {t('admin.classes.selectTeacher')}
+          </label>
+
+          <div className="h-fit overflow-hidden rounded-md border border-border">
+            <ScrollableSelectList
+              options={teacherOptions}
+              selectedId={selectedTeacherId}
+              onSelect={(id) =>
+                setSelectedTeacherId(id === '' ? '' : Number(id))
+              }
+              isLoading={isLoadingTeachers}
+              loadingText={`${t('common.loading')}...`}
+              emptyText={t('common.noResults')}
+              hasMore={!!hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+              onLoadMore={() => fetchNextPage()}
+            />
+          </div>
+        </div>
       </div>
     </BaseModal>
   )

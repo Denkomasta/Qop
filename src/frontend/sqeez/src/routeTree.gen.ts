@@ -19,6 +19,7 @@ import { Route as AppAuthenticatedTeacherRouteImport } from './routes/app/_authe
 import { Route as AppAuthenticatedSubjectsIndexRouteImport } from './routes/app/_authenticated/subjects/index'
 import { Route as AppAuthenticatedQuizzesIndexRouteImport } from './routes/app/_authenticated/quizzes/index'
 import { Route as AppAuthenticatedProfileIndexRouteImport } from './routes/app/_authenticated/profile/index'
+import { Route as AppAuthenticatedLeaderboardsIndexRouteImport } from './routes/app/_authenticated/leaderboards/index'
 import { Route as AppAuthenticatedClassIndexRouteImport } from './routes/app/_authenticated/class/index'
 import { Route as AppAuthenticatedProfileUserIdRouteImport } from './routes/app/_authenticated/profile/$userId'
 import { Route as AppAuthenticatedClassClassIdRouteImport } from './routes/app/_authenticated/class/$classId'
@@ -82,6 +83,12 @@ const AppAuthenticatedProfileIndexRoute =
   AppAuthenticatedProfileIndexRouteImport.update({
     id: '/profile/',
     path: '/profile/',
+    getParentRoute: () => AppAuthenticatedRoute,
+  } as any)
+const AppAuthenticatedLeaderboardsIndexRoute =
+  AppAuthenticatedLeaderboardsIndexRouteImport.update({
+    id: '/leaderboards/',
+    path: '/leaderboards/',
     getParentRoute: () => AppAuthenticatedRoute,
   } as any)
 const AppAuthenticatedClassIndexRoute =
@@ -163,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/app/class/$classId': typeof AppAuthenticatedClassClassIdRoute
   '/app/profile/$userId': typeof AppAuthenticatedProfileUserIdRoute
   '/app/class/': typeof AppAuthenticatedClassIndexRoute
+  '/app/leaderboards/': typeof AppAuthenticatedLeaderboardsIndexRoute
   '/app/profile/': typeof AppAuthenticatedProfileIndexRoute
   '/app/quizzes/': typeof AppAuthenticatedQuizzesIndexRoute
   '/app/subjects/': typeof AppAuthenticatedSubjectsIndexRoute
@@ -185,6 +193,7 @@ export interface FileRoutesByTo {
   '/app/class/$classId': typeof AppAuthenticatedClassClassIdRoute
   '/app/profile/$userId': typeof AppAuthenticatedProfileUserIdRoute
   '/app/class': typeof AppAuthenticatedClassIndexRoute
+  '/app/leaderboards': typeof AppAuthenticatedLeaderboardsIndexRoute
   '/app/profile': typeof AppAuthenticatedProfileIndexRoute
   '/app/quizzes': typeof AppAuthenticatedQuizzesIndexRoute
   '/app/subjects': typeof AppAuthenticatedSubjectsIndexRoute
@@ -209,6 +218,7 @@ export interface FileRoutesById {
   '/app/_authenticated/class/$classId': typeof AppAuthenticatedClassClassIdRoute
   '/app/_authenticated/profile/$userId': typeof AppAuthenticatedProfileUserIdRoute
   '/app/_authenticated/class/': typeof AppAuthenticatedClassIndexRoute
+  '/app/_authenticated/leaderboards/': typeof AppAuthenticatedLeaderboardsIndexRoute
   '/app/_authenticated/profile/': typeof AppAuthenticatedProfileIndexRoute
   '/app/_authenticated/quizzes/': typeof AppAuthenticatedQuizzesIndexRoute
   '/app/_authenticated/subjects/': typeof AppAuthenticatedSubjectsIndexRoute
@@ -234,6 +244,7 @@ export interface FileRouteTypes {
     | '/app/class/$classId'
     | '/app/profile/$userId'
     | '/app/class/'
+    | '/app/leaderboards/'
     | '/app/profile/'
     | '/app/quizzes/'
     | '/app/subjects/'
@@ -256,6 +267,7 @@ export interface FileRouteTypes {
     | '/app/class/$classId'
     | '/app/profile/$userId'
     | '/app/class'
+    | '/app/leaderboards'
     | '/app/profile'
     | '/app/quizzes'
     | '/app/subjects'
@@ -279,6 +291,7 @@ export interface FileRouteTypes {
     | '/app/_authenticated/class/$classId'
     | '/app/_authenticated/profile/$userId'
     | '/app/_authenticated/class/'
+    | '/app/_authenticated/leaderboards/'
     | '/app/_authenticated/profile/'
     | '/app/_authenticated/quizzes/'
     | '/app/_authenticated/subjects/'
@@ -369,6 +382,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/app/profile/'
       preLoaderRoute: typeof AppAuthenticatedProfileIndexRouteImport
+      parentRoute: typeof AppAuthenticatedRoute
+    }
+    '/app/_authenticated/leaderboards/': {
+      id: '/app/_authenticated/leaderboards/'
+      path: '/leaderboards'
+      fullPath: '/app/leaderboards/'
+      preLoaderRoute: typeof AppAuthenticatedLeaderboardsIndexRouteImport
       parentRoute: typeof AppAuthenticatedRoute
     }
     '/app/_authenticated/class/': {
@@ -473,6 +493,7 @@ interface AppAuthenticatedRouteChildren {
   AppAuthenticatedClassClassIdRoute: typeof AppAuthenticatedClassClassIdRoute
   AppAuthenticatedProfileUserIdRoute: typeof AppAuthenticatedProfileUserIdRoute
   AppAuthenticatedClassIndexRoute: typeof AppAuthenticatedClassIndexRoute
+  AppAuthenticatedLeaderboardsIndexRoute: typeof AppAuthenticatedLeaderboardsIndexRoute
   AppAuthenticatedProfileIndexRoute: typeof AppAuthenticatedProfileIndexRoute
   AppAuthenticatedQuizzesIndexRoute: typeof AppAuthenticatedQuizzesIndexRoute
   AppAuthenticatedSubjectsIndexRoute: typeof AppAuthenticatedSubjectsIndexRoute
@@ -491,6 +512,8 @@ const AppAuthenticatedRouteChildren: AppAuthenticatedRouteChildren = {
   AppAuthenticatedClassClassIdRoute: AppAuthenticatedClassClassIdRoute,
   AppAuthenticatedProfileUserIdRoute: AppAuthenticatedProfileUserIdRoute,
   AppAuthenticatedClassIndexRoute: AppAuthenticatedClassIndexRoute,
+  AppAuthenticatedLeaderboardsIndexRoute:
+    AppAuthenticatedLeaderboardsIndexRoute,
   AppAuthenticatedProfileIndexRoute: AppAuthenticatedProfileIndexRoute,
   AppAuthenticatedQuizzesIndexRoute: AppAuthenticatedQuizzesIndexRoute,
   AppAuthenticatedSubjectsIndexRoute: AppAuthenticatedSubjectsIndexRoute,

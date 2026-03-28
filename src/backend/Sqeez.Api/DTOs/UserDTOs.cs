@@ -95,6 +95,13 @@ namespace Sqeez.Api.DTOs
         public string? PhoneNumber { get; init; }
     }
 
+    public enum UserSortField
+    {
+        Username,
+        XP,
+        LastSeen
+    }
+
     public class UserFilterDto : PagedFilterDto
     {
         public string? SearchTerm { get; init; }
@@ -107,6 +114,8 @@ namespace Sqeez.Api.DTOs
 
         public string? Department { get; init; }
         public string? PhoneNumber { get; init; }
+        public UserSortField? SortBy { get; init; }
+        public bool IsDescending { get; init; } = false;
     }
 
     public record AvatarUploadResponseDto(string Message, string AvatarUrl);

@@ -5,8 +5,14 @@ import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
 import { School, ArrowLeft, UserPlus, Search } from 'lucide-react'
 
-import { useGetApiUsers } from '@/api/generated/endpoints/user/user'
-import { usePostApiClassesIdStudentsRemove } from '@/api/generated/endpoints/school-classes/school-classes'
+import {
+  getGetApiUsersQueryKey,
+  useGetApiUsers,
+} from '@/api/generated/endpoints/user/user'
+import {
+  getGetApiClassesIdQueryKey,
+  usePostApiClassesIdStudentsRemove,
+} from '@/api/generated/endpoints/school-classes/school-classes'
 
 import { Button } from '@/components/ui/Button'
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
@@ -55,8 +61,10 @@ export function AdminClassDetailsPage({
   const removeStudentMutation = usePostApiClassesIdStudentsRemove({
     mutation: {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['users'] })
-        queryClient.invalidateQueries({ queryKey: ['classes'] })
+        queryClient.invalidateQueries({ queryKey: getGetApiUsersQueryKey() })
+        queryClient.invalidateQueries({
+          queryKey: getGetApiClassesIdQueryKey(Number(classData?.id)),
+        })
 
         toast.success(t('admin.class.studentRemoved'))
         setStudentToRemove(null)

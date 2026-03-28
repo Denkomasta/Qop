@@ -4,6 +4,7 @@ import { School, Users, BookOpen, Edit2, UserX, Trash2 } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge/Badge'
 import { DataTable, type ColumnDef } from '@/components/ui/Table/DataTable'
 import type { SchoolClassDto } from '@/api/generated/model'
+import { Link } from '@tanstack/react-router'
 
 interface AdminSchoolClassTableProps {
   classes: SchoolClassDto[]
@@ -28,12 +29,16 @@ export function AdminSchoolClassTable({
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <School className="h-5 w-5" />
           </div>
-          <div className="flex flex-col">
+          <Link
+            to="/app/admin/classes/$classId"
+            params={{ classId: cls.id.toString() }}
+            className="flex flex-col hover:underline"
+          >
             <span className="font-semibold text-foreground">{cls.name}</span>
             <span className="text-xs text-muted-foreground">
               {t('admin.classes.section')}: {cls.section}
             </span>
-          </div>
+          </Link>
         </div>
       ),
     },

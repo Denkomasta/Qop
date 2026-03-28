@@ -99,7 +99,10 @@
       "subjectCreated": "Subject created successfully",
       "editSubjectTitle": "Edit Subject",
       "editSubjectDesc": "Update the details and assignments for {{subjectName}}.",
-      "subjectUpdated": "Subject updated successfully"
+      "subjectUpdated": "Subject updated successfully",
+      "deleteSubjectTitle": "Delete Subject",
+      "deleteSubjectDesc": "Are you sure you want to delete the subject \"{{subjectName}}\"? This action cannot be undone.",
+      "subjectDeleted": "Subject deleted successfully"
     }
   },
   "badges": {

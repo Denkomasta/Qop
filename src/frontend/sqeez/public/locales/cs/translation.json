@@ -99,7 +99,10 @@
       "subjectCreated": "Předmět byl úspěšně vytvořen",
       "editSubjectTitle": "Upravit předmět",
       "editSubjectDesc": "Aktualizujte detaily a přiřazení pro {{subjectName}}.",
-      "subjectUpdated": "Předmět byl úspěšně aktualizován"
+      "subjectUpdated": "Předmět byl úspěšně aktualizován",
+      "deleteSubjectTitle": "Smazat předmět",
+      "deleteSubjectDesc": "Opravdu chcete smazat předmět \"{{subjectName}}\"? Tuto akci nelze vrátit zpět.",
+      "subjectDeleted": "Předmět byl úspěšně smazán"
     }
   },
   "badges": {

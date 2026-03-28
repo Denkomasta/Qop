@@ -3,6 +3,26 @@
     "label": "English",
     "flag": "🇺🇸"
   },
+  "admin": {
+    "userManagement": "User Management",
+    "totalUsers": "Total Users",
+    "searchUsers": "Search by name, username, or email...",
+    "allRoles": "All Roles",
+    "students": "Students",
+    "teachers": "Teachers",
+    "admins": "Admins",
+    "user": "User",
+    "contact": "Contact",
+    "role": "Role",
+    "actions": "Actions",
+    "noUsersFound": "No users found matching your filters.",
+    "clickToEditRole": "Click to edit role",
+    "roleUpdated": "User role updated successfully",
+    "modifyRoleTitle": "Modify User Role",
+    "modifyRoleDesc": "Change access permissions for {{name}}.",
+    "warning": "Warning",
+    "adminWarningDesc": "Giving this user Admin privileges grants them full access to all system settings, user management, and destructive actions."
+  },
   "badges": {
     "earned": "Earned",
     "earnedOn": "Earned on",
@@ -72,7 +92,12 @@
     "submitting": "Submitting...",
     "confirmDelete": "Are you sure you want to delete this? This action cannot be undone.",
     "remove": "Remove",
-    "saved": "Saved"
+    "saved": "Saved",
+    "page": "Page",
+    "of": "of",
+    "areYouSure": "Are you sure?",
+    "yes": "Yes",
+    "no": "No"
   },
   "dashboard": {
     "administration": "Administration",
@@ -173,6 +198,13 @@
     "help": "Help",
     "privacy": "Privacy",
     "terms": "Terms"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "subtitle": "Top performing students by XP",
+    "searchPlaceholder": "Search students...",
+    "noStudentsFound": "No students found",
+    "tryDifferentSearch": "Try adjusting your search filters."
   },
   "login": {
     "welcomeBack": "Welcome back!",

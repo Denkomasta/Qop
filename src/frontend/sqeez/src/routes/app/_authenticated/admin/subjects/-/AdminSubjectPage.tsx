@@ -10,6 +10,7 @@ import type { SubjectDto } from '@/api/generated/model'
 
 import { AdminSubjectsTable } from './AdminSubjectsTable'
 import { CreateSubjectModal } from './CreateSubjectModal'
+import { EditSubjectModal } from './EditSubjectModal'
 
 export function AdminSubjectsPage() {
   const { t } = useTranslation()
@@ -119,8 +120,12 @@ export function AdminSubjectsPage() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
       />
-      {/* <EditSubjectModal subject={subjectToEdit} onClose={() => setSubjectToEdit(null)} />
-        <DeleteSubjectModal subject={subjectToDelete} onClose={() => setSubjectToDelete(null)} /> */}
+      <EditSubjectModal
+        isOpen={!!subjectToEdit}
+        subject={subjectToEdit}
+        onClose={() => setSubjectToEdit(null)}
+      />
+      {/* <DeleteSubjectModal subject={subjectToDelete} onClose={() => setSubjectToDelete(null)} /> */}
     </div>
   )
 }

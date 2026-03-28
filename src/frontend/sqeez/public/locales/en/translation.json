@@ -96,7 +96,10 @@
       "descriptionPlaceholder": "Brief overview of the subject...",
       "startDateLabel": "Start Date",
       "endDateLabel": "End Date",
-      "subjectCreated": "Subject created successfully"
+      "subjectCreated": "Subject created successfully",
+      "editSubjectTitle": "Edit Subject",
+      "editSubjectDesc": "Update the details and assignments for {{subjectName}}.",
+      "subjectUpdated": "Subject updated successfully"
     }
   },
   "badges": {

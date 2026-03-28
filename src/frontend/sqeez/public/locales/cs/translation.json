@@ -22,7 +22,7 @@
     "unassignedTeacher": "Bez učitele",
     "unassignedClass": "Bez třídy",
     "schoolClass": "Školní třída",
-    "searchClasses": "Search classes...",
+    "searchClasses": "Hledat třídy...",
     "class": {
       "backToClasses": "Zpět na třídy",
       "enrolledStudents": "Zapsaní studenti",
@@ -96,7 +96,10 @@
       "descriptionPlaceholder": "Stručný přehled předmětu...",
       "startDateLabel": "Datum zahájení",
       "endDateLabel": "Datum ukončení",
-      "subjectCreated": "Předmět byl úspěšně vytvořen"
+      "subjectCreated": "Předmět byl úspěšně vytvořen",
+      "editSubjectTitle": "Upravit předmět",
+      "editSubjectDesc": "Aktualizujte detaily a přiřazení pro {{subjectName}}.",
+      "subjectUpdated": "Předmět byl úspěšně aktualizován"
     }
   },
   "badges": {

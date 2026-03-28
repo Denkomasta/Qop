@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react'
-import { Calendar } from 'lucide-react'
+import React, { useState } from 'react'
 import { Input } from '@/components/ui/Input'
 
 interface DateTimePickerProps extends Omit<
@@ -17,7 +16,7 @@ export function DateTimePicker({
   onChange,
   min,
   max,
-  icon = <Calendar className="h-4 w-4" />,
+  icon,
   ...props
 }: DateTimePickerProps) {
   const toLocalDatetimeString = (isoString?: string | null) => {
@@ -33,11 +32,13 @@ export function DateTimePicker({
     }
   }
 
+  const [prevValueProp, setPrevValueProp] = useState(value)
   const [localValue, setLocalValue] = useState(toLocalDatetimeString(value))
 
-  useEffect(() => {
+  if (value !== prevValueProp) {
+    setPrevValueProp(value)
     setLocalValue(toLocalDatetimeString(value))
-  }, [value])
+  }
 
   const handleBlur = () => {
     if (!localValue) {

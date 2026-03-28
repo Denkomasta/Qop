@@ -40,7 +40,23 @@
       "assignTeacherDesc": "Select a primary teacher for {{className}}.",
       "selectTeacher": "Select Teacher",
       "teacherUpdated": "Class teacher updated successfully",
-      "searchTeachersPlaceholder": "Search by name or username..."
+      "searchTeachersPlaceholder": "Search by name or username...",
+      "createClass": "Create Class",
+      "createClassTitle": "Create School Class",
+      "createClassDesc": "Add a new class to the system and optionally assign a primary teacher.",
+      "nameLabel": "Class Name",
+      "namePlaceholder": "e.g. Mathematics 101",
+      "yearLabel": "Academic Year",
+      "yearPlaceholder": "e.g. 2024/2025",
+      "sectionLabel": "Section",
+      "sectionPlaceholder": "e.g. A, B, or Fall",
+      "leaveUnassigned": "Leave without a primary teacher",
+      "classCreated": "School class created successfully",
+      "invalidYearFormat": "Format must be YYYY/YYYY (e.g. 2024/2025)",
+      "deleteClassTitle": "Delete School Class",
+      "deleteClassDesc": "Are you sure you want to delete the class \"{{className}}\"? This action cannot be undone and may affect enrolled students and subjects.",
+      "classDeleted": "School class deleted successfully",
+      "cannotDelete": "Cannot delete class with enrolled students or an assigned teacher."
     }
   },
   "badges": {
@@ -118,7 +134,10 @@
     "areYouSure": "Are you sure?",
     "yes": "Yes",
     "no": "No",
-    "noDataFound": "No data found."
+    "noDataFound": "No data found.",
+    "create": "Create",
+    "optional": "Optional",
+    "required": "This field is required."
   },
   "dashboard": {
     "administration": "Administration",

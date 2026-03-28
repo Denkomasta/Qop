@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { School, Users, BookOpen, Edit2, UserX } from 'lucide-react'
+import { School, Users, BookOpen, Edit2, UserX, Trash2 } from 'lucide-react'
 
 import { Badge } from '@/components/ui/Badge/Badge'
 import { DataTable, type ColumnDef } from '@/components/ui/Table/DataTable'
@@ -9,12 +9,14 @@ interface AdminSchoolClassTableProps {
   classes: SchoolClassDto[]
   isLoading: boolean
   onEditTeacher: (schoolClass: SchoolClassDto) => void
+  onDeleteClass: (schoolClass: SchoolClassDto) => void
 }
 
 export function AdminSchoolClassTable({
   classes,
   isLoading,
   onEditTeacher,
+  onDeleteClass,
 }: AdminSchoolClassTableProps) {
   const { t } = useTranslation()
 
@@ -79,6 +81,32 @@ export function AdminSchoolClassTable({
           </span>
         </div>
       ),
+    },
+    {
+      header: '',
+      className: 'text-right w-20',
+      cell: (cls) => {
+        const canDelete = Number(cls.studentCount) === 0 && !cls.teacherId
+
+        return (
+          <div className="flex justify-end">
+            <button
+              onClick={() => canDelete && onDeleteClass(cls)}
+              disabled={!canDelete}
+              className={`flex h-8 w-8 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-destructive focus-visible:outline-none ${
+                canDelete
+                  ? 'text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
+                  : 'cursor-not-allowed text-muted-foreground/30'
+              }`}
+              title={
+                canDelete ? t('common.delete') : t('admin.classes.cannotDelete')
+              }
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        )
+      },
     },
   ]
 

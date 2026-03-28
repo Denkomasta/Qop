@@ -40,7 +40,23 @@
       "assignTeacherDesc": "Vyberte třídního učitele pro {{className}}.",
       "selectTeacher": "Vybrat učitele",
       "teacherUpdated": "Třídní učitel byl úspěšně aktualizován",
-      "searchTeachersPlaceholder": "Vyhledejte učitele podle jména nebo přezdívky..."
+      "searchTeachersPlaceholder": "Vyhledejte učitele podle jména nebo přezdívky...",
+      "createClass": "Vytvořit třídu",
+      "createClassTitle": "Vytvořit školní třídu",
+      "createClassDesc": "Přidejte do systému novou třídu a volitelně přiřaďte třídního učitele.",
+      "nameLabel": "Název třídy",
+      "namePlaceholder": "např. Matematika 101",
+      "yearLabel": "Školní rok",
+      "yearPlaceholder": "např. 2024/2025",
+      "sectionLabel": "Sekce",
+      "sectionPlaceholder": "např. A, B nebo Podzim",
+      "leaveUnassigned": "Ponechat bez třídního učitele",
+      "classCreated": "Školní třída byla úspěšně vytvořena",
+      "invalidYearFormat": "Formát musí být RRRR/RRRR (např. 2024/2025)",
+      "deleteClassTitle": "Smazat školní třídu",
+      "deleteClassDesc": "Opravdu chcete smazat třídu \"{{className}}\"? Tuto akci nelze vrátit zpět a může ovlivnit zapsané studenty a předměty.",
+      "classDeleted": "Školní třída byla úspěšně smazána",
+      "cannotDelete": "Nelze smazat třídu se zapsanými studenty nebo přiřazeným učitelem."
     }
   },
   "badges": {
@@ -118,7 +134,10 @@
     "areYouSure": "Jste si jisti?",
     "yes": "Ano",
     "no": "Ne",
-    "noDataFound": "Nebyla nalezena žádná data."
+    "noDataFound": "Nebyla nalezena žádná data.",
+    "create": "Vytvořit",
+    "optional": "Volitelné",
+    "required": "Toto pole je povinné."
   },
   "dashboard": {
     "administration": "Administrativa",

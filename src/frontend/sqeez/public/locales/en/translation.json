@@ -21,7 +21,26 @@
     "modifyRoleTitle": "Modify User Role",
     "modifyRoleDesc": "Change access permissions for {{name}}.",
     "warning": "Warning",
-    "adminWarningDesc": "Giving this user Admin privileges grants them full access to all system settings, user management, and destructive actions."
+    "adminWarningDesc": "Giving this user Admin privileges grants them full access to all system settings, user management, and destructive actions.",
+    "classes": {
+      "classManagement": "School Classes",
+      "totalClasses": "Total Classes",
+      "searchClasses": "Search classes by name or section...",
+      "filterYear": "e.g. 2024/2025",
+      "className": "Class Name",
+      "section": "Section",
+      "academicYear": "Academic Year",
+      "teacher": "Teacher",
+      "statistics": "Statistics",
+      "subjects": "Subjects",
+      "clickToEditTeacher": "Click to assign teacher",
+      "unassigned": "Unassigned",
+      "noClassesFound": "No school classes found.",
+      "assignTeacherTitle": "Assign Teacher",
+      "assignTeacherDesc": "Select a primary teacher for {{className}}.",
+      "selectTeacher": "Select Teacher",
+      "teacherUpdated": "Class teacher updated successfully"
+    }
   },
   "badges": {
     "earned": "Earned",
@@ -97,7 +116,8 @@
     "of": "of",
     "areYouSure": "Are you sure?",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "noDataFound": "No data found."
   },
   "dashboard": {
     "administration": "Administration",

@@ -1,37 +1,36 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Users, Search } from 'lucide-react'
+import { School, Search } from 'lucide-react'
 
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { Pagination } from '@/components/ui/Pagination'
-import type { UserRole } from '@/api/generated/model'
-import { useGetApiUsers } from '@/api/generated/endpoints/user/user'
+import { useGetApiClasses } from '@/api/generated/endpoints/school-classes/school-classes'
+import type { SchoolClassDto } from '@/api/generated/model'
 
-import { RoleModificationModal } from './RoleModificationModal'
-import { AdminUsersTable, type SelectedUserForRole } from './AdminUsersTable'
+import { AdminSchoolClassTable } from './AdminSchoolClassTable'
+import { TeacherModificationModal } from './TeacherModificationModal'
 
-export function AdminUsersPage() {
+export function AdminSchoolClassPage() {
   const { t } = useTranslation()
 
   const [searchQuery, setSearchQuery] = useState('')
-  const [roleFilter, setRoleFilter] = useState<UserRole | ''>('')
+  const [academicYearFilter, setAcademicYearFilter] = useState('')
   const [pageNumber, setPageNumber] = useState(1)
   const pageSize = 15
 
-  const [selectedUserForRole, setSelectedUserForRole] =
-    useState<SelectedUserForRole | null>(null)
+  const [selectedClassForTeacher, setSelectedClassForTeacher] =
+    useState<SchoolClassDto | null>(null)
 
-  const { data: usersResponse, isLoading } = useGetApiUsers({
+  const { data: classesResponse, isLoading } = useGetApiClasses({
     SearchTerm: searchQuery || undefined,
-    Role: roleFilter || undefined,
-    StrictRoleOnly: !!roleFilter,
+    AcademicYear: academicYearFilter || undefined,
     PageNumber: pageNumber,
     PageSize: pageSize,
   })
 
-  const users = usersResponse?.data || []
-  const totalPages = Number(usersResponse?.totalPages || 1)
-  const totalCount = usersResponse?.totalCount || 0
+  const classes = classesResponse?.data || []
+  const totalPages = Number(classesResponse?.totalPages || 1)
+  const totalCount = classesResponse?.totalCount || 0
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -39,14 +38,14 @@ export function AdminUsersPage() {
         <div className="mx-auto flex max-w-7xl flex-col gap-6">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <Users className="h-6 w-6" />
+              <School className="h-6 w-6" />
             </div>
             <div>
               <h1 className="text-3xl font-bold tracking-tight">
-                {t('admin.userManagement')}
+                {t('admin.classes.classManagement')}
               </h1>
               <p className="text-muted-foreground">
-                {t('admin.totalUsers')}:{' '}
+                {t('admin.classes.totalClasses')}:{' '}
                 <span className="font-bold">{totalCount}</span>
               </p>
             </div>
@@ -54,41 +53,39 @@ export function AdminUsersPage() {
 
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <DebouncedInput
-              id="admin-user-search"
+              id="admin-class-search"
               value={searchQuery}
               onChange={(val) => {
                 setSearchQuery(val)
                 setPageNumber(1)
               }}
-              placeholder={t('admin.searchUsers')}
+              placeholder={t('admin.classes.searchClasses')}
               icon={<Search className="h-4 w-4" />}
               className="max-w-md bg-background"
               hideErrors
             />
 
-            <select
-              className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-              value={roleFilter}
-              onChange={(e) => {
-                setRoleFilter(e.target.value as UserRole | '')
+            <DebouncedInput
+              id="admin-academic-year"
+              value={academicYearFilter}
+              onChange={(val) => {
+                setAcademicYearFilter(val)
                 setPageNumber(1)
               }}
-            >
-              <option value="">{t('admin.allRoles')}</option>
-              <option value="Student">{t('admin.students')}</option>
-              <option value="Teacher">{t('admin.teachers')}</option>
-              <option value="Admin">{t('admin.admins')}</option>
-            </select>
+              placeholder={t('admin.filterYear', 'e.g. 2024/2025')}
+              className="max-w-50 bg-background"
+              hideErrors
+            />
           </div>
         </div>
       </header>
 
       <main className="flex-1 overflow-y-auto p-6">
         <div className="mx-auto max-w-7xl">
-          <AdminUsersTable
-            users={users}
+          <AdminSchoolClassTable
+            classes={classes}
             isLoading={isLoading}
-            onEditRole={setSelectedUserForRole}
+            onEditTeacher={setSelectedClassForTeacher}
           />
 
           {!isLoading && totalPages > 1 && (
@@ -103,11 +100,11 @@ export function AdminUsersPage() {
         </div>
       </main>
 
-      <RoleModificationModal
-        key={selectedUserForRole?.id ?? 'empty-modal'}
-        isOpen={!!selectedUserForRole}
-        onClose={() => setSelectedUserForRole(null)}
-        user={selectedUserForRole}
+      <TeacherModificationModal
+        key={selectedClassForTeacher?.id ?? 'empty-modal'}
+        isOpen={!!selectedClassForTeacher}
+        onClose={() => setSelectedClassForTeacher(null)}
+        schoolClass={selectedClassForTeacher}
       />
     </div>
   )

@@ -21,7 +21,26 @@
     "modifyRoleTitle": "Upravit roli uživatele",
     "modifyRoleDesc": "Změnit přístupová práva pro {{name}}.",
     "warning": "Varování",
-    "adminWarningDesc": "Přidělením administrátorských práv získá tento uživatel plný přístup ke všem systémovým nastavením, správě uživatelů a k nevratným akcím."
+    "adminWarningDesc": "Přidělením administrátorských práv získá tento uživatel plný přístup ke všem systémovým nastavením, správě uživatelů a k nevratným akcím.",
+    "classes": {
+      "classManagement": "Školní třídy",
+      "totalClasses": "Celkem tříd",
+      "searchClasses": "Hledat třídy podle názvu nebo sekce...",
+      "filterYear": "např. 2024/2025",
+      "className": "Název třídy",
+      "section": "Sekce",
+      "academicYear": "Školní rok",
+      "teacher": "Učitel",
+      "statistics": "Statistiky",
+      "subjects": "Předměty",
+      "clickToEditTeacher": "Klikněte pro přiřazení učitele",
+      "unassigned": "Nepřiřazeno",
+      "noClassesFound": "Nebyly nalezeny žádné třídy.",
+      "assignTeacherTitle": "Přiřadit učitele",
+      "assignTeacherDesc": "Vyberte třídního učitele pro {{className}}.",
+      "selectTeacher": "Vybrat učitele",
+      "teacherUpdated": "Třídní učitel byl úspěšně aktualizován"
+    }
   },
   "badges": {
     "earned": "Získáno",
@@ -97,7 +116,8 @@
     "of": "z",
     "areYouSure": "Jste si jisti?",
     "yes": "Ano",
-    "no": "Ne"
+    "no": "Ne",
+    "noDataFound": "Nebyla nalezena žádná data."
   },
   "dashboard": {
     "administration": "Administrativa",

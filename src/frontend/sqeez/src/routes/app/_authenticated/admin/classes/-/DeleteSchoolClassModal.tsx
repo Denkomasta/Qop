@@ -1,0 +1,62 @@
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { useQueryClient } from '@tanstack/react-query'
+
+import { useDeleteApiClassesId } from '@/api/generated/endpoints/school-classes/school-classes'
+import { getGetApiClassesQueryKey } from '@/api/generated/endpoints/school-classes/school-classes'
+
+import type { SchoolClassDto } from '@/api/generated/model'
+import { ConfirmModal } from '@/components/ui'
+
+interface DeleteSchoolClassModalProps {
+  isOpen: boolean
+  onClose: () => void
+  schoolClass: SchoolClassDto | null
+}
+
+export function DeleteSchoolClassModal({
+  isOpen,
+  onClose,
+  schoolClass,
+}: DeleteSchoolClassModalProps) {
+  const { t } = useTranslation()
+  const queryClient = useQueryClient()
+
+  const deleteClassMutation = useDeleteApiClassesId({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: getGetApiClassesQueryKey() })
+        toast.success(t('admin.classes.classDeleted'))
+        onClose()
+      },
+      onError: () => toast.error(t('common.error')),
+    },
+  })
+
+  const handleDelete = async () => {
+    if (!schoolClass) return
+
+    try {
+      await deleteClassMutation.mutateAsync({ id: schoolClass.id.toString() })
+      console.log(`Deleted class ID ${schoolClass.id}`)
+      onClose()
+    } catch (error) {
+      console.error('Failed to delete class:', error)
+    }
+  }
+
+  return (
+    <ConfirmModal
+      isOpen={isOpen}
+      onClose={onClose}
+      onConfirm={handleDelete}
+      title={t('admin.classes.deleteClassTitle')}
+      description={t('admin.classes.deleteClassDesc', {
+        className: schoolClass?.name,
+      })}
+      confirmText={t('common.delete')}
+      isDestructive={true}
+      isLoading={deleteClassMutation.isPending}
+    />
+  )
+}

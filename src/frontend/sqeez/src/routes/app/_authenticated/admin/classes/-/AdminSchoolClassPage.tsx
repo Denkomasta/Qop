@@ -1,14 +1,17 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { School, Search } from 'lucide-react'
+import { School, Search, Plus } from 'lucide-react'
 
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { Pagination } from '@/components/ui/Pagination'
+import { Button } from '@/components/ui/Button'
 import { useGetApiClasses } from '@/api/generated/endpoints/school-classes/school-classes'
 import type { SchoolClassDto } from '@/api/generated/model'
 
 import { AdminSchoolClassTable } from './AdminSchoolClassTable'
 import { TeacherModificationModal } from './TeacherModificationModal'
+import { CreateSchoolClassModal } from './CreateSchoolClassModal'
+import { DeleteSchoolClassModal } from './DeleteSchoolClassModal'
 
 export function AdminSchoolClassPage() {
   const { t } = useTranslation()
@@ -20,6 +23,9 @@ export function AdminSchoolClassPage() {
 
   const [selectedClassForTeacher, setSelectedClassForTeacher] =
     useState<SchoolClassDto | null>(null)
+  const [selectedClassForDeletion, setSelectedClassForDeletion] =
+    useState<SchoolClassDto | null>(null)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   const { data: classesResponse, isLoading } = useGetApiClasses({
     SearchTerm: searchQuery || undefined,
@@ -36,19 +42,29 @@ export function AdminSchoolClassPage() {
     <div className="flex h-full flex-col bg-background">
       <header className="border-b border-border bg-card p-6">
         <div className="mx-auto flex max-w-7xl flex-col gap-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <School className="h-6 w-6" />
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <School className="h-6 w-6" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight">
+                  {t('admin.classes.classManagement')}
+                </h1>
+                <p className="text-muted-foreground">
+                  {t('admin.classes.totalClasses')}:{' '}
+                  <span className="font-bold">{totalCount}</span>
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">
-                {t('admin.classes.classManagement')}
-              </h1>
-              <p className="text-muted-foreground">
-                {t('admin.classes.totalClasses')}:{' '}
-                <span className="font-bold">{totalCount}</span>
-              </p>
-            </div>
+
+            <Button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              {t('admin.classes.createClass')}
+            </Button>
           </div>
 
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -86,6 +102,7 @@ export function AdminSchoolClassPage() {
             classes={classes}
             isLoading={isLoading}
             onEditTeacher={setSelectedClassForTeacher}
+            onDeleteClass={setSelectedClassForDeletion}
           />
 
           {!isLoading && totalPages > 1 && (
@@ -101,10 +118,22 @@ export function AdminSchoolClassPage() {
       </main>
 
       <TeacherModificationModal
-        key={selectedClassForTeacher?.id ?? 'empty-modal'}
+        key={selectedClassForTeacher?.id ?? 'teacher-modal'}
         isOpen={!!selectedClassForTeacher}
         onClose={() => setSelectedClassForTeacher(null)}
         schoolClass={selectedClassForTeacher}
+      />
+
+      <CreateSchoolClassModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
+
+      <DeleteSchoolClassModal
+        key={selectedClassForDeletion?.id ?? 'delete-modal'}
+        isOpen={!!selectedClassForDeletion}
+        onClose={() => setSelectedClassForDeletion(null)}
+        schoolClass={selectedClassForDeletion}
       />
     </div>
   )

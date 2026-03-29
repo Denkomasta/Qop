@@ -40,7 +40,7 @@ export function BaseModal({
           </DialogHeader>
         )}
 
-        <div className="max-w-80 py-4 sm:max-w-fit">{children}</div>
+        <div className="max-w-80 py-4 sm:max-w-full">{children}</div>
 
         {footer && <DialogFooter>{footer}</DialogFooter>}
       </DialogContent>

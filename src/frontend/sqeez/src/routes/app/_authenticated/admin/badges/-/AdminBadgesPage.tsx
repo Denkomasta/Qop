@@ -2,7 +2,10 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Plus, Search, Edit2, Trash2, Eye, Shield, Star } from 'lucide-react'
 
-import { useGetApiBadges } from '@/api/generated/endpoints/badges/badges'
+import {
+  useDeleteApiBadgesId,
+  useGetApiBadges,
+} from '@/api/generated/endpoints/badges/badges'
 import type { BadgeDto } from '@/api/generated/model'
 
 import { Button } from '@/components/ui/Button'
@@ -33,6 +36,8 @@ export function AdminBadgesPage() {
     PageNumber: pageNumber,
     PageSize: PAGE_SIZE,
   })
+
+  const deleteBadgeMutation = useDeleteApiBadgesId()
 
   const badges = pagedBadges?.data || []
   const totalCount = Number(pagedBadges?.totalCount || 0)

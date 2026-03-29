@@ -372,7 +372,13 @@
     "noDescription": "No description has been provided for this subject.",
     "enrolledStudents": "Enrolled Students",
     "totalQuizzes": "Total Quizzes",
-    "backToSubject": "Back to Subject"
+    "backToSubject": "Back to Subject",
+    "backToSubjects": "Back to Subjects",
+    "enrollStudent": "Enroll Student",
+    "removeFromSubject": "Remove from subject",
+    "noStudentsEnrolled": "No students currently enrolled in this subject.",
+    "removeConfirmDesc": "Are you sure you want to remove {{studentName}} from this subject?",
+    "studentRemoved": "Student removed from subject successfully"
   },
   "system": {
     "name": "Sqeez"

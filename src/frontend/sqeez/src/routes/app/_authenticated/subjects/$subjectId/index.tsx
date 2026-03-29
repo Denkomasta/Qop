@@ -165,7 +165,12 @@ function SubjectPage() {
                 <CardTitle className="text-sm font-medium">
                   {t('subject.enrolledStudents')}
                 </CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
+                <Link
+                  to="/app/subjects/$subjectId/students"
+                  params={{ subjectId }}
+                >
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </Link>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">

@@ -107,6 +107,7 @@ namespace Sqeez.Api.DTOs
         public string? SearchTerm { get; init; }
         public bool? IsOnline { get; init; }
         public long? SchoolClassId { get; init; }
+        public long? SubjectId { get; init; }
         public bool? IsArchived { get; init; }
 
         public UserRole? Role { get; init; }

@@ -459,7 +459,9 @@
     "quizRecapTitle": "Kvíz dokončen",
     "achievementUnlocked": "Úspěch Odemčen!",
     "published": "Publikováno",
-    "draft": "Koncept"
+    "draft": "Koncept",
+    "active": "Aktivní",
+    "pastInactive": "Ukončený / Neaktivní"
   },
   "editor": {
     "questionsTitle": "Otázky",

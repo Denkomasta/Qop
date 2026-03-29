@@ -25,6 +25,7 @@ function SubjectQuizzesPage() {
 
   const [searchQuery, setSearchQuery] = useState('')
   const [pageNumber, setPageNumber] = useState(1)
+  const [showActiveOnly, setShowActiveOnly] = useState(true)
   const PAGE_SIZE = 12
 
   const { data: subjectData, isLoading: isSubjectLoading } =
@@ -41,7 +42,7 @@ function SubjectQuizzesPage() {
     {
       SearchTerm: searchQuery,
       StudentId: user?.id,
-      IsActive: true,
+      IsActive: showActiveOnly,
       PageNumber: pageNumber,
       PageSize: PAGE_SIZE,
     },
@@ -101,6 +102,9 @@ function SubjectQuizzesPage() {
       setPageNumber={setPageNumber}
       subject={subjectData}
       emptyStateMessage={t('quiz.noGlobalQuizzes')}
+      showActiveToggle={true}
+      showActiveOnly={showActiveOnly}
+      setShowActiveOnly={setShowActiveOnly}
     />
   )
 }

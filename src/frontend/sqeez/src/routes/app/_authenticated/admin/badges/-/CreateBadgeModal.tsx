@@ -3,19 +3,17 @@ import { useTranslation } from 'react-i18next'
 import { useForm, FormProvider } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Camera } from 'lucide-react'
 import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
 
 import { BaseModal } from '@/components/ui/Modal'
-import { Input } from '@/components/ui/Input'
-import { TextArea } from '@/components/ui/TextArea'
 import { Button, AsyncButton } from '@/components/ui/Button'
 
 import { usePostApiBadges } from '@/api/generated/endpoints/badges/badges'
 import { getGetApiBadgesQueryKey } from '@/api/generated/endpoints/badges/badges'
 import { BadgeRulesBuilder } from './BadgeRulesBuilder'
 import { getBadgeSchema } from '@/schemas/badgeSchema'
+import { BadgeBasicInfoFields } from './BadgeBasicInfoFields'
 
 interface CreateBadgeModalProps {
   isOpen: boolean
@@ -51,10 +49,9 @@ export function CreateBadgeModal({ isOpen, onClose }: CreateBadgeModalProps) {
   })
 
   const {
-    register,
     handleSubmit,
     reset,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = methods
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,77 +143,14 @@ export function CreateBadgeModal({ isOpen, onClose }: CreateBadgeModalProps) {
       }
     >
       <FormProvider {...methods}>
-        <div className="mr-4 flex max-h-[55vh] w-full max-w-90 flex-col gap-8 overflow-y-auto">
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-col items-center gap-2 pt-2">
-              <input
-                type="file"
-                accept="image/jpeg, image/png, image/svg+xml"
-                className="hidden"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-              />
-              {previewUrl ? (
-                <div className="relative">
-                  <div className="flex size-32 items-center justify-center rounded-xl border border-border bg-muted/30 p-2 shadow-sm">
-                    <img
-                      src={previewUrl}
-                      alt="Preview"
-                      className="h-full w-full object-contain"
-                    />
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="absolute -right-3 -bottom-3 rounded-full shadow-md"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Camera className="size-4" />
-                  </Button>
-                </div>
-              ) : (
-                <div
-                  className="flex size-32 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-muted-foreground/50 bg-secondary/30 transition-colors hover:bg-secondary/50"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <Camera className="mb-2 size-8 text-muted-foreground" />
-                  <span className="text-center text-xs font-medium text-muted-foreground">
-                    {t('admin.badges.uploadIcon')}
-                  </span>
-                </div>
-              )}
-              {!selectedFile && (
-                <p className="text-xs text-destructive">
-                  {t('common.required')}
-                </p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-4">
-              <Input
-                label={t('common.name')}
-                placeholder={t('admin.badges.namePlaceholder')}
-                error={errors.name?.message}
-                {...register('name')}
-              />
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <Input
-                  type="number"
-                  label={t('admin.badges.xpBonus')}
-                  placeholder="100"
-                  min={0}
-                  error={errors.xpBonus?.message}
-                  {...register('xpBonus', { valueAsNumber: true })}
-                />
-              </div>
-              <TextArea
-                label={t('common.description')}
-                placeholder={t('admin.badges.descPlaceholder')}
-                error={errors.description?.message}
-                {...register('description')}
-              />
-            </div>
-          </div>
+        <div className="flex max-h-[55vh] min-h-0 w-full max-w-full flex-col gap-8 overflow-x-hidden overflow-y-auto p-1 pr-3 sm:w-162.5">
+          <BadgeBasicInfoFields
+            fileInputRef={fileInputRef}
+            onFileChange={handleFileChange}
+            previewUrl={previewUrl}
+            hasSelectedFile={!!selectedFile}
+            isEditMode={false}
+          />
 
           <hr className="border-border" />
 

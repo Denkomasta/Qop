@@ -23,6 +23,16 @@
     "unassignedClass": "Bez třídy",
     "schoolClass": "Školní třída",
     "searchClasses": "Hledat třídy...",
+    "badges": {
+      "title": "Správa odznaků",
+      "subtitle": "Vytvářejte a spravujte globální odznaky úspěchů.",
+      "createBadge": "Vytvořit odznak",
+      "badge": "Odznak",
+      "search": "Hledat odznaky...",
+      "noBadgesFound": "Nebyly nalezeny žádné odznaky.",
+      "deleteTitle": "Smazat odznak",
+      "deleteDesc": "Opravdu chcete smazat odznak \"{{badgeName}}\"? Tímto bude trvale odebrán všem studentům, kteří jej získali."
+    },
     "class": {
       "backToClasses": "Zpět na třídy",
       "enrolledStudents": "Zapsaní studenti",
@@ -194,7 +204,10 @@
     "user": "Uživatel",
     "contact": "Kontakt",
     "actions": "Akce",
-    "leaveEmpty": "Ponechat prázdné"
+    "leaveEmpty": "Ponechat prázdné",
+    "viewDetails": "Zobrazit detaily",
+    "total": "Celkem",
+    "description": "Popis"
   },
   "dashboard": {
     "administration": "Administrativa",

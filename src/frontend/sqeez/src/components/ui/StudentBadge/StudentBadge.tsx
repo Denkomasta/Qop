@@ -1,4 +1,4 @@
-import { Shield, Lock } from 'lucide-react'
+import { Shield, Lock, Edit2, Trash2 } from 'lucide-react'
 import { getImageUrl } from '@/lib/imageHelpers'
 
 interface StudentBadgeProps {
@@ -7,6 +7,9 @@ interface StudentBadgeProps {
   earnedAt?: string
   isEarned?: boolean
   lockedText?: string
+  isAdmin?: boolean
+  onEdit?: () => void
+  onDelete?: () => void
 }
 
 export function StudentBadge({
@@ -15,6 +18,9 @@ export function StudentBadge({
   earnedAt,
   isEarned = true,
   lockedText,
+  isAdmin,
+  onEdit,
+  onDelete,
 }: StudentBadgeProps) {
   return (
     <div
@@ -24,6 +30,35 @@ export function StudentBadge({
           : 'opacity-50 grayscale hover:opacity-70'
       }`}
     >
+      {isAdmin && (
+        <div className="absolute top-2 right-2 z-10 flex gap-1 rounded-md bg-background/80 p-0.5 shadow-sm backdrop-blur-sm">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              onEdit?.()
+            }}
+            className="rounded-sm p-1.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary focus:ring-2 focus:ring-primary focus:outline-none"
+            title="Edit Badge"
+          >
+            <Edit2 className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              onDelete?.()
+            }}
+            className="rounded-sm p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive focus:ring-2 focus:ring-destructive focus:outline-none"
+            title="Delete Badge"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
       <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary/10 p-2">
         {iconUrl ? (
           <img

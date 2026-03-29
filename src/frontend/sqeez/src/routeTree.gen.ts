@@ -31,6 +31,7 @@ import { Route as AppAuthenticatedQuizzesQuizIdIndexRouteImport } from './routes
 import { Route as AppAuthenticatedAdminUsersIndexRouteImport } from './routes/app/_authenticated/admin/users/index'
 import { Route as AppAuthenticatedAdminSubjectsIndexRouteImport } from './routes/app/_authenticated/admin/subjects/index'
 import { Route as AppAuthenticatedAdminClassesIndexRouteImport } from './routes/app/_authenticated/admin/classes/index'
+import { Route as AppAuthenticatedAdminBadgesIndexRouteImport } from './routes/app/_authenticated/admin/badges/index'
 import { Route as AppAuthenticatedAdminClassesClassIdRouteImport } from './routes/app/_authenticated/admin/classes/$classId'
 import { Route as AppAuthenticatedSubjectsSubjectIdStudentsIndexRouteImport } from './routes/app/_authenticated/subjects/$subjectId/students/index'
 import { Route as AppAuthenticatedSubjectsSubjectIdQuizzesIndexRouteImport } from './routes/app/_authenticated/subjects/$subjectId/quizzes/index'
@@ -162,6 +163,12 @@ const AppAuthenticatedAdminClassesIndexRoute =
     path: '/classes/',
     getParentRoute: () => AppAuthenticatedAdminRoute,
   } as any)
+const AppAuthenticatedAdminBadgesIndexRoute =
+  AppAuthenticatedAdminBadgesIndexRouteImport.update({
+    id: '/badges/',
+    path: '/badges/',
+    getParentRoute: () => AppAuthenticatedAdminRoute,
+  } as any)
 const AppAuthenticatedAdminClassesClassIdRoute =
   AppAuthenticatedAdminClassesClassIdRouteImport.update({
     id: '/classes/$classId',
@@ -217,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/app/quizzes/': typeof AppAuthenticatedQuizzesIndexRoute
   '/app/subjects/': typeof AppAuthenticatedSubjectsIndexRoute
   '/app/admin/classes/$classId': typeof AppAuthenticatedAdminClassesClassIdRoute
+  '/app/admin/badges/': typeof AppAuthenticatedAdminBadgesIndexRoute
   '/app/admin/classes/': typeof AppAuthenticatedAdminClassesIndexRoute
   '/app/admin/subjects/': typeof AppAuthenticatedAdminSubjectsIndexRoute
   '/app/admin/users/': typeof AppAuthenticatedAdminUsersIndexRoute
@@ -246,6 +254,7 @@ export interface FileRoutesByTo {
   '/app/quizzes': typeof AppAuthenticatedQuizzesIndexRoute
   '/app/subjects': typeof AppAuthenticatedSubjectsIndexRoute
   '/app/admin/classes/$classId': typeof AppAuthenticatedAdminClassesClassIdRoute
+  '/app/admin/badges': typeof AppAuthenticatedAdminBadgesIndexRoute
   '/app/admin/classes': typeof AppAuthenticatedAdminClassesIndexRoute
   '/app/admin/subjects': typeof AppAuthenticatedAdminSubjectsIndexRoute
   '/app/admin/users': typeof AppAuthenticatedAdminUsersIndexRoute
@@ -277,6 +286,7 @@ export interface FileRoutesById {
   '/app/_authenticated/quizzes/': typeof AppAuthenticatedQuizzesIndexRoute
   '/app/_authenticated/subjects/': typeof AppAuthenticatedSubjectsIndexRoute
   '/app/_authenticated/admin/classes/$classId': typeof AppAuthenticatedAdminClassesClassIdRoute
+  '/app/_authenticated/admin/badges/': typeof AppAuthenticatedAdminBadgesIndexRoute
   '/app/_authenticated/admin/classes/': typeof AppAuthenticatedAdminClassesIndexRoute
   '/app/_authenticated/admin/subjects/': typeof AppAuthenticatedAdminSubjectsIndexRoute
   '/app/_authenticated/admin/users/': typeof AppAuthenticatedAdminUsersIndexRoute
@@ -309,6 +319,7 @@ export interface FileRouteTypes {
     | '/app/quizzes/'
     | '/app/subjects/'
     | '/app/admin/classes/$classId'
+    | '/app/admin/badges/'
     | '/app/admin/classes/'
     | '/app/admin/subjects/'
     | '/app/admin/users/'
@@ -338,6 +349,7 @@ export interface FileRouteTypes {
     | '/app/quizzes'
     | '/app/subjects'
     | '/app/admin/classes/$classId'
+    | '/app/admin/badges'
     | '/app/admin/classes'
     | '/app/admin/subjects'
     | '/app/admin/users'
@@ -368,6 +380,7 @@ export interface FileRouteTypes {
     | '/app/_authenticated/quizzes/'
     | '/app/_authenticated/subjects/'
     | '/app/_authenticated/admin/classes/$classId'
+    | '/app/_authenticated/admin/badges/'
     | '/app/_authenticated/admin/classes/'
     | '/app/_authenticated/admin/subjects/'
     | '/app/_authenticated/admin/users/'
@@ -545,6 +558,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAuthenticatedAdminClassesIndexRouteImport
       parentRoute: typeof AppAuthenticatedAdminRoute
     }
+    '/app/_authenticated/admin/badges/': {
+      id: '/app/_authenticated/admin/badges/'
+      path: '/badges'
+      fullPath: '/app/admin/badges/'
+      preLoaderRoute: typeof AppAuthenticatedAdminBadgesIndexRouteImport
+      parentRoute: typeof AppAuthenticatedAdminRoute
+    }
     '/app/_authenticated/admin/classes/$classId': {
       id: '/app/_authenticated/admin/classes/$classId'
       path: '/classes/$classId'
@@ -592,6 +612,7 @@ declare module '@tanstack/react-router' {
 
 interface AppAuthenticatedAdminRouteChildren {
   AppAuthenticatedAdminClassesClassIdRoute: typeof AppAuthenticatedAdminClassesClassIdRoute
+  AppAuthenticatedAdminBadgesIndexRoute: typeof AppAuthenticatedAdminBadgesIndexRoute
   AppAuthenticatedAdminClassesIndexRoute: typeof AppAuthenticatedAdminClassesIndexRoute
   AppAuthenticatedAdminSubjectsIndexRoute: typeof AppAuthenticatedAdminSubjectsIndexRoute
   AppAuthenticatedAdminUsersIndexRoute: typeof AppAuthenticatedAdminUsersIndexRoute
@@ -600,6 +621,7 @@ interface AppAuthenticatedAdminRouteChildren {
 const AppAuthenticatedAdminRouteChildren: AppAuthenticatedAdminRouteChildren = {
   AppAuthenticatedAdminClassesClassIdRoute:
     AppAuthenticatedAdminClassesClassIdRoute,
+  AppAuthenticatedAdminBadgesIndexRoute: AppAuthenticatedAdminBadgesIndexRoute,
   AppAuthenticatedAdminClassesIndexRoute:
     AppAuthenticatedAdminClassesIndexRoute,
   AppAuthenticatedAdminSubjectsIndexRoute:

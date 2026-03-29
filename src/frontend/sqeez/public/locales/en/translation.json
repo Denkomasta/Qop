@@ -23,6 +23,16 @@
     "unassignedClass": "No Class",
     "schoolClass": "School Class",
     "searchClasses": "Search classes...",
+    "badges": {
+      "title": "Badge Management",
+      "subtitle": "Create and manage global achievement badges.",
+      "createBadge": "Create Badge",
+      "badge": "Badge",
+      "search": "Search badges...",
+      "noBadgesFound": "No badges found.",
+      "deleteTitle": "Delete Badge",
+      "deleteDesc": "Are you sure you want to delete \"{{badgeName}}\"? This will permanently remove it from all students who have earned it."
+    },
     "class": {
       "backToClasses": "Back to Classes",
       "enrolledStudents": "Enrolled Students",
@@ -194,7 +204,10 @@
     "user": "User",
     "contact": "Contact",
     "actions": "Actions",
-    "leaveEmpty": "Leave empty"
+    "leaveEmpty": "Leave empty",
+    "viewDetails": "View Details",
+    "total": "Total",
+    "description": "Description"
   },
   "dashboard": {
     "administration": "Administration",

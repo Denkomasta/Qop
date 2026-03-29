@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as RegisterIndexRouteImport } from './routes/register/index'
 import { Route as LogoutIndexRouteImport } from './routes/logout/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
+import { Route as HelpIndexRouteImport } from './routes/help/index'
+import { Route as AboutIndexRouteImport } from './routes/about/index'
 import { Route as AppAuthenticatedRouteImport } from './routes/app/_authenticated'
 import { Route as AppAuthenticatedIndexRouteImport } from './routes/app/_authenticated/index'
 import { Route as AppAuthenticatedTeacherRouteImport } from './routes/app/_authenticated/teacher'
@@ -57,6 +59,16 @@ const LogoutIndexRoute = LogoutIndexRouteImport.update({
 const LoginIndexRoute = LoginIndexRouteImport.update({
   id: '/login/',
   path: '/login/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpIndexRoute = HelpIndexRouteImport.update({
+  id: '/help/',
+  path: '/help/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutIndexRoute = AboutIndexRouteImport.update({
+  id: '/about/',
+  path: '/about/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppAuthenticatedRoute = AppAuthenticatedRouteImport.update({
@@ -209,6 +221,8 @@ const AppAuthenticatedQuizzesQuizIdBuilderIndexRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppAuthenticatedRouteWithChildren
+  '/about/': typeof AboutIndexRoute
+  '/help/': typeof HelpIndexRoute
   '/login/': typeof LoginIndexRoute
   '/logout/': typeof LogoutIndexRoute
   '/register/': typeof RegisterIndexRoute
@@ -239,6 +253,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutIndexRoute
+  '/help': typeof HelpIndexRoute
   '/login': typeof LoginIndexRoute
   '/logout': typeof LogoutIndexRoute
   '/register': typeof RegisterIndexRoute
@@ -271,6 +287,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app/_authenticated': typeof AppAuthenticatedRouteWithChildren
+  '/about/': typeof AboutIndexRoute
+  '/help/': typeof HelpIndexRoute
   '/login/': typeof LoginIndexRoute
   '/logout/': typeof LogoutIndexRoute
   '/register/': typeof RegisterIndexRoute
@@ -304,6 +322,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/about/'
+    | '/help/'
     | '/login/'
     | '/logout/'
     | '/register/'
@@ -334,6 +354,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
+    | '/help'
     | '/login'
     | '/logout'
     | '/register'
@@ -365,6 +387,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app/_authenticated'
+    | '/about/'
+    | '/help/'
     | '/login/'
     | '/logout/'
     | '/register/'
@@ -397,6 +421,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppAuthenticatedRoute: typeof AppAuthenticatedRouteWithChildren
+  AboutIndexRoute: typeof AboutIndexRoute
+  HelpIndexRoute: typeof HelpIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   LogoutIndexRoute: typeof LogoutIndexRoute
   RegisterIndexRoute: typeof RegisterIndexRoute
@@ -430,6 +456,20 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login/'
       preLoaderRoute: typeof LoginIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help/': {
+      id: '/help/'
+      path: '/help'
+      fullPath: '/help/'
+      preLoaderRoute: typeof HelpIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about/': {
+      id: '/about/'
+      path: '/about'
+      fullPath: '/about/'
+      preLoaderRoute: typeof AboutIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/_authenticated': {
@@ -705,6 +745,8 @@ const AppAuthenticatedRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppAuthenticatedRoute: AppAuthenticatedRouteWithChildren,
+  AboutIndexRoute: AboutIndexRoute,
+  HelpIndexRoute: HelpIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   LogoutIndexRoute: LogoutIndexRoute,
   RegisterIndexRoute: RegisterIndexRoute,

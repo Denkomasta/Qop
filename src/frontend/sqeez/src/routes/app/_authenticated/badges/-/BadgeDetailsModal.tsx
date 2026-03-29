@@ -33,7 +33,7 @@ export function BadgeDetailsModal({
 
   return (
     <BaseModal isOpen={isOpen} onClose={onClose} title={badge.name}>
-      <div className="flex flex-col items-center gap-6 pt-4 pb-2">
+      <div className="flex w-full flex-col items-center gap-6 pt-4 pb-2">
         <div
           className={`flex h-32 w-32 items-center justify-center rounded-full p-4 ${
             isEarned ? 'bg-primary/10' : 'bg-muted grayscale'

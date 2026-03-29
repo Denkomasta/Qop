@@ -39,6 +39,9 @@ interface QuizListViewProps {
   emptyStateMessage: string
   subject?: SubjectDto
   role?: UserRole
+  showActiveToggle?: boolean
+  showActiveOnly?: boolean
+  setShowActiveOnly?: (active: boolean) => void
 }
 
 export function QuizListView({
@@ -56,6 +59,9 @@ export function QuizListView({
   emptyStateMessage,
   subject,
   role = 'Student',
+  showActiveToggle = false,
+  showActiveOnly = true,
+  setShowActiveOnly,
 }: QuizListViewProps) {
   const { t } = useTranslation()
 
@@ -100,7 +106,39 @@ export function QuizListView({
           placeholder={t('quiz.search', 'Search quizzes...')}
           icon={<Search className="h-4 w-4" />}
           className="sm:max-w-xs"
+          hideErrors
         />
+
+        {showActiveToggle && setShowActiveOnly && (
+          <div className="flex rounded-lg bg-muted p-1">
+            <button
+              onClick={() => {
+                setShowActiveOnly(true)
+                setPageNumber(1)
+              }}
+              className={`flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium transition-all ${
+                showActiveOnly
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {t('quiz.active')}
+            </button>
+            <button
+              onClick={() => {
+                setShowActiveOnly(false)
+                setPageNumber(1)
+              }}
+              className={`flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium transition-all ${
+                !showActiveOnly
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {t('quiz.pastInactive')}
+            </button>
+          </div>
+        )}
       </div>
 
       <div

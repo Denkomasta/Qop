@@ -460,7 +460,9 @@
     "quizRecapTitle": "Quiz Completed",
     "achievementUnlocked": "Achievement Unlocked!",
     "published": "Published",
-    "draft": "Draft"
+    "draft": "Draft",
+    "active": "Active",
+    "pastInactive": "Past / Inactive"
   },
   "editor": {
     "questionsTitle": "Questions",

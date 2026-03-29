@@ -14,6 +14,10 @@ export type GetApiUsersParams = {
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   SchoolClassId?: number | string
+  /**
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
+  SubjectId?: number | string
   IsArchived?: boolean
   Role?: UserRole
   StrictRoleOnly?: boolean

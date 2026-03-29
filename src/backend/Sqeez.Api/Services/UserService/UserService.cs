@@ -116,6 +116,11 @@ namespace Sqeez.Api.Services.UserService
                 query = query.Where(u => u.SchoolClassId == filter.SchoolClassId.Value);
             }
 
+            if (filter.SubjectId.HasValue)
+            {
+                query = query.Where(u => u.Enrollments.Any(e => e.SubjectId == filter.SubjectId.Value));
+            }
+
             if (filter.IsArchived is true)
             {
                 query = query.Where(u => u.ArchivedAt != null);

@@ -13,6 +13,7 @@ import {
 import { Badge } from '@/components/ui/Badge/Badge'
 import { DataTable, type ColumnDef } from '@/components/ui/Table/DataTable'
 import type { SubjectDto } from '@/api/generated/model'
+import { Link } from '@tanstack/react-router'
 
 interface AdminSubjectsTableProps {
   subjects: SubjectDto[]
@@ -39,9 +40,13 @@ export function AdminSubjectsTable({
           </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-foreground">
+              <Link
+                className="font-semibold text-foreground hover:underline"
+                to="/app/subjects/$subjectId"
+                params={{ subjectId: subject.id.toString() }}
+              >
                 {subject.name}
-              </span>
+              </Link>
               <Badge variant="secondary" className="text-[10px] uppercase">
                 {subject.code}
               </Badge>
@@ -77,9 +82,14 @@ export function AdminSubjectsTable({
       cell: (subject) => (
         <div className="flex flex-col gap-1.5">
           {subject.teacherId ? (
-            <Badge className="w-fit bg-blue-600 hover:bg-blue-700">
-              <User className="mr-1 h-3 w-3" /> {subject.teacherName}
-            </Badge>
+            <Link
+              to="/app/profile/$userId"
+              params={{ userId: subject.teacherId.toString() }}
+            >
+              <Badge className="w-fit bg-blue-600 hover:bg-blue-700">
+                <User className="mr-1 h-3 w-3" /> {subject.teacherName}
+              </Badge>
+            </Link>
           ) : (
             <span className="text-xs text-muted-foreground italic">
               {t('admin.unassignedTeacher')}
@@ -87,12 +97,17 @@ export function AdminSubjectsTable({
           )}
 
           {subject.schoolClassId ? (
-            <Badge
-              variant="outline"
-              className="w-fit border-indigo-500/30 text-indigo-500"
+            <Link
+              to="/app/admin/classes/$classId"
+              params={{ classId: subject.schoolClassId.toString() }}
             >
-              <School className="mr-1 h-3 w-3" /> {subject.schoolClassName}
-            </Badge>
+              <Badge
+                variant="outline"
+                className="w-fit border-indigo-500/30 text-indigo-500"
+              >
+                <School className="mr-1 h-3 w-3" /> {subject.schoolClassName}
+              </Badge>
+            </Link>
           ) : (
             <span className="text-xs text-muted-foreground italic">
               {t('admin.unassignedClass')}

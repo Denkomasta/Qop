@@ -31,7 +31,18 @@
       "search": "Hledat odznaky...",
       "noBadgesFound": "Nebyly nalezeny žádné odznaky.",
       "deleteTitle": "Smazat odznak",
-      "deleteDesc": "Opravdu chcete smazat odznak \"{{badgeName}}\"? Tímto bude trvale odebrán všem studentům, kteří jej získali."
+      "deleteDesc": "Opravdu chcete smazat odznak \"{{badgeName}}\"? Tímto bude trvale odebrán všem studentům, kteří jej získali.",
+      "createDesc": "Vyplňte níže uvedené údaje pro vytvoření nového odznaku.",
+      "uploadIcon": "Nahrát ikonu",
+      "namePlaceholder": "např. Matematický mág",
+      "xpBonus": "XP Bonus",
+      "descPlaceholder": "Popište, co tento odznak představuje...",
+      "rulesTitle": "Pravidla pro získání",
+      "rulesDesc": "Studenti musí splnit všechna pravidla pro získání odznaku.",
+      "addRule": "Přidat pravidlo",
+      "atLeastOneRule": "Musíte přidat alespoň jedno pravidlo.",
+      "iconRequired": "Je vyžadována ikona.",
+      "createdSuccessfully": "Odznak byl úspěšně vytvořen!"
     },
     "class": {
       "backToClasses": "Zpět na třídy",
@@ -207,7 +218,8 @@
     "leaveEmpty": "Ponechat prázdné",
     "viewDetails": "Zobrazit detaily",
     "total": "Celkem",
-    "description": "Popis"
+    "description": "Popis",
+    "name": "Jméno"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -282,7 +294,8 @@
     "usernameLong": "Uživatelské jméno může mít maximálně 20 znaků.",
     "invalidPhone": "Zadejte platné telefonní číslo.",
     "invalidCharacters": "Hodnota obsahuje nepovolené znaky. Použijte pouze písmena, číslice, pomlčky a podtržítka.",
-    "fileTooLarge": "Vybraný soubor je příliš velký (maximum {{maxValue}} MB)."
+    "fileTooLarge": "Vybraný soubor je příliš velký (maximum {{maxValue}} MB).",
+    "invalidNumber": "Zadejte platné číslo."
   },
   "enrollments": {
     "confirmDelete": "Opravdu se chcete odhlásit z tohoto předmětu? Tuto akci nelze vrátit zpět.",

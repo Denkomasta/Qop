@@ -31,7 +31,18 @@
       "search": "Search badges...",
       "noBadgesFound": "No badges found.",
       "deleteTitle": "Delete Badge",
-      "deleteDesc": "Are you sure you want to delete \"{{badgeName}}\"? This will permanently remove it from all students who have earned it."
+      "deleteDesc": "Are you sure you want to delete \"{{badgeName}}\"? This will permanently remove it from all students who have earned it.",
+      "createDesc": "Fill in the details below to create a new achievement badge.",
+      "uploadIcon": "Upload Icon",
+      "namePlaceholder": "e.g., Math Wizard",
+      "xpBonus": "XP Bonus",
+      "descPlaceholder": "Describe what this badge represents...",
+      "rulesTitle": "Earning Rules",
+      "rulesDesc": "Students must complete all rules to earn this badge.",
+      "addRule": "Add Rule",
+      "atLeastOneRule": "You must add at least one rule.",
+      "iconRequired": "An icon is required.",
+      "createdSuccessfully": "Badge created successfully!"
     },
     "class": {
       "backToClasses": "Back to Classes",
@@ -207,7 +218,8 @@
     "leaveEmpty": "Leave empty",
     "viewDetails": "View Details",
     "total": "Total",
-    "description": "Description"
+    "description": "Description",
+    "name": "Name"
   },
   "dashboard": {
     "administration": "Administration",
@@ -305,7 +317,8 @@
     "usernameLong": "Username cannot exceed 20 characters.",
     "invalidPhone": "Please enter a valid phone number.",
     "invalidCharacters": "Input contains invalid characters. Please use only letters, numbers, dashes, and underscores.",
-    "fileTooLarge": "Attached file is too large to send (max {{maxValue}} MB)."
+    "fileTooLarge": "Attached file is too large to send (max {{maxValue}} MB).",
+    "invalidNumber": "Please enter a valid number."
   },
   "footer": {
     "rights": "All rights reserved.",

@@ -30,7 +30,7 @@ export function BaseModal({
 }: BaseModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className={cn('sm:max-w-106.25', className)}>
+      <DialogContent className={cn('max-w-fit', className)}>
         {(title || description) && (
           <DialogHeader>
             {title && <DialogTitle>{title}</DialogTitle>}
@@ -40,7 +40,7 @@ export function BaseModal({
           </DialogHeader>
         )}
 
-        <div className="py-4">{children}</div>
+        <div className="max-w-80 py-4 sm:max-w-fit">{children}</div>
 
         {footer && <DialogFooter>{footer}</DialogFooter>}
       </DialogContent>

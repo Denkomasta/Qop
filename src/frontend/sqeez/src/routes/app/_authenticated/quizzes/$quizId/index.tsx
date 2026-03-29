@@ -96,6 +96,8 @@ function QuizDetailsPage() {
   const hasAttempts = attempts > 0
   const retries = Number(quiz.maxRetries)
   const maxRetriesReached = retries > 0 && attempts >= retries
+  const isPublished =
+    quiz.publishDate && new Date(quiz.publishDate) <= new Date()
 
   return (
     <div className="container mx-auto max-w-5xl space-y-8 p-6">
@@ -242,7 +244,7 @@ function QuizDetailsPage() {
                       {t('quiz.publishDate')}
                     </p>
                     <p className="text-base font-semibold">
-                      {formatDateTime(quiz.publishDate) || t('common.unknown')}
+                      {formatDateTime(quiz.publishDate) || t('quiz.notSet')}
                     </p>
                   </div>
                 </div>
@@ -259,7 +261,7 @@ function QuizDetailsPage() {
                       {t('quiz.viewResults')}
                     </Link>
                   </Button>
-                ) : (
+                ) : isPublished ? (
                   <Button className="w-full text-base" size="lg" asChild>
                     <Link
                       to="/app/quizzes/$quizId/play"
@@ -269,6 +271,11 @@ function QuizDetailsPage() {
                       <PlayCircle className="mr-2 size-5" />
                       {hasAttempts ? t('quiz.retakeQuiz') : t('quiz.startQuiz')}
                     </Link>
+                  </Button>
+                ) : (
+                  <Button className="w-full text-base" size="lg" disabled>
+                    <PlayCircle className="mr-2 size-5" />
+                    {hasAttempts ? t('quiz.retakeQuiz') : t('quiz.startQuiz')}
                   </Button>
                 )}
               </CardFooter>

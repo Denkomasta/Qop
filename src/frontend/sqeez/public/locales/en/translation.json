@@ -3,6 +3,37 @@
     "label": "English",
     "flag": "🇺🇸"
   },
+  "about": {
+    "hero": {
+      "title": "Our Mission",
+      "subtitle": "We believe learning should be an adventure, not a chore."
+    },
+    "story": {
+      "title": "Why we built Sqeez",
+      "p1": "Traditional studying can feel isolating and repetitive. We wanted to build a platform that brings the thrill of gaming into the classroom, making it easier for students to stay motivated and retain information.",
+      "p2": "By combining fast-paced interactive quizzes with a robust achievement system, we transform passive reading into active engagement. Whether you are studying for a massive exam or just learning a new hobby, Sqeez adapts to your pace.",
+      "graphicTitle": "Knowledge is Power"
+    },
+    "values": {
+      "title": "Our Core Values",
+      "v1": {
+        "title": "Student First",
+        "desc": "Every feature we build is designed to make the learning experience smoother and more enjoyable for the user."
+      },
+      "v2": {
+        "title": "Community Driven",
+        "desc": "Learning is better together. We foster a competitive but supportive environment where everyone grows."
+      },
+      "v3": {
+        "title": "Reliable & Safe",
+        "desc": "Your data is yours. We prioritize privacy and security so you can focus entirely on your education."
+      }
+    },
+    "cta": {
+      "title": "Ready to join the community?",
+      "subtitle": "Create your account today and start your journey towards mastery."
+    }
+  },
   "admin": {
     "userManagement": "User Management",
     "totalUsers": "Total Users",
@@ -329,6 +360,76 @@
     "help": "Help",
     "privacy": "Privacy",
     "terms": "Terms"
+  },
+  "help": {
+    "hero": {
+      "title": "Help Center for Educators",
+      "subtitle": "Everything you need to bring interactive quizzes into your classroom."
+    },
+    "features": {
+      "create": {
+        "title": "Custom Quizzes",
+        "desc": "Build your own question banks tailored to your curriculum, or remix existing public quizzes."
+      },
+      "engage": {
+        "title": "Engage Students",
+        "desc": "Use our Badges and XP system to turn homework assignments into exciting challenges."
+      },
+      "track": {
+        "title": "Actionable Insights",
+        "desc": "Track student progress in real-time. Identify which topics the class is struggling with at a glance."
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": {
+        "question": "Is Sqeez really 100% free and open source?",
+        "answer": "Yes! Sqeez is entirely open source. You can download the code, host it on your own infrastructure, and modify it to fit your school's exact needs without paying any licensing fees."
+      },
+      "q2": {
+        "question": "How difficult is it to deploy Sqeez?",
+        "answer": "We provide pre-configured Docker containers and comprehensive documentation. Your school's IT administrator can have the entire platform up and running in minutes."
+      },
+      "q3": {
+        "question": "Who controls the student data and analytics?",
+        "answer": "You do. Because Sqeez is self-hosted, all student data, grades, and analytics stay securely on your own servers. We never track or collect your classroom's data, ensuring full GDPR and privacy compliance."
+      },
+      "q4": {
+        "question": "How do my students use the platform?",
+        "answer": "Students create secure accounts on your school's hosted instance. Once logged in, they can enroll in your specific subjects, complete assigned quizzes, track their ranking on live leaderboards, and gather XP to unlock achievements. It is a complete, gamified learning ecosystem!"
+      }
+    },
+    "contact": {
+      "title": "Still need help?",
+      "subtitle": "Our team is here to help you set up your digital classroom.",
+      "btn": "Contact Support"
+    }
+  },
+  "landing": {
+    "hero": {
+      "pill": "The ultimate learning experience",
+      "title1": "Master any subject with",
+      "titleHighlight": "interactive quizzes.",
+      "description": "Challenge yourself, compete with friends, and track your progress. Earn XP and unlock exclusive badges as you level up your knowledge.",
+      "startBtn": "Start Learning",
+      "learnMoreBtn": "Learn More"
+    },
+    "features": {
+      "title": "Why learn with us?",
+      "subtitle": "Everything you need to make studying engaging and effective.",
+      "quizzes": {
+        "title": "Lightning Fast Quizzes",
+        "desc": "Jump right into tailored quiz sessions. Answer dynamic questions and get real-time feedback to reinforce your memory instantly."
+      },
+      "badges": {
+        "title": "Earn Badges & XP",
+        "desc": "Turn studying into a game. Score perfect streaks to earn XP and unlock rare achievement badges to show off on your profile."
+      },
+      "progress": {
+        "title": "Track Your Progress",
+        "desc": "Visualize your learning journey. Identify your weak spots and see your accuracy improve over time with detailed analytics."
+      }
+    }
   },
   "leaderboard": {
     "title": "Leaderboard",

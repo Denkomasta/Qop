@@ -3,6 +3,37 @@
     "label": "Čeština",
     "flag": "🇨🇿"
   },
+  "about": {
+    "hero": {
+      "title": "Naše mise",
+      "subtitle": "Věříme, že učení by mělo být dobrodružství, ne otrava."
+    },
+    "story": {
+      "title": "Proč jsme vytvořili Sqeez",
+      "p1": "Tradiční studium může působit osaměle a stereotypně. Chtěli jsme vybudovat platformu, která přinese vzrušení ze hry do výuky a pomůže studentům udržet si motivaci a lépe si pamatovat informace.",
+      "p2": "Kombinací rychlých interaktivních kvízů a propracovaného systému úspěchů měníme pasivní čtení v aktivní zapojení. Ať už se učíte na velkou zkoušku, nebo jen objevujete nový koníček, Sqeez se přizpůsobí vašemu tempu.",
+      "graphicTitle": "Vědění je moc"
+    },
+    "values": {
+      "title": "Naše klíčové hodnoty",
+      "v1": {
+        "title": "Student na prvním místě",
+        "desc": "Každá funkce, kterou vytvoříme, je navržena tak, aby byl proces učení pro uživatele co nejplynulejší a nejpříjemnější."
+      },
+      "v2": {
+        "title": "Síla komunity",
+        "desc": "Společně se učí lépe. Vytváříme soutěživé, ale zároveň podporující prostředí, kde může růst každý."
+      },
+      "v3": {
+        "title": "Spolehlivost a bezpečí",
+        "desc": "Vaše data jsou vaše. Soukromí a bezpečnost jsou naší prioritou, abyste se mohli plně soustředit na své vzdělávání."
+      }
+    },
+    "cta": {
+      "title": "Jste připraveni se k nám přidat?",
+      "subtitle": "Vytvořte si bezplatný účet ještě dnes a vydejte se na cestu k mistrovství."
+    }
+  },
   "admin": {
     "userManagement": "Správa uživatelů",
     "totalUsers": "Celkem uživatelů",
@@ -329,6 +360,76 @@
     "help": "Nápověda",
     "privacy": "Soukromí",
     "terms": "Podmínky"
+  },
+  "help": {
+    "hero": {
+      "title": "Centrum nápovědy pro učitele",
+      "subtitle": "Vše, co potřebujete pro zapojení interaktivních kvízů do vaší výuky."
+    },
+    "features": {
+      "create": {
+        "title": "Kvízy na míru",
+        "desc": "Vytvořte si vlastní databázi otázek přesně podle vašich osnov, nebo upravte již existující veřejné kvízy."
+      },
+      "engage": {
+        "title": "Zapojte studenty",
+        "desc": "Využijte náš systém odznaků a XP, aby se z domácích úkolů stala vzrušující výzva."
+      },
+      "track": {
+        "title": "Užitečné přehledy",
+        "desc": "Sledujte pokrok studentů v reálném čase. Na první pohled zjistíte, se kterými tématy má třída největší potíže."
+      }
+    },
+    "faq": {
+      "title": "Často kladené otázky",
+      "q1": {
+        "question": "Je Sqeez opravdu 100% zdarma a open source?",
+        "answer": "Ano! Sqeez je plně open source. Můžete si stáhnout zdrojový kód, provozovat jej na vlastních serverech a upravit si ho přesně podle potřeb vaší školy bez jakýchkoliv licenčních poplatků."
+      },
+      "q2": {
+        "question": "Jak složité je Sqeez nasadit?",
+        "answer": "Poskytujeme předkonfigurované Docker kontejnery a obsáhlou dokumentaci. Váš školní IT administrátor dokáže celou platformu zprovoznit během několika minut."
+      },
+      "q3": {
+        "question": "Kdo má kontrolu nad daty studentů a analytikou?",
+        "answer": "Vy. Protože si Sqeez hostujete sami, všechna data studentů, známky a statistiky zůstávají bezpečně na vašich vlastních serverech. Nikdy nesledujeme ani neshromažďujeme data vaší třídy, což zaručuje plný soulad s GDPR a ochranou soukromí."
+      },
+      "q4": {
+        "question": "Jak studenti platformu používají?",
+        "answer": "Studenti si vytvoří vlastní zabezpečené účty na vaší školní instanci aplikace. Po přihlášení se mohou zapsat do konkrétních předmětů, plnit zadané kvízy, sledovat své umístění v žebříčcích a sbírat XP pro odemknutí úspěchů. Je to kompletní, gamifikovaný vzdělávací ekosystém!"
+      }
+    },
+    "contact": {
+      "title": "Stále potřebujete pomoct?",
+      "subtitle": "Náš tým je připraven vám pomoci s nastavením vaší digitální třídy.",
+      "btn": "Kontaktovat podporu"
+    }
+  },
+  "landing": {
+    "hero": {
+      "pill": "Dokonalý zážitek z učení",
+      "title1": "Ovládněte jakékoliv téma díky",
+      "titleHighlight": "interaktivním kvízům.",
+      "description": "Překonávejte sami sebe, soutěžte s přáteli a sledujte svůj pokrok. Získávejte XP a odemykejte exkluzivní odznaky podle toho, jak se zlepšujete.",
+      "startBtn": "Začít se učit",
+      "learnMoreBtn": "Zjistit více"
+    },
+    "features": {
+      "title": "Proč se učit s námi?",
+      "subtitle": "Vše, co potřebujete, aby bylo studium poutavé a efektivní.",
+      "quizzes": {
+        "title": "Bleskově rychlé kvízy",
+        "desc": "Naskočte rovnou do kvízů na míru. Odpovídejte na dynamické otázky a získejte okamžitou zpětnou vazbu, abyste si látku hned upevnili."
+      },
+      "badges": {
+        "title": "Získávejte odznaky a XP",
+        "desc": "Proměňte učení ve hru. Získávejte XP za bezchybné série a odemykejte vzácné odznaky, kterými se můžete pochlubit na svém profilu."
+      },
+      "progress": {
+        "title": "Sledujte svůj pokrok",
+        "desc": "Vizualizujte si svou cestu za poznáním. Odhalte své slabiny a sledujte, jak se vaše úspěšnost postupem času zlepšuje díky detailním statistikám."
+      }
+    }
   },
   "leaderboard": {
     "title": "Žebříček",

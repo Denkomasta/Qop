@@ -42,7 +42,11 @@
       "addRule": "Add Rule",
       "atLeastOneRule": "You must add at least one rule.",
       "iconRequired": "An icon is required.",
-      "createdSuccessfully": "Badge created successfully!"
+      "createdSuccessfully": "Badge created successfully!",
+      "editBadge": "Edit Badge",
+      "editDesc": "Update the details and rules for this badge.",
+      "changeIcon": "Change Icon",
+      "updatedSuccessfully": "Badge updated successfully!"
     },
     "class": {
       "backToClasses": "Back to Classes",

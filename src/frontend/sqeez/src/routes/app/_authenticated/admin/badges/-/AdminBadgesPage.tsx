@@ -14,6 +14,7 @@ import { getImageUrl } from '@/lib/imageHelpers'
 import { BadgeDetailsModal } from '../../../badges/-/BadgeDetailsModal'
 import { ConfirmModal } from '@/components/ui'
 import { CreateBadgeModal } from './CreateBadgeModal'
+import { EditBadgeModal } from './EditBadgeModal'
 
 export function AdminBadgesPage() {
   const { t } = useTranslation()
@@ -202,7 +203,11 @@ export function AdminBadgesPage() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
       />
-      {/* <EditBadgeModal badge={badgeToEdit} onClose={() => setBadgeToEdit(null)} /> */}
+      <EditBadgeModal
+        isOpen={!!badgeToEdit}
+        badge={badgeToEdit}
+        onClose={() => setBadgeToEdit(null)}
+      />
     </div>
   )
 }

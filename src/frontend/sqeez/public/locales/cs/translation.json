@@ -42,7 +42,11 @@
       "addRule": "Přidat pravidlo",
       "atLeastOneRule": "Musíte přidat alespoň jedno pravidlo.",
       "iconRequired": "Je vyžadována ikona.",
-      "createdSuccessfully": "Odznak byl úspěšně vytvořen!"
+      "createdSuccessfully": "Odznak byl úspěšně vytvořen!",
+      "editBadge": "Upravit odznak",
+      "editDesc": "Upravte detaily a pravidla pro tento odznak.",
+      "changeIcon": "Změnit ikonu",
+      "updatedSuccessfully": "Odznak byl úspěšně upraven!"
     },
     "class": {
       "backToClasses": "Zpět na třídy",

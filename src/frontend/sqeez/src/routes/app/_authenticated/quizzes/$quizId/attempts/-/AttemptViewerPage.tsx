@@ -128,6 +128,7 @@ export function AttemptViewerPage({
           <QuestionResultCard
             key={response.id}
             quizId={attempt.quizId}
+            attemptId={attemptId}
             studentResponse={response}
             isTeacher={canGrade}
           />

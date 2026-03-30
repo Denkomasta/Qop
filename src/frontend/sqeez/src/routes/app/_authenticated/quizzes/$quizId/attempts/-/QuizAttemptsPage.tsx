@@ -12,10 +12,11 @@ import { AttemptsTable, type AttemptRowDto } from './AttemptsTable'
 import { useState } from 'react'
 import { Pagination } from '@/components/ui/Pagination'
 import { isQuizActive } from '@/lib/quizHelpers'
+import { useGetApiSubjectsId } from '@/api/generated/endpoints/subjects/subjects'
 
 export function QuizAttemptsPage({ quizId }: { quizId: string }) {
   const { t } = useTranslation()
-  const { user } = useAuthStore()
+  const { user, isTeacher } = useAuthStore()
 
   const [pageNumber, setPageNumber] = useState(1)
   const PAGE_SIZE = 15
@@ -33,7 +34,12 @@ export function QuizAttemptsPage({ quizId }: { quizId: string }) {
       { query: { enabled: !!quizId && !!user?.id } },
     )
 
-  const isLoading = isQuizLoading || isAttemptsLoading
+  const { data: subject, isLoading: isSubjectLoading } = useGetApiSubjectsId(
+    Number(quiz?.subjectId),
+    { query: { enabled: !!quiz?.subjectId && isTeacher } },
+  )
+
+  const isLoading = isQuizLoading || isAttemptsLoading || isSubjectLoading
 
   if (isLoading) {
     return (
@@ -50,6 +56,8 @@ export function QuizAttemptsPage({ quizId }: { quizId: string }) {
       quizTitle: quiz?.title,
       status: String(attempt.status),
       totalScore: Number(attempt.totalScore || 0),
+      studentName: attempt.studentName || '',
+      studentId: attempt.studentId || undefined,
       startTime: attempt.startTime || new Date().toISOString(),
     }),
   )
@@ -58,6 +66,7 @@ export function QuizAttemptsPage({ quizId }: { quizId: string }) {
     publishDate: quiz?.publishDate,
     closingDate: quiz?.closingDate,
   })
+  const isTeacherView = isTeacher && subject?.teacherId === user?.id
 
   return (
     <div className="container mx-auto max-w-5xl space-y-8 p-6">
@@ -99,7 +108,7 @@ export function QuizAttemptsPage({ quizId }: { quizId: string }) {
       <div className="space-y-4">
         <AttemptsTable
           attempts={tableData}
-          isTeacherView={false}
+          isTeacherView={isTeacherView}
           isLoading={isAttemptsLoading}
           isQuizActive={isActive}
         />

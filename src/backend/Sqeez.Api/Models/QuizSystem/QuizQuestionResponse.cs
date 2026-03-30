@@ -6,7 +6,7 @@
         public long ResponseTimeMs { get; set; }
         public string? FreeTextAnswer { get; set; }
         public bool IsLiked { get; set; }
-        public int Score { get; set; }
+        public int? Score { get; set; }
 
         // Foreign Keys
         public long QuizAttemptId { get; set; }

@@ -420,7 +420,7 @@ namespace Sqeez.Api.Migrations
                     b.Property<long>("ResponseTimeMs")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("Score")
+                    b.Property<int?>("Score")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");

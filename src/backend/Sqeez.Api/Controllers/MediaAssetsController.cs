@@ -129,8 +129,28 @@ namespace Sqeez.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> Delete(long id)
         {
-            var dbDeleteResult = await _mediaAssetService.DeleteMediaAssetAsync(id);
-            return HandleServiceResult(dbDeleteResult);
+            var assetResult = await _mediaAssetService.GetMediaAssetByIdAsync(id);
+            if (!assetResult.Success || assetResult.Data == null)
+            {
+                return HandleServiceResult(assetResult);
+            }
+
+            var userIdStr = GetUserIdFromClaims();
+            bool isAdmin = User.IsInRole("Admin");
+
+            if (!long.TryParse(userIdStr, out long currentUserId))
+            {
+                return Unauthorized();
+            }
+
+            if (!isAdmin && assetResult.Data.OwnerId != currentUserId)
+            {
+                return Forbid();
+            }
+
+            var result = await _mediaAssetService.DeleteMediaAssetAndFileAsync(id);
+
+            return HandleServiceResult(result);
         }
 
         /// <summary>

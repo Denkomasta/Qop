@@ -95,16 +95,25 @@ export function QuestionMediaEditor({
       </div>
 
       {currentMediaAssetId ? (
-        <div className="group relative w-full overflow-hidden rounded-xl border-2 border-muted bg-muted/10">
-          <MediaAssetViewer assetId={currentMediaAssetId} />
+        <div className="w-full overflow-hidden rounded-xl border-2 border-muted bg-muted/5">
+          <div className="flex items-center justify-end border-b-2 border-muted bg-muted/20 p-2">
+            <AsyncButton
+              onClick={() => setIsRemoveModalOpen(true)}
+              variant="ghost"
+              size="sm"
+              className="hover:text-destructive-foreground h-8 gap-2 text-destructive hover:bg-destructive"
+              title={t('editor.removeMedia')}
+            >
+              <X className="size-4" />
+              <span className="text-sm font-medium">
+                {t('common.remove', 'Remove')}
+              </span>
+            </AsyncButton>
+          </div>
 
-          <AsyncButton
-            onClick={() => setIsRemoveModalOpen(true)}
-            className="hover:text-destructive-foreground absolute top-2 right-2 rounded-md bg-background/80 p-2 text-destructive opacity-0 backdrop-blur transition-all group-hover:opacity-100 hover:bg-destructive"
-            title={t('editor.removeMedia')}
-          >
-            <X className="size-4" />
-          </AsyncButton>
+          <div className="flex min-h-30 w-full items-center justify-center p-4">
+            <MediaAssetViewer assetId={currentMediaAssetId} />
+          </div>
         </div>
       ) : (
         <label className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-muted-foreground/30 bg-muted/5 transition-colors hover:border-primary/50 hover:bg-primary/5">

@@ -9,7 +9,11 @@ namespace Sqeez.Api.Services
 {
     public class QuizOptionService : BaseService<QuizOptionService>, IQuizOptionService
     {
-        public QuizOptionService(SqeezDbContext context, ILogger<QuizOptionService> logger) : base(context, logger) { }
+        private readonly IMediaAssetService _mediaAssetService;
+        public QuizOptionService(SqeezDbContext context, ILogger<QuizOptionService> logger, IMediaAssetService mas) : base(context, logger)
+        {
+            _mediaAssetService = mas;
+        }
 
         public async Task<ServiceResult<PagedResponse<QuizOptionDto>>> GetAllQuizOptionsAsync(QuizOptionFilterDto filter)
         {
@@ -136,11 +140,17 @@ namespace Sqeez.Api.Services
             if (dto.IsFreeText.HasValue) option.IsFreeText = dto.IsFreeText.Value;
             if (dto.IsCorrect.HasValue) option.IsCorrect = dto.IsCorrect.Value;
 
+            long? oldMediaAssetId = null;
+
             if (dto.MediaAssetId.HasValue)
             {
                 if (dto.MediaAssetId.Value == 0)
                 {
-                    option.MediaAssetId = null;
+                    if (option.MediaAssetId != null)
+                    {
+                        oldMediaAssetId = option.MediaAssetId;
+                        option.MediaAssetId = null;
+                    }
                 }
                 else if (dto.MediaAssetId.Value != option.MediaAssetId)
                 {
@@ -148,11 +158,17 @@ namespace Sqeez.Api.Services
                     if (!mediaExists)
                         return ServiceResult<QuizOptionDto>.Failure("The specified Media Asset does not exist.", ServiceError.NotFound);
 
+                    oldMediaAssetId = option.MediaAssetId;
                     option.MediaAssetId = dto.MediaAssetId.Value;
                 }
             }
 
             await _context.SaveChangesAsync();
+
+            if (oldMediaAssetId.HasValue)
+            {
+                await _mediaAssetService.DeleteMediaAssetAndFileAsync(oldMediaAssetId.Value);
+            }
 
             return ServiceResult<QuizOptionDto>.Ok(new QuizOptionDto(
                 option.Id,
@@ -171,11 +187,19 @@ namespace Sqeez.Api.Services
             if (option == null)
                 return ServiceResult<bool>.Failure("Quiz option not found.", ServiceError.NotFound);
 
+            long? oldMediaAssetId = option.MediaAssetId;
+
             _context.QuizOptions.Remove(option);
 
             try
             {
                 await _context.SaveChangesAsync();
+
+                if (oldMediaAssetId.HasValue)
+                {
+                    await _mediaAssetService.DeleteMediaAssetAndFileAsync(oldMediaAssetId.Value);
+                }
+
                 return ServiceResult<bool>.Ok(true);
             }
             catch (DbUpdateException ex)

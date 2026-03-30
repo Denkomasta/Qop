@@ -10,5 +10,6 @@ namespace Sqeez.Api.Services.Interfaces
         Task<ServiceResult<MediaAssetDto>> PatchMediaAssetAsync(long id, PatchMediaAssetDto dto);
         Task<ServiceResult<bool>> DeleteMediaAssetAsync(long id);
         Task<ServiceResult<MediaDownloadDto>> GetDownloadMetadataAsync(long mediaId, long currentUserId, string currentUserRole);
+        Task<ServiceResult<bool>> DeleteMediaAssetAndFileAsync(long id);
     }
 }

@@ -9,7 +9,12 @@ namespace Sqeez.Api.Services
 {
     public class QuizQuestionService : BaseService<QuizQuestionService>, IQuizQuestionService
     {
-        public QuizQuestionService(SqeezDbContext context, ILogger<QuizQuestionService> logger) : base(context, logger) { }
+        private readonly IMediaAssetService _mediaAssetService;
+
+        public QuizQuestionService(SqeezDbContext context, ILogger<QuizQuestionService> logger, IMediaAssetService mas) : base(context, logger)
+        {
+            _mediaAssetService = mas;
+        }
 
         public async Task<ServiceResult<PagedResponse<QuizQuestionDto>>> GetAllQuizQuestionsAsync(QuizQuestionFilterDto filter)
         {
@@ -131,11 +136,17 @@ namespace Sqeez.Api.Services
             if (dto.Difficulty.HasValue) question.Difficulty = dto.Difficulty.Value;
             if (dto.TimeLimit.HasValue) question.TimeLimit = dto.TimeLimit.Value;
 
+            long? oldMediaAssetId = null;
+
             if (dto.MediaAssetId.HasValue)
             {
                 if (dto.MediaAssetId.Value == 0)
                 {
-                    question.MediaAssetId = null;
+                    if (question.MediaAssetId != null)
+                    {
+                        oldMediaAssetId = question.MediaAssetId;
+                        question.MediaAssetId = null;
+                    }
                 }
                 else if (dto.MediaAssetId.Value != question.MediaAssetId)
                 {
@@ -143,11 +154,17 @@ namespace Sqeez.Api.Services
                     if (!mediaExists)
                         return ServiceResult<QuizQuestionDto>.Failure("The specified Media Asset does not exist.", ServiceError.NotFound);
 
+                    oldMediaAssetId = question.MediaAssetId;
                     question.MediaAssetId = dto.MediaAssetId.Value;
                 }
             }
 
             await _context.SaveChangesAsync();
+
+            if (oldMediaAssetId.HasValue)
+            {
+                await _mediaAssetService.DeleteMediaAssetAndFileAsync(oldMediaAssetId.Value);
+            }
 
             return ServiceResult<QuizQuestionDto>.Ok(new QuizQuestionDto(
                 question.Id,
@@ -161,17 +178,35 @@ namespace Sqeez.Api.Services
 
         public async Task<ServiceResult<bool>> DeleteQuizQuestionAsync(long id)
         {
-            var question = await _context.QuizQuestions.FindAsync(id);
+            var question = await _context.QuizQuestions
+                .Include(q => q.Options)
+                .FirstOrDefaultAsync(q => q.Id == id);
 
             if (question == null)
                 return ServiceResult<bool>.Failure("Quiz question not found.", ServiceError.NotFound);
 
-            // Hard delete with quiz options cascade delete
+            var mediaAssetIdsToDelete = new List<long>();
+
+            if (question.MediaAssetId.HasValue)
+                mediaAssetIdsToDelete.Add(question.MediaAssetId.Value);
+
+            foreach (var option in question.Options)
+            {
+                if (option.MediaAssetId.HasValue)
+                    mediaAssetIdsToDelete.Add(option.MediaAssetId.Value);
+            }
+
             _context.QuizQuestions.Remove(question);
 
             try
             {
                 await _context.SaveChangesAsync();
+
+                foreach (var assetId in mediaAssetIdsToDelete)
+                {
+                    await _mediaAssetService.DeleteMediaAssetAndFileAsync(assetId);
+                }
+
                 return ServiceResult<bool>.Ok(true);
             }
             catch (DbUpdateException ex)

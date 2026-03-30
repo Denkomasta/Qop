@@ -161,6 +161,16 @@
       "subjectDeleted": "Subject deleted successfully"
     }
   },
+  "attempts": {
+    "review": "Attempt Review",
+    "status": "Status",
+    "timeTaken": "Time Taken",
+    "totalScore": "Total Score",
+    "responses": "Student Responses",
+    "noAttemptsTeacher": "No students have taken this quiz yet.",
+    "noAttemptsStudent": "You have not taken any quizzes yet.",
+    "completed": "Completed"
+  },
   "badges": {
     "earned": "Earned",
     "earnedOn": "Earned on",
@@ -254,7 +264,14 @@
     "viewDetails": "View Details",
     "total": "Total",
     "description": "Description",
-    "name": "Name"
+    "quiz": "Quiz",
+    "date": "Date",
+    "name": "Name",
+    "points": "pts",
+    "minutes": "min",
+    "score": "Score",
+    "grade": "Grade",
+    "view": "View"
   },
   "dashboard": {
     "administration": "Administration",
@@ -652,5 +669,17 @@
     "closingDateHelp": "Leave blank for no deadline.",
     "removeMediaTitle": "Remove Media Asset",
     "removeMediaDesc": "Are you sure you want to remove this media asset? You will need to upload it again if you change your mind."
+  },
+  "grading": {
+    "needsGrading": "Needs Grading",
+    "pts": "pts",
+    "studentAnswer": "Student Answer",
+    "correctAnswer": "Correct Answer",
+    "noAnswer": "No answer provided",
+    "assignPoints": "Assign Points",
+    "invalidPoints": "Points must be between 0 and {{max}}",
+    "savedSuccessfully": "Grade saved successfully!",
+    "likeAnswer": "Like this answer",
+    "selectedOptions": "Selected Options"
   }
 }

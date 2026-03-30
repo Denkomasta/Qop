@@ -40,6 +40,8 @@ import { Route as AppAuthenticatedSubjectsSubjectIdQuizzesIndexRouteImport } fro
 import { Route as AppAuthenticatedQuizzesQuizIdResultsIndexRouteImport } from './routes/app/_authenticated/quizzes/$quizId/results/index'
 import { Route as AppAuthenticatedQuizzesQuizIdPlayIndexRouteImport } from './routes/app/_authenticated/quizzes/$quizId/play/index'
 import { Route as AppAuthenticatedQuizzesQuizIdBuilderIndexRouteImport } from './routes/app/_authenticated/quizzes/$quizId/builder/index'
+import { Route as AppAuthenticatedQuizzesQuizIdAttemptsIndexRouteImport } from './routes/app/_authenticated/quizzes/$quizId/attempts/index'
+import { Route as AppAuthenticatedQuizzesQuizIdAttemptsAttemptIdRouteImport } from './routes/app/_authenticated/quizzes/$quizId/attempts/$attemptId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -217,6 +219,18 @@ const AppAuthenticatedQuizzesQuizIdBuilderIndexRoute =
     path: '/quizzes/$quizId/builder/',
     getParentRoute: () => AppAuthenticatedRoute,
   } as any)
+const AppAuthenticatedQuizzesQuizIdAttemptsIndexRoute =
+  AppAuthenticatedQuizzesQuizIdAttemptsIndexRouteImport.update({
+    id: '/quizzes/$quizId/attempts/',
+    path: '/quizzes/$quizId/attempts/',
+    getParentRoute: () => AppAuthenticatedRoute,
+  } as any)
+const AppAuthenticatedQuizzesQuizIdAttemptsAttemptIdRoute =
+  AppAuthenticatedQuizzesQuizIdAttemptsAttemptIdRouteImport.update({
+    id: '/quizzes/$quizId/attempts/$attemptId',
+    path: '/quizzes/$quizId/attempts/$attemptId',
+    getParentRoute: () => AppAuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -245,6 +259,8 @@ export interface FileRoutesByFullPath {
   '/app/quizzes/$quizId/': typeof AppAuthenticatedQuizzesQuizIdIndexRoute
   '/app/subjects/$subjectId/': typeof AppAuthenticatedSubjectsSubjectIdIndexRoute
   '/app/teacher/quizzes/': typeof AppAuthenticatedTeacherQuizzesIndexRoute
+  '/app/quizzes/$quizId/attempts/$attemptId': typeof AppAuthenticatedQuizzesQuizIdAttemptsAttemptIdRoute
+  '/app/quizzes/$quizId/attempts/': typeof AppAuthenticatedQuizzesQuizIdAttemptsIndexRoute
   '/app/quizzes/$quizId/builder/': typeof AppAuthenticatedQuizzesQuizIdBuilderIndexRoute
   '/app/quizzes/$quizId/play/': typeof AppAuthenticatedQuizzesQuizIdPlayIndexRoute
   '/app/quizzes/$quizId/results/': typeof AppAuthenticatedQuizzesQuizIdResultsIndexRoute
@@ -277,6 +293,8 @@ export interface FileRoutesByTo {
   '/app/quizzes/$quizId': typeof AppAuthenticatedQuizzesQuizIdIndexRoute
   '/app/subjects/$subjectId': typeof AppAuthenticatedSubjectsSubjectIdIndexRoute
   '/app/teacher/quizzes': typeof AppAuthenticatedTeacherQuizzesIndexRoute
+  '/app/quizzes/$quizId/attempts/$attemptId': typeof AppAuthenticatedQuizzesQuizIdAttemptsAttemptIdRoute
+  '/app/quizzes/$quizId/attempts': typeof AppAuthenticatedQuizzesQuizIdAttemptsIndexRoute
   '/app/quizzes/$quizId/builder': typeof AppAuthenticatedQuizzesQuizIdBuilderIndexRoute
   '/app/quizzes/$quizId/play': typeof AppAuthenticatedQuizzesQuizIdPlayIndexRoute
   '/app/quizzes/$quizId/results': typeof AppAuthenticatedQuizzesQuizIdResultsIndexRoute
@@ -311,6 +329,8 @@ export interface FileRoutesById {
   '/app/_authenticated/quizzes/$quizId/': typeof AppAuthenticatedQuizzesQuizIdIndexRoute
   '/app/_authenticated/subjects/$subjectId/': typeof AppAuthenticatedSubjectsSubjectIdIndexRoute
   '/app/_authenticated/teacher/quizzes/': typeof AppAuthenticatedTeacherQuizzesIndexRoute
+  '/app/_authenticated/quizzes/$quizId/attempts/$attemptId': typeof AppAuthenticatedQuizzesQuizIdAttemptsAttemptIdRoute
+  '/app/_authenticated/quizzes/$quizId/attempts/': typeof AppAuthenticatedQuizzesQuizIdAttemptsIndexRoute
   '/app/_authenticated/quizzes/$quizId/builder/': typeof AppAuthenticatedQuizzesQuizIdBuilderIndexRoute
   '/app/_authenticated/quizzes/$quizId/play/': typeof AppAuthenticatedQuizzesQuizIdPlayIndexRoute
   '/app/_authenticated/quizzes/$quizId/results/': typeof AppAuthenticatedQuizzesQuizIdResultsIndexRoute
@@ -346,6 +366,8 @@ export interface FileRouteTypes {
     | '/app/quizzes/$quizId/'
     | '/app/subjects/$subjectId/'
     | '/app/teacher/quizzes/'
+    | '/app/quizzes/$quizId/attempts/$attemptId'
+    | '/app/quizzes/$quizId/attempts/'
     | '/app/quizzes/$quizId/builder/'
     | '/app/quizzes/$quizId/play/'
     | '/app/quizzes/$quizId/results/'
@@ -378,6 +400,8 @@ export interface FileRouteTypes {
     | '/app/quizzes/$quizId'
     | '/app/subjects/$subjectId'
     | '/app/teacher/quizzes'
+    | '/app/quizzes/$quizId/attempts/$attemptId'
+    | '/app/quizzes/$quizId/attempts'
     | '/app/quizzes/$quizId/builder'
     | '/app/quizzes/$quizId/play'
     | '/app/quizzes/$quizId/results'
@@ -411,6 +435,8 @@ export interface FileRouteTypes {
     | '/app/_authenticated/quizzes/$quizId/'
     | '/app/_authenticated/subjects/$subjectId/'
     | '/app/_authenticated/teacher/quizzes/'
+    | '/app/_authenticated/quizzes/$quizId/attempts/$attemptId'
+    | '/app/_authenticated/quizzes/$quizId/attempts/'
     | '/app/_authenticated/quizzes/$quizId/builder/'
     | '/app/_authenticated/quizzes/$quizId/play/'
     | '/app/_authenticated/quizzes/$quizId/results/'
@@ -647,6 +673,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAuthenticatedQuizzesQuizIdBuilderIndexRouteImport
       parentRoute: typeof AppAuthenticatedRoute
     }
+    '/app/_authenticated/quizzes/$quizId/attempts/': {
+      id: '/app/_authenticated/quizzes/$quizId/attempts/'
+      path: '/quizzes/$quizId/attempts'
+      fullPath: '/app/quizzes/$quizId/attempts/'
+      preLoaderRoute: typeof AppAuthenticatedQuizzesQuizIdAttemptsIndexRouteImport
+      parentRoute: typeof AppAuthenticatedRoute
+    }
+    '/app/_authenticated/quizzes/$quizId/attempts/$attemptId': {
+      id: '/app/_authenticated/quizzes/$quizId/attempts/$attemptId'
+      path: '/quizzes/$quizId/attempts/$attemptId'
+      fullPath: '/app/quizzes/$quizId/attempts/$attemptId'
+      preLoaderRoute: typeof AppAuthenticatedQuizzesQuizIdAttemptsAttemptIdRouteImport
+      parentRoute: typeof AppAuthenticatedRoute
+    }
   }
 }
 
@@ -703,6 +743,8 @@ interface AppAuthenticatedRouteChildren {
   AppAuthenticatedSubjectsIndexRoute: typeof AppAuthenticatedSubjectsIndexRoute
   AppAuthenticatedQuizzesQuizIdIndexRoute: typeof AppAuthenticatedQuizzesQuizIdIndexRoute
   AppAuthenticatedSubjectsSubjectIdIndexRoute: typeof AppAuthenticatedSubjectsSubjectIdIndexRoute
+  AppAuthenticatedQuizzesQuizIdAttemptsAttemptIdRoute: typeof AppAuthenticatedQuizzesQuizIdAttemptsAttemptIdRoute
+  AppAuthenticatedQuizzesQuizIdAttemptsIndexRoute: typeof AppAuthenticatedQuizzesQuizIdAttemptsIndexRoute
   AppAuthenticatedQuizzesQuizIdBuilderIndexRoute: typeof AppAuthenticatedQuizzesQuizIdBuilderIndexRoute
   AppAuthenticatedQuizzesQuizIdPlayIndexRoute: typeof AppAuthenticatedQuizzesQuizIdPlayIndexRoute
   AppAuthenticatedQuizzesQuizIdResultsIndexRoute: typeof AppAuthenticatedQuizzesQuizIdResultsIndexRoute
@@ -727,6 +769,10 @@ const AppAuthenticatedRouteChildren: AppAuthenticatedRouteChildren = {
     AppAuthenticatedQuizzesQuizIdIndexRoute,
   AppAuthenticatedSubjectsSubjectIdIndexRoute:
     AppAuthenticatedSubjectsSubjectIdIndexRoute,
+  AppAuthenticatedQuizzesQuizIdAttemptsAttemptIdRoute:
+    AppAuthenticatedQuizzesQuizIdAttemptsAttemptIdRoute,
+  AppAuthenticatedQuizzesQuizIdAttemptsIndexRoute:
+    AppAuthenticatedQuizzesQuizIdAttemptsIndexRoute,
   AppAuthenticatedQuizzesQuizIdBuilderIndexRoute:
     AppAuthenticatedQuizzesQuizIdBuilderIndexRoute,
   AppAuthenticatedQuizzesQuizIdPlayIndexRoute:

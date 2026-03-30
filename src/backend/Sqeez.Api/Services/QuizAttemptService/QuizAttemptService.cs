@@ -387,5 +387,31 @@ namespace Sqeez.Api.Services
 
             return ServiceResult<bool>.Ok(true);
         }
+
+        public async Task<ServiceResult<bool>> DeleteAllAttemptsForQuizAsync(long quizId, long teacherId, bool isAdmin = false)
+        {
+            var quiz = await _context.Quizzes
+                .Include(q => q.Subject)
+                .FirstOrDefaultAsync(q => q.Id == quizId);
+
+            if (quiz == null)
+                return ServiceResult<bool>.Failure("Quiz not found.", ServiceError.NotFound);
+
+            if (!isAdmin && quiz.Subject.TeacherId != teacherId)
+                return ServiceResult<bool>.Failure("You do not have permission to delete attempts for this quiz.", ServiceError.Forbidden);
+
+            var attempts = await _context.QuizAttempts
+                .Where(a => a.QuizId == quizId)
+                .ToListAsync();
+
+            if (!attempts.Any())
+                return ServiceResult<bool>.Ok(true);
+
+            _context.QuizAttempts.RemoveRange(attempts);
+
+            await _context.SaveChangesAsync();
+
+            return ServiceResult<bool>.Ok(true);
+        }
     }
 }

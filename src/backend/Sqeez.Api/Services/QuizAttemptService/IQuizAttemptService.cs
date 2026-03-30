@@ -47,5 +47,10 @@ namespace Sqeez.Api.Services.Interfaces
         /// Allows a teacher to manually reset (delete) student's attempt.
         /// </summary>
         Task<ServiceResult<bool>> DeleteAttemptAsync(long attemptId, long teacherId);
+
+        /// <summary>
+        /// Allows a teacher to manually wipe (delete) all attempts.
+        /// </summary>
+        Task<ServiceResult<bool>> DeleteAllAttemptsForQuizAsync(long quizId, long teacherId, bool isAdmin = false);
     }
 }

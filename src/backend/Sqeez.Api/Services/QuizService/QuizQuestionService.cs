@@ -90,15 +90,22 @@ namespace Sqeez.Api.Services
 
         public async Task<ServiceResult<QuizQuestionDto>> CreateQuizQuestionAsync(CreateQuizQuestionDto dto)
         {
-            var quizExists = await _context.Quizzes.AnyAsync(q => q.Id == dto.QuizId);
-            if (!quizExists)
+            var quizData = await _context.Quizzes
+                .Where(q => q.Id == dto.QuizId)
+                .Select(q => new
+                {
+                    HasAttempts = _context.QuizAttempts.Any(a => a.QuizId == q.Id)
+                })
+                .FirstOrDefaultAsync();
+
+            if (quizData == null)
                 return ServiceResult<QuizQuestionDto>.Failure("The specified Quiz does not exist.", ServiceError.NotFound);
 
-            if (dto.MediaAssetId.HasValue)
+            if (quizData.HasAttempts)
             {
-                var mediaExists = await _context.MediaAssets.AnyAsync(m => m.Id == dto.MediaAssetId.Value);
-                if (!mediaExists)
-                    return ServiceResult<QuizQuestionDto>.Failure("The specified Media Asset does not exist.", ServiceError.NotFound);
+                return ServiceResult<QuizQuestionDto>.Failure(
+                    "Cannot add new questions to this quiz because students have already started or completed it.",
+                    ServiceError.Conflict);
             }
 
             var question = new QuizQuestion
@@ -131,6 +138,14 @@ namespace Sqeez.Api.Services
 
             if (question == null)
                 return ServiceResult<QuizQuestionDto>.Failure("Quiz question not found.", ServiceError.NotFound);
+
+            bool hasAttempts = await _context.QuizAttempts.AnyAsync(a => a.QuizId == question.QuizId);
+            if (hasAttempts)
+            {
+                return ServiceResult<QuizQuestionDto>.Failure(
+                    "Cannot modify this question because students have already started or completed this quiz.",
+                    ServiceError.Conflict);
+            }
 
             if (dto.Title != null) question.Title = dto.Title;
             if (dto.Difficulty.HasValue) question.Difficulty = dto.Difficulty.Value;
@@ -184,6 +199,14 @@ namespace Sqeez.Api.Services
 
             if (question == null)
                 return ServiceResult<bool>.Failure("Quiz question not found.", ServiceError.NotFound);
+
+            bool hasAttempts = await _context.QuizAttempts.AnyAsync(a => a.QuizId == question.QuizId);
+            if (hasAttempts)
+            {
+                return ServiceResult<bool>.Failure(
+                    "Cannot delete this question because students have already started or completed this quiz.",
+                    ServiceError.Conflict);
+            }
 
             var mediaAssetIdsToDelete = new List<long>();
 

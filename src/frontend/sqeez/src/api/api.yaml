@@ -1000,6 +1000,33 @@ paths:
             text/json:
               schema:
                 $ref: "#/components/schemas/QuestionResponseDto"
+  /api/quiz-attempts/{quizId}/attempts:
+    delete:
+      tags:
+        - QuizAttempts
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
   /api/quizzes:
     get:
       tags:
@@ -4162,6 +4189,7 @@ components:
         score:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
+            - "null"
             - integer
             - string
           format: int32
@@ -4232,6 +4260,7 @@ components:
         score:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
+            - "null"
             - integer
             - string
           format: int32

@@ -150,5 +150,26 @@ namespace Sqeez.Api.Controllers
             var result = await _quizAttemptService.DeleteAttemptAsync(id, teacherId);
             return HandleServiceResult(result);
         }
+
+        /// <summary>
+        /// DELETE /api/quizzes/{quizId}/attempts
+        /// Deletes all quiz attempts and student responses for a specific quiz.
+        /// </summary>
+        [Authorize(Roles = "Admin,Teacher")]
+        [HttpDelete("{quizId}/attempts")]
+        public async Task<ActionResult<bool>> DeleteAllAttemptsForQuiz(long quizId)
+        {
+            var userIdStr = GetUserIdFromClaims();
+            if (!long.TryParse(userIdStr, out long currentUserId))
+            {
+                return Unauthorized();
+            }
+
+            bool isAdmin = User.IsInRole("Admin");
+
+            var result = await _quizAttemptService.DeleteAllAttemptsForQuizAsync(quizId, currentUserId, isAdmin);
+
+            return HandleServiceResult(result);
+        }
     }
 }

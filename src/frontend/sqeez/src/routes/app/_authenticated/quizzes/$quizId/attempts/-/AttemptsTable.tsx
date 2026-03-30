@@ -20,12 +20,14 @@ interface AttemptsTableProps {
   attempts: AttemptRowDto[]
   isTeacherView: boolean
   isLoading?: boolean
+  isQuizActive?: boolean
 }
 
 export function AttemptsTable({
   attempts,
   isTeacherView,
   isLoading,
+  isQuizActive = false,
 }: AttemptsTableProps) {
   const { t } = useTranslation()
 
@@ -80,7 +82,7 @@ export function AttemptsTable({
       className: 'text-right',
       cell: (item) => (
         <span className="font-bold">
-          {item.totalScore} {t('common.points')}
+          {t('common.points')}: {item.totalScore}
         </span>
       ),
     },
@@ -91,15 +93,19 @@ export function AttemptsTable({
         const isNeedsGrading =
           item.status === 'PendingGrading' || item.status === 'NeedsGrading'
         const showGradeButton = isTeacherView && isNeedsGrading
+        const isViewDisabled = !isTeacherView && isQuizActive
 
         return (
           <Link
             to={`/app/quizzes/$quizId/attempts/$attemptId`}
             params={{ quizId: String(item.quizId), attemptId: String(item.id) }}
+            disabled={isViewDisabled}
+            className={isViewDisabled ? 'pointer-events-none opacity-50' : ''}
           >
             <Button
               variant={showGradeButton ? 'default' : 'ghost'}
               size="sm"
+              disabled={isViewDisabled}
               className={
                 showGradeButton
                   ? 'bg-yellow-500 text-white hover:bg-yellow-600'

@@ -11,6 +11,7 @@ import { useGetApiQuizAttemptsQuizQuizId } from '@/api/generated/endpoints/quiz-
 import { AttemptsTable, type AttemptRowDto } from './AttemptsTable'
 import { useState } from 'react'
 import { Pagination } from '@/components/ui/Pagination'
+import { isQuizActive } from '@/lib/quizHelpers'
 
 export function QuizAttemptsPage({ quizId }: { quizId: string }) {
   const { t } = useTranslation()
@@ -53,6 +54,10 @@ export function QuizAttemptsPage({ quizId }: { quizId: string }) {
     }),
   )
   const totalPages = Number(pastAttempts?.totalPages || 1)
+  const isActive = isQuizActive({
+    publishDate: quiz?.publishDate,
+    closingDate: quiz?.closingDate,
+  })
 
   return (
     <div className="container mx-auto max-w-5xl space-y-8 p-6">
@@ -96,6 +101,7 @@ export function QuizAttemptsPage({ quizId }: { quizId: string }) {
           attempts={tableData}
           isTeacherView={false}
           isLoading={isAttemptsLoading}
+          isQuizActive={isActive}
         />
       </div>
 

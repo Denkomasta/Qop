@@ -129,6 +129,7 @@ export function TeacherQuizzesPage() {
               ? subjects.find((s) => s.id === selectedSubjectId)
               : undefined
           }
+          showActiveToggle={true}
           showActiveOnly={showActiveOnly}
           setShowActiveOnly={setShowActiveOnly}
         />

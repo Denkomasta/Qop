@@ -271,7 +271,9 @@
     "minutes": "min",
     "score": "Skóre",
     "grade": "Ohodnotit",
-    "view": "Zobrazit"
+    "view": "Zobrazit",
+    "deleteAll": "Smazat vše",
+    "deleting": "Mažu..."
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -670,7 +672,13 @@
     "closingDate": "Datum uzávěrky",
     "closingDateHelp": "Ponechte prázdné, pokud kvíz nemá termín.",
     "removeMediaTitle": "Odstranění mediálního obsahu",
-    "removeMediaDesc": "Jste si jistý, že chcete odstranit tento mediální obsah? Musí být nahrán znovu, pokud změníte názor."
+    "removeMediaDesc": "Jste si jistý, že chcete odstranit tento mediální obsah? Musí být nahrán znovu, pokud změníte názor.",
+    "dangerZone": "Nebezpečná zóna",
+    "deleteAllAttemptsWarning": "Smazáním všech pokusů odstraníte všechny odpovědi a hodnocení studentů v tomto kvízu. Tuto akci nelze vrátit zpět.",
+    "deleteAllAttempts": "Smazat všechny pokusy",
+    "confirmDeleteAllAttempts": "Jste si jisti?",
+    "confirmDeleteAllAttemptsText": "Tímto trvale smažete všechny studentské pokusy, odpovědi a hodnocení spojené s tímto kvízem. Jste si naprosto jisti, že chcete pokračovat?",
+    "attemptsDeletedSuccess": "Všechny pokusy byly úspěšně smazány."
   },
   "grading": {
     "needsGrading": "Vyžaduje hodnocení",

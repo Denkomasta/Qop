@@ -48,7 +48,7 @@ export function ActiveQuestionScreen({
   }
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-3xl animate-in flex-col p-4 duration-500 fade-in md:p-6 lg:p-8">
+    <div className="flex min-h-[calc(100vh-4rem)] w-full animate-in flex-col justify-center p-4 duration-500 fade-in md:p-6 md:px-12 lg:p-8 lg:px-16">
       <div className="mb-6 space-y-2">
         <div className="flex justify-between text-sm font-medium text-muted-foreground">
           <span>

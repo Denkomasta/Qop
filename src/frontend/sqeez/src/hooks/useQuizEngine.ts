@@ -29,6 +29,8 @@ export type QuizPhase =
   | 'recap'
   | 'completed'
 
+export type BootUpError = 'QUIZ_NOT_FOUND' | 'NOT_ENROLLED' | null
+
 export function useQuizEngine(quizId: string, initialAttemptId?: number) {
   const { t } = useTranslation()
   const userId = useAuthStore((s) => s.user?.id)
@@ -219,13 +221,26 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
     }
   }
 
+  let bootUpError: BootUpError = null
+
+  if (!isQuizLoading && !quizData) {
+    bootUpError = 'QUIZ_NOT_FOUND'
+  } else if (
+    !isEnrollmentLoading &&
+    quizData &&
+    (!enrollmentData?.data || enrollmentData.data.length === 0)
+  ) {
+    bootUpError = 'NOT_ENROLLED'
+  }
+
   const isBootingUp =
-    isQuizLoading || !quizData || isEnrollmentLoading || !enrollmentData?.data
+    (isQuizLoading || isEnrollmentLoading) && bootUpError === null
 
   return {
     state: {
       ...state,
       isBootingUp,
+      bootUpError,
       isQuestionLoading,
       quizData,
       userEnrollment: enrollmentData?.data?.[0],

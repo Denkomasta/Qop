@@ -17,6 +17,7 @@ export function QuizAttemptsPage({ quizId }: { quizId: string }) {
   const { user } = useAuthStore()
 
   const [pageNumber, setPageNumber] = useState(1)
+  const PAGE_SIZE = 15
 
   const { data: quiz, isLoading: isQuizLoading } = useGetApiQuizzesQuizId(
     Number(quizId),
@@ -27,7 +28,7 @@ export function QuizAttemptsPage({ quizId }: { quizId: string }) {
   const { data: pastAttempts, isLoading: isAttemptsLoading } =
     useGetApiQuizAttemptsQuizQuizId(
       Number(quizId),
-      { studentId: Number(user?.id) },
+      { pageNumber, pageSize: PAGE_SIZE },
       { query: { enabled: !!quizId && !!user?.id } },
     )
 

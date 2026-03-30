@@ -388,7 +388,7 @@ namespace Sqeez.Api.Migrations
                     ResponseTimeMs = table.Column<long>(type: "bigint", nullable: false),
                     FreeTextAnswer = table.Column<string>(type: "text", nullable: true),
                     IsLiked = table.Column<bool>(type: "boolean", nullable: false),
-                    Score = table.Column<int>(type: "integer", nullable: false),
+                    Score = table.Column<int>(type: "integer", nullable: true),
                     QuizAttemptId = table.Column<long>(type: "bigint", nullable: false),
                     QuizQuestionId = table.Column<long>(type: "bigint", nullable: false)
                 },

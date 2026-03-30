@@ -23,6 +23,7 @@ const loginSchema = z.object({
 
 const errorMapping: Record<number, TranslationKey> = {
   401: 'error.invalidCredentials',
+  404: 'errors.userNotFound',
   500: 'error.serverError',
 }
 

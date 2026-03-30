@@ -11,6 +11,7 @@ export interface AttemptRowDto {
   quizId: number | string
   quizTitle?: string
   studentName?: string
+  studentId?: number | string
   status: 'InProgress' | 'PendingGrading' | 'Completed' | string
   totalScore: number
   startTime: string
@@ -34,11 +35,24 @@ export function AttemptsTable({
   const columns: ColumnDef<AttemptRowDto>[] = [
     {
       header: isTeacherView ? t('common.student') : t('common.quiz'),
-      cell: (item) => (
-        <span className="font-medium">
-          {isTeacherView ? item.studentName : item.quizTitle}
-        </span>
-      ),
+      cell: (item) => {
+        if (isTeacherView) {
+          if (item.studentId && item.studentName) {
+            return (
+              <Link
+                to="/app/profile/$userId"
+                params={{ userId: String(item.studentId) }}
+                className="font-medium transition-colors hover:text-primary hover:underline"
+              >
+                {item.studentName}
+              </Link>
+            )
+          }
+          return <span className="font-medium">{item.studentName}</span>
+        }
+
+        return <span className="font-medium">{item.quizTitle}</span>
+      },
     },
     {
       header: t('common.date'),

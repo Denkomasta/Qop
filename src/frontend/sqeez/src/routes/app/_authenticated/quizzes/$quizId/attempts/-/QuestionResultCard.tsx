@@ -11,19 +11,21 @@ import { Spinner } from '@/components/ui/Spinner'
 
 import type { QuestionResponseDto } from '@/api/generated/model'
 import {
-  getGetApiQuizAttemptsQuizQuizIdQueryKey,
+  getGetApiQuizAttemptsIdQueryKey,
   usePatchApiQuizAttemptsResponsesResponseIdGrade,
 } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
 import { useGetApiQuizzesQuizIdQuestionsQuestionIdDetailed } from '@/api/generated/endpoints/quizzes/quizzes'
 
 interface QuestionResultCardProps {
   quizId: number | string
+  attemptId: number | string
   studentResponse: QuestionResponseDto
   isTeacher: boolean
 }
 
 export function QuestionResultCard({
   quizId,
+  attemptId,
   studentResponse,
   isTeacher,
 }: QuestionResultCardProps) {
@@ -36,18 +38,21 @@ export function QuestionResultCard({
       studentResponse.quizQuestionId,
     )
 
-  const awardedScore = Number(studentResponse.score)
+  const awardedScore = Number(studentResponse.score || 0)
   const maxPoints = Number(questionDef?.difficulty || 1)
 
-  const [gradeInput, setGradeInput] = useState<number | ''>(
-    awardedScore > 0 ? awardedScore : '',
+  const [prevScore, setPrevScore] = useState(studentResponse.score)
+  const [gradeInput, setGradeInput] = useState<number | string>(
+    studentResponse.score !== null && studentResponse.score !== undefined
+      ? awardedScore
+      : '',
   )
 
   const gradeMutation = usePatchApiQuizAttemptsResponsesResponseIdGrade({
     mutation: {
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: getGetApiQuizAttemptsQuizQuizIdQueryKey(quizId),
+          queryKey: getGetApiQuizAttemptsIdQueryKey(Number(attemptId)),
         })
         toast.success(t('grading.savedSuccessfully'))
       },
@@ -56,6 +61,15 @@ export function QuestionResultCard({
       },
     },
   })
+
+  if (studentResponse.score !== prevScore) {
+    setPrevScore(studentResponse.score)
+    setGradeInput(
+      studentResponse.score !== null && studentResponse.score !== undefined
+        ? Number(studentResponse.score)
+        : '',
+    )
+  }
 
   if (isLoading || !questionDef) {
     return (
@@ -66,12 +80,18 @@ export function QuestionResultCard({
   }
 
   const isFreeText = questionDef.options.some((opt) => opt.isFreeText)
+
   const isNeedsGrading =
-    isFreeText && awardedScore === 0 && studentResponse.freeTextAnswer
+    isFreeText &&
+    awardedScore === 0 &&
+    studentResponse.freeTextAnswer &&
+    gradeInput === ''
+
   const isPerfectScore = awardedScore === maxPoints
 
   const handleSaveGrade = async () => {
-    if (gradeInput === '' || gradeInput < 0 || gradeInput > maxPoints) {
+    const numericGrade = Number(gradeInput)
+    if (gradeInput === '' || numericGrade < 0 || numericGrade > maxPoints) {
       toast.error(t('grading.invalidPoints', { max: maxPoints }))
       return
     }
@@ -79,7 +99,7 @@ export function QuestionResultCard({
     await gradeMutation.mutateAsync({
       responseId: Number(studentResponse.id),
       data: {
-        score: Number(gradeInput),
+        score: numericGrade,
         isLiked: studentResponse.isLiked,
       },
     })

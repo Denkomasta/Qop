@@ -12,7 +12,9 @@ namespace Sqeez.Api.DTOs
         int TotalScore,
         int? Mark,
         long? NextQuestionId = null,
-        List<StudentBadgeBasicDto>? EarnedBadges = null
+        List<StudentBadgeBasicDto>? EarnedBadges = null,
+        string? StudentName = null,
+        long? StudentId = null
     );
 
     public record QuestionResponseDto(
@@ -21,7 +23,7 @@ namespace Sqeez.Api.DTOs
         long ResponseTimeMs,
         string? FreeTextAnswer,
         bool IsLiked,
-        int Score,
+        int? Score,
         List<long> SelectedOptionIds
     );
 
@@ -31,7 +33,7 @@ namespace Sqeez.Api.DTOs
         long ResponseTimeMs,
         string? FreeTextAnswer,
         bool IsLiked,
-        int Score,
+        int? Score,
         List<long> SelectedOptionIds,
         List<long>? CorrectOptionIds = null,
         string? CorrectFreeTextAnswer = null,

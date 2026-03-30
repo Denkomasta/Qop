@@ -33,4 +33,11 @@ export interface QuizAttemptDto {
   nextQuestionId?: number | string | null
   /** @nullable */
   earnedBadges?: StudentBadgeBasicDto[] | null
+  /** @nullable */
+  studentName?: string | null
+  /**
+   * @nullable
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
+  studentId?: number | string | null
 }

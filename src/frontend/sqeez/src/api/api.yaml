@@ -4371,6 +4371,17 @@ components:
             - array
           items:
             $ref: "#/components/schemas/StudentBadgeBasicDto"
+        studentName:
+          type:
+            - "null"
+            - string
+        studentId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
     QuizDto:
       required:
         - id

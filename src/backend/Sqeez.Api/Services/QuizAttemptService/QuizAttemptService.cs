@@ -125,18 +125,27 @@ namespace Sqeez.Api.Services
                 }
             }
 
-            response.Score = 0;
+            bool isFreeTextQuestion = question.Options.Any(o => o.IsFreeText);
 
-            if (string.IsNullOrWhiteSpace(dto.FreeTextAnswer) && response.Options.Any())
+            if (isFreeTextQuestion)
             {
-                var correctOptionIds = question.Options.Where(o => o.IsCorrect).Select(o => o.Id).ToList();
-                var selectedIds = response.Options.Select(o => o.Id).ToList();
+                response.Score = null;
+            }
+            else
+            {
+                response.Score = 0;
 
-                bool isPerfectMatch = correctOptionIds.Count == selectedIds.Count && !correctOptionIds.Except(selectedIds).Any();
-
-                if (isPerfectMatch)
+                if (response.Options.Any())
                 {
-                    response.Score = question.Difficulty;
+                    var correctOptionIds = question.Options.Where(o => o.IsCorrect).Select(o => o.Id).ToList();
+                    var selectedIds = response.Options.Select(o => o.Id).ToList();
+
+                    bool isPerfectMatch = correctOptionIds.Count == selectedIds.Count && !correctOptionIds.Except(selectedIds).Any();
+
+                    if (isPerfectMatch)
+                    {
+                        response.Score = question.Difficulty;
+                    }
                 }
             }
 
@@ -192,7 +201,7 @@ namespace Sqeez.Api.Services
 
             attempt.Status = AttemptStatus.Completed;
             attempt.EndTime = DateTime.UtcNow;
-            attempt.TotalScore = attempt.Responses.Sum(r => r.Score);
+            attempt.TotalScore = attempt.Responses.Sum(r => r.Score ?? 0);
 
             // Find their highest score from previous completed attempts of this quiz
             int previousHighScore = await _context.QuizAttempts
@@ -311,7 +320,11 @@ namespace Sqeez.Api.Services
                     a.EndTime,
                     a.Status,
                     a.TotalScore,
-                    a.Mark
+                    a.Mark,
+                    null,
+                    null,
+                    isQuizOwner ? (a.Enrollment.Student.FirstName + " " + a.Enrollment.Student.LastName) : null,
+                    isQuizOwner ? a.Enrollment.StudentId : null
                 ))
                 .ToListAsync();
 
@@ -346,7 +359,7 @@ namespace Sqeez.Api.Services
             response.IsLiked = dto.IsLiked;
 
             // Recalculate the overall QuizAttempt TotalScore since the teacher changed a grade!
-            response.QuizAttempt.TotalScore = response.QuizAttempt.Responses.Sum(r => r.Score);
+            response.QuizAttempt.TotalScore = response.QuizAttempt.Responses.Sum(r => r.Score ?? 0);
 
             await _context.SaveChangesAsync();
 

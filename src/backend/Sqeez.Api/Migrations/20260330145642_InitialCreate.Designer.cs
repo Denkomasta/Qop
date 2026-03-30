@@ -12,7 +12,7 @@ using Sqeez.Api.Data;
 namespace Sqeez.Api.Migrations
 {
     [DbContext(typeof(SqeezDbContext))]
-    [Migration("20260320190405_InitialCreate")]
+    [Migration("20260330145642_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -423,7 +423,7 @@ namespace Sqeez.Api.Migrations
                     b.Property<long>("ResponseTimeMs")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("Score")
+                    b.Property<int?>("Score")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");

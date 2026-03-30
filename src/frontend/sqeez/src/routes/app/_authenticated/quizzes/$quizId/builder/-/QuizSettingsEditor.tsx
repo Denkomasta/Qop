@@ -1,15 +1,28 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import {
+  Loader2,
+  Settings2,
+  Globe,
+  Globe2,
+  Trash2,
+  AlertTriangle,
+} from 'lucide-react'
+
 import {
   getGetApiQuizzesQuizIdQueryKey,
   useGetApiQuizzesQuizId,
   usePatchApiQuizzesQuizId,
 } from '@/api/generated/endpoints/quizzes/quizzes'
-import { Loader2, Settings2, Globe, Globe2 } from 'lucide-react'
+
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { Button } from '@/components/ui/Button'
 import { DebouncedTextArea } from '@/components/ui/TextArea'
-import { useQueryClient } from '@tanstack/react-query'
 import { DateTimePicker, Input } from '@/components/ui/Input'
+import { ConfirmModal } from '@/components/ui/Modal/ConfirmModal'
+import { useDeleteApiQuizAttemptsQuizIdAttempts } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
 
 interface QuizSettingsEditorProps {
   quizId: string
@@ -19,6 +32,8 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+
   const { data: quizResponse, isLoading } = useGetApiQuizzesQuizId(
     quizId,
     undefined,
@@ -26,6 +41,7 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
       query: { enabled: !!quizId },
     },
   )
+
   const patchMutation = usePatchApiQuizzesQuizId({
     mutation: {
       onSuccess: (updatedQuizData) => {
@@ -33,6 +49,22 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
           getGetApiQuizzesQuizIdQueryKey(quizId),
           updatedQuizData,
         )
+      },
+    },
+  })
+
+  const deleteAttemptsMutation = useDeleteApiQuizAttemptsQuizIdAttempts({
+    mutation: {
+      onSuccess: () => {
+        toast.success(t('editor.attemptsDeletedSuccess'))
+        setIsDeleteModalOpen(false)
+
+        queryClient.invalidateQueries({
+          predicate: (query) => query.queryKey.includes('attempts'),
+        })
+      },
+      onError: () => {
+        toast.error(t('common.error'))
       },
     },
   })
@@ -52,6 +84,12 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
       'publishDate',
       isPublished ? null : new Date().toISOString(),
     )
+  }
+
+  const handleDeleteAllAttempts = async () => {
+    await deleteAttemptsMutation.mutateAsync({
+      quizId,
+    })
   }
 
   if (isLoading) {
@@ -133,7 +171,36 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
             onChange={(isoString) => handleUpdate('closingDate', isoString)}
           />
         </div>
+
+        <div className="mt-12 rounded-xl border border-destructive/20 bg-destructive/5 p-6">
+          <h2 className="mb-2 flex items-center gap-2 text-lg font-semibold text-destructive">
+            <AlertTriangle className="h-5 w-5" />
+            {t('editor.dangerZone')}
+          </h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            {t('editor.deleteAllAttemptsWarning')}
+          </p>
+          <Button
+            variant="destructive"
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="gap-2"
+          >
+            <Trash2 className="h-4 w-4" />
+            {t('editor.deleteAllAttempts')}
+          </Button>
+        </div>
       </div>
+
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteAllAttempts}
+        title={t('editor.confirmDeleteAllAttempts')}
+        description={t('editor.confirmDeleteAllAttemptsText')}
+        confirmText={t('common.delete')}
+        isDestructive={true}
+        isLoading={deleteAttemptsMutation.isPending}
+      />
     </div>
   )
 }

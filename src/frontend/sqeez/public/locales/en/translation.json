@@ -271,7 +271,9 @@
     "minutes": "min",
     "score": "Score",
     "grade": "Grade",
-    "view": "View"
+    "view": "View",
+    "deleteAll": "Delete All",
+    "deleting": "Deleting..."
   },
   "dashboard": {
     "administration": "Administration",
@@ -671,7 +673,13 @@
     "closingDate": "Closing Date",
     "closingDateHelp": "Leave blank for no deadline.",
     "removeMediaTitle": "Remove Media Asset",
-    "removeMediaDesc": "Are you sure you want to remove this media asset? You will need to upload it again if you change your mind."
+    "removeMediaDesc": "Are you sure you want to remove this media asset? You will need to upload it again if you change your mind.",
+    "dangerZone": "Danger Zone",
+    "deleteAllAttemptsWarning": "Deleting all attempts will remove all student attempts and answers for this quiz. This action cannot be undone.",
+    "deleteAllAttempts": "Delete All Attempts",
+    "confirmDeleteAllAttempts": "Are you sure?",
+    "confirmDeleteAllAttemptsText": "This will permanently delete all student attempts and answers associated with this quiz. Are you absolutely sure you want to proceed?",
+    "attemptsDeletedSuccess": "All attempts deleted successfully."
   },
   "grading": {
     "needsGrading": "Needs Grading",

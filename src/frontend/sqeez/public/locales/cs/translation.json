@@ -161,6 +161,16 @@
       "subjectDeleted": "Předmět byl úspěšně smazán"
     }
   },
+  "attempts": {
+    "review": "Přehled pokusu",
+    "status": "Stav",
+    "timeTaken": "Čas",
+    "totalScore": "Celkové skóre",
+    "responses": "Odpovědi studenta",
+    "noAttemptsTeacher": "Tento kvíz zatím nevyplnil žádný student.",
+    "noAttemptsStudent": "Zatím jste nevyplnili žádný kvíz.",
+    "completed": "Dokončeno"
+  },
   "badges": {
     "earned": "Získáno",
     "earnedOn": "Získáno",
@@ -254,7 +264,14 @@
     "viewDetails": "Zobrazit detaily",
     "total": "Celkem",
     "description": "Popis",
-    "name": "Jméno"
+    "quiz": "Kvíz",
+    "date": "Datum",
+    "name": "Jméno",
+    "points": "bodů",
+    "minutes": "min",
+    "score": "Skóre",
+    "grade": "Ohodnotit",
+    "view": "Zobrazit"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -651,5 +668,17 @@
     "closingDateHelp": "Ponechte prázdné, pokud kvíz nemá termín.",
     "removeMediaTitle": "Odstranění mediálního obsahu",
     "removeMediaDesc": "Jste si jistý, že chcete odstranit tento mediální obsah? Musí být nahrán znovu, pokud změníte názor."
+  },
+  "grading": {
+    "needsGrading": "Vyžaduje hodnocení",
+    "pts": "bodů",
+    "studentAnswer": "Odpověď studenta",
+    "correctAnswer": "Správná odpověď",
+    "noAnswer": "Nebyla poskytnuta žádná odpověď",
+    "assignPoints": "Přidělit body",
+    "invalidPoints": "Body musí být v rozmezí 0 až {{max}}",
+    "savedSuccessfully": "Hodnocení úspěšně uloženo!",
+    "likeAnswer": "Dát To se mi líbí",
+    "selectedOptions": "Vybrané možnosti"
   }
 }

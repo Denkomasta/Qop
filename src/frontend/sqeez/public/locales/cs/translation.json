@@ -691,5 +691,25 @@
     "savedSuccessfully": "Hodnocení úspěšně uloženo!",
     "likeAnswer": "Dát To se mi líbí",
     "selectedOptions": "Vybrané možnosti"
+  },
+  "settings": {
+    "systemConfig": "Konfigurace systému",
+    "systemConfigDesc": "Spravujte globální nastavení, bezpečnostní pravidla a výchozí chování celé platformy.",
+    "general": "Obecné",
+    "schoolName": "Název školy / organizace",
+    "currentAcademicYear": "Aktuální akademický rok",
+    "supportEmail": "E-mail podpory",
+    "defaultLanguage": "Výchozí jazyk",
+    "logoUrl": "URL loga",
+    "logoUrlHelp": "Musí to být platná, veřejně přístupná adresa obrázku.",
+    "security": "Zabezpečení a registrace",
+    "allowPublicRegistration": "Povolit veřejnou registraci",
+    "allowPublicRegistrationDesc": "Pokud je vypnuto, nové účty mohou vytvářet pouze administrátoři.",
+    "requireEmailVerification": "Vyžadovat ověření e-mailu",
+    "requireEmailVerificationDesc": "Uživatelé musí před prvním přihlášením kliknout na odkaz ve svém e-mailu.",
+    "limits": "Systémové limity",
+    "maxFileUploadSizeMB": "Maximální velikost nahrávaného souboru (MB)",
+    "maxActiveSessions": "Max. počet aktivních relací na uživatele",
+    "maxActiveSessionsHelp": "Na kolika zařízeních může být uživatel současně přihlášen."
   }
 }

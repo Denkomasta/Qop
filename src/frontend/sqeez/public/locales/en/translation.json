@@ -692,5 +692,25 @@
     "savedSuccessfully": "Grade saved successfully!",
     "likeAnswer": "Like this answer",
     "selectedOptions": "Selected Options"
+  },
+  "settings": {
+    "systemConfig": "System Configuration",
+    "systemConfigDesc": "Manage global settings, security policies, and default behaviors for the entire platform.",
+    "general": "General",
+    "schoolName": "School / Organization Name",
+    "currentAcademicYear": "Current Academic Year",
+    "supportEmail": "Support Email",
+    "defaultLanguage": "Default Language",
+    "logoUrl": "Logo URL",
+    "logoUrlHelp": "Must be a valid, publicly accessible image URL.",
+    "security": "Security & Registration",
+    "allowPublicRegistration": "Allow Public Registration",
+    "allowPublicRegistrationDesc": "If disabled, only admins can create new user accounts.",
+    "requireEmailVerification": "Require Email Verification",
+    "requireEmailVerificationDesc": "Users must click a link in their email before logging in for the first time.",
+    "limits": "System Limits",
+    "maxFileUploadSizeMB": "Max File Upload Size (MB)",
+    "maxActiveSessions": "Max Active Sessions Per User",
+    "maxActiveSessionsHelp": "How many devices a user can be logged into simultaneously."
   }
 }

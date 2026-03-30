@@ -254,7 +254,7 @@ function QuizDetailsPage() {
                 {maxRetriesReached ? (
                   <Button className="w-full" size="lg" asChild>
                     <Link
-                      to="/app/quizzes/$quizId/results"
+                      to="/app/quizzes/$quizId/attempts"
                       params={{ quizId: quizId.toString() }}
                     >
                       <CheckCircle className="mr-2 size-5" />

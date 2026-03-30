@@ -19,6 +19,7 @@ export function TeacherQuizzesPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [pageNumber, setPageNumber] = useState(1)
+  const [showActiveOnly, setShowActiveOnly] = useState(false)
   const [selectedSubjectId, setSelectedSubjectId] = useState<string | number>(
     'all',
   )
@@ -39,6 +40,7 @@ export function TeacherQuizzesPage() {
       SearchTerm: searchQuery || undefined,
       PageNumber: pageNumber,
       PageSize: 12,
+      IsActive: showActiveOnly,
     },
     { query: { enabled: !!userId } },
   )
@@ -127,6 +129,8 @@ export function TeacherQuizzesPage() {
               ? subjects.find((s) => s.id === selectedSubjectId)
               : undefined
           }
+          showActiveOnly={showActiveOnly}
+          setShowActiveOnly={setShowActiveOnly}
         />
       </section>
       <CreateQuizModal

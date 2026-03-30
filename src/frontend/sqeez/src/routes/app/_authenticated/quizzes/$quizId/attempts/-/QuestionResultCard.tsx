@@ -10,7 +10,10 @@ import { Input } from '@/components/ui/Input'
 import { Spinner } from '@/components/ui/Spinner'
 
 import type { QuestionResponseDto } from '@/api/generated/model'
-import { usePatchApiQuizAttemptsResponsesResponseIdGrade } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
+import {
+  getGetApiQuizAttemptsQuizQuizIdQueryKey,
+  usePatchApiQuizAttemptsResponsesResponseIdGrade,
+} from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
 import { useGetApiQuizzesQuizIdQuestionsQuestionIdDetailed } from '@/api/generated/endpoints/quizzes/quizzes'
 
 interface QuestionResultCardProps {
@@ -43,7 +46,9 @@ export function QuestionResultCard({
   const gradeMutation = usePatchApiQuizAttemptsResponsesResponseIdGrade({
     mutation: {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['api/quiz-attempts'] })
+        queryClient.invalidateQueries({
+          queryKey: getGetApiQuizAttemptsQuizQuizIdQueryKey(quizId),
+        })
         toast.success(t('grading.savedSuccessfully'))
       },
       onError: () => {

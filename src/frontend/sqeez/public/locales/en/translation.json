@@ -613,7 +613,10 @@
     "published": "Published",
     "draft": "Draft",
     "active": "Active",
-    "pastInactive": "Past / Inactive"
+    "pastInactive": "Past / Inactive",
+    "notEnrolledTitle": "Access Denied",
+    "notEnrolledDesc": "You must be enrolled in this subject to play its quizzes.",
+    "notFoundTitle": "Quiz Not Found"
   },
   "editor": {
     "questionsTitle": "Questions",

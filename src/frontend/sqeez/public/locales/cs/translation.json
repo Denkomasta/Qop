@@ -612,7 +612,10 @@
     "published": "Publikováno",
     "draft": "Koncept",
     "active": "Aktivní",
-    "pastInactive": "Ukončený / Neaktivní"
+    "pastInactive": "Ukončený / Neaktivní",
+    "notEnrolledTitle": "Přístup odepřen",
+    "notEnrolledDesc": "Abyste mohli spustit tento kvíz, musíte být zapsáni do příslušného předmětu.",
+    "notFoundTitle": "Kvíz nenalezen"
   },
   "editor": {
     "questionsTitle": "Otázky",

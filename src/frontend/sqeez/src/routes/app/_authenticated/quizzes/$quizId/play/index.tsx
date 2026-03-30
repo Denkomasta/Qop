@@ -9,6 +9,7 @@ import { QuizRecapScreen } from './-/QuizRecapScreen'
 import { ActiveQuestionScreen } from './-/ActiveQuestionScreen'
 import { useQuizEngine } from '@/hooks/useQuizEngine'
 import { MediaAssetViewer } from './-/MediaAssetViewer'
+import { ErrorCard } from '@/components/ui/Card'
 
 export const Route = createFileRoute(
   '/app/_authenticated/quizzes/$quizId/play/',
@@ -33,6 +34,25 @@ function QuizTakePage() {
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
         <Spinner size="lg" />
       </div>
+    )
+  }
+
+  if (state.isBootingUp) {
+    return <Spinner size="lg" className="m-auto" />
+  }
+
+  if (state.bootUpError) {
+    const isNotEnrolled = state.bootUpError === 'NOT_ENROLLED'
+
+    return (
+      <ErrorCard
+        title={
+          isNotEnrolled ? t('quiz.notEnrolledTitle') : t('quiz.notFoundTitle')
+        }
+        description={
+          isNotEnrolled ? t('quiz.notEnrolledDesc') : t('quiz.notFoundDesc')
+        }
+      />
     )
   }
 

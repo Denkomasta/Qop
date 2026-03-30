@@ -190,5 +190,23 @@ namespace Sqeez.Api.Services
                     ServiceError.Conflict);
             }
         }
+
+        public async Task<ServiceResult<bool>> DeleteMediaAssetAndFileAsync(long id)
+        {
+            var asset = await _context.MediaAssets.FindAsync(id);
+            if (asset == null) return ServiceResult<bool>.Ok(true);
+
+            string fileUrl = asset.LocationUrl;
+
+            _context.MediaAssets.Remove(asset);
+            await _context.SaveChangesAsync();
+
+            if (!string.IsNullOrWhiteSpace(fileUrl))
+            {
+                await _fileStorageService.DeleteFileAsync(fileUrl);
+            }
+
+            return ServiceResult<bool>.Ok(true);
+        }
     }
 }

@@ -145,7 +145,7 @@ export function AdminBadgesPage() {
 
       <div className="flex-1 overflow-y-auto p-6">
         <div className="mx-auto max-w-7xl space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <DebouncedInput
               id="admin-badge-search"
               value={searchQuery}
@@ -158,7 +158,7 @@ export function AdminBadgesPage() {
               className="max-w-md bg-card"
               hideErrors
             />
-            <span className="text-sm font-medium text-muted-foreground">
+            <span className="text-sm font-medium text-nowrap text-muted-foreground">
               {t('common.total')}: {totalCount}
             </span>
           </div>

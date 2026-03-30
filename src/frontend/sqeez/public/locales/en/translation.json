@@ -298,7 +298,9 @@
     "adminClasses": "School Classes",
     "adminClassesDescription": "Create, edit, and manage school classes and their students.",
     "adminSubjects": "Subjects",
-    "adminSubjectsDescription": "Manage global subject catalogs, codes, and details."
+    "adminSubjectsDescription": "Manage global subject catalogs, codes, and details.",
+    "adminBadges": "Manage Badges",
+    "adminBadgesDescription": "Create, configure, and manage achievement badges and XP reward rules for the platform."
   },
   "enrollments": {
     "confirmDelete": "Are you sure you want to unenroll from this subject? This action cannot be undone.",

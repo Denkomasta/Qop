@@ -298,7 +298,9 @@
     "adminClasses": "Školní třídy",
     "adminClassesDescription": "Vytvářejte, upravujte a spravujte školní třídy a jejich studenty.",
     "adminSubjects": "Předměty",
-    "adminSubjectsDescription": "Spravujte globální katalog předmětů, kódy a detaily."
+    "adminSubjectsDescription": "Spravujte globální katalog předmětů, kódy a detaily.",
+    "adminBadges": "Správa odznaků",
+    "adminBadgesDescription": "Vytvářejte, upravujte a nastavujte odznaky úspěchů a pravidla pro XP odměny na platformě."
   },
   "error": {
     "generic": "Nastala chyba. Prosím zkuste to později.",

@@ -3,6 +3,8 @@ import { Brain, Heart, Shield, Sparkles, Users } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/Button'
+import { FeatureCard } from '@/components/ui/Card'
+import { CtaSection } from '@/components/ui/Section'
 
 export const Route = createFileRoute('/about/')({
   component: About,
@@ -62,54 +64,39 @@ function About() {
             </div>
 
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-                <Heart className="mb-4 h-8 w-8 text-rose-500" />
-                <h3 className="mb-2 text-xl font-bold text-foreground">
-                  {t('about.values.v1.title')}
-                </h3>
-                <p className="text-muted-foreground">
-                  {t('about.values.v1.desc')}
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-                <Users className="mb-4 h-8 w-8 text-blue-500" />
-                <h3 className="mb-2 text-xl font-bold text-foreground">
-                  {t('about.values.v2.title')}
-                </h3>
-                <p className="text-muted-foreground">
-                  {t('about.values.v2.desc')}
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-                <Shield className="mb-4 h-8 w-8 text-green-500" />
-                <h3 className="mb-2 text-xl font-bold text-foreground">
-                  {t('about.values.v3.title')}
-                </h3>
-                <p className="text-muted-foreground">
-                  {t('about.values.v3.desc')}
-                </p>
-              </div>
+              <FeatureCard
+                icon={<Heart className="h-7 w-7 text-rose-500" />}
+                iconWrapperClassName="bg-rose-500/10"
+                title={t('about.values.v1.title')}
+                description={t('about.values.v1.desc')}
+              />
+              <FeatureCard
+                icon={<Users className="h-7 w-7 text-blue-500" />}
+                iconWrapperClassName="bg-blue-500/10"
+                title={t('about.values.v2.title')}
+                description={t('about.values.v2.desc')}
+              />
+              <FeatureCard
+                icon={<Shield className="h-7 w-7 text-green-500" />}
+                iconWrapperClassName="bg-green-500/10"
+                title={t('about.values.v3.title')}
+                description={t('about.values.v3.desc')}
+              />
             </div>
           </div>
         </section>
 
-        <section className="py-20 sm:py-32">
-          <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-            <h2 className="mb-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              {t('about.cta.title')}
-            </h2>
-            <p className="mb-8 text-lg text-muted-foreground">
-              {t('about.cta.subtitle')}
-            </p>
+        <CtaSection
+          title={t('about.cta.title')}
+          subtitle={t('about.cta.subtitle')}
+          actionButton={
             <Link to="/register">
               <Button size="lg" className="h-14 px-10 text-lg">
                 {t('landing.hero.startBtn')}
               </Button>
             </Link>
-          </div>
-        </section>
+          }
+        />
       </div>
     </div>
   )

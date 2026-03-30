@@ -16,6 +16,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/Accordion'
+import { FeatureCard } from '@/components/ui/Card'
+import { CtaSection } from '@/components/ui/Section'
 
 export const Route = createFileRoute('/help/')({
   component: Help,
@@ -46,35 +48,26 @@ function Help() {
         <section className="py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-              <div className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm">
-                <BookOpen className="mb-4 h-8 w-8 text-blue-500" />
-                <h3 className="mb-2 text-xl font-bold text-foreground">
-                  {t('help.features.create.title')}
-                </h3>
-                <p className="text-muted-foreground">
-                  {t('help.features.create.desc')}
-                </p>
-              </div>
+              <FeatureCard
+                icon={<BookOpen className="h-7 w-7 text-blue-500" />}
+                iconWrapperClassName="bg-blue-500/10"
+                title={t('help.features.create.title')}
+                description={t('help.features.create.desc')}
+              />
 
-              <div className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm">
-                <Brain className="mb-4 h-8 w-8 text-purple-500" />
-                <h3 className="mb-2 text-xl font-bold text-foreground">
-                  {t('help.features.engage.title')}
-                </h3>
-                <p className="text-muted-foreground">
-                  {t('help.features.engage.desc')}
-                </p>
-              </div>
+              <FeatureCard
+                icon={<Brain className="h-7 w-7 text-purple-500" />}
+                iconWrapperClassName="bg-purple-500/10"
+                title={t('help.features.engage.title')}
+                description={t('help.features.engage.desc')}
+              />
 
-              <div className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm">
-                <BarChart3 className="mb-4 h-8 w-8 text-green-500" />
-                <h3 className="mb-2 text-xl font-bold text-foreground">
-                  {t('help.features.track.title')}
-                </h3>
-                <p className="text-muted-foreground">
-                  {t('help.features.track.desc')}
-                </p>
-              </div>
+              <FeatureCard
+                icon={<BarChart3 className="h-7 w-7 text-green-500" />}
+                iconWrapperClassName="bg-green-500/10"
+                title={t('help.features.track.title')}
+                description={t('help.features.track.desc')}
+              />
             </div>
           </div>
         </section>
@@ -132,20 +125,16 @@ function Help() {
           </div>
         </section>
 
-        <section className="py-20">
-          <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-            <h2 className="mb-4 text-2xl font-bold text-foreground sm:text-3xl">
-              {t('help.contact.title')}
-            </h2>
-            <p className="mb-8 text-lg text-muted-foreground">
-              {t('help.contact.subtitle')}
-            </p>
+        <CtaSection
+          title={t('help.contact.title')}
+          subtitle={t('help.contact.subtitle')}
+          actionButton={
             <Button size="lg" className="h-12 gap-2 px-8">
               <Mail className="h-4 w-4" />
               {t('help.contact.btn')}
             </Button>
-          </div>
-        </section>
+          }
+        />
       </div>
     </div>
   )

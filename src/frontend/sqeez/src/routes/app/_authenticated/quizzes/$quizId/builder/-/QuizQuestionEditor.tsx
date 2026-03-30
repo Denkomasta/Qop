@@ -74,18 +74,14 @@ export function QuizQuestionEditor({ quizId }: QuizQuestionEditorProps) {
   return (
     <div className="flex-1 overflow-y-auto bg-background p-8 lg:p-12">
       <div className="mx-auto max-w-3xl space-y-12">
-        <div className="flex flex-col gap-2">
-          <label className="text-xs font-black tracking-widest text-muted-foreground uppercase">
-            {t('editor.questionText')}
-          </label>
-          <DebouncedInput
-            value={question?.title ?? ''}
-            onChange={handleUpdateTitle}
-            placeholder={t('editor.newQuestionDefault')}
-            className="text-lg font-semibold"
-            debounceTime={800}
-          />
-        </div>
+        <DebouncedInput
+          value={question?.title ?? ''}
+          label={t('editor.questionText')}
+          onChange={handleUpdateTitle}
+          placeholder={t('editor.newQuestionDefault')}
+          className="text-lg font-semibold"
+          debounceTime={800}
+        />
 
         <QuestionMediaEditor
           quizId={quizId}

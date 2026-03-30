@@ -12,6 +12,7 @@ interface DebouncedInputProps extends Omit<
   label?: string
   hideErrors?: boolean
   helpText?: string
+  wrapperClassName?: string
 }
 
 export function DebouncedInput({
@@ -19,7 +20,7 @@ export function DebouncedInput({
   onChange,
   debounceTime = 300,
   icon,
-  className = '',
+  wrapperClassName = '',
   label,
   hideErrors,
   helpText,
@@ -42,14 +43,13 @@ export function DebouncedInput({
   }, [localValue, initialValue, debounceTime, onChange])
 
   return (
-    <div className={`relative w-full ${className}`}>
+    <div className={`relative w-full ${wrapperClassName}`}>
       <Input
         {...props}
         icon={icon}
         label={label}
         value={localValue}
         onChange={(e) => setLocalValue(e.target.value)}
-        className={`${icon ? 'pl-9' : ''} w-full`}
         hideErrors={hideErrors}
         helpText={helpText}
       />

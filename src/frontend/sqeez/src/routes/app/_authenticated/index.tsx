@@ -17,6 +17,7 @@ import {
   Library,
   School,
   BookCopy,
+  Award,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useGetApiUsersId } from '@/api/generated/endpoints/user/user'
@@ -161,6 +162,13 @@ function DashboardLaunchpad() {
       icon: <BookCopy className="h-8 w-8" />,
       href: '/app/admin/subjects',
       colorClass: 'bg-cyan-500/10 text-cyan-500',
+    },
+    {
+      title: t('dashboard.adminBadges'),
+      description: t('dashboard.adminBadgesDescription'),
+      icon: <Award className="h-8 w-8" />,
+      href: '/app/admin/badges',
+      colorClass: 'bg-amber-500/10 text-amber-500',
     },
     {
       title: t('dashboard.systemSettings'),

@@ -52,7 +52,7 @@ export function LeaderboardPage() {
 
   return (
     <div className="flex h-full flex-col bg-background">
-      <header className="border-b border-border bg-card p-6 md:p-8">
+      <div className="border-b border-border bg-card p-6 md:p-8">
         <div className="mx-auto flex max-w-4xl flex-col gap-6">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -81,14 +81,13 @@ export function LeaderboardPage() {
                 'Search students...',
               )}
               icon={<Search className="h-4 w-4" />}
-              className="bg-background"
               hideErrors
             />
           </div>
         </div>
-      </header>
+      </div>
 
-      <main className="flex-1 overflow-y-auto p-6 md:p-8">
+      <div className="flex-1 overflow-y-auto p-6 md:p-8">
         <div className="mx-auto max-w-4xl">
           {isLoading ? (
             <div className="flex flex-col gap-3">
@@ -197,7 +196,7 @@ export function LeaderboardPage() {
             </div>
           )}
         </div>
-      </main>
+      </div>
     </div>
   )
 }

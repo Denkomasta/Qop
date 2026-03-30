@@ -3,6 +3,7 @@ import { Trophy, Zap, Target, ArrowRight, Sparkles } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/Button'
+import { FeatureCard } from '@/components/ui/Card'
 
 export const Route = createFileRoute('/')({
   component: Landing,
@@ -69,41 +70,26 @@ function Landing() {
             </div>
 
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-              <div className="flex flex-col items-center rounded-2xl border border-border bg-card p-8 text-center shadow-sm transition-shadow hover:shadow-md">
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-                  <Zap className="h-7 w-7 text-primary" />
-                </div>
-                <h3 className="mb-3 text-xl font-bold text-foreground">
-                  {t('landing.features.quizzes.title')}
-                </h3>
-                <p className="text-muted-foreground">
-                  {t('landing.features.quizzes.desc')}
-                </p>
-              </div>
+              <FeatureCard
+                icon={<Zap className="h-7 w-7 text-primary" />}
+                iconWrapperClassName="bg-primary/10"
+                title={t('landing.features.quizzes.title')}
+                description={t('landing.features.quizzes.desc')}
+              />
 
-              <div className="flex flex-col items-center rounded-2xl border border-border bg-card p-8 text-center shadow-sm transition-shadow hover:shadow-md">
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-yellow-500/10">
-                  <Trophy className="h-7 w-7 text-yellow-500" />
-                </div>
-                <h3 className="mb-3 text-xl font-bold text-foreground">
-                  {t('landing.features.badges.title')}
-                </h3>
-                <p className="text-muted-foreground">
-                  {t('landing.features.badges.desc')}
-                </p>
-              </div>
+              <FeatureCard
+                icon={<Trophy className="h-7 w-7 text-yellow-500" />}
+                iconWrapperClassName="bg-yellow-500/10"
+                title={t('landing.features.badges.title')}
+                description={t('landing.features.badges.desc')}
+              />
 
-              <div className="flex flex-col items-center rounded-2xl border border-border bg-card p-8 text-center shadow-sm transition-shadow hover:shadow-md">
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-green-500/10">
-                  <Target className="h-7 w-7 text-green-500" />
-                </div>
-                <h3 className="mb-3 text-xl font-bold text-foreground">
-                  {t('landing.features.progress.title')}
-                </h3>
-                <p className="text-muted-foreground">
-                  {t('landing.features.progress.desc')}
-                </p>
-              </div>
+              <FeatureCard
+                icon={<Target className="h-7 w-7 text-green-500" />}
+                iconWrapperClassName="bg-green-500/10"
+                title={t('landing.features.progress.title')}
+                description={t('landing.features.progress.desc')}
+              />
             </div>
           </div>
         </div>

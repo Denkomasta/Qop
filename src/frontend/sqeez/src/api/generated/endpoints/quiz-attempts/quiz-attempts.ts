@@ -967,3 +967,84 @@ export const usePatchApiQuizAttemptsResponsesResponseIdGrade = <
     queryClient,
   )
 }
+export const deleteApiQuizAttemptsQuizIdAttempts = (
+  quizId: number | string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<boolean>(
+    { url: `/api/quiz-attempts/${quizId}/attempts`, method: 'DELETE', signal },
+    options,
+  )
+}
+
+export const getDeleteApiQuizAttemptsQuizIdAttemptsMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteApiQuizAttemptsQuizIdAttempts>>,
+    TError,
+    { quizId: number | string },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteApiQuizAttemptsQuizIdAttempts>>,
+  TError,
+  { quizId: number | string },
+  TContext
+> => {
+  const mutationKey = ['deleteApiQuizAttemptsQuizIdAttempts']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteApiQuizAttemptsQuizIdAttempts>>,
+    { quizId: number | string }
+  > = (props) => {
+    const { quizId } = props ?? {}
+
+    return deleteApiQuizAttemptsQuizIdAttempts(quizId, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type DeleteApiQuizAttemptsQuizIdAttemptsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteApiQuizAttemptsQuizIdAttempts>>
+>
+
+export type DeleteApiQuizAttemptsQuizIdAttemptsMutationError =
+  ErrorType<unknown>
+
+export const useDeleteApiQuizAttemptsQuizIdAttempts = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteApiQuizAttemptsQuizIdAttempts>>,
+      TError,
+      { quizId: number | string },
+      TContext
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteApiQuizAttemptsQuizIdAttempts>>,
+  TError,
+  { quizId: number | string },
+  TContext
+> => {
+  return useMutation(
+    getDeleteApiQuizAttemptsQuizIdAttemptsMutationOptions(options),
+    queryClient,
+  )
+}

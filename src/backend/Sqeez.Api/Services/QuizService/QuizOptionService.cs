@@ -94,9 +94,21 @@ namespace Sqeez.Api.Services
 
         public async Task<ServiceResult<QuizOptionDto>> CreateQuizOptionAsync(CreateQuizOptionDto dto)
         {
-            var questionExists = await _context.QuizQuestions.AnyAsync(q => q.Id == dto.QuizQuestionID);
-            if (!questionExists)
+            var questionData = await _context.QuizQuestions
+                .Where(q => q.Id == dto.QuizQuestionID)
+                .Select(q => new
+                {
+                    HasAttempts = _context.QuizAttempts.Any(a => a.QuizId == q.QuizId)
+                })
+                .FirstOrDefaultAsync();
+
+            if (questionData == null)
                 return ServiceResult<QuizOptionDto>.Failure("The specified Quiz Question does not exist.", ServiceError.NotFound);
+
+            if (questionData.HasAttempts)
+                return ServiceResult<QuizOptionDto>.Failure(
+                    "Cannot add new options because students have already started or completed this quiz.",
+                    ServiceError.Conflict);
 
             if (dto.MediaAssetId.HasValue)
             {
@@ -131,10 +143,19 @@ namespace Sqeez.Api.Services
         {
             var option = await _context.QuizOptions
                 .Include(o => o.Responses)
+                .Include(o => o.QuizQuestion)
                 .FirstOrDefaultAsync(o => o.Id == id);
 
             if (option == null)
                 return ServiceResult<QuizOptionDto>.Failure("Quiz option not found.", ServiceError.NotFound);
+
+            bool hasAttempts = await _context.QuizAttempts.AnyAsync(a => a.QuizId == option.QuizQuestion.QuizId);
+            if (hasAttempts)
+            {
+                return ServiceResult<QuizOptionDto>.Failure(
+                    "Cannot modify this option because students have already started or completed this quiz.",
+                    ServiceError.Conflict);
+            }
 
             if (dto.Text != null) option.Text = dto.Text;
             if (dto.IsFreeText.HasValue) option.IsFreeText = dto.IsFreeText.Value;
@@ -182,10 +203,20 @@ namespace Sqeez.Api.Services
 
         public async Task<ServiceResult<bool>> DeleteQuizOptionAsync(long id)
         {
-            var option = await _context.QuizOptions.FindAsync(id);
+            var option = await _context.QuizOptions
+                 .Include(o => o.QuizQuestion)
+                 .FirstOrDefaultAsync(o => o.Id == id);
 
             if (option == null)
                 return ServiceResult<bool>.Failure("Quiz option not found.", ServiceError.NotFound);
+
+            bool hasAttempts = await _context.QuizAttempts.AnyAsync(a => a.QuizId == option.QuizQuestion.QuizId);
+            if (hasAttempts)
+            {
+                return ServiceResult<bool>.Failure(
+                    "Cannot delete this option because students have already started or completed this quiz.",
+                    ServiceError.Conflict);
+            }
 
             long? oldMediaAssetId = option.MediaAssetId;
 

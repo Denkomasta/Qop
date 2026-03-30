@@ -15,7 +15,10 @@ export interface QuestionResponseDto {
   /** @nullable */
   freeTextAnswer: string | null
   isLiked: boolean
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  score: number | string
+  /**
+   * @nullable
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
+  score: number | string | null
   selectedOptionIds: (number | string)[]
 }

@@ -23,7 +23,7 @@ interface QuizState {
     initResume: (attemptId: number) => void
     startAttempt: (attemptId: number, firstQuestionId: number | null) => void
     finishTransition: () => void
-    selectOption: (optId: number | string) => void
+    setSelectedOptions: (ids: (number | string)[]) => void
     setFreeText: (text: string) => void
     submitAnswer: (payload: {
       correctIds: (number | string)[]
@@ -83,7 +83,7 @@ export const useQuizStore = create<QuizState>()(
           currentCorrectOptionIds: [],
         }),
 
-      selectOption: (optId) => set({ selectedOptionIds: [optId] }),
+      setSelectedOptions: (ids) => set({ selectedOptionIds: ids }),
 
       setFreeText: (text) => set({ freeTextValue: text }),
 

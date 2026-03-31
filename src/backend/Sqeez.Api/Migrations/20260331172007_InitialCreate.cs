@@ -333,6 +333,7 @@ namespace Sqeez.Api.Migrations
                     Title = table.Column<string>(type: "text", nullable: true),
                     Difficulty = table.Column<int>(type: "integer", nullable: false),
                     TimeLimit = table.Column<int>(type: "integer", nullable: false),
+                    IsStrictMultipleChoice = table.Column<bool>(type: "boolean", nullable: false),
                     QuizId = table.Column<long>(type: "bigint", nullable: false),
                     MediaAssetId = table.Column<long>(type: "bigint", nullable: true)
                 },

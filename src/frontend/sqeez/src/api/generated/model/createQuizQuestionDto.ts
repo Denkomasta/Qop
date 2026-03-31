@@ -18,4 +18,5 @@ export interface CreateQuizQuestionDto {
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   mediaAssetId?: number | string | null
+  isStrictMultipleChoice?: boolean
 }

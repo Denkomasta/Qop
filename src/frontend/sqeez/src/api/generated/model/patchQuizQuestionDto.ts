@@ -23,4 +23,6 @@ export interface PatchQuizQuestionDto {
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   mediaAssetId?: number | string | null
+  /** @nullable */
+  isStrictMultipleChoice?: boolean | null
 }

@@ -140,11 +140,24 @@ namespace Sqeez.Api.Services
                     var correctOptionIds = question.Options.Where(o => o.IsCorrect).Select(o => o.Id).ToList();
                     var selectedIds = response.Options.Select(o => o.Id).ToList();
 
-                    bool isPerfectMatch = correctOptionIds.Count == selectedIds.Count && !correctOptionIds.Except(selectedIds).Any();
-
-                    if (isPerfectMatch)
+                    if (question.IsStrictMultipleChoice)
                     {
-                        response.Score = question.Difficulty;
+                        bool isPerfectMatch = correctOptionIds.Count == selectedIds.Count
+                                           && !correctOptionIds.Except(selectedIds).Any();
+
+                        if (isPerfectMatch)
+                        {
+                            response.Score = question.Difficulty;
+                        }
+                    }
+                    else
+                    {
+                        bool isCorrectSingleChoice = selectedIds.Count == 1 && correctOptionIds.Contains(selectedIds.First());
+
+                        if (isCorrectSingleChoice)
+                        {
+                            response.Score = question.Difficulty;
+                        }
                     }
                 }
             }

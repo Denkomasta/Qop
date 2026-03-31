@@ -13,6 +13,7 @@ export interface QuizQuestionDto {
   difficulty: number | string
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   timeLimit: number | string
+  isStrictMultipleChoice: boolean
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   quizId: number | string
   /**

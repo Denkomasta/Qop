@@ -52,6 +52,7 @@ namespace Sqeez.Api.Services
                     q.Title ?? string.Empty,
                     q.Difficulty,
                     q.TimeLimit,
+                    q.IsStrictMultipleChoice,
                     q.QuizId,
                     q.MediaAssetId,
                     q.Options.Count
@@ -76,6 +77,7 @@ namespace Sqeez.Api.Services
                     q.Title ?? string.Empty,
                     q.Difficulty,
                     q.TimeLimit,
+                    q.IsStrictMultipleChoice,
                     q.QuizId,
                     q.MediaAssetId,
                     q.Options.Count
@@ -125,6 +127,7 @@ namespace Sqeez.Api.Services
                 question.Title,
                 question.Difficulty,
                 question.TimeLimit,
+                question.IsStrictMultipleChoice,
                 question.QuizId,
                 question.MediaAssetId,
                 0)); // 0 Options on initial creation
@@ -150,6 +153,7 @@ namespace Sqeez.Api.Services
             if (dto.Title != null) question.Title = dto.Title;
             if (dto.Difficulty.HasValue) question.Difficulty = dto.Difficulty.Value;
             if (dto.TimeLimit.HasValue) question.TimeLimit = dto.TimeLimit.Value;
+            if (dto.IsStrictMultipleChoice.HasValue) question.IsStrictMultipleChoice = dto.IsStrictMultipleChoice.Value;
 
             long? oldMediaAssetId = null;
 
@@ -186,6 +190,7 @@ namespace Sqeez.Api.Services
                 question.Title ?? string.Empty,
                 question.Difficulty,
                 question.TimeLimit,
+                question.IsStrictMultipleChoice,
                 question.QuizId,
                 question.MediaAssetId,
                 question.Options.Count));
@@ -248,6 +253,7 @@ namespace Sqeez.Api.Services
                     q.Title ?? string.Empty,
                     q.Difficulty,
                     q.TimeLimit,
+                    q.IsStrictMultipleChoice,
                     q.QuizId,
                     q.MediaAssetId,
                     q.Options.Select(o => new StudentQuizOptionDto(

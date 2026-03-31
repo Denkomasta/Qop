@@ -621,7 +621,9 @@
     "pastInactive": "Past / Inactive",
     "notEnrolledTitle": "Access Denied",
     "notEnrolledDesc": "You must be enrolled in this subject to play its quizzes.",
-    "notFoundTitle": "Quiz Not Found"
+    "notFoundTitle": "Quiz Not Found",
+    "selectMultipleHint": "Select all that apply",
+    "selectSingleHint": "Select one answer"
   },
   "editor": {
     "questionsTitle": "Questions",

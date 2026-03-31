@@ -63,7 +63,8 @@ namespace Sqeez.Api.Services
 
             if (dto.AllowPublicRegistration.HasValue) config.AllowPublicRegistration = dto.AllowPublicRegistration.Value;
             if (dto.RequireEmailVerification.HasValue) config.RequireEmailVerification = dto.RequireEmailVerification.Value;
-            if (dto.MaxFileUploadSizeMB.HasValue) config.MaxFileUploadSizeMB = dto.MaxFileUploadSizeMB.Value;
+            if (dto.MaxAvatarAndBadgeUploadSizeMB.HasValue) config.MaxAvatarAndBadgeUploadSizeMB = dto.MaxAvatarAndBadgeUploadSizeMB.Value;
+            if (dto.MaxQuizMediaUploadSizeMB.HasValue) config.MaxQuizMediaUploadSizeMB = dto.MaxQuizMediaUploadSizeMB.Value;
             if (dto.MaxActiveSessionsPerUser.HasValue) config.MaxActiveSessionsPerUser = dto.MaxActiveSessionsPerUser.Value;
 
             await _context.SaveChangesAsync();
@@ -84,7 +85,9 @@ namespace Sqeez.Api.Services
                 config.SchoolName, config.LogoUrl, config.SupportEmail, config.DefaultLanguage,
                 config.CurrentAcademicYear, config.AllowPublicRegistration,
                 config.RequireEmailVerification,
-                config.MaxFileUploadSizeMB, config.MaxActiveSessionsPerUser
+                config.MaxAvatarAndBadgeUploadSizeMB,
+                config.MaxQuizMediaUploadSizeMB,
+                config.MaxActiveSessionsPerUser
             );
         }
     }

@@ -711,7 +711,10 @@
     "requireEmailVerification": "Vyžadovat ověření e-mailu",
     "requireEmailVerificationDesc": "Uživatelé musí před prvním přihlášením kliknout na odkaz ve svém e-mailu.",
     "limits": "Systémové limity",
-    "maxFileUploadSizeMB": "Maximální velikost nahrávaného souboru (MB)",
+    "maxAvatarSizeMB": "Max. velikost avatara a odznaků (MB)",
+    "maxAvatarSizeHelp": "Maximální velikost souboru pro uživatelské profily a gamifikační odznaky.",
+    "maxQuizMediaSizeMB": "Max. velikost médií v kvízu (MB)",
+    "maxQuizMediaSizeHelp": "Maximální velikost souboru pro kvízová videa, zvuk a velké obrázky.",
     "maxActiveSessions": "Max. počet aktivních relací na uživatele",
     "maxActiveSessionsHelp": "Na kolika zařízeních může být uživatel současně přihlášen."
   }

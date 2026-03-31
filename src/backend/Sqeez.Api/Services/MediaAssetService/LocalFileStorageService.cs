@@ -25,20 +25,50 @@ namespace Sqeez.Api.Services
 
             var config = await _configService.GetConfigAsync();
 
-            long maxSizeBytes = config.Data!.MaxFileUploadSizeMB * 1024 * 1024;
+            int maxLimitMB;
+            string fileCategoryName;
+
+            if (subDirectory.Equals("avatars", StringComparison.OrdinalIgnoreCase) ||
+                subDirectory.Equals("badges", StringComparison.OrdinalIgnoreCase))
+            {
+                maxLimitMB = config.Data!.MaxAvatarAndBadgeUploadSizeMB;
+                fileCategoryName = "avatars and badges";
+            }
+            else
+            {
+                maxLimitMB = config.Data!.MaxQuizMediaUploadSizeMB;
+                fileCategoryName = "quiz media";
+            }
+
+            long maxSizeBytes = maxLimitMB * 1024 * 1024;
 
             if (file.Length > maxSizeBytes)
             {
                 return ServiceResult<string>.Failure(
-                    $"File is too large. Maximum allowed size is {config.Data.MaxFileUploadSizeMB} MB.",
+                    $"File is too large. Maximum allowed size for {fileCategoryName} is {maxLimitMB} MB.",
                     ServiceError.ValidationFailed);
             }
 
             var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+            if (fileCategoryName == "avatars and badges")
+            {
+                var allowedImageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                if (!allowedImageExtensions.Contains(extension))
+                {
+                    var allowed = string.Join(", ", allowedImageExtensions);
+                    return ServiceResult<string>.Failure(
+                        $"Invalid file type. Avatars and badges must be images ({allowed}).",
+                        ServiceError.ValidationFailed);
+                }
+            }
+
             if (string.IsNullOrEmpty(extension) || !_allowedExtensions.Contains(extension))
             {
                 var allowed = string.Join(", ", _allowedExtensions);
-                return ServiceResult<string>.Failure($"Invalid file type '{extension}'. Allowed types are: {allowed}", ServiceError.ValidationFailed);
+                return ServiceResult<string>.Failure(
+                    $"Invalid file type '{extension}'. Allowed types are: {allowed}",
+                    ServiceError.ValidationFailed);
             }
 
             try

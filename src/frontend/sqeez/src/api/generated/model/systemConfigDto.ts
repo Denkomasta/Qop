@@ -14,7 +14,9 @@ export interface SystemConfigDto {
   allowPublicRegistration: boolean
   requireEmailVerification: boolean
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  maxFileUploadSizeMB: number | string
+  maxAvatarAndBadgeUploadSizeMB: number | string
+  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  maxQuizMediaUploadSizeMB: number | string
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   maxActiveSessionsPerUser: number | string
 }

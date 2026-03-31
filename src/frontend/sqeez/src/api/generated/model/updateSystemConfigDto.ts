@@ -24,7 +24,12 @@ export interface UpdateSystemConfigDto {
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
-  maxFileUploadSizeMB: number | string | null
+  maxAvatarAndBadgeUploadSizeMB: number | string | null
+  /**
+   * @nullable
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
+  maxQuizMediaUploadSizeMB: number | string | null
   /**
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$

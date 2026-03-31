@@ -458,7 +458,10 @@ namespace Sqeez.Api.Migrations
                     b.Property<int>("MaxActiveSessionsPerUser")
                         .HasColumnType("integer");
 
-                    b.Property<int>("MaxFileUploadSizeMB")
+                    b.Property<int>("MaxAvatarAndBadgeUploadSizeMB")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MaxQuizMediaUploadSizeMB")
                         .HasColumnType("integer");
 
                     b.Property<bool>("RequireEmailVerification")
@@ -485,7 +488,8 @@ namespace Sqeez.Api.Migrations
                             DefaultLanguage = "en",
                             LogoUrl = "",
                             MaxActiveSessionsPerUser = 3,
-                            MaxFileUploadSizeMB = 10,
+                            MaxAvatarAndBadgeUploadSizeMB = 5,
+                            MaxQuizMediaUploadSizeMB = 50,
                             RequireEmailVerification = true,
                             SchoolName = "Sqeez",
                             SupportEmail = "support@sqeez.com"

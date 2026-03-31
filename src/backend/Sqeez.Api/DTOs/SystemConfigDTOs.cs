@@ -8,7 +8,8 @@
         string CurrentAcademicYear,
         bool AllowPublicRegistration,
         bool RequireEmailVerification,
-        int MaxFileUploadSizeMB,
+        int MaxAvatarAndBadgeUploadSizeMB,
+        int MaxQuizMediaUploadSizeMB,
         int MaxActiveSessionsPerUser
     );
 
@@ -20,7 +21,8 @@
         string? CurrentAcademicYear,
         bool? AllowPublicRegistration,
         bool? RequireEmailVerification,
-        int? MaxFileUploadSizeMB,
+        int? MaxAvatarAndBadgeUploadSizeMB,
+        int? MaxQuizMediaUploadSizeMB,
         int? MaxActiveSessionsPerUser
     );
 }

@@ -18,7 +18,8 @@
         public bool RequireEmailVerification { get; set; } = true;
 
         // --- TECHNICAL LIMITS ---
-        public int MaxFileUploadSizeMB { get; set; } = 10; // Prevent students from uploading 4K videos
+        public int MaxAvatarAndBadgeUploadSizeMB { get; set; } = 5; // Images only (5MB is plenty for high-res web images)
+        public int MaxQuizMediaUploadSizeMB { get; set; } = 50; // Videos, Audio, complex diagrams (50MB)
         public int MaxActiveSessionsPerUser { get; set; } = 3; // Prevent account sharing
     }
 }

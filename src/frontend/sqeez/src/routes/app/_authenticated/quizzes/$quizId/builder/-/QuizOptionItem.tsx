@@ -24,12 +24,14 @@ interface QuizOptionItemProps {
   quizId: string
   questionId: string
   option: QuizOptionDto
+  maxFileSizeMB?: number
 }
 
 export function QuizOptionItem({
   quizId,
   questionId,
   option,
+  maxFileSizeMB,
 }: QuizOptionItemProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
@@ -178,6 +180,7 @@ export function QuizOptionItem({
         onSave={async (newAssetId) => {
           await handleUpdate({ mediaAssetId: newAssetId })
         }}
+        maxFileSizeMB={maxFileSizeMB}
       />
     </>
   )

@@ -315,6 +315,8 @@ namespace Sqeez.Api.Services.UserService
             user.ArchivedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
+            // Delete must be with file deletion
+
             return ServiceResult<bool>.Ok(true);
         }
 

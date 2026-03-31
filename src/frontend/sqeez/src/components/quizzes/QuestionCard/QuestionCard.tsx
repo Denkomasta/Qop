@@ -28,33 +28,34 @@ export function QuestionCard({
   const isMultiChoice = question.isStrictMultipleChoice === true
 
   return (
-    <Card className="flex-1 border-primary/10 shadow-md">
-      <CardHeader className="border-b bg-muted/20 pb-6">
-        <div className="space-y-2">
-          <CardTitle className="text-xl leading-relaxed md:text-2xl">
+    <Card className="flex-1 overflow-hidden border-0 bg-transparent shadow-none">
+      <CardHeader className="mb-6 rounded-3xl border-4 border-primary/10 bg-card pb-8 text-center shadow-sm">
+        <div className="space-y-3">
+          <CardTitle className="text-2xl leading-relaxed font-black tracking-wide text-primary md:text-4xl">
             {question.title}
           </CardTitle>
 
-          <p className="text-sm font-medium text-muted-foreground">
+          <div className="inline-block rounded-full bg-muted/50 px-4 py-1 text-sm font-bold text-muted-foreground">
             {isMultiChoice
               ? t('quiz.selectMultipleHint')
               : t('quiz.selectSingleHint')}
-          </p>
+          </div>
         </div>
 
         {question.mediaAssetId && renderMediaAsset && (
-          <div className="mt-4 overflow-hidden rounded-xl border bg-background/50">
+          <div className="mx-auto mt-6 max-w-xl overflow-hidden rounded-2xl border-4 border-primary/5 shadow-md">
             {renderMediaAsset(question.mediaAssetId, false)}
           </div>
         )}
       </CardHeader>
 
-      <CardContent className="pt-6">
-        <div className="space-y-4">
-          {question.options.map((option) => (
+      <CardContent className="p-0">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
+          {question.options.map((option, index) => (
             <QuizOptionItem
               key={option.id}
               option={option}
+              index={index}
               isSelected={selectedOptionIds.includes(option.id)}
               isMultiChoice={isMultiChoice}
               onSelect={() => onSelectOption(option.id)}

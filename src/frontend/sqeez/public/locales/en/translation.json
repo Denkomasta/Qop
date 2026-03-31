@@ -623,7 +623,10 @@
     "notEnrolledDesc": "You must be enrolled in this subject to play its quizzes.",
     "notFoundTitle": "Quiz Not Found",
     "selectMultipleHint": "Select all that apply",
-    "selectSingleHint": "Select one answer"
+    "selectSingleHint": "Select one answer",
+    "pendingGrading": "Pending Grading",
+    "pendingGradingDesc": "Your teacher will review this answer soon!",
+    "expectedAnswer": "Expected Answer"
   },
   "editor": {
     "questionsTitle": "Questions",

@@ -689,7 +689,12 @@
     "freeTextModeActive": "Režim volné odpovědi je aktivní",
     "freeTextHint": "Studenti napíší svou odpověď. Níže zadejte očekávanou odpověď pro automatické hodnocení, nebo tuto možnost smažte pro návrat k Výběru z možností.",
     "quizLockedTitle": "Kvíz je uzamčen",
-    "quizLockedDesc": "Tento kvíz nelze upravovat, protože jej již studenti vyplnili. Pro odemčení úprav musíte nejprve smazat jejich pokusy."
+    "quizLockedDesc": "Tento kvíz nelze upravovat, protože jej již studenti vyplnili. Pro odemčení úprav musíte nejprve smazat jejich pokusy.",
+    "maxFileSizeHintTypes": "Max. {{maxSize}} MB (Obrázky, Video, Zvuk)",
+    "difficultyEasy": "Snadné - Základní koncepty",
+    "difficultyMedium": "Střední - Vyžaduje přemýšlení",
+    "difficultyHard": "Těžké - Pokročilé znalosti",
+    "viewOptionMedia": "Zobrazit média možnosti"
   },
   "grading": {
     "needsGrading": "Vyžaduje hodnocení",

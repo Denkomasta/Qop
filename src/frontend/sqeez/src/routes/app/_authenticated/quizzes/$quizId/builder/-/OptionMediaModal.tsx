@@ -1,18 +1,28 @@
 import { useRef, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { UploadCloud, X, FileAudio, FileVideo, ImageIcon } from 'lucide-react'
+import {
+  UploadCloud,
+  X,
+  FileAudio,
+  FileVideo,
+  ImageIcon,
+  Lock,
+} from 'lucide-react'
 import { BaseModal } from '@/components/ui/Modal'
 import { AsyncButton, Button } from '@/components/ui/Button'
 import { toast } from 'sonner'
 import { usePostApiMediaAssetsUpload } from '@/api/generated/endpoints/media-assets/media-assets'
 import { MediaAssetViewer } from '../../play/-/MediaAssetViewer'
+import { useSystemConfig } from '@/hooks/useSystemConfig'
+import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
+import { handleQuizMutationError } from '@/lib/quizHelpers'
+import { cn } from '@/lib/utils'
 
 interface OptionMediaModalProps {
   isOpen: boolean
   onClose: () => void
   onSave: (newMediaAssetId: number | string | null) => Promise<void>
   currentMediaAssetId?: number | string | null
-  maxFileSizeMB?: number
 }
 
 export function OptionMediaModal({
@@ -20,16 +30,20 @@ export function OptionMediaModal({
   onClose,
   onSave,
   currentMediaAssetId,
-  maxFileSizeMB = 10,
 }: OptionMediaModalProps) {
   const { t } = useTranslation()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const { config } = useSystemConfig()
+
+  const isLocked = useQuizEditorUIStore((s) => s.isLocked)
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [isConfirmingRemove, setIsConfirmingRemove] = useState(false)
 
   const uploadMedia = usePostApiMediaAssetsUpload()
+
+  const maxSizeMB = Number(config?.maxQuizMediaUploadSizeMB) || 5
 
   useEffect(() => {
     return () => {
@@ -48,10 +62,12 @@ export function OptionMediaModal({
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isLocked) return
+
     const file = e.target.files?.[0]
     if (file) {
-      if (file.size > maxFileSizeMB * 1024 * 1024) {
-        toast.error(t('errors.fileTooLarge', { maxValue: maxFileSizeMB }))
+      if (file.size > maxSizeMB * 1024 * 1024) {
+        toast.error(t('errors.fileTooLarge', { maxValue: maxSizeMB }))
         return
       }
       setSelectedFile(file)
@@ -60,10 +76,12 @@ export function OptionMediaModal({
   }
 
   const handleConfirmSave = async () => {
+    if (isLocked) return
+
     try {
       if (selectedFile) {
         const response = await uploadMedia.mutateAsync({
-          data: { File: selectedFile },
+          data: { File: selectedFile, IsPrivate: false },
         })
 
         if (!response.id) throw new Error('Upload failed to return an ID')
@@ -76,18 +94,19 @@ export function OptionMediaModal({
       }
       handleClose()
     } catch (error) {
-      console.error(error)
-      toast.error(t('common.error'))
+      handleQuizMutationError(error, t)
     }
   }
 
   const handleRemoveCurrentMedia = async () => {
+    if (isLocked) return
+
     try {
-      await onSave(0) // never existing id
+      await onSave(0)
       toast.success(t('editor.mediaRemoved'))
       handleClose()
-    } catch {
-      toast.error(t('common.error'))
+    } catch (error) {
+      handleQuizMutationError(error, t)
     }
   }
 
@@ -103,31 +122,23 @@ export function OptionMediaModal({
         />
       )
     }
-    if (selectedFile.type.startsWith('video/')) {
-      return (
-        <div className="flex flex-col items-center justify-center rounded-xl bg-muted/20 p-4">
-          <FileVideo className="mb-2 h-12 w-12 text-muted-foreground" />
-          <p className="text-sm font-medium">{selectedFile.name}</p>
-        </div>
-      )
-    }
-    if (selectedFile.type.startsWith('audio/')) {
-      return (
-        <div className="flex flex-col items-center justify-center rounded-xl bg-muted/20 p-4">
-          <FileAudio className="mb-2 h-12 w-12 text-muted-foreground" />
-          <p className="text-sm font-medium">{selectedFile.name}</p>
-        </div>
-      )
-    }
-    return <p className="text-sm">{selectedFile.name}</p>
+    const Icon = selectedFile.type.startsWith('video/') ? FileVideo : FileAudio
+    return (
+      <div className="flex flex-col items-center justify-center rounded-xl bg-muted/20 p-4">
+        <Icon className="mb-2 h-12 w-12 text-muted-foreground" />
+        <p className="text-sm font-medium">{selectedFile.name}</p>
+      </div>
+    )
   }
 
   return (
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      title={t('editor.optionMediaTitle')}
-      description={t('editor.optionMediaDescription')}
+      title={
+        isLocked ? t('editor.viewOptionMedia') : t('editor.optionMediaTitle')
+      }
+      description={isLocked ? undefined : t('editor.optionMediaDescription')}
       footer={
         isConfirmingRemove ? (
           <div className="flex w-full animate-in flex-col items-center justify-evenly gap-4 fade-in slide-in-from-bottom-2 sm:flex-row">
@@ -143,6 +154,7 @@ export function OptionMediaModal({
               variant="destructive"
               size="lg"
               onClick={handleRemoveCurrentMedia}
+              disabled={isLocked}
               className="flex-1 sm:min-w-32 sm:flex-none"
             >
               {t('common.remove')}
@@ -150,7 +162,7 @@ export function OptionMediaModal({
           </div>
         ) : (
           <div className="flex w-full animate-in justify-between gap-4 fade-in sm:space-x-0">
-            {currentMediaAssetId && !selectedFile ? (
+            {currentMediaAssetId && !selectedFile && !isLocked ? (
               <Button
                 variant="destructive"
                 size="lg"
@@ -172,15 +184,17 @@ export function OptionMediaModal({
               >
                 {t('common.cancel')}
               </Button>
-              <AsyncButton
-                size="lg"
-                onClick={handleConfirmSave}
-                disabled={!selectedFile}
-                loadingText={t('common.saving') + '...'}
-                className="min-w-32"
-              >
-                {t('common.save')}
-              </AsyncButton>
+              {!isLocked && (
+                <AsyncButton
+                  size="lg"
+                  onClick={handleConfirmSave}
+                  disabled={!selectedFile}
+                  loadingText={t('common.saving') + '...'}
+                  className="min-w-32"
+                >
+                  {t('common.save')}
+                </AsyncButton>
+              )}
             </div>
           </div>
         )
@@ -193,6 +207,7 @@ export function OptionMediaModal({
           className="hidden"
           ref={fileInputRef}
           onChange={handleFileChange}
+          disabled={isLocked}
         />
 
         <div className="w-full">
@@ -214,28 +229,43 @@ export function OptionMediaModal({
           ) : currentMediaAssetId ? (
             <div className="group relative w-full">
               <MediaAssetViewer assetId={currentMediaAssetId} isOption />
-              <Button
-                size="sm"
-                variant="secondary"
-                className="absolute right-2 bottom-2 gap-2 shadow-md"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <UploadCloud className="h-4 w-4" />
-                {t('editor.changeMedia')}
-              </Button>
+              {!isLocked && (
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="absolute right-2 bottom-2 gap-2 shadow-md"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <UploadCloud className="h-4 w-4" />
+                  {t('editor.changeMedia')}
+                </Button>
+              )}
             </div>
           ) : (
             <div
-              className="flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-muted-foreground/50 bg-secondary/30 transition-colors hover:bg-secondary/50"
-              onClick={() => fileInputRef.current?.click()}
+              className={cn(
+                'flex h-40 w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-muted-foreground/50 bg-secondary/30 transition-colors',
+                isLocked
+                  ? 'cursor-not-allowed opacity-50'
+                  : 'cursor-pointer hover:bg-secondary/50',
+              )}
+              onClick={() => !isLocked && fileInputRef.current?.click()}
             >
-              <ImageIcon className="mb-2 h-8 w-8 text-muted-foreground" />
+              {isLocked ? (
+                <Lock className="mb-2 h-8 w-8 text-muted-foreground" />
+              ) : (
+                <ImageIcon className="mb-2 h-8 w-8 text-muted-foreground" />
+              )}
               <span className="text-sm font-medium text-muted-foreground">
-                {t('editor.clickToSelectMedia')}
+                {isLocked
+                  ? t('editor.quizLockedTitle')
+                  : t('editor.clickToSelectMedia')}
               </span>
-              <span className="mt-1 text-xs text-muted-foreground/70">
-                Max {maxFileSizeMB}MB (Images, Video, Audio)
-              </span>
+              {!isLocked && (
+                <span className="mt-1 text-xs text-muted-foreground/70">
+                  {t('editor.maxFileSizeHintTypes', { maxSize: maxSizeMB })}
+                </span>
+              )}
             </div>
           )}
         </div>

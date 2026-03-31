@@ -5,9 +5,9 @@ import {
 } from '@/api/generated/endpoints/quizzes/quizzes'
 import { useQueryClient } from '@tanstack/react-query'
 import { cn } from '@/lib/utils'
-import { toast } from 'sonner'
-import type { AxiosError } from 'axios'
-import type { AspNetProblemDetails } from '@/api/custom-axios'
+import { Lock } from 'lucide-react'
+import { handleQuizMutationError } from '@/lib/quizHelpers'
+import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
 
 interface QuestionDifficultyEditorProps {
   quizId: string
@@ -23,42 +23,46 @@ export function QuestionDifficultyEditor({
   const { t } = useTranslation()
   const queryClient = useQueryClient()
 
-  const updateMutation = usePatchApiQuizzesQuizIdQuestionsQuestionId({
-    mutation: {
-      onSuccess: (updatedQuestionData) => {
-        queryClient.setQueryData(
-          getGetApiQuizzesQuizIdQuestionsQuestionIdQueryKey(quizId, questionId),
-          updatedQuestionData,
-        )
+  const isLocked = useQuizEditorUIStore((s) => s.isLocked)
+
+  const { mutate: updateDifficulty, isPending } =
+    usePatchApiQuizzesQuizIdQuestionsQuestionId({
+      mutation: {
+        onSuccess: (updatedQuestionData) => {
+          queryClient.setQueryData(
+            getGetApiQuizzesQuizIdQuestionsQuestionIdQueryKey(
+              quizId,
+              questionId,
+            ),
+            updatedQuestionData,
+          )
+        },
+        onError: (error) => handleQuizMutationError(error, t),
       },
-    },
-  })
+    })
 
   const levels = [1, 2, 3, 4, 5]
 
-  const handleDifficultyChange = async (level: number) => {
-    if (level === currentDifficulty) return
+  const handleDifficultyChange = (level: number) => {
+    if (level === currentDifficulty || isLocked) return
 
-    try {
-      await updateMutation.mutateAsync({
-        quizId,
-        questionId,
-        data: { difficulty: level },
-      })
-    } catch (e) {
-      const axiosError = e as AxiosError<AspNetProblemDetails>
-      if (axiosError.response?.status === 403) {
-        toast.error(t('errors.accessDeniedTitle'))
-      } else {
-        toast.error(t('common.error') || 'Failed to save')
-      }
-    }
+    updateDifficulty({
+      quizId,
+      questionId,
+      data: { difficulty: level },
+    })
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="text-xs font-black tracking-widest text-muted-foreground uppercase">
+    <div
+      className={cn(
+        'flex flex-col gap-2',
+        isLocked && 'opacity-70 grayscale-[0.2]',
+      )}
+    >
+      <div className="flex items-center gap-2 text-xs font-black tracking-widest text-muted-foreground uppercase">
         {t('editor.difficulty')}
+        {isLocked && <Lock className="h-3 w-3" />}
       </div>
 
       <div className="flex gap-2">
@@ -66,12 +70,16 @@ export function QuestionDifficultyEditor({
           <button
             key={level}
             onClick={() => handleDifficultyChange(level)}
-            disabled={updateMutation.isPending}
+            disabled={isPending || isLocked}
             className={cn(
               'h-10 flex-1 rounded-lg border text-sm font-bold transition-all active:scale-95',
               currentDifficulty === level
                 ? 'border-primary bg-primary text-primary-foreground shadow-md'
-                : 'border-muted bg-background text-muted-foreground hover:border-primary/50',
+                : 'border-muted bg-background text-muted-foreground',
+              !isLocked && 'hover:border-primary/50',
+              (isPending || isLocked) &&
+                currentDifficulty !== level &&
+                'cursor-not-allowed opacity-50',
             )}
           >
             {level}
@@ -80,9 +88,9 @@ export function QuestionDifficultyEditor({
       </div>
 
       <p className="px-1 text-[10px] text-muted-foreground italic">
-        {currentDifficulty <= 2 && 'Easy - Basic concepts'}
-        {currentDifficulty === 3 && 'Medium - Requires some thought'}
-        {currentDifficulty >= 4 && 'Hard - Advanced mastery'}
+        {currentDifficulty <= 2 && t('editor.difficultyEasy')}
+        {currentDifficulty === 3 && t('editor.difficultyMedium')}
+        {currentDifficulty >= 4 && t('editor.difficultyHard')}
       </p>
     </div>
   )

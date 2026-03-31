@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { useQueryClient } from '@tanstack/react-query'
 import { QuizOptionItem } from './QuizOptionItem'
 import { handleQuizMutationError } from '@/lib/quizHelpers'
+import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
 
 interface QuizOptionsEditorProps {
   quizId: string
@@ -21,6 +22,8 @@ export function QuizOptionsEditor({
 }: QuizOptionsEditorProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
+
+  const { isLocked } = useQuizEditorUIStore()
 
   const { data: optionsData, isLoading } =
     useGetApiQuizzesQuizIdQuestionsQuestionIdOptions(quizId, questionId)
@@ -44,6 +47,8 @@ export function QuizOptionsEditor({
   })
 
   const handleAddOption = async (asFreeText: boolean = false) => {
+    if (isLocked) return
+
     await addOptionMutation.mutateAsync({
       quizId,
       questionId,
@@ -73,7 +78,7 @@ export function QuizOptionsEditor({
             variant="ghost"
             size="sm"
             onClick={() => handleAddOption(false)}
-            disabled={addOptionMutation.isPending}
+            disabled={addOptionMutation.isPending || isLocked}
             className="h-8 gap-1"
           >
             {addOptionMutation.isPending ? (
@@ -117,7 +122,7 @@ export function QuizOptionsEditor({
                 variant="outline"
                 className="gap-2"
                 onClick={() => handleAddOption(false)}
-                disabled={addOptionMutation.isPending}
+                disabled={addOptionMutation.isPending || isLocked}
               >
                 <ListChecks className="h-4 w-4" />
                 {t('editor.startMultipleChoice')}
@@ -126,7 +131,7 @@ export function QuizOptionsEditor({
                 variant="outline"
                 className="gap-2"
                 onClick={() => handleAddOption(true)}
-                disabled={addOptionMutation.isPending}
+                disabled={addOptionMutation.isPending || isLocked}
               >
                 <Type className="h-4 w-4" />
                 {t('editor.startFreeText')}

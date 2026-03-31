@@ -19,7 +19,7 @@ interface QuizEditorSidebarProps {
 
 export function QuizEditorSidebar({ quizId }: QuizEditorSidebarProps) {
   const { t } = useTranslation()
-  const { activeQuestionId, actions } = useQuizEditorUIStore()
+  const { activeQuestionId, actions, isLocked } = useQuizEditorUIStore()
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [questionToDelete, setQuestionToDelete] = useState<
@@ -98,7 +98,7 @@ export function QuizEditorSidebar({ quizId }: QuizEditorSidebarProps) {
             size="sm"
             className="h-8 w-8 p-0"
             onClick={handleAddQuestion}
-            disabled={createQuestion.isPending}
+            disabled={createQuestion.isPending || isLocked}
             title={t('editor.addQuestion')}
           >
             {createQuestion.isPending ? (
@@ -193,6 +193,7 @@ export function QuizEditorSidebar({ quizId }: QuizEditorSidebarProps) {
                     : 'text-muted-foreground hover:bg-destructive/10 hover:text-destructive',
                 )}
                 onClick={(e) => handleDeleteClick(e, q.id)}
+                disabled={deleteQuestion.isPending || isLocked}
               >
                 {deleteQuestion.isPending ? (
                   <Loader2 className="h-3 w-3 animate-spin" />
@@ -217,7 +218,7 @@ export function QuizEditorSidebar({ quizId }: QuizEditorSidebarProps) {
           'Are you sure you want to delete this question? This action cannot be undone.',
         )}
         isDestructive={true}
-        confirmText={t('common.delete', 'Delete')}
+        confirmText={t('common.delete')}
       />
     </>
   )

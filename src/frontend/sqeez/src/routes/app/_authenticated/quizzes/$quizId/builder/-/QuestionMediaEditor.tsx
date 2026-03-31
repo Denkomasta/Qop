@@ -5,12 +5,15 @@ import {
   usePatchApiQuizzesQuizIdQuestionsQuestionId,
 } from '@/api/generated/endpoints/quizzes/quizzes'
 import { usePostApiMediaAssetsUpload } from '@/api/generated/endpoints/media-assets/media-assets'
-import { Image as ImageIcon, UploadCloud, X, Loader2 } from 'lucide-react'
+import { Image as ImageIcon, UploadCloud, X, Loader2, Lock } from 'lucide-react'
 import { toast } from 'sonner'
 import { MediaAssetViewer } from '../../play/-/MediaAssetViewer'
 import { AsyncButton, ConfirmModal } from '@/components/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useSystemConfig } from '@/hooks/useSystemConfig'
+import { handleQuizMutationError } from '@/lib/quizHelpers'
+import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
+import { cn } from '@/lib/utils'
 
 interface QuestionMediaEditorProps {
   quizId: string
@@ -28,6 +31,8 @@ export function QuestionMediaEditor({
 
   const { config } = useSystemConfig()
 
+  const isLocked = useQuizEditorUIStore((s) => s.isLocked)
+
   const [isUploading, setIsUploading] = useState(false)
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false)
 
@@ -39,6 +44,7 @@ export function QuestionMediaEditor({
           updatedQuizData,
         )
       },
+      onError: (error) => handleQuizMutationError(error, t),
     },
   })
 
@@ -46,6 +52,8 @@ export function QuestionMediaEditor({
   const maxSizeMB = Number(config?.maxQuizMediaUploadSizeMB) || 10
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isLocked) return
+
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -79,7 +87,9 @@ export function QuestionMediaEditor({
       toast.success(t('editor.mediaUploaded'))
     } catch (error) {
       console.error('Upload failed', error)
-      toast.error(t('common.error'))
+      if (!updateMutation.isError) {
+        toast.error(t('common.error'))
+      }
     } finally {
       setIsUploading(false)
       e.target.value = ''
@@ -87,6 +97,8 @@ export function QuestionMediaEditor({
   }
 
   const handleRemoveMedia = async () => {
+    if (isLocked) return
+
     try {
       await updateMutation.mutateAsync({
         quizId,
@@ -96,7 +108,7 @@ export function QuestionMediaEditor({
       setIsRemoveModalOpen(false)
       toast.success(t('editor.mediaRemoved'))
     } catch {
-      toast.error(t('common.error'))
+      // Handled by mutation onError
     }
   }
 
@@ -104,31 +116,41 @@ export function QuestionMediaEditor({
     <div className="space-y-3">
       <div className="flex items-center gap-2 text-xs font-black tracking-widest text-muted-foreground uppercase">
         <ImageIcon className="h-4 w-4" /> {t('editor.mediaAsset')}
+        {isLocked && <Lock className="h-3 w-3" />}
       </div>
 
       {currentMediaAssetId ? (
         <div className="w-full overflow-hidden rounded-xl border-2 border-muted bg-muted/5">
-          <div className="flex items-center justify-end border-b-2 border-muted bg-muted/20 p-2">
-            <AsyncButton
-              onClick={() => setIsRemoveModalOpen(true)}
-              variant="ghost"
-              size="sm"
-              className="hover:text-destructive-foreground h-8 gap-2 text-destructive hover:bg-destructive"
-              title={t('editor.removeMedia')}
-            >
-              <X className="size-4" />
-              <span className="text-sm font-medium">
-                {t('common.remove', 'Remove')}
-              </span>
-            </AsyncButton>
-          </div>
+          {!isLocked && (
+            <div className="flex items-center justify-end border-b-2 border-muted bg-muted/20 p-2">
+              <AsyncButton
+                onClick={() => setIsRemoveModalOpen(true)}
+                variant="ghost"
+                size="sm"
+                className="hover:text-destructive-foreground h-8 gap-2 text-destructive hover:bg-destructive"
+                title={t('editor.removeMedia')}
+              >
+                <X className="size-4" />
+                <span className="text-sm font-medium">
+                  {t('common.remove', 'Remove')}
+                </span>
+              </AsyncButton>
+            </div>
+          )}
 
           <div className="flex min-h-30 w-full items-center justify-center p-4">
             <MediaAssetViewer assetId={currentMediaAssetId} />
           </div>
         </div>
       ) : (
-        <label className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-muted-foreground/30 bg-muted/5 transition-colors hover:border-primary/50 hover:bg-primary/5">
+        <label
+          className={cn(
+            'flex h-32 w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-muted-foreground/30 bg-muted/5 transition-colors',
+            isLocked
+              ? 'cursor-not-allowed opacity-70 grayscale-[0.2]'
+              : 'cursor-pointer hover:border-primary/50 hover:bg-primary/5',
+          )}
+        >
           {isUploading ? (
             <div className="flex flex-col items-center gap-2">
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -143,29 +165,31 @@ export function QuestionMediaEditor({
                 {t('editor.uploadMediaHint')}
               </span>
               <span className="mt-1 text-xs text-muted-foreground/70">
-                Max {maxSizeMB}MB
+                {t('editor.maxFileSizeHintTypes', { maxSize: maxSizeMB })}
               </span>
               <input
                 type="file"
                 accept="image/*,video/*,audio/*"
                 className="hidden"
                 onChange={handleFileUpload}
-                disabled={isUploading}
+                disabled={isUploading || isLocked}
               />
             </>
           )}
         </label>
       )}
 
-      <ConfirmModal
-        isOpen={isRemoveModalOpen}
-        onClose={() => setIsRemoveModalOpen(false)}
-        onConfirm={handleRemoveMedia}
-        title={t('editor.removeMediaTitle')}
-        description={t('editor.removeMediaDesc')}
-        isDestructive={true}
-        confirmText={t('common.remove')}
-      />
+      {!isLocked && (
+        <ConfirmModal
+          isOpen={isRemoveModalOpen}
+          onClose={() => setIsRemoveModalOpen(false)}
+          onConfirm={handleRemoveMedia}
+          title={t('editor.removeMediaTitle')}
+          description={t('editor.removeMediaDesc')}
+          isDestructive={true}
+          confirmText={t('common.remove')}
+        />
+      )}
     </div>
   )
 }

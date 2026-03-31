@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
@@ -9,6 +9,7 @@ import {
   Globe2,
   Trash2,
   AlertTriangle,
+  Lock,
 } from 'lucide-react'
 
 import {
@@ -23,6 +24,7 @@ import { DebouncedTextArea } from '@/components/ui/TextArea'
 import { DateTimePicker, Input } from '@/components/ui/Input'
 import { ConfirmModal } from '@/components/ui/Modal/ConfirmModal'
 import { useDeleteApiQuizAttemptsQuizIdAttempts } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
+import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
 
 interface QuizSettingsEditorProps {
   quizId: string
@@ -31,6 +33,7 @@ interface QuizSettingsEditorProps {
 export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
+  const { isLocked, actions } = useQuizEditorUIStore()
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
@@ -41,6 +44,12 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
       query: { enabled: !!quizId },
     },
   )
+
+  useEffect(() => {
+    if (quizResponse) {
+      actions.setLocked(Number(quizResponse.quizAttempts) > 0)
+    }
+  }, [quizResponse, actions])
 
   const patchMutation = usePatchApiQuizzesQuizId({
     mutation: {
@@ -58,6 +67,8 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
       onSuccess: () => {
         toast.success(t('editor.attemptsDeletedSuccess'))
         setIsDeleteModalOpen(false)
+
+        actions.setLocked(false)
 
         queryClient.invalidateQueries({
           predicate: (query) => query.queryKey.includes('attempts'),
@@ -111,6 +122,9 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
             <h1 className="text-2xl font-bold tracking-tight">
               {t('editor.quizSettings')}
             </h1>
+            {isLocked && (
+              <Lock className="ml-2 h-5 w-5 text-muted-foreground" />
+            )}
           </div>
           <Button
             variant={isPublished ? 'outline' : 'default'}

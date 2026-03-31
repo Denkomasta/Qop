@@ -1,6 +1,12 @@
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Trash2, CheckCircle2, Circle, Image as ImageIcon } from 'lucide-react'
+import {
+  Trash2,
+  CheckCircle2,
+  Circle,
+  Image as ImageIcon,
+  Lock,
+} from 'lucide-react'
 import {
   getGetApiQuizzesQuizIdQuestionsQuestionIdOptionsQueryKey,
   usePatchApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionId,
@@ -13,6 +19,7 @@ import { cn } from '@/lib/utils'
 import { OptionMediaModal } from './OptionMediaModal'
 import type { PatchQuizOptionDto, QuizOptionDto } from '@/api/generated/model'
 import { handleQuizMutationError } from '@/lib/quizHelpers'
+import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
 
 interface QuizOptionItemProps {
   quizId: string
@@ -30,8 +37,11 @@ export function QuizOptionItem({
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false)
+  const lastSubmittedData = useRef<string | null>(null)
 
-  const patchOption =
+  const isLocked = useQuizEditorUIStore((s) => s.isLocked)
+
+  const { mutate: updateOption, isPending: isUpdating } =
     usePatchApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionId({
       mutation: {
         onSuccess: () => {
@@ -46,7 +56,7 @@ export function QuizOptionItem({
       },
     })
 
-  const deleteOption =
+  const { mutate: removeOption, isPending: isDeleting } =
     useDeleteApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionId({
       mutation: {
         onSuccess: () => {
@@ -61,17 +71,52 @@ export function QuizOptionItem({
       },
     })
 
-  const handleUpdate = async (data: PatchQuizOptionDto) => {
-    await patchOption.mutateAsync({
+  const handleUpdate = useCallback(
+    (data: PatchQuizOptionDto) => {
+      if (isLocked) return
+
+      if (
+        (data.text !== undefined && data.text === option.text) ||
+        (data.isCorrect !== undefined && data.isCorrect === option.isCorrect) ||
+        (data.isFreeText !== undefined &&
+          data.isFreeText === option.isFreeText) ||
+        (data.mediaAssetId !== undefined &&
+          data.mediaAssetId === option.mediaAssetId)
+      ) {
+        lastSubmittedData.current = null
+        return
+      }
+
+      const stringifiedData = JSON.stringify(data)
+      if (stringifiedData === lastSubmittedData.current) {
+        return
+      }
+
+      lastSubmittedData.current = stringifiedData
+
+      updateOption({
+        quizId,
+        questionId,
+        optionId: option.id.toString(),
+        data,
+      })
+    },
+    [
+      option.id,
+      option.text,
+      option.isCorrect,
+      option.isFreeText,
+      option.mediaAssetId,
       quizId,
       questionId,
-      optionId: option.id.toString(),
-      data,
-    })
-  }
+      updateOption,
+      isLocked,
+    ],
+  )
 
-  const handleDelete = async () => {
-    await deleteOption.mutateAsync({
+  const handleDelete = () => {
+    if (isLocked) return
+    removeOption({
       quizId,
       questionId,
       optionId: option.id.toString(),
@@ -87,12 +132,13 @@ export function QuizOptionItem({
             ? 'border-green-500/30 bg-green-500/5'
             : 'border-border bg-background',
           isFreeTextMode && 'border-blue-500/20 bg-blue-500/5',
+          isLocked && 'pointer-events-none opacity-70 grayscale-[0.2]',
         )}
       >
         {!isFreeTextMode && (
           <button
             onClick={() => handleUpdate({ isCorrect: !option.isCorrect })}
-            disabled={patchOption.isPending}
+            disabled={isUpdating || isLocked}
             className="shrink-0 p-2 transition-transform active:scale-90 disabled:opacity-50"
             title={t('editor.markCorrect')}
           >
@@ -108,6 +154,7 @@ export function QuizOptionItem({
           <DebouncedInput
             value={option.text ?? ''}
             onChange={(newText) => handleUpdate({ text: newText })}
+            disabled={isLocked}
             placeholder={
               isFreeTextMode
                 ? t('editor.freeTextAnswerHint')
@@ -121,7 +168,9 @@ export function QuizOptionItem({
           />
         </div>
 
-        {!isFreeTextMode && (
+        {isLocked && <Lock className="mr-2 h-4 w-4 text-muted-foreground" />}
+
+        {!isFreeTextMode && !isLocked && (
           <div className="flex items-center gap-1 border-l border-border/50 px-2">
             <Button
               variant="ghost"
@@ -140,24 +189,26 @@ export function QuizOptionItem({
           </div>
         )}
 
-        <Button
-          variant="ghost"
-          size="icon"
-          disabled={deleteOption.isPending}
-          className="h-8 w-8 text-destructive opacity-0 transition-opacity group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive"
-          onClick={handleDelete}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+        {!isLocked && (
+          <Button
+            variant="ghost"
+            size="icon"
+            disabled={isDeleting}
+            className="h-8 w-8 text-destructive opacity-0 transition-opacity group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive"
+            onClick={handleDelete}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        )}
       </div>
 
-      {!isFreeTextMode && (
+      {!isFreeTextMode && !isLocked && (
         <OptionMediaModal
           isOpen={isMediaModalOpen}
           onClose={() => setIsMediaModalOpen(false)}
           currentMediaAssetId={option.mediaAssetId}
           onSave={async (newAssetId) => {
-            await handleUpdate({ mediaAssetId: newAssetId })
+            handleUpdate({ mediaAssetId: newAssetId })
           }}
         />
       )}

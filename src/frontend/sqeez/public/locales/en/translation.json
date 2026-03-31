@@ -697,7 +697,9 @@
     "difficultyEasy": "Easy - Basic concepts",
     "difficultyMedium": "Medium - Requires some thought",
     "difficultyHard": "Hard - Advanced mastery",
-    "viewOptionMedia": "View Option Media"
+    "viewOptionMedia": "View Option Media",
+    "strictMultipleChoiceTitle": "Multiple Correct Answers",
+    "strictMultipleChoiceDesc": "Students must select exactly all of the correct options to earn points."
   },
   "grading": {
     "needsGrading": "Needs Grading",

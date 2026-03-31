@@ -1,3 +1,4 @@
+import { useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
 import {
@@ -15,7 +16,7 @@ import { QuizOptionsEditor } from './QuizOptionsEditor'
 import { QuizSettingsEditor } from './QuizSettingsEditor'
 import { useQueryClient } from '@tanstack/react-query'
 import { handleQuizMutationError } from '@/lib/quizHelpers'
-import { useCallback, useRef } from 'react'
+import { QuestionMultipleChoiceEditor } from './QuestionMultipleChoiceEditor'
 
 interface QuizQuestionEditorProps {
   quizId: string
@@ -112,18 +113,26 @@ export function QuizQuestionEditor({ quizId }: QuizQuestionEditorProps) {
 
         <div className="grid grid-cols-1 gap-12 rounded-xl border bg-muted/5 p-6 md:grid-cols-2">
           <QuestionDifficultyEditor
-            key={question?.difficulty}
+            key={`diff-${question?.difficulty}`}
             quizId={quizId}
             questionId={activeQuestionId.toString()}
             currentDifficulty={Number(question?.difficulty ?? 1)}
           />
 
           <QuestionTimeLimitEditor
+            key={`time-${question?.timeLimit}`}
             quizId={quizId}
             questionId={activeQuestionId.toString()}
             currentTimeLimit={Number(question?.timeLimit ?? 30)}
           />
         </div>
+
+        <QuestionMultipleChoiceEditor
+          key={`strict-${question?.isStrictMultipleChoice}`}
+          quizId={quizId}
+          questionId={activeQuestionId.toString()}
+          currentIsStrict={question?.isStrictMultipleChoice ?? false}
+        />
 
         <hr className="border-muted" />
 

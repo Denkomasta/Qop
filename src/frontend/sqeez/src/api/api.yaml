@@ -5108,7 +5108,8 @@ components:
         - currentAcademicYear
         - allowPublicRegistration
         - requireEmailVerification
-        - maxFileUploadSizeMB
+        - maxAvatarAndBadgeUploadSizeMB
+        - maxQuizMediaUploadSizeMB
         - maxActiveSessionsPerUser
       type: object
       properties:
@@ -5126,7 +5127,13 @@ components:
           type: boolean
         requireEmailVerification:
           type: boolean
-        maxFileUploadSizeMB:
+        maxAvatarAndBadgeUploadSizeMB:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        maxQuizMediaUploadSizeMB:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
@@ -5213,7 +5220,8 @@ components:
         - currentAcademicYear
         - allowPublicRegistration
         - requireEmailVerification
-        - maxFileUploadSizeMB
+        - maxAvatarAndBadgeUploadSizeMB
+        - maxQuizMediaUploadSizeMB
         - maxActiveSessionsPerUser
       type: object
       properties:
@@ -5245,7 +5253,14 @@ components:
           type:
             - "null"
             - boolean
-        maxFileUploadSizeMB:
+        maxAvatarAndBadgeUploadSizeMB:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int32
+        maxQuizMediaUploadSizeMB:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - "null"

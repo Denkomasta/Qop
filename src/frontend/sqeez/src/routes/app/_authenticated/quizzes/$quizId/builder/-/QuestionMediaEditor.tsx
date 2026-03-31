@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import { MediaAssetViewer } from '../../play/-/MediaAssetViewer'
 import { AsyncButton, ConfirmModal } from '@/components/ui'
 import { useQueryClient } from '@tanstack/react-query'
+import { useSystemConfig } from '@/hooks/useSystemConfig'
 
 interface QuestionMediaEditorProps {
   quizId: string
@@ -24,6 +25,8 @@ export function QuestionMediaEditor({
 }: QuestionMediaEditorProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
+
+  const { config } = useSystemConfig()
 
   const [isUploading, setIsUploading] = useState(false)
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false)
@@ -40,10 +43,19 @@ export function QuestionMediaEditor({
   })
 
   const uploadMutation = usePostApiMediaAssetsUpload()
+  const maxSizeMB = Number(config?.maxQuizMediaUploadSizeMB) || 10
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+
+    const maxSizeBytes = maxSizeMB * 1024 * 1024
+
+    if (file.size > maxSizeBytes) {
+      toast.error(t('errors.fileTooLarge', { maxValue: maxSizeMB }))
+      e.target.value = ''
+      return
+    }
 
     setIsUploading(true)
     try {
@@ -129,6 +141,9 @@ export function QuestionMediaEditor({
               <UploadCloud className="mb-2 h-6 w-6 text-muted-foreground" />
               <span className="text-sm font-medium text-muted-foreground">
                 {t('editor.uploadMediaHint')}
+              </span>
+              <span className="mt-1 text-xs text-muted-foreground/70">
+                Max {maxSizeMB}MB
               </span>
               <input
                 type="file"

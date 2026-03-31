@@ -14,6 +14,7 @@ import { getGetApiBadgesQueryKey } from '@/api/generated/endpoints/badges/badges
 import { BadgeRulesBuilder } from './BadgeRulesBuilder'
 import { getBadgeSchema } from '@/schemas/badgeSchema'
 import { BadgeBasicInfoFields } from './BadgeBasicInfoFields'
+import { useSystemConfig } from '@/hooks/useSystemConfig'
 
 interface CreateBadgeModalProps {
   isOpen: boolean
@@ -28,6 +29,7 @@ export function CreateBadgeModal({ isOpen, onClose }: CreateBadgeModalProps) {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const { config } = useSystemConfig()
 
   type CreateBadgeFormValues = z.infer<typeof schema>
 
@@ -57,8 +59,11 @@ export function CreateBadgeModal({ isOpen, onClose }: CreateBadgeModalProps) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        toast.error(t('errors.fileTooLarge', { maxValue: 2 }))
+      const maxSizeMB = Number(config?.maxAvatarAndBadgeUploadSizeMB) || 1
+      const maxSizeBytes = maxSizeMB * 1024 * 1024
+
+      if (file.size > maxSizeBytes) {
+        toast.error(t('errors.fileTooLarge', { maxValue: maxSizeMB }))
         return
       }
       setSelectedFile(file)

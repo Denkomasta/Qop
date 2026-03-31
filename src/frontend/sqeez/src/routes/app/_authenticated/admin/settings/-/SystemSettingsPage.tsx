@@ -60,7 +60,8 @@ export function SystemSettingsPage() {
       currentAcademicYear: currentCache.currentAcademicYear,
       allowPublicRegistration: currentCache.allowPublicRegistration,
       requireEmailVerification: currentCache.requireEmailVerification,
-      maxFileUploadSizeMB: currentCache.maxFileUploadSizeMB,
+      maxAvatarAndBadgeUploadSizeMB: currentCache.maxAvatarAndBadgeUploadSizeMB,
+      maxQuizMediaUploadSizeMB: currentCache.maxQuizMediaUploadSizeMB,
       maxActiveSessionsPerUser: currentCache.maxActiveSessionsPerUser,
       [field]: value,
     }
@@ -195,12 +196,28 @@ export function SystemSettingsPage() {
             <Input
               type="number"
               min="1"
-              label={t('settings.maxFileUploadSizeMB')}
-              value={config?.maxFileUploadSizeMB ?? 0}
+              label={t('settings.maxAvatarSizeMB')}
+              value={config?.maxAvatarAndBadgeUploadSizeMB ?? 0}
               onChange={(e) =>
-                handleUpdate('maxFileUploadSizeMB', Number(e.target.value))
+                handleUpdate(
+                  'maxAvatarAndBadgeUploadSizeMB',
+                  Number(e.target.value),
+                )
               }
               disabled={patchMutation.isPending}
+              helpText={t('settings.maxAvatarSizeHelp')}
+            />
+
+            <Input
+              type="number"
+              min="1"
+              label={t('settings.maxQuizMediaSizeMB')}
+              value={config?.maxQuizMediaUploadSizeMB ?? 0}
+              onChange={(e) =>
+                handleUpdate('maxQuizMediaUploadSizeMB', Number(e.target.value))
+              }
+              disabled={patchMutation.isPending}
+              helpText={t('settings.maxQuizMediaSizeHelp')}
             />
 
             <Input

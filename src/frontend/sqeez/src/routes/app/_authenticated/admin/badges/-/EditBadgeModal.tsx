@@ -22,6 +22,7 @@ import { getImageUrl } from '@/lib/imageHelpers'
 import { getBadgeSchema } from '@/schemas/badgeSchema'
 import { BadgeRulesBuilder } from './BadgeRulesBuilder'
 import { BadgeBasicInfoFields } from './BadgeBasicInfoFields'
+import { useSystemConfig } from '@/hooks/useSystemConfig'
 
 interface EditBadgeModalProps {
   isOpen: boolean
@@ -41,6 +42,7 @@ export function EditBadgeModal({
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [localPreviewUrl, setLocalPreviewUrl] = useState<string | null>(null)
+  const { config } = useSystemConfig()
 
   const displayUrl =
     localPreviewUrl || (badge?.iconUrl ? getImageUrl(badge.iconUrl) : null)
@@ -83,8 +85,11 @@ export function EditBadgeModal({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        toast.error(t('errors.fileTooLarge', { maxValue: 2 }))
+      const maxSizeMB = Number(config?.maxAvatarAndBadgeUploadSizeMB) || 1
+      const maxSizeBytes = maxSizeMB * 1024 * 1024
+
+      if (file.size > maxSizeBytes) {
+        toast.error(t('errors.fileTooLarge', { maxValue: maxSizeMB }))
         return
       }
 

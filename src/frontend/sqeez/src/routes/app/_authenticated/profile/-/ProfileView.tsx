@@ -37,6 +37,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { AvatarUploadModal } from './AvatarUploadModal'
 import { Link } from '@tanstack/react-router'
 import { StudentBadge } from '@/components/ui/StudentBadge'
+import { useSystemConfig } from '@/hooks/useSystemConfig'
 
 type EditFieldState = {
   key: string
@@ -53,11 +54,13 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
 
   const {
     data: profileData,
-    isLoading: isLoading,
+    isLoading,
     refetch,
   } = useGetApiUsersIdDetails(idToFetch ?? 0, {
     query: { enabled: !!idToFetch },
   })
+
+  const { config, isLoading: isSystemConfigLoading } = useSystemConfig()
 
   const updateProfile = usePatchApiUsersId()
 
@@ -78,7 +81,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
     })
     .slice(0, 3)
 
-  if (isLoading) {
+  if (isLoading || isSystemConfigLoading) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
         <Spinner size={'lg'} />
@@ -419,6 +422,11 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
 
       {isOwnProfile && (
         <AvatarUploadModal
+          maxFileSizeMB={
+            config?.maxAvatarAndBadgeUploadSizeMB
+              ? Number(config.maxAvatarAndBadgeUploadSizeMB)
+              : undefined
+          }
           isOpen={isAvatarModalOpen}
           onClose={handleCloseAvatarModal}
           onUpload={onAvatarSave}

@@ -4,11 +4,10 @@ import {
   usePatchApiQuizzesQuizIdQuestionsQuestionId,
 } from '@/api/generated/endpoints/quizzes/quizzes'
 import { cn } from '@/lib/utils'
-import { toast } from 'sonner'
-import type { AxiosError } from 'axios'
-import type { AspNetProblemDetails } from '@/api/custom-axios'
-import { Clock } from 'lucide-react'
+import { Clock, Lock } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
+import { handleQuizMutationError } from '@/lib/quizHelpers'
+import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
 
 interface QuestionTimeLimitEditorProps {
   quizId: string
@@ -24,46 +23,44 @@ export function QuestionTimeLimitEditor({
   const { t } = useTranslation()
   const queryClient = useQueryClient()
 
-  const updateMutation = usePatchApiQuizzesQuizIdQuestionsQuestionId({
-    mutation: {
-      // Setting the new data in the get EP too
-      onSuccess: (updatedQuestionData) => {
-        queryClient.setQueryData(
-          getGetApiQuizzesQuizIdQuestionsQuestionIdQueryKey(quizId, questionId),
-          updatedQuestionData,
-        )
+  const isLocked = useQuizEditorUIStore((s) => s.isLocked)
+
+  const { mutate: updateTime, isPending } =
+    usePatchApiQuizzesQuizIdQuestionsQuestionId({
+      mutation: {
+        onSuccess: (updatedQuestionData) => {
+          queryClient.setQueryData(
+            getGetApiQuizzesQuizIdQuestionsQuestionIdQueryKey(
+              quizId,
+              questionId,
+            ),
+            updatedQuestionData,
+          )
+        },
+        onError: (error) => handleQuizMutationError(error, t),
       },
-    },
-  })
+    })
 
   const presets = [10, 20, 30, 60, 120]
 
-  const handleTimeChange = async (seconds: number) => {
-    if (seconds === currentTimeLimit) return
+  const handleTimeChange = (seconds: number) => {
+    if (seconds === currentTimeLimit || isLocked) return
 
-    try {
-      await updateMutation.mutateAsync({
-        quizId,
-        questionId,
-        data: { timeLimit: seconds },
-      })
-    } catch (e) {
-      const axiosError = e as AxiosError<AspNetProblemDetails>
-      if (axiosError.response?.status === 403) {
-        toast.error(t('errors.accessDeniedTitle'))
-      } else {
-        toast.error(t('common.error'))
-      }
-    }
+    updateTime({
+      quizId,
+      questionId,
+      data: { timeLimit: seconds },
+    })
   }
 
   return (
-    <div className="space-y-3">
+    <div className={cn('space-y-3', isLocked && 'opacity-70 grayscale-[0.2]')}>
       <div className="flex items-center gap-2 text-muted-foreground">
         <Clock className="h-4 w-4" />
         <label className="text-xs font-black tracking-widest uppercase">
           {t('editor.timeLimit')}
         </label>
+        {isLocked && <Lock className="h-3 w-3" />}
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -71,13 +68,14 @@ export function QuestionTimeLimitEditor({
           <button
             key={time}
             onClick={() => handleTimeChange(time)}
-            disabled={updateMutation.isPending}
+            disabled={isPending || isLocked}
             className={cn(
               'h-10 min-w-15 flex-1 rounded-lg border text-sm font-bold transition-all active:scale-95',
               currentTimeLimit === time
                 ? 'border-primary bg-primary text-primary-foreground shadow-md'
-                : 'border-muted bg-background text-muted-foreground hover:border-primary/50',
-              updateMutation.isPending &&
+                : 'border-muted bg-background text-muted-foreground',
+              !isLocked && 'hover:border-primary/50',
+              (isPending || isLocked) &&
                 currentTimeLimit !== time &&
                 'cursor-not-allowed opacity-50',
             )}

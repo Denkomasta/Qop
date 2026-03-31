@@ -690,7 +690,12 @@
     "freeTextModeActive": "Free Text Mode is active",
     "freeTextHint": "Students will type their answer. Enter an expected answer below for auto-grading, or delete this option to switch back to Multiple Choice.",
     "quizLockedTitle": "Quiz is Locked",
-    "quizLockedDesc": "This quiz cannot be modified because students have already attempted it. You must delete the attempts to unlock editing."
+    "quizLockedDesc": "This quiz cannot be modified because students have already attempted it. You must delete the attempts to unlock editing.",
+    "maxFileSizeHintTypes": "Max {{maxSize}}MB (Images, Video, Audio)",
+    "difficultyEasy": "Easy - Basic concepts",
+    "difficultyMedium": "Medium - Requires some thought",
+    "difficultyHard": "Hard - Advanced mastery",
+    "viewOptionMedia": "View Option Media"
   },
   "grading": {
     "needsGrading": "Needs Grading",

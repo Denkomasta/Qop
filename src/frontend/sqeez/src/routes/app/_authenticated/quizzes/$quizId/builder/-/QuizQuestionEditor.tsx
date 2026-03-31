@@ -14,6 +14,8 @@ import { QuestionMediaEditor } from './QuestionMediaEditor'
 import { QuizOptionsEditor } from './QuizOptionsEditor'
 import { QuizSettingsEditor } from './QuizSettingsEditor'
 import { useQueryClient } from '@tanstack/react-query'
+import { handleQuizMutationError } from '@/lib/quizHelpers'
+import { useCallback, useRef } from 'react'
 
 interface QuizQuestionEditorProps {
   quizId: string
@@ -22,7 +24,9 @@ interface QuizQuestionEditorProps {
 export function QuizQuestionEditor({ quizId }: QuizQuestionEditorProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
-  const activeQuestionId = useQuizEditorUIStore((s) => s.activeQuestionId)
+  const { activeQuestionId, isLocked } = useQuizEditorUIStore()
+
+  const lastSubmittedTitle = useRef<string | null>(null)
 
   const { data: question, isLoading } =
     useGetApiQuizzesQuizIdQuestionsQuestionId(
@@ -31,33 +35,49 @@ export function QuizQuestionEditor({ quizId }: QuizQuestionEditorProps) {
       { query: { enabled: !!activeQuestionId } },
     )
 
-  const updateMutation = usePatchApiQuizzesQuizIdQuestionsQuestionId({
-    mutation: {
-      onSuccess: (updatedQuizData) => {
-        queryClient.setQueryData(
-          getGetApiQuizzesQuizIdQuestionsQuestionIdQueryKey(
-            quizId,
-            activeQuestionId?.toString() ?? '',
-          ),
-          updatedQuizData,
-        )
+  const { mutate: updateQuestion } =
+    usePatchApiQuizzesQuizIdQuestionsQuestionId({
+      mutation: {
+        onSuccess: (updatedQuizData) => {
+          queryClient.setQueryData(
+            getGetApiQuizzesQuizIdQuestionsQuestionIdQueryKey(
+              quizId,
+              activeQuestionId?.toString() ?? '',
+            ),
+            updatedQuizData,
+          )
+
+          lastSubmittedTitle.current = null
+
+          queryClient.invalidateQueries({
+            queryKey: getGetApiQuizzesQuizIdQuestionsQueryKey(quizId),
+          })
+        },
+        onError: (error) => handleQuizMutationError(error, t),
       },
+    })
+
+  const handleUpdateTitle = useCallback(
+    (title: string) => {
+      if (!activeQuestionId || isLocked) return
+
+      if (title === question?.title) {
+        lastSubmittedTitle.current = null
+        return
+      }
+
+      if (title === lastSubmittedTitle.current) return
+
+      lastSubmittedTitle.current = title
+
+      updateQuestion({
+        quizId,
+        questionId: activeQuestionId.toString(),
+        data: { title },
+      })
     },
-  })
-
-  const handleUpdateTitle = async (title: string) => {
-    if (!activeQuestionId) return
-
-    await updateMutation.mutateAsync({
-      quizId,
-      questionId: activeQuestionId.toString(),
-      data: { title },
-    })
-
-    queryClient.invalidateQueries({
-      queryKey: getGetApiQuizzesQuizIdQuestionsQueryKey(quizId),
-    })
-  }
+    [activeQuestionId, isLocked, question?.title, quizId, updateQuestion],
+  )
 
   if (isLoading) {
     return (
@@ -80,6 +100,7 @@ export function QuizQuestionEditor({ quizId }: QuizQuestionEditorProps) {
           onChange={handleUpdateTitle}
           placeholder={t('editor.newQuestionDefault')}
           className="text-lg font-semibold"
+          disabled={isLocked}
           debounceTime={800}
         />
 

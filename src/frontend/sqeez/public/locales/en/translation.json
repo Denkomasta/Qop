@@ -510,7 +510,10 @@
     "alreadyHaveAccount": "Already have an account?",
     "signIn": "Sign in!",
     "username": "Username",
-    "register": "Register"
+    "register": "Register",
+    "disabledTitle": "Registration Disabled",
+    "disabledMessage": "Public registration is currently turned off. Please contact your system administrator or school to create an account.",
+    "backToLogin": "Go to Login"
   },
   "subject": {
     "notFound": "Subject Not Found",

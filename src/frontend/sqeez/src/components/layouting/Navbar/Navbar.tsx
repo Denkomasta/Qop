@@ -29,6 +29,7 @@ interface NavbarProps {
   user?: UserDTO
   navigationText?: string
   isAuthenticated?: boolean
+  isRegisterEnabled?: boolean
 }
 
 export function Navbar({
@@ -40,13 +41,13 @@ export function Navbar({
   logoutButtonText,
   isAuthenticated,
   user,
+  isRegisterEnabled,
 }: NavbarProps) {
   const avatarUrl = getImageUrl(user?.avatarUrl)
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="flex h-16 items-center justify-between pr-4">
-        {/* Left: Logo & Desktop Nav */}
         <div className="flex items-center gap-8">
           <Link
             to={isAuthenticated ? '/app' : '/'}
@@ -70,7 +71,6 @@ export function Navbar({
           </nav>
         </div>
 
-        {/* Right: Actions & Mobile Menu */}
         <div className="flex items-center gap-3">
           <div className="hidden gap-2 sm:flex">
             {isAuthenticated ? (
@@ -94,16 +94,17 @@ export function Navbar({
                 <Button variant="ghost" size="sm" asChild>
                   <Link to="/login">{loginButtonText}</Link>
                 </Button>
-                <Button size="sm" asChild>
-                  <Link to="/register">{registerButtonText}</Link>
-                </Button>
+                {isRegisterEnabled && (
+                  <Button size="sm" asChild>
+                    <Link to="/register">{registerButtonText}</Link>
+                  </Button>
+                )}
               </>
             )}
             <LanguageSwitcher />
             <ThemeSwitcher />
           </div>
 
-          {/* Mobile Menu Trigger */}
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
@@ -148,9 +149,11 @@ export function Navbar({
                     <Button variant={'outline'} className="w-full" asChild>
                       <Link to="/login">{loginButtonText}</Link>
                     </Button>
-                    <Button className="w-full" asChild>
-                      <Link to="/register">{registerButtonText}</Link>
-                    </Button>
+                    {isRegisterEnabled && (
+                      <Button className="w-full" asChild>
+                        <Link to="/register">{registerButtonText}</Link>
+                      </Button>
+                    )}
                   </>
                 )}
                 <LanguageSwitcher />

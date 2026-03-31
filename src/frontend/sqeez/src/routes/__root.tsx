@@ -2,7 +2,9 @@ import { useGetApiAuthMe } from '@/api/generated/endpoints/auth/auth'
 import { Footer } from '@/components/layouting/Footer/Footer'
 import { Navbar } from '@/components/layouting/Navbar/Navbar'
 import { Toaster } from '@/components/ui/Sonner'
+import { Spinner } from '@/components/ui/Spinner'
 import { ThemeProvider } from '@/context/ThemeContext'
+import { useSystemConfig } from '@/hooks/useSystemConfig'
 import { useAuthStore } from '@/store/useAuthStore'
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
@@ -17,7 +19,7 @@ const RootLayout = () => {
   const {
     data: user,
     error,
-    // isLoading,
+    isLoading,
   } = useGetApiAuthMe({
     query: {
       retry: false,
@@ -25,6 +27,8 @@ const RootLayout = () => {
       refetchOnWindowFocus: false,
     },
   })
+
+  const { config, isLoading: isSystemConfigLoading } = useSystemConfig()
 
   useEffect(() => {
     if (user) {
@@ -43,13 +47,16 @@ const RootLayout = () => {
     { to: '/terms', label: t('footer.terms') },
   ]
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="flex h-screen items-center justify-center">
-  //       Loading...
-  //     </div>
-  //   )
-  // }
+  if (isLoading || isSystemConfigLoading) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+        <Spinner size="lg" />
+        <p className="animate-pulse font-medium text-muted-foreground">
+          {t('common.loading')}...
+        </p>
+      </div>
+    )
+  }
 
   return (
     <ThemeProvider>
@@ -63,6 +70,7 @@ const RootLayout = () => {
           logoutButtonText={t('navbar.logout')}
           isAuthenticated={!!user}
           user={user}
+          isRegisterEnabled={config?.allowPublicRegistration ?? false}
         />
 
         <main className="flex flex-1 flex-col">

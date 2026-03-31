@@ -510,7 +510,10 @@
     "alreadyHaveAccount": "Máte již účet?",
     "signIn": "Přihlaste se!",
     "username": "Uživatelské jméno",
-    "register": "Zaregistrovat se"
+    "register": "Zaregistrovat se",
+    "disabledTitle": "Registrace zakázána",
+    "disabledMessage": "Veřejná registrace je momentálně vypnutá. Pro vytvoření účtu prosím kontaktujte svého administrátora systému nebo školu.",
+    "backToLogin": "Přejít na přihlášení"
   },
   "subject": {
     "notFound": "Předmět nenalezen",

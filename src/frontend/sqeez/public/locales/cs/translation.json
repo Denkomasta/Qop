@@ -681,7 +681,15 @@
     "deleteAllAttempts": "Smazat všechny pokusy",
     "confirmDeleteAllAttempts": "Jste si jisti?",
     "confirmDeleteAllAttemptsText": "Tímto trvale smažete všechny studentské pokusy, odpovědi a hodnocení spojené s tímto kvízem. Jste si naprosto jisti, že chcete pokračovat?",
-    "attemptsDeletedSuccess": "Všechny pokusy byly úspěšně smazány."
+    "attemptsDeletedSuccess": "Všechny pokusy byly úspěšně smazány.",
+    "expectedAnswer": "Očekávaná odpověď",
+    "chooseQuestionType": "Vyberte formát pro tuto otázku:",
+    "startMultipleChoice": "Výběr z možností",
+    "startFreeText": "Volná textová odpověď",
+    "freeTextModeActive": "Režim volné odpovědi je aktivní",
+    "freeTextHint": "Studenti napíší svou odpověď. Níže zadejte očekávanou odpověď pro automatické hodnocení, nebo tuto možnost smažte pro návrat k Výběru z možností.",
+    "quizLockedTitle": "Kvíz je uzamčen",
+    "quizLockedDesc": "Tento kvíz nelze upravovat, protože jej již studenti vyplnili. Pro odemčení úprav musíte nejprve smazat jejich pokusy."
   },
   "grading": {
     "needsGrading": "Vyžaduje hodnocení",

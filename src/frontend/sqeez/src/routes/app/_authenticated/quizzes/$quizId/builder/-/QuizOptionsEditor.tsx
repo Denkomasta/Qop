@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Plus, Loader2 } from 'lucide-react'
+import { Plus, Loader2, Type, ListChecks, Info } from 'lucide-react'
 import {
   getGetApiQuizzesQuizIdQuestionsQuestionIdOptionsQueryKey,
   useGetApiQuizzesQuizIdQuestionsQuestionIdOptions,
@@ -8,6 +8,7 @@ import {
 import { Button } from '@/components/ui/Button'
 import { useQueryClient } from '@tanstack/react-query'
 import { QuizOptionItem } from './QuizOptionItem'
+import { handleQuizMutationError } from '@/lib/quizHelpers'
 
 interface QuizOptionsEditorProps {
   quizId: string
@@ -26,6 +27,8 @@ export function QuizOptionsEditor({
 
   const options = optionsData?.data ?? []
 
+  const isFreeTextMode = options.some((opt) => opt.isFreeText)
+
   const addOptionMutation = usePostApiQuizzesQuizIdQuestionsQuestionIdOptions({
     mutation: {
       onSuccess: () => {
@@ -36,18 +39,19 @@ export function QuizOptionsEditor({
           ),
         })
       },
+      onError: (error) => handleQuizMutationError(error, t),
     },
   })
 
-  const handleAddOption = async () => {
+  const handleAddOption = async (asFreeText: boolean = false) => {
     await addOptionMutation.mutateAsync({
       quizId,
       questionId,
       data: {
-        text: t('editor.newOptionDefault'),
-        isCorrect: false,
+        text: asFreeText ? '' : t('editor.newOptionDefault'),
+        isCorrect: asFreeText ? true : false,
         quizQuestionID: questionId,
-        isFreeText: false,
+        isFreeText: asFreeText,
       },
     })
   }
@@ -61,23 +65,36 @@ export function QuizOptionsEditor({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <label className="text-xs font-black tracking-widest text-muted-foreground uppercase">
-          {t('editor.options')}
+          {isFreeTextMode ? t('editor.expectedAnswer') : t('editor.options')}
         </label>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleAddOption}
-          disabled={addOptionMutation.isPending}
-          className="h-8 gap-1"
-        >
-          {addOptionMutation.isPending ? (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-          ) : (
-            <Plus className="h-3.5 w-3.5" />
-          )}
-          {t('editor.addOption')}
-        </Button>
+
+        {!isFreeTextMode && options.length > 0 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleAddOption(false)}
+            disabled={addOptionMutation.isPending}
+            className="h-8 gap-1"
+          >
+            {addOptionMutation.isPending ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Plus className="h-3.5 w-3.5" />
+            )}
+            {t('editor.addOption')}
+          </Button>
+        )}
       </div>
+
+      {isFreeTextMode && (
+        <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 p-4 text-sm text-primary">
+          <Info className="mt-0.5 h-4 w-4 shrink-0" />
+          <div className="flex flex-col gap-1">
+            <p className="font-semibold">{t('editor.freeTextModeActive')}</p>
+            <p className="text-primary/80">{t('editor.freeTextHint')}</p>
+          </div>
+        </div>
+      )}
 
       <div className="space-y-3">
         {options.map((opt) => (
@@ -86,14 +103,35 @@ export function QuizOptionsEditor({
             quizId={quizId}
             questionId={questionId}
             option={opt}
+            isFreeTextMode={isFreeTextMode}
           />
         ))}
 
         {options.length === 0 && (
-          <div className="rounded-xl border-2 border-dashed border-muted/50 p-8 text-center">
+          <div className="flex flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed border-muted/50 p-8 text-center">
             <p className="text-sm text-muted-foreground">
-              {t('editor.noOptionsYet')}
+              {t('editor.chooseQuestionType')}
             </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={() => handleAddOption(false)}
+                disabled={addOptionMutation.isPending}
+              >
+                <ListChecks className="h-4 w-4" />
+                {t('editor.startMultipleChoice')}
+              </Button>
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={() => handleAddOption(true)}
+                disabled={addOptionMutation.isPending}
+              >
+                <Type className="h-4 w-4" />
+                {t('editor.startFreeText')}
+              </Button>
+            </div>
           </div>
         )}
       </div>

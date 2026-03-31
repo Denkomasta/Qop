@@ -682,7 +682,15 @@
     "deleteAllAttempts": "Delete All Attempts",
     "confirmDeleteAllAttempts": "Are you sure?",
     "confirmDeleteAllAttemptsText": "This will permanently delete all student attempts and answers associated with this quiz. Are you absolutely sure you want to proceed?",
-    "attemptsDeletedSuccess": "All attempts deleted successfully."
+    "attemptsDeletedSuccess": "All attempts deleted successfully.",
+    "expectedAnswer": "Expected Answer",
+    "chooseQuestionType": "Choose a format for this question:",
+    "startMultipleChoice": "Multiple Choice",
+    "startFreeText": "Free Text Answer",
+    "freeTextModeActive": "Free Text Mode is active",
+    "freeTextHint": "Students will type their answer. Enter an expected answer below for auto-grading, or delete this option to switch back to Multiple Choice.",
+    "quizLockedTitle": "Quiz is Locked",
+    "quizLockedDesc": "This quiz cannot be modified because students have already attempted it. You must delete the attempts to unlock editing."
   },
   "grading": {
     "needsGrading": "Needs Grading",

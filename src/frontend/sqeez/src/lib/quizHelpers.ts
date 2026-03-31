@@ -1,3 +1,7 @@
+import { isAxiosError } from 'axios'
+import { toast } from 'sonner'
+import { type TFunction } from 'i18next'
+
 export interface QuizDateInfo {
   publishDate?: string | null
   closingDate?: string | null
@@ -56,4 +60,15 @@ export function getQuizStatus(
   }
 
   return 'active'
+}
+
+export function handleQuizMutationError(error: unknown, t: TFunction) {
+  if (isAxiosError(error) && error.response?.status === 409) {
+    toast.error(t('editor.quizLockedTitle'), {
+      description: t('editor.quizLockedDesc'),
+      duration: 8000,
+    })
+  } else {
+    toast.error(t('common.error'))
+  }
 }

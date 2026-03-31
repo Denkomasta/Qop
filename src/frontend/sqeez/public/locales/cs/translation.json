@@ -696,7 +696,9 @@
     "difficultyEasy": "Snadné - Základní koncepty",
     "difficultyMedium": "Střední - Vyžaduje přemýšlení",
     "difficultyHard": "Těžké - Pokročilé znalosti",
-    "viewOptionMedia": "Zobrazit média možnosti"
+    "viewOptionMedia": "Zobrazit média možnosti",
+    "strictMultipleChoiceTitle": "Více správných odpovědí",
+    "strictMultipleChoiceDesc": "Studenti musí vybrat přesně všechny správné možnosti, aby získali body."
   },
   "grading": {
     "needsGrading": "Vyžaduje hodnocení",

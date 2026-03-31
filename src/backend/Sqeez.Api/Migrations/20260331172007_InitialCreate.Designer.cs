@@ -12,7 +12,7 @@ using Sqeez.Api.Data;
 namespace Sqeez.Api.Migrations
 {
     [DbContext(typeof(SqeezDbContext))]
-    [Migration("20260331085620_InitialCreate")]
+    [Migration("20260331172007_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -378,6 +378,9 @@ namespace Sqeez.Api.Migrations
 
                     b.Property<int>("Difficulty")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsStrictMultipleChoice")
+                        .HasColumnType("boolean");
 
                     b.Property<long?>("MediaAssetId")
                         .HasColumnType("bigint");

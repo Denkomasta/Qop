@@ -376,6 +376,9 @@ namespace Sqeez.Api.Migrations
                     b.Property<int>("Difficulty")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsStrictMultipleChoice")
+                        .HasColumnType("boolean");
+
                     b.Property<long?>("MediaAssetId")
                         .HasColumnType("bigint");
 

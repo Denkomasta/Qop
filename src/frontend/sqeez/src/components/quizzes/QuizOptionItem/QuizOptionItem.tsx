@@ -1,9 +1,11 @@
 import type { StudentQuizOptionDto } from '@/api/generated/model'
 import { useTranslation } from 'react-i18next'
+import { Check } from 'lucide-react'
 
 interface QuizOptionItemProps {
   option: StudentQuizOptionDto
   isSelected: boolean
+  isMultiChoice?: boolean
   onSelect: () => void
   mediaNode?: React.ReactNode
   freeTextValue?: string
@@ -13,6 +15,7 @@ interface QuizOptionItemProps {
 export function QuizOptionItem({
   option,
   isSelected,
+  isMultiChoice = false,
   onSelect,
   mediaNode,
   freeTextValue = '',
@@ -61,13 +64,18 @@ export function QuizOptionItem({
     >
       <div className="flex w-full items-center gap-4 sm:w-auto sm:flex-1">
         <div
-          className={`flex size-5 shrink-0 items-center justify-center rounded-full border ${
+          className={`flex size-5 shrink-0 items-center justify-center border transition-all ${
+            isMultiChoice ? 'rounded-sm' : 'rounded-full'
+          } ${
             isSelected ? 'border-primary bg-primary' : 'border-muted-foreground'
           }`}
         >
-          {isSelected && (
-            <div className="size-2 rounded-full bg-primary-foreground" />
-          )}
+          {isSelected &&
+            (isMultiChoice ? (
+              <Check className="size-3.5 stroke-3 text-primary-foreground" />
+            ) : (
+              <div className="size-2 rounded-full bg-primary-foreground" />
+            ))}
         </div>
 
         <span

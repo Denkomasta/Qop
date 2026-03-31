@@ -3030,6 +3030,9 @@ components:
             - integer
             - string
           format: int64
+        isStrictMultipleChoice:
+          type: boolean
+          default: false
     CreateSchoolClassDto:
       required:
         - name
@@ -3213,6 +3216,7 @@ components:
         - title
         - difficulty
         - timeLimit
+        - isStrictMultipleChoice
         - quizId
         - mediaAssetId
         - options
@@ -3238,6 +3242,8 @@ components:
             - integer
             - string
           format: int32
+        isStrictMultipleChoice:
+          type: boolean
         quizId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
@@ -3940,6 +3946,10 @@ components:
             - integer
             - string
           format: int64
+        isStrictMultipleChoice:
+          type:
+            - "null"
+            - boolean
     PatchSchoolClassDto:
       type: object
       properties:
@@ -4522,6 +4532,7 @@ components:
         - title
         - difficulty
         - timeLimit
+        - isStrictMultipleChoice
         - quizId
         - mediaAssetId
         - quizOptions
@@ -4547,6 +4558,8 @@ components:
             - integer
             - string
           format: int32
+        isStrictMultipleChoice:
+          type: boolean
         quizId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:

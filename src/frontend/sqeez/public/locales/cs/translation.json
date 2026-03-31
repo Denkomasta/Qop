@@ -620,7 +620,9 @@
     "pastInactive": "Ukončený / Neaktivní",
     "notEnrolledTitle": "Přístup odepřen",
     "notEnrolledDesc": "Abyste mohli spustit tento kvíz, musíte být zapsáni do příslušného předmětu.",
-    "notFoundTitle": "Kvíz nenalezen"
+    "notFoundTitle": "Kvíz nenalezen",
+    "selectMultipleHint": "Vyberte všechny správné možnosti",
+    "selectSingleHint": "Vyberte jednu odpověď"
   },
   "editor": {
     "questionsTitle": "Otázky",

@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic.FileIO;
-using Sqeez.Api.Models.Media;
+﻿using Sqeez.Api.Models.Media;
 
 namespace Sqeez.Api.Models.QuizSystem
 {
@@ -9,6 +8,7 @@ namespace Sqeez.Api.Models.QuizSystem
         public string? Title { get; set; }
         public int Difficulty { get; set; }
         public int TimeLimit { get; set; }
+        public bool IsStrictMultipleChoice { get; set; }
 
         // Foreign Keys
         public long QuizId { get; set; }

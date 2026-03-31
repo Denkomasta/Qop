@@ -208,7 +208,7 @@ function DashboardLaunchpad() {
 
       {isAdmin && (
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold tracking-tight text-destructive">
+          <h2 className="text-xl font-semibold tracking-tight">
             {t('dashboard.administration')}
           </h2>
           <NavCardGrid items={adminLinks} />

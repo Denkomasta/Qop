@@ -61,7 +61,6 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
         query: {
           enabled:
             !!state.currentQuestionId &&
-            // prefetches the question
             (state.phase === 'transition' || state.phase === 'answering'),
           refetchOnWindowFocus: false,
           staleTime: 1000 * 60,
@@ -70,12 +69,9 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
     )
 
   useEffect(() => {
-    // If we opened a different quiz, wipe the store
     if (state.activeQuizId !== null && state.activeQuizId !== quizId) {
       actions.resetQuiz()
-    }
-    // Lock in the current quiz ID so we remember it for next time
-    else if (state.activeQuizId !== quizId) {
+    } else if (state.activeQuizId !== quizId) {
       useQuizStore.setState({ activeQuizId: quizId })
     }
   }, [quizId, state.activeQuizId, actions])
@@ -257,8 +253,22 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
       ) => actions.startAttempt(attemptId, firstQuestionId),
       handleTransitionComplete: () => actions.finishTransition(),
       resetEngine: () => actions.resetQuiz(),
-      handleOptionSelect: (optId: number | string) =>
-        actions.selectOption(optId),
+
+      handleOptionSelect: (optId: number | string) => {
+        const isMultiChoice = currentQuestion?.isStrictMultipleChoice === true
+
+        if (isMultiChoice) {
+          const isAlreadySelected = state.selectedOptionIds.includes(optId)
+          const newSelection = isAlreadySelected
+            ? state.selectedOptionIds.filter((id) => id !== optId)
+            : [...state.selectedOptionIds, optId]
+
+          actions.setSelectedOptions(newSelection)
+        } else {
+          actions.setSelectedOptions([optId])
+        }
+      },
+
       handleFreeTextChange: (text: string) => actions.setFreeText(text),
       handleAnswerSubmit,
       handleRecapContinue,

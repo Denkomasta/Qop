@@ -622,7 +622,10 @@
     "notEnrolledDesc": "Abyste mohli spustit tento kvíz, musíte být zapsáni do příslušného předmětu.",
     "notFoundTitle": "Kvíz nenalezen",
     "selectMultipleHint": "Vyberte všechny správné možnosti",
-    "selectSingleHint": "Vyberte jednu odpověď"
+    "selectSingleHint": "Vyberte jednu odpověď",
+    "pendingGrading": "Čeká na ohodnocení",
+    "pendingGradingDesc": "Váš učitel tuto odpověď brzy zkontroluje!",
+    "expectedAnswer": "Očekávaná odpověď"
   },
   "editor": {
     "questionsTitle": "Otázky",

@@ -1,14 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AlertTriangle, PlayCircle, Rocket } from 'lucide-react'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/Card'
+import { AlertTriangle, PlayCircle, Rocket, ArrowLeft } from 'lucide-react'
 import { AsyncButton, Button } from '@/components/ui/Button'
 import { usePostApiQuizAttemptsStart } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
 
@@ -60,54 +52,62 @@ export function QuizStartScreen({
   }
 
   return (
-    <div className="flex min-h-[60vh] items-center justify-center p-4">
-      <Card className="w-full max-w-lg border-primary/20 shadow-lg">
-        <CardHeader className="pb-6 text-center">
-          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-            <Rocket className="h-10 w-10 text-primary" />
+    <div className="flex min-h-[calc(100vh-4rem)] w-full animate-in flex-col items-center justify-center p-4 duration-500 zoom-in-95 fade-in md:p-6 lg:p-8">
+      <div className="w-full max-w-2xl overflow-hidden rounded-[2rem] border-4 border-muted bg-card shadow-xl">
+        <div className="flex flex-col items-center justify-center border-b-4 border-muted/50 bg-muted/10 p-8 text-center sm:p-10">
+          <div className="relative mb-4">
+            <div className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
+            <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 shadow-sm md:h-24 md:w-24">
+              <Rocket className="h-10 w-10 text-primary md:h-12 md:w-12" />
+            </div>
           </div>
-          <CardTitle className="text-2xl font-bold">
+          <h1 className="text-3xl font-black tracking-widest text-foreground drop-shadow-sm md:text-4xl">
             {t('quiz.readyToStart')}
-          </CardTitle>
-          <CardDescription className="mt-2 text-base">
+          </h1>
+          <p className="mt-2 text-lg font-bold tracking-wide text-muted-foreground md:text-xl">
             {quizTitle}
-          </CardDescription>
-        </CardHeader>
+          </p>
+        </div>
 
-        <CardContent className="space-y-4 pb-6 text-center">
-          <div className="rounded-lg bg-amber-500/10 p-4 text-amber-600 dark:text-amber-500">
-            <div className="flex items-start gap-3 text-left text-sm font-medium">
-              <AlertTriangle className="h-5 w-5 shrink-0" />
-              <p>{t('quiz.startWarning')}</p>
+        <div className="p-6 md:p-8">
+          <div className="mb-8 rounded-2xl border-4 border-b-8 border-amber-200 bg-amber-50 p-6 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
+            <div className="flex items-center gap-4 text-left font-bold">
+              <AlertTriangle className="size-8 shrink-0 md:size-10" />
+              <p className="text-lg md:text-xl">{t('quiz.startWarning')}</p>
             </div>
           </div>
 
           {error && (
-            <p className="text-sm font-medium text-destructive">{error}</p>
+            <div className="mb-6 rounded-2xl border-4 border-rose-200 bg-rose-50 p-4 text-center text-lg font-bold text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300">
+              {error}
+            </div>
           )}
-        </CardContent>
 
-        <CardFooter className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <Button
-            variant="ghost"
-            onClick={onCancel}
-            disabled={isStarting}
-            className="w-full sm:w-fit"
-          >
-            {t('common.cancel')}
-          </Button>
-          <AsyncButton
-            size="lg"
-            onClick={handleStartAttempt}
-            disabled={isStarting}
-            className="w-full sm:w-fit"
-            loadingText={t('quiz.beginAttempt')}
-          >
-            <PlayCircle className="mr-2 size-5" />
-            {t('quiz.beginAttempt')}
-          </AsyncButton>
-        </CardFooter>
-      </Card>
+          <div className="flex flex-col-reverse gap-4 sm:flex-row sm:gap-4">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={onCancel}
+              disabled={isStarting}
+              className="h-auto w-full rounded-2xl border-4 border-b-8 border-muted bg-transparent py-3 text-lg font-black text-muted-foreground transition-all hover:-translate-y-1 hover:bg-muted/10 active:translate-y-2 active:border-b-4 sm:w-1/2 md:py-4"
+            >
+              <ArrowLeft className="mr-2 size-5 stroke-3" />
+              {t('common.cancel')}
+            </Button>
+
+            <AsyncButton
+              size="lg"
+              onClick={handleStartAttempt}
+              disabled={isStarting}
+              loadingText={t('quiz.beginAttempt')}
+              className="h-auto w-full rounded-2xl border-b-8 border-primary-foreground/20 py-3 text-lg font-black shadow-none transition-all hover:-translate-y-1 active:translate-y-2 active:border-b-0 sm:w-1/2 md:py-4"
+            >
+              <PlayCircle className="mr-2 size-6 stroke-3" />
+              {t('quiz.beginAttempt')}
+            </AsyncButton>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

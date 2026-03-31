@@ -1,16 +1,18 @@
+import type { DetailedQuizQuestionDto } from '@/api/generated/model'
 import { useTranslation } from 'react-i18next'
-import { CheckCircle2, XCircle, ArrowRight, Clock, Timer } from 'lucide-react'
+import { Check, X, ArrowRight, Clock, Hourglass } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import type { DetailedQuizQuestionDto } from '@/api/generated/model'
+import { MediaAssetViewer } from './MediaAssetViewer'
 
 interface QuestionRecapScreenProps {
   question: DetailedQuizQuestionDto
   selectedOptionIds: (number | string)[]
   correctOptionIds: (number | string)[]
-  userFreeTextAnswer?: string
-  correctFreeTextAnswer?: string | null
-  timeSpentMs?: number | null
+  userFreeTextAnswer: string
+  correctFreeTextAnswer: string | null
+  timeSpentMs: number
   onContinue: () => void
   isLastQuestion: boolean
 }
@@ -19,7 +21,7 @@ export function QuestionRecapScreen({
   question,
   selectedOptionIds,
   correctOptionIds,
-  userFreeTextAnswer = '',
+  userFreeTextAnswer,
   correctFreeTextAnswer,
   timeSpentMs,
   onContinue,
@@ -27,161 +29,147 @@ export function QuestionRecapScreen({
 }: QuestionRecapScreenProps) {
   const { t } = useTranslation()
 
-  const isFreeTextQuestion = question.options.some((o) => o.isFreeText)
+  const isFreeText = question.options.some((o) => o.isFreeText)
 
   const isFullyCorrect =
-    !isFreeTextQuestion &&
-    selectedOptionIds.length > 0 &&
+    !isFreeText &&
     selectedOptionIds.length === correctOptionIds.length &&
     selectedOptionIds.every((id) => correctOptionIds.includes(id))
 
-  const formattedTime = timeSpentMs
-    ? `${(timeSpentMs / 1000).toFixed(1)}s`
-    : null
+  let bannerStyle = ''
+  let BannerIcon = null
+  let bannerText = ''
 
-  let bannerClass = ''
-  let TitleIcon = null
-  let titleText = ''
-  let descText = ''
-  let titleColor = ''
-  let descColor = ''
-
-  if (isFreeTextQuestion) {
-    bannerClass =
-      'border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-900/20'
-    TitleIcon = <Clock className="h-8 w-8 text-amber-600 dark:text-amber-500" />
-    titleText = t('quiz.pendingReviewTitle')
-    descText = t('quiz.pendingReviewDesc')
-    titleColor = 'text-amber-700 dark:text-amber-400'
-    descColor = 'text-amber-700/80 dark:text-amber-500/80'
+  if (isFreeText) {
+    bannerStyle = 'border-blue-700 bg-blue-500 text-white'
+    BannerIcon = Hourglass
+    bannerText = t('quiz.pendingGrading')
   } else if (isFullyCorrect) {
-    bannerClass =
-      'border-green-200 bg-green-50 dark:border-green-900/50 dark:bg-green-900/20'
-    TitleIcon = (
-      <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-500" />
-    )
-    titleText = t('quiz.correctAnswer')
-    descText = t('quiz.greatJob')
-    titleColor = 'text-green-700 dark:text-green-400'
-    descColor = 'text-green-600 dark:text-green-500/80'
+    bannerStyle = 'border-emerald-700 bg-emerald-500 text-white'
+    BannerIcon = Check
+    bannerText = t('quiz.correctAnswer')
   } else {
-    bannerClass = 'border-destructive/20 bg-destructive/10'
-    TitleIcon = <XCircle className="h-8 w-8 text-destructive" />
-    titleText = t('quiz.incorrectAnswer')
-    descText = t('quiz.reviewAnswer')
-    titleColor = 'text-destructive'
-    descColor = 'text-destructive/80'
+    bannerStyle = 'border-rose-700 bg-rose-500 text-white'
+    BannerIcon = X
+    bannerText = t('quiz.incorrectAnswer')
   }
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-3xl animate-in flex-col p-4 duration-500 fade-in slide-in-from-bottom-4 md:p-6 lg:p-8">
+    <div className="flex min-h-[calc(100vh-4rem)] w-full animate-in flex-col justify-center p-4 duration-500 fade-in md:p-6 md:px-12 lg:p-8 lg:px-16">
       <div
-        className={`mb-6 flex items-center gap-3 rounded-xl border p-4 shadow-sm ${bannerClass}`}
+        className={cn(
+          'mb-6 flex items-center justify-between rounded-2xl border-4 p-4 font-black shadow-sm md:p-6',
+          bannerStyle,
+        )}
       >
-        {TitleIcon}
-        <div>
-          <h2 className={`text-xl font-bold ${titleColor}`}>{titleText}</h2>
-          <p className={`text-sm ${descColor}`}>{descText}</p>
+        <div className="flex items-center gap-4 text-2xl tracking-wide md:text-3xl">
+          <BannerIcon className="size-8 stroke-4 md:size-10" />
+          <span>{bannerText}</span>
         </div>
 
-        {formattedTime && (
-          <div className="ml-auto flex items-center gap-1.5 rounded-full border border-border/50 bg-background/60 px-3 py-1 text-sm font-semibold shadow-sm">
-            <Timer className="h-4 w-4 opacity-70" />
-            <span>{formattedTime}</span>
-          </div>
-        )}
+        <div className="flex items-center gap-2 rounded-xl bg-black/20 px-4 py-2 text-sm font-bold md:text-lg">
+          <Clock className="size-5" />
+          {(timeSpentMs / 1000).toFixed(1)}s
+        </div>
       </div>
 
-      <Card className="mb-8 flex-1 border-primary/10 shadow-md">
-        <CardHeader className="border-b bg-muted/20 pb-6">
-          <CardTitle className="text-xl leading-relaxed text-foreground md:text-2xl">
+      <Card className="flex-1 overflow-hidden border-0 bg-transparent shadow-none">
+        <CardHeader className="mb-6 rounded-3xl border-4 border-primary/10 bg-card pb-8 text-center shadow-sm">
+          <CardTitle className="text-xl leading-relaxed font-black tracking-wide text-primary md:text-3xl">
             {question.title}
           </CardTitle>
+
+          {question.mediaAssetId && (
+            <div className="mx-auto mt-6 max-w-xl overflow-hidden rounded-2xl border-4 border-primary/5 shadow-md">
+              <MediaAssetViewer
+                assetId={question.mediaAssetId}
+                isOption={false}
+              />
+            </div>
+          )}
         </CardHeader>
 
-        <CardContent className="pt-6">
-          {isFreeTextQuestion ? (
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-muted-foreground">
-                  {t('quiz.yourAnswer')}
-                </p>
-                <div className="rounded-md border border-border bg-card p-4 text-base text-foreground shadow-sm">
-                  {userFreeTextAnswer ? (
-                    <span className="whitespace-pre-wrap">
-                      {userFreeTextAnswer}
-                    </span>
-                  ) : (
-                    <span className="italic opacity-70">
-                      {t('quiz.noAnswerProvided')}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {correctFreeTextAnswer && (
-                <div className="space-y-2">
-                  <p className="flex items-end justify-between text-sm font-medium text-muted-foreground">
-                    {t('quiz.expectedAnswerLabel')}
-                    <span className="text-xs font-normal italic opacity-70">
-                      {t('quiz.gradingGuideNote')}
-                    </span>
-                  </p>
-                  <div className="rounded-md border border-muted-foreground/20 bg-muted/30 p-4 text-base text-muted-foreground">
-                    <span className="whitespace-pre-wrap">
-                      {correctFreeTextAnswer}
+        <CardContent className="p-0">
+          {isFreeText ? (
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-6 rounded-3xl border-4 border-blue-500/20 bg-card p-6 shadow-sm md:flex-row">
+                <div className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border-4 border-muted/30 bg-muted/10 p-6 text-center">
+                  <span className="shrink-0 text-sm font-bold tracking-widest text-muted-foreground uppercase">
+                    {t('quiz.yourAnswer')}
+                  </span>
+                  <div className="max-h-48 flex-1 overflow-y-auto pr-2">
+                    <span className="w-full text-2xl font-black break-words text-foreground md:text-3xl">
+                      {userFreeTextAnswer || '-'}
                     </span>
                   </div>
                 </div>
-              )}
+
+                <div className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border-4 border-blue-700 bg-blue-500 p-6 text-center text-white">
+                  <span className="shrink-0 text-sm font-bold tracking-widest text-blue-100 uppercase">
+                    {t('quiz.expectedAnswer', 'Expected Answer')}
+                  </span>
+                  <div className="max-h-48 flex-1 overflow-y-auto pr-2">
+                    <span className="w-full text-2xl font-black break-words md:text-3xl">
+                      {correctFreeTextAnswer || '-'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-2 text-center text-lg font-bold text-muted-foreground/80">
+                {t('quiz.pendingGradingDesc')}
+              </div>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
               {question.options.map((option) => {
                 const isSelected = selectedOptionIds.includes(option.id)
                 const isCorrect = correctOptionIds.includes(option.id)
 
-                let optionStyle = 'border-border bg-card opacity-50'
+                let blockStyle = ''
                 let Icon = null
 
                 if (isSelected && isCorrect) {
-                  optionStyle =
-                    'border-green-500 bg-green-50 dark:bg-green-900/20 ring-1 ring-green-500'
-                  Icon = (
-                    <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  )
+                  blockStyle =
+                    'bg-emerald-500 border-emerald-700 text-white border-b-4 translate-y-1 brightness-95'
+                  Icon = <Check className="size-6 stroke-4 text-white" />
                 } else if (isSelected && !isCorrect) {
-                  optionStyle =
-                    'border-destructive bg-destructive/10 ring-1 ring-destructive'
-                  Icon = <XCircle className="h-5 w-5 text-destructive" />
+                  blockStyle =
+                    'bg-rose-500 border-rose-700 text-white border-b-4 translate-y-1 brightness-95'
+                  Icon = <X className="size-6 stroke-4 text-white" />
                 } else if (!isSelected && isCorrect) {
-                  optionStyle =
-                    'border-green-500 border-dashed bg-green-50/50 dark:bg-green-900/10'
-                  Icon = (
-                    <CheckCircle2 className="h-5 w-5 text-green-600/50 dark:text-green-400/50" />
-                  )
+                  blockStyle =
+                    'bg-emerald-100 border-emerald-500 text-emerald-900 border-b-8 opacity-90'
+                  Icon = <Check className="size-6 stroke-4 text-emerald-700" />
+                } else {
+                  blockStyle =
+                    'bg-muted/30 border-muted text-muted-foreground border-b-4 opacity-50 grayscale'
                 }
 
                 return (
                   <div
                     key={option.id}
-                    className={`flex w-full items-center gap-4 rounded-xl border p-4 text-left transition-all ${optionStyle}`}
+                    className={cn(
+                      'relative flex min-h-24 w-full flex-col items-center justify-center gap-2 rounded-3xl border-4 p-6 text-center transition-all md:min-h-32',
+                      blockStyle,
+                    )}
                   >
-                    <div className="flex h-6 w-6 shrink-0 items-center justify-center">
-                      {Icon ? (
-                        Icon
-                      ) : (
-                        <div className="h-2 w-2 rounded-full bg-muted-foreground/30" />
-                      )}
-                    </div>
+                    {Icon && (
+                      <div className="absolute top-4 right-4 flex size-8 items-center justify-center">
+                        {Icon}
+                      </div>
+                    )}
 
-                    <span
-                      className={`text-base font-medium ${
-                        isSelected || isCorrect
-                          ? 'text-foreground'
-                          : 'text-muted-foreground'
-                      }`}
-                    >
+                    {option.mediaAssetId && (
+                      <div className="w-full max-w-37.5 overflow-hidden rounded-xl border-4 border-black/10">
+                        <MediaAssetViewer
+                          assetId={option.mediaAssetId}
+                          isOption
+                        />
+                      </div>
+                    )}
+
+                    <span className="line-clamp-3 w-full text-lg font-black tracking-wide break-words md:text-xl lg:text-2xl">
                       {option.text}
                     </span>
                   </div>
@@ -192,14 +180,14 @@ export function QuestionRecapScreen({
         </CardContent>
       </Card>
 
-      <div className="mt-auto flex justify-end">
+      <div className="mt-8 flex justify-end">
         <Button
           size="lg"
           onClick={onContinue}
-          className="w-full shadow-md sm:w-auto"
+          className="w-full rounded-2xl border-b-4 border-primary-foreground/30 px-8 py-6 text-xl font-black shadow-md transition-transform hover:-translate-y-1 active:translate-y-1 active:border-b-0 sm:w-auto"
         >
           {isLastQuestion ? t('quiz.finishQuiz') : t('common.continue')}
-          <ArrowRight className="ml-2 h-5 w-5" />
+          <ArrowRight className="ml-2 h-6 w-6 stroke-3" />
         </Button>
       </div>
     </div>

@@ -228,7 +228,7 @@ export function LoginForm() {
                   {resendMutation.isPending && (
                     <Spinner size="sm" className="mr-2" />
                   )}
-                  {t('login.resendVerification', 'Resend verification email')}
+                  {t('login.resendVerification')}
                 </Button>
               )}
             </div>

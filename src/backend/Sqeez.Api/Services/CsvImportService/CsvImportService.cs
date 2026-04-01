@@ -135,7 +135,10 @@ namespace Sqeez.Api.Services
                         PasswordHash = hashedPassword,
                         Role = UserRole.Student,
                         LastSeen = DateTime.UtcNow,
-                        SchoolClassId = classDictionary.GetValueOrDefault(record.ClassName.Trim().ToLower())
+                        SchoolClassId = classDictionary.GetValueOrDefault(record.ClassName.Trim().ToLower()),
+                        IsEmailVerified = true,
+                        EmailVerificationToken = null,
+                        EmailVerificationTokenExpiry = null,
                     });
                 }
 

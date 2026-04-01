@@ -18,6 +18,7 @@ import {
   School,
   BookCopy,
   Award,
+  FileUp,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useGetApiUsersId } from '@/api/generated/endpoints/user/user'
@@ -169,6 +170,13 @@ function DashboardLaunchpad() {
       icon: <Award className="h-8 w-8" />,
       href: '/app/admin/badges',
       colorClass: 'bg-amber-500/10 text-amber-500',
+    },
+    {
+      title: t('dashboard.adminImport'),
+      description: t('dashboard.adminImportDescription'),
+      icon: <FileUp className="h-8 w-8" />,
+      href: '/app/admin/imports',
+      colorClass: 'bg-emerald-500/10 text-emerald-500',
     },
     {
       title: t('dashboard.systemSettings'),

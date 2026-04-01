@@ -145,6 +145,8 @@
       "successTitle": "Import zpracován",
       "recordsCount": "Úspěšně vytvořeno {{count}} nových záznamů.",
       "issuesFound": "Problémy k vyřešení (některé řádky mohly být přeskočeny):",
+      "csvRawExample": "Ukázka CSV šablony",
+      "copyTemplate": "Kopírovat CSV šablonu",
       "steps": {
         "classes": {
           "title": "Třídy",
@@ -312,7 +314,8 @@
     "view": "Zobrazit",
     "deleteAll": "Smazat vše",
     "deleting": "Mažu...",
-    "close": "Zavřít"
+    "close": "Zavřít",
+    "copied": "Úspěšně zkopírováno!"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -358,7 +361,9 @@
     "adminSubjects": "Předměty",
     "adminSubjectsDescription": "Spravujte globální katalog předmětů, kódy a detaily.",
     "adminBadges": "Správa odznaků",
-    "adminBadgesDescription": "Vytvářejte, upravujte a nastavujte odznaky úspěchů a pravidla pro XP odměny na platformě."
+    "adminBadgesDescription": "Vytvářejte, upravujte a nastavujte odznaky úspěchů a pravidla pro XP odměny na platformě.",
+    "adminImport": "Import dat",
+    "adminImportDescription": "Import tříd, předmětů a uživatelů z CSV souborů."
   },
   "error": {
     "generic": "Nastala chyba. Prosím zkuste to později.",

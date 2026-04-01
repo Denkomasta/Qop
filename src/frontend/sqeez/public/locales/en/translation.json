@@ -145,6 +145,8 @@
       "successTitle": "Import Processed",
       "recordsCount": "Successfully created {{count}} new records.",
       "issuesFound": "Issues to address (some rows may have been skipped):",
+      "csvRawExample": "Raw CSV template",
+      "copyTemplate": "Copy CSV template",
       "steps": {
         "classes": {
           "title": "Classes",
@@ -312,7 +314,8 @@
     "view": "View",
     "deleteAll": "Delete All",
     "deleting": "Deleting...",
-    "close": "Close"
+    "close": "Close",
+    "copied": "Successfully copied!"
   },
   "dashboard": {
     "administration": "Administration",
@@ -358,7 +361,9 @@
     "adminSubjects": "Subjects",
     "adminSubjectsDescription": "Manage global subject catalogs, codes, and details.",
     "adminBadges": "Manage Badges",
-    "adminBadgesDescription": "Create, configure, and manage achievement badges and XP reward rules for the platform."
+    "adminBadgesDescription": "Create, configure, and manage achievement badges and XP reward rules for the platform.",
+    "adminImport": "Data Import",
+    "adminImportDescription": "Import classes, subjects and users from CSV files."
   },
   "enrollments": {
     "confirmDelete": "Are you sure you want to unenroll from this subject? This action cannot be undone.",

@@ -129,6 +129,44 @@
       "classDeleted": "School class deleted successfully",
       "cannotDelete": "Cannot delete class with enrolled students or assigned teacher."
     },
+    "import": {
+      "title": "Data Import",
+      "subtitle": "Bulk create classes, subjects, and students via CSV.",
+      "startBtn": "Upload CSV",
+      "howItWorks": "How it works",
+      "description": "Our orchestrator processes the file in stages to ensure data integrity.",
+      "csvFormat": "CSV Column Requirements",
+      "passwordNote": "If password is left empty, a default one will be assigned.",
+      "uploadTitle": "Import Master CSV",
+      "clickToUpload": "Click or drag CSV file here to upload",
+      "onlyCsvAllowed": "Only CSV files are allowed.",
+      "process": "Process File",
+      "completed": "Import process finished",
+      "successTitle": "Import Processed",
+      "recordsCount": "Successfully created {{count}} new records.",
+      "issuesFound": "Issues to address (some rows may have been skipped):",
+      "steps": {
+        "classes": {
+          "title": "Classes",
+          "desc": "Identifies unique classes. Creates them if they don't exist yet."
+        },
+        "subjects": {
+          "title": "Subjects",
+          "desc": "Maps subjects to the identified classes using codes."
+        },
+        "students": {
+          "title": "Students",
+          "desc": "Creates student accounts, hashes passwords, and assigns them to classes."
+        }
+      },
+      "tableExample": {
+        "className": "9.A",
+        "subjectName": "Mathematics",
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "john.doe@example.com"
+      }
+    },
     "subjects": {
       "subjectManagement": "Subject Management",
       "totalSubjects": "Total Subjects",
@@ -273,7 +311,8 @@
     "grade": "Grade",
     "view": "View",
     "deleteAll": "Delete All",
-    "deleting": "Deleting..."
+    "deleting": "Deleting...",
+    "close": "Close"
   },
   "dashboard": {
     "administration": "Administration",
@@ -374,7 +413,8 @@
     "invalidPhone": "Please enter a valid phone number.",
     "invalidCharacters": "Input contains invalid characters. Please use only letters, numbers, dashes, and underscores.",
     "fileTooLarge": "Attached file is too large to send (max {{maxValue}} MB).",
-    "invalidNumber": "Please enter a valid number."
+    "invalidNumber": "Please enter a valid number.",
+    "importFailed": "The import failed. Please check the file format."
   },
   "footer": {
     "rights": "All rights reserved.",

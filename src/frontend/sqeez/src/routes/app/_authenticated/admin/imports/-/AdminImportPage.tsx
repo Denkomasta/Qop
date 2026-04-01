@@ -10,21 +10,25 @@ import {
   CardTitle,
 } from '@/components/ui/Card'
 import { ImportCsvModal } from './ImportCsvModal'
+import { toast } from 'sonner'
+
+const csvTemplate = `Class Name,Academic Year,Subject Name,Subject Code,First Name,Last Name,Email,Password
+9.A,2025/2026,Mathematics,MATH-9A,Jan,Novák,jan.novak@example.com,Password123!`
+
+const csvTemplateHeaders = [
+  'Class Name',
+  'Academic Year',
+  'Subject Name',
+  'Subject Code',
+  'First Name',
+  'Last Name',
+  'Email',
+  'Password',
+]
 
 export function AdminImportPage() {
   const { t } = useTranslation()
   const [isModalOpen, setIsModalOpen] = useState(false)
-
-  const csvTemplateHeaders = [
-    'Class Name',
-    'Academic Year',
-    'Subject Name',
-    'Subject Code',
-    'First Name',
-    'Last Name',
-    'Email',
-    'Password',
-  ]
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -115,35 +119,46 @@ export function AdminImportPage() {
                   </thead>
                   <tbody>
                     <tr className="text-muted-foreground">
-                      <td className="border-b p-3 italic">
-                        {t('admin.import.tableExample.className')}
-                      </td>
+                      <td className="border-b p-3 italic">9.A</td>
                       <td className="border-b p-3 italic">2025/2026</td>
+                      <td className="border-b p-3 italic">Mathematics</td>
+                      <td className="border-b p-3 italic">MATH-9A</td>
+                      <td className="border-b p-3 italic">Jan</td>
+                      <td className="border-b p-3 italic">Novak</td>
                       <td className="border-b p-3 italic">
-                        {t('admin.import.tableExample.subjectName')}
+                        jan.novak@example.com
                       </td>
-                      <td className="border-b p-3 italic">MATH-01</td>
-                      <td className="border-b p-3 italic">
-                        {t('admin.import.tableExample.firstName')}
-                      </td>
-                      <td className="border-b p-3 italic">
-                        {t('admin.import.tableExample.lastName')}
-                      </td>
-                      <td className="border-b p-3 italic">
-                        {t('admin.import.tableExample.email')}
-                      </td>
-                      <td className="border-b p-3 italic">********</td>
+                      <td className="border-b p-3 italic">Password123!</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
               <p className="mt-4 text-xs text-muted-foreground">
-                *{' '}
-                {t(
-                  'admin.import.passwordNote',
-                  'If password is left empty, a default one will be assigned.',
-                )}
+                * {t('admin.import.passwordNote')}
               </p>
+
+              <div className="mt-6 space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium">
+                    {t('admin.import.csvRawExample')}
+                  </p>
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      navigator.clipboard.writeText(csvTemplate)
+                      toast.success(t('common.copied'))
+                    }}
+                  >
+                    {t('admin.import.copyTemplate')}
+                  </Button>
+                </div>
+
+                <pre className="overflow-x-auto rounded-md bg-muted p-4 text-xs">
+                  <code>{csvTemplate}</code>
+                </pre>
+              </div>
             </CardContent>
           </Card>
         </div>

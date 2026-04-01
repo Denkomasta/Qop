@@ -1,4 +1,6 @@
 ﻿using Sqeez.Api.DTOs;
+using Sqeez.Api.Models.Import;
+using Sqeez.Api.Models.Users;
 
 namespace Sqeez.Api.Services.Interfaces
 {
@@ -8,6 +10,7 @@ namespace Sqeez.Api.Services.Interfaces
         Task<ServiceResult<StudentDto>> GetUserByIdAsync(long id);
         Task<ServiceResult<DetailedUserDto>> GetDetailedUserByIdAsync(long id);
         Task<ServiceResult<StudentDto>> CreateUserAsync(CreateStudentDto dto);
+        Task<ServiceResult<BulkOperationResult<StudentDto>>> CreateStudentsBulkAsync(IEnumerable<Student> students);
         Task<ServiceResult<StudentDto>> PatchUserAsync(long id, PatchStudentDto dto);
         Task<ServiceResult<bool>> ArchiveUserAsync(long id);
         Task<ServiceResult<string>> UploadAvatarAsync(long userId, IFormFile imageFile);

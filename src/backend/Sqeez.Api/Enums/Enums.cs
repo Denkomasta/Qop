@@ -13,7 +13,8 @@
         Conflict = 3,
         Unauthorized = 4,
         Forbidden = 5,
-        InternalError = 6
+        InternalError = 6,
+        BadRequest = 7,
     }
 
     public enum BadgeMetric

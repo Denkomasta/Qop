@@ -18,8 +18,7 @@ namespace Sqeez.Api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost("master")]
-        [Consumes("multipart/form-data")]
-        public async Task<ActionResult<ImportResultDto>> ImportMasterFile([FromForm] IFormFile file)
+        public async Task<ActionResult<ImportResultDto>> ImportMasterFile(IFormFile file)
         {
             var result = await _csvImportService.ImportMasterFileAsync(file);
             return HandleServiceResult(result);

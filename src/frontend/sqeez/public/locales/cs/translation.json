@@ -129,6 +129,44 @@
       "classDeleted": "Školní třída byla úspěšně smazána",
       "cannotDelete": "Nelze smazat třídu se zapsanými studenty nebo přiřazeným učitelem."
     },
+    "import": {
+      "title": "Import dat",
+      "subtitle": "Hromadné vytváření tříd, předmětů a studentů pomocí CSV.",
+      "startBtn": "Nahrát CSV",
+      "howItWorks": "Jak to funguje",
+      "description": "Náš orchestrátor zpracovává soubor po etapách, aby zajistil integritu dat.",
+      "csvFormat": "Požadavky na sloupce CSV",
+      "passwordNote": "Pokud zůstane heslo prázdné, bude přiřazeno výchozí.",
+      "uploadTitle": "Importovat hlavní CSV",
+      "clickToUpload": "Klikněte nebo přetáhněte soubor CSV sem",
+      "onlyCsvAllowed": "Povoleny jsou pouze soubory CSV.",
+      "process": "Zpracovat soubor",
+      "completed": "Proces importu byl dokončen",
+      "successTitle": "Import zpracován",
+      "recordsCount": "Úspěšně vytvořeno {{count}} nových záznamů.",
+      "issuesFound": "Problémy k vyřešení (některé řádky mohly být přeskočeny):",
+      "steps": {
+        "classes": {
+          "title": "Třídy",
+          "desc": "Identifikuje unikátní třídy. Pokud ještě neexistují, vytvoří je."
+        },
+        "subjects": {
+          "title": "Předměty",
+          "desc": "Přiřadí předměty k identifikovaným třídám pomocí kódů."
+        },
+        "students": {
+          "title": "Studenti",
+          "desc": "Vytvoří studentské účty, zašifruje hesla a přiřadí je do tříd."
+        }
+      },
+      "tableExample": {
+        "className": "9.A",
+        "subjectName": "Matematika",
+        "firstName": "Jan",
+        "lastName": "Novák",
+        "email": "jan.novak@priklad.cz"
+      }
+    },
     "subjects": {
       "subjectManagement": "Správa předmětů",
       "totalSubjects": "Celkem předmětů",
@@ -273,7 +311,8 @@
     "grade": "Ohodnotit",
     "view": "Zobrazit",
     "deleteAll": "Smazat vše",
-    "deleting": "Mažu..."
+    "deleting": "Mažu...",
+    "close": "Zavřít"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -351,7 +390,8 @@
     "invalidPhone": "Zadejte platné telefonní číslo.",
     "invalidCharacters": "Hodnota obsahuje nepovolené znaky. Použijte pouze písmena, číslice, pomlčky a podtržítka.",
     "fileTooLarge": "Vybraný soubor je příliš velký (maximum {{maxValue}} MB).",
-    "invalidNumber": "Zadejte platné číslo."
+    "invalidNumber": "Zadejte platné číslo.",
+    "importFailed": "Import se nezdařil. Zkontrolujte prosím formát souboru."
   },
   "enrollments": {
     "confirmDelete": "Opravdu se chcete odhlásit z tohoto předmětu? Tuto akci nelze vrátit zpět.",

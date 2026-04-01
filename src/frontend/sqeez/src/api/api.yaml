@@ -484,6 +484,32 @@ paths:
             text/json:
               schema:
                 type: boolean
+  /api/import/master:
+    post:
+      tags:
+        - Import
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  $ref: "#/components/schemas/IFormFile"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/ImportResultDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportResultDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/ImportResultDto"
   /api/media-assets:
     get:
       tags:
@@ -3462,6 +3488,21 @@ components:
     IFormFile:
       type: string
       format: binary
+    ImportResultDto:
+      type: object
+      properties:
+        recordsImported:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        errors:
+          type: array
+          items:
+            type: string
+        hasRowErrors:
+          type: boolean
     LoginDTO:
       required:
         - email
@@ -5330,6 +5371,7 @@ tags:
   - name: Auth
   - name: Badges
   - name: Enrollments
+  - name: Import
   - name: MediaAssets
   - name: QuizAttempts
   - name: Quizzes

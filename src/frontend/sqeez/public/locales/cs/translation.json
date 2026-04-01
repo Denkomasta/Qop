@@ -558,7 +558,24 @@
     "register": "Zaregistrovat se",
     "disabledTitle": "Registrace zakázána",
     "disabledMessage": "Veřejná registrace je momentálně vypnutá. Pro vytvoření účtu prosím kontaktujte svého administrátora systému nebo školu.",
-    "backToLogin": "Přejít na přihlášení"
+    "backToLogin": "Přejít na přihlášení",
+    "confirmPassword": "Potvrďte heslo",
+    "checkEmailTitle": "Zkontrolujte si e-mail",
+    "checkEmailDesc": "Odeslali jsme ověřovací odkaz na",
+    "validation": {
+      "firstNameRequired": "Jméno je povinné",
+      "lastNameRequired": "Příjmení je povinné",
+      "usernameMin": "Uživatelské jméno musí mít alespoň 3 znaky",
+      "usernameMax": "Uživatelské jméno nesmí přesáhnout 20 znaků",
+      "usernameFormat": "Uživatelské jméno může obsahovat pouze písmena, čísla, pomlčky a podtržítka",
+      "emailInvalid": "Neplatná e-mailová adresa",
+      "passwordMin": "Heslo musí mít alespoň 8 znaků",
+      "passwordUppercase": "Heslo musí obsahovat alespoň jedno velké písmeno",
+      "passwordLowercase": "Heslo musí obsahovat alespoň jedno malé písmeno",
+      "passwordNumber": "Heslo musí obsahovat alespoň jednu číslici",
+      "passwordSpecial": "Heslo musí obsahovat alespoň jeden speciální znak",
+      "passwordsMatch": "Hesla se neshodují"
+    }
   },
   "subject": {
     "notFound": "Předmět nenalezen",

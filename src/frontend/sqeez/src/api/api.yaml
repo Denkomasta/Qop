@@ -41,6 +41,25 @@ paths:
       responses:
         "200":
           description: OK
+  /api/auth/resend-verification:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResendVerificationDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/ResendVerificationDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/ResendVerificationDto"
+        required: true
+      responses:
+        "200":
+          description: OK
   /api/auth/login:
     post:
       tags:
@@ -4672,6 +4691,16 @@ components:
               - integer
               - string
             format: int64
+    ResendVerificationDto:
+      required:
+        - email
+      type: object
+      properties:
+        email:
+          type: string
+        rememberMe:
+          type: boolean
+          default: false
     SchoolClassBasicDto:
       type: object
       properties:

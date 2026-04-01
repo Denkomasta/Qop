@@ -1,17 +1,23 @@
-import { Mail, Lock, BookOpen, Loader2 } from 'lucide-react'
+import { Mail, Lock, BookOpen } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { Input } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { useTranslation } from 'react-i18next'
 import { Link, useSearch } from '@tanstack/react-router'
-import { usePostApiAuthLogin as useLogin } from '@/api/generated/endpoints/auth/auth'
+import {
+  usePostApiAuthLogin as useLogin,
+  usePostApiAuthResendVerification,
+} from '@/api/generated/endpoints/auth/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useForm, Controller, type SubmitHandler } from 'react-hook-form'
 import type { TranslationKey } from '@/i18next'
 import { AxiosError } from 'axios'
 import { useAuthSuccess } from '@/hooks/useAuthSuccess'
+import { toast } from 'sonner'
+import { Spinner } from '@/components/ui/Spinner'
+import type { AspNetProblemDetails } from '@/api/custom-axios'
 
 const loginSchema = z.object({
   email: z.email({ message: 'Invalid email address' }),
@@ -39,6 +45,7 @@ export function LoginForm() {
     handleSubmit,
     setError,
     control,
+    getValues,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -46,6 +53,27 @@ export function LoginForm() {
       email: '',
       password: '',
       remember: false,
+    },
+  })
+
+  const resendMutation = usePostApiAuthResendVerification({
+    mutation: {
+      onSuccess: () => {
+        toast.success(t('login.resendSuccess'))
+      },
+      onError: (error: AxiosError<AspNetProblemDetails>) => {
+        const status = error.response?.status
+
+        if (status === 400) {
+          toast.error(t('error.alreadyVerified'))
+        } else if (status === 404) {
+          toast.error(t('error.userNotFound'))
+        } else if (status === 429) {
+          toast.error(t('error.tooManyRequests'))
+        } else {
+          toast.error(t('error.generic'))
+        }
+      },
     },
   })
 
@@ -61,15 +89,27 @@ export function LoginForm() {
           })
         }
       },
-      onError: (error: AxiosError) => {
-        setError('root', {
-          type: 'manual',
-          message: t(
-            error.response?.status
-              ? errorMapping[error.response.status]
-              : 'error.generic',
-          ),
-        })
+      onError: (error: AxiosError<AspNetProblemDetails>) => {
+        const data = error.response?.data
+        const backendError = data?.error || data?.detail || data?.title || ''
+
+        const isUnverified = backendError.toLowerCase().includes('verif')
+
+        if (isUnverified) {
+          setError('root', {
+            type: 'unverified',
+            message: t('error.unverifiedEmail', 'Your email is not verified.'),
+          })
+        } else {
+          setError('root', {
+            type: 'manual',
+            message: t(
+              error.response?.status
+                ? errorMapping[error.response.status] || 'error.generic'
+                : 'error.generic',
+            ),
+          })
+        }
       },
     },
   })
@@ -81,6 +121,15 @@ export function LoginForm() {
         password: values.password,
         rememberMe: values.remember,
       },
+    })
+  }
+
+  const handleResendClick = () => {
+    const email = getValues('email')
+    if (!email) return
+
+    resendMutation.mutate({
+      data: { email },
     })
   }
 
@@ -115,7 +164,7 @@ export function LoginForm() {
           label={t('login.email')}
           placeholder={t('login.emailPlaceholder')}
           error={errors.email?.message}
-          disabled={isPending}
+          disabled={isPending || resendMutation.isPending}
           icon={<Mail className="h-4 w-4" />}
         />
 
@@ -126,11 +175,11 @@ export function LoginForm() {
           label={t('login.password')}
           placeholder={t('login.password')}
           error={errors.password?.message}
-          disabled={isPending}
+          disabled={isPending || resendMutation.isPending}
           icon={<Lock className="h-4 w-4" />}
           rightTopChip={
             <>
-              <a // TODO: Link to forgot password page
+              <a
                 href="#"
                 className="text-xs font-medium text-primary transition-colors hover:text-primary/80"
               >
@@ -149,7 +198,7 @@ export function LoginForm() {
                 id="remember"
                 checked={field.value}
                 onCheckedChange={field.onChange}
-                disabled={isPending}
+                disabled={isPending || resendMutation.isPending}
                 aria-label="Remember me for 30 days"
               />
             )}
@@ -164,20 +213,38 @@ export function LoginForm() {
 
         {errors.root && (
           <div className="animate-in rounded-lg bg-destructive/15 p-3 text-[0.8rem] font-medium text-destructive ring-1 ring-destructive/20 transition-all zoom-in-95 fade-in">
-            {errors.root.message}
+            <div className="flex flex-col gap-2">
+              <span>{errors.root.message}</span>
+
+              {errors.root.type === 'unverified' && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="w-fit border-destructive/30 text-destructive hover:bg-destructive/20 hover:text-destructive"
+                  disabled={resendMutation.isPending}
+                  onClick={handleResendClick}
+                >
+                  {resendMutation.isPending && (
+                    <Spinner size="sm" className="mr-2" />
+                  )}
+                  {t('login.resendVerification', 'Resend verification email')}
+                </Button>
+              )}
+            </div>
           </div>
         )}
 
         <Button
           type="submit"
-          className="h-11 w-full rounded-xl bg-primary font-semibold text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
-          disabled={isPending}
+          className="mt-2 h-11 w-full rounded-xl bg-primary font-semibold text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
+          disabled={isPending || resendMutation.isPending}
         >
-          {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {isPending && <Spinner size="sm" className="mr-2" />}
           {t('common.signIn')}
         </Button>
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="mt-2 text-center text-sm text-muted-foreground">
           {t('login.areYouNew')}{' '}
           <Link
             to="/register"

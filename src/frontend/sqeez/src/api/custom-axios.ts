@@ -24,6 +24,7 @@ export interface AspNetProblemDetails {
   instance?: string
   traceId?: string
   errors?: Record<string, string[]>
+  error?: string
 }
 
 const baseURL =

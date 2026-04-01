@@ -24,6 +24,7 @@ import type {
   LoginDTO,
   PostApiAuthVerifyEmailParams,
   RegisterDTO,
+  ResendVerificationDto,
   UpdateRoleDTO,
   UserDTO,
 } from '../../model'
@@ -196,6 +197,92 @@ export const usePostApiAuthVerifyEmail = <
 > => {
   return useMutation(
     getPostApiAuthVerifyEmailMutationOptions(options),
+    queryClient,
+  )
+}
+export const postApiAuthResendVerification = (
+  resendVerificationDto: ResendVerificationDto,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    {
+      url: `/api/auth/resend-verification`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: resendVerificationDto,
+      signal,
+    },
+    options,
+  )
+}
+
+export const getPostApiAuthResendVerificationMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postApiAuthResendVerification>>,
+    TError,
+    { data: ResendVerificationDto },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postApiAuthResendVerification>>,
+  TError,
+  { data: ResendVerificationDto },
+  TContext
+> => {
+  const mutationKey = ['postApiAuthResendVerification']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postApiAuthResendVerification>>,
+    { data: ResendVerificationDto }
+  > = (props) => {
+    const { data } = props ?? {}
+
+    return postApiAuthResendVerification(data, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type PostApiAuthResendVerificationMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postApiAuthResendVerification>>
+>
+export type PostApiAuthResendVerificationMutationBody = ResendVerificationDto
+export type PostApiAuthResendVerificationMutationError = ErrorType<unknown>
+
+export const usePostApiAuthResendVerification = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof postApiAuthResendVerification>>,
+      TError,
+      { data: ResendVerificationDto },
+      TContext
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof postApiAuthResendVerification>>,
+  TError,
+  { data: ResendVerificationDto },
+  TContext
+> => {
+  return useMutation(
+    getPostApiAuthResendVerificationMutationOptions(options),
     queryClient,
   )
 }

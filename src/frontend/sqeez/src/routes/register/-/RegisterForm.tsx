@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Mail, Lock, BookOpen, Loader2, User as UserIcon } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { Input } from '@/components/ui/Input'
@@ -16,7 +16,7 @@ import {
 
 export function RegisterForm() {
   const { t } = useTranslation()
-  const registerSchema = getRegisterSchema(t)
+  const registerSchema = useMemo(() => getRegisterSchema(t), [t])
 
   const [isSuccess, setIsSuccess] = useState(false)
 

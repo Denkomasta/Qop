@@ -15,6 +15,7 @@
         Forbidden = 5,
         InternalError = 6,
         BadRequest = 7,
+        TooManyRequests = 8,
     }
 
     public enum BadgeMetric

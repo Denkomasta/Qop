@@ -64,4 +64,10 @@ namespace Sqeez.Api.DTOs
     public record RefreshTokenDto(
         string RefreshToken
     );
+
+    public record ResendVerificationDto(
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email format.")]
+        string Email,
+        bool RememberMe = false
+    );
 }

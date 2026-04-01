@@ -3,8 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using Sqeez.Api.Data;
+using Sqeez.Api.Models.Config;
 using Sqeez.Api.Services;
 using Sqeez.Api.Services.AuthService;
+using Sqeez.Api.Services.EmailService;
 using Sqeez.Api.Services.Interfaces;
 using Sqeez.Api.Services.SubjectService;
 using Sqeez.Api.Services.TokenService;
@@ -62,6 +64,8 @@ builder.Services.AddDbContext<SqeezDbContext>(options =>
 
 builder.Services.AddMemoryCache();
 
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ISchoolClassService, SchoolClassService>();
@@ -77,6 +81,7 @@ builder.Services.AddScoped<IBadgeService, BadgeService>();
 builder.Services.AddScoped<ISystemConfigService, SystemConfigService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICsvImportService, CsvImportService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

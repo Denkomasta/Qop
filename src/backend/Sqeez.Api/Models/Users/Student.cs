@@ -17,6 +17,9 @@ namespace Sqeez.Api.Models.Users
         public DateTime LastSeen { get; set; }
         public DateTime? ArchivedAt { get; set; }
         public string? AvatarUrl { get; set; }
+        public bool IsEmailVerified { get; set; } = false;
+        public string? EmailVerificationToken { get; set; }
+        public DateTime? EmailVerificationTokenExpiry { get; set; }
 
         public long? SchoolClassId { get; set; }
         public SchoolClass? SchoolClass { get; set; }

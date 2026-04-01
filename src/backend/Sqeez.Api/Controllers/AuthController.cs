@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Services.AuthService;
-using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
 {
@@ -64,11 +63,22 @@ namespace Sqeez.Api.Controllers
         {
             var result = await _authService.RegisterAsync(registerDto);
 
-            if (!result.Success || result.Data == null) return HandleServiceResult(result);
+            if (!result.Success) return HandleServiceResult(result);
 
-            SetTokens(result.Data, registerDto.RememberMe);
+            return Ok(new { message = "Registration successful. Please check your email to verify your account." });
+        }
 
-            return Ok(new { message = "Registration was successful." });
+        [HttpPost("verify-email")]
+        public async Task<ActionResult> VerifyEmail([FromQuery] string token)
+        {
+            if (string.IsNullOrEmpty(token))
+                return BadRequest(new { message = "Token is required." });
+
+            var result = await _authService.VerifyEmailAsync(token);
+
+            if (!result.Success) return HandleServiceResult(result);
+
+            return Ok(new { message = "Email verified successfully. You can now log in." });
         }
 
         [HttpPost("login")]

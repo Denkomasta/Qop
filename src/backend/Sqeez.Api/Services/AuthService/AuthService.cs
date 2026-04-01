@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
@@ -13,14 +12,19 @@ namespace Sqeez.Api.Services.AuthService
     public class AuthService : BaseService<AuthService>, IAuthService
     {
         private readonly ITokenService _tokenService;
+        private readonly IEmailService _emailService;
         private readonly ISystemConfigService _configService;
         private readonly string _superUserEmail;
+        private readonly string _frontendUrl;
 
-        public AuthService(SqeezDbContext context, IConfiguration config, ITokenService tokenService, ISystemConfigService configService, ILogger<AuthService> logger) : base(context, logger)
+        public AuthService(SqeezDbContext context, IConfiguration config, ITokenService tokenService, IEmailService emailService,
+            ISystemConfigService configService, ILogger<AuthService> logger) : base(context, logger)
         {
+            _emailService = emailService;
             _tokenService = tokenService;
             _configService = configService;
             _superUserEmail = config["SUPER_USER_EMAIL"]?.Trim().ToLower() ?? string.Empty;
+            _frontendUrl = config["FRONTEND_URL"]?.Trim().TrimEnd('/') ?? "http://localhost:3000";
         }
 
         private async Task<AuthResponseDto> GenerateAuthResponseAndSessionAsync(Student user, bool rememberMe = false)
@@ -81,6 +85,9 @@ namespace Sqeez.Api.Services.AuthService
 
             if (user == null) return ServiceResult<AuthResponseDto>.Failure("Invalid email or password.", ServiceError.NotFound);
 
+            if (!user.IsEmailVerified)
+                return ServiceResult<AuthResponseDto>.Failure("Please verify your email address before logging in.", ServiceError.Unauthorized);
+
             bool isValid = BC.Verify(dto.Password.Trim(), user.PasswordHash);
             if (!isValid) return ServiceResult<AuthResponseDto>.Failure("Invalid email or password.", ServiceError.Unauthorized);
 
@@ -90,38 +97,78 @@ namespace Sqeez.Api.Services.AuthService
             return ServiceResult<AuthResponseDto>.Ok(response);
         }
 
-        public async Task<ServiceResult<AuthResponseDto>> RegisterAsync(RegisterDTO dto)
+        public async Task<ServiceResult<bool>> RegisterAsync(RegisterDTO dto)
         {
             _logger.LogInformation("Attempting to register user: {Email}", dto.Email);
 
             var config = await _configService.GetConfigAsync();
             if (!config.Data!.AllowPublicRegistration)
             {
-                return ServiceResult<AuthResponseDto>.Failure(
+                return ServiceResult<bool>.Failure(
                     "Public registration is currently closed. Please contact your administrator for an invite.",
                     ServiceError.Forbidden);
             }
 
-            string firstName = dto.FirstName.Trim();
-            string lastName = dto.LastName.Trim();
             string email = dto.Email.Trim().ToLower();
-            string salt = BC.GenerateSalt(12);
-            string hashedPassword = BC.HashPassword(dto.Password.Trim(), salt);
             string username = string.IsNullOrWhiteSpace(dto.Username) ? email.Split('@')[0] : dto.Username.Trim();
 
-            if (await _context.Students.AnyAsync(x => x.Email == email)) return ServiceResult<AuthResponseDto>.Failure("Email already exists.", ServiceError.Conflict);
-            if (await _context.Students.AnyAsync(x => x.Username == username)) return ServiceResult<AuthResponseDto>.Failure("Username already exists", ServiceError.Conflict);
+            if (await _context.Students.AnyAsync(x => x.Email == email))
+                return ServiceResult<bool>.Failure("Email already exists.", ServiceError.Conflict);
+            if (await _context.Students.AnyAsync(x => x.Username == username))
+                return ServiceResult<bool>.Failure("Username already exists", ServiceError.Conflict);
 
+            string salt = BC.GenerateSalt(12);
+            string hashedPassword = BC.HashPassword(dto.Password.Trim(), salt);
             bool isSuperUser = email == _superUserEmail;
+
+            string verificationToken = Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32));
+
             Student user = isSuperUser
-                ? new Admin { FirstName = firstName, LastName = lastName, Username = username, Email = email, PasswordHash = hashedPassword, Role = UserRole.Admin, LastSeen = DateTime.UtcNow }
-                : new Student { FirstName = firstName, LastName = lastName, Username = username, Email = email, PasswordHash = hashedPassword, Role = UserRole.Student, LastSeen = DateTime.UtcNow };
+                ? new Admin { FirstName = dto.FirstName.Trim(), LastName = dto.LastName.Trim(), Username = username, Email = email, PasswordHash = hashedPassword, Role = UserRole.Admin, LastSeen = DateTime.UtcNow }
+                : new Student { FirstName = dto.FirstName.Trim(), LastName = dto.LastName.Trim(), Username = username, Email = email, PasswordHash = hashedPassword, Role = UserRole.Student, LastSeen = DateTime.UtcNow };
+
+            if (isSuperUser)
+            {
+                user.IsEmailVerified = true;
+                user.EmailVerificationToken = null;
+                user.EmailVerificationTokenExpiry = null;
+            }
+            else
+            {
+                user.IsEmailVerified = false;
+                user.EmailVerificationToken = verificationToken;
+                user.EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(24);
+            }
 
             _context.Students.Add(user);
             await _context.SaveChangesAsync();
 
-            var response = await GenerateAuthResponseAndSessionAsync(user, dto.RememberMe);
-            return ServiceResult<AuthResponseDto>.Ok(response);
+            if (!isSuperUser)
+            {
+                string verificationLink = $"{_frontendUrl}/verify-email?token={verificationToken}";
+                await _emailService.SendVerificationEmailAsync(user.Email, verificationLink);
+            }
+
+            return ServiceResult<bool>.Ok(true);
+        }
+
+        public async Task<ServiceResult<bool>> VerifyEmailAsync(string token)
+        {
+            var user = await _context.Students.FirstOrDefaultAsync(u => u.EmailVerificationToken == token);
+
+            if (user == null)
+                return ServiceResult<bool>.Failure("Invalid verification token.", ServiceError.NotFound);
+
+            if (user.EmailVerificationTokenExpiry < DateTime.UtcNow)
+                return ServiceResult<bool>.Failure("Verification token has expired. Please request a new one.", ServiceError.Unauthorized);
+
+            user.IsEmailVerified = true;
+            user.EmailVerificationToken = null;
+            user.EmailVerificationTokenExpiry = null;
+
+            await _context.SaveChangesAsync();
+
+            return ServiceResult<bool>.Ok(true);
         }
 
         public async Task<ServiceResult<AuthResponseDto>> RefreshTokenAsync(RefreshTokenDto dto)
@@ -179,7 +226,7 @@ namespace Sqeez.Api.Services.AuthService
             };
 
             if (user == null) return ServiceResult<UserDTO>.Failure("User not found", ServiceError.NotFound);
-            
+
             var result = new UserDTO(
                 Id: user.Id,
                 Username: user.Username,

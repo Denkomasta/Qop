@@ -37,7 +37,8 @@ namespace Sqeez.Api.Data
                 Role = UserRole.Admin,
                 LastSeen = DateTime.UtcNow,
                 Department = "Board",
-                PhoneNumber = "00420123456789"
+                PhoneNumber = "00420123456789",
+                IsEmailVerified = true
             };
 
             // --- 2. School Classes ---
@@ -68,7 +69,8 @@ namespace Sqeez.Api.Data
                 Role = UserRole.Teacher,
                 LastSeen = DateTime.UtcNow,
                 Department = "Mathematics & Sciences",
-                ManagedClass = class3B
+                ManagedClass = class3B,
+                IsEmailVerified = true
             };
 
             var teacherJana = new Teacher
@@ -81,7 +83,8 @@ namespace Sqeez.Api.Data
                 Role = UserRole.Teacher,
                 LastSeen = DateTime.UtcNow,
                 Department = "Languages",
-                ManagedClass = class3A
+                ManagedClass = class3A,
+                IsEmailVerified = true
             };
 
             var avatarsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "avatars");
@@ -107,7 +110,8 @@ namespace Sqeez.Api.Data
                 Role = UserRole.Student,
                 LastSeen = DateTime.UtcNow,
                 SchoolClass = class3B,
-                AvatarUrl = "/avatars/default-avatar.png"
+                AvatarUrl = "/avatars/default-avatar.png",
+                IsEmailVerified = true,
             };
 
             var studentPepa = new Student
@@ -119,7 +123,8 @@ namespace Sqeez.Api.Data
                 PasswordHash = defaultPassword,
                 Role = UserRole.Student,
                 LastSeen = DateTime.UtcNow,
-                SchoolClass = class3B
+                SchoolClass = class3B,
+                IsEmailVerified = true,
             };
 
             var studentKarel = new Student
@@ -131,7 +136,8 @@ namespace Sqeez.Api.Data
                 PasswordHash = defaultPassword,
                 Role = UserRole.Student,
                 LastSeen = DateTime.UtcNow,
-                SchoolClass = class3A
+                SchoolClass = class3A,
+                IsEmailVerified = true,
             };
 
             var studentEva = new Student
@@ -143,7 +149,8 @@ namespace Sqeez.Api.Data
                 PasswordHash = defaultPassword,
                 Role = UserRole.Student,
                 LastSeen = DateTime.UtcNow,
-                SchoolClass = class3A
+                SchoolClass = class3A,
+                IsEmailVerified = true,
             };
 
             context.Students.AddRange(superAdmin, teacherDenda, teacherJana, studentTonda, studentPepa, studentKarel, studentEva);

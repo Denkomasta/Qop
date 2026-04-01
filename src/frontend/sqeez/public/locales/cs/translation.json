@@ -782,5 +782,23 @@
     "maxQuizMediaSizeHelp": "Maximální velikost souboru pro kvízová videa, zvuk a velké obrázky.",
     "maxActiveSessions": "Max. počet aktivních relací na uživatele",
     "maxActiveSessionsHelp": "Na kolika zařízeních může být uživatel současně přihlášen."
+  },
+  "verifyEmail": {
+    "invalidLinkTitle": "Neplatný odkaz",
+    "invalidLinkDesc": "Nebyl nalezen žádný ověřovací token. Ujistěte se prosím, že jste klikli na přesný odkaz zaslaný na váš e-mail.",
+    "readyTitle": "Připraveno k ověření",
+    "readyTitleUser": "Připraveno k ověření, {{name}}?",
+    "readyDesc": "Kliknutím na tlačítko níže bezpečně ověříte svou e-mailovou adresu a aktivujete svůj účet.",
+    "verifyButton": "Ověřit můj e-mail",
+    "verifyingTitle": "Ověřování e-mailu",
+    "verifyingDesc": "Čekejte prosím, zatímco potvrzujeme vaši e-mailovou adresu...",
+    "failedTitle": "Ověření selhalo",
+    "failedDescFallback": "Tento ověřovací odkaz je neplatný, vypršela jeho platnost, nebo již byl použit.",
+    "successTitle": "E-mail ověřen!",
+    "successDesc": "Váš e-mail byl úspěšně ověřen. Váš účet je nyní aktivní.",
+    "alreadyLoggedInMsg": "Poznámka: Jste aktuálně přihlášeni do Sqeez.",
+    "goToApp": "Přejít na Dashboard",
+    "goToLogin": "Přejít na přihlášení",
+    "logInToSqeez": "Přihlásit se do Sqeez"
   }
 }

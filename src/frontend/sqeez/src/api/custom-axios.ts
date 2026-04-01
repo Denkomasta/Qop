@@ -54,6 +54,7 @@ const AUTH_ENDPOINTS = [
   '/api/auth/login',
   '/api/auth/register',
   '/api/auth/refresh',
+  '/api/auth/verify-email',
 ]
 
 AXIOS_INSTANCE.interceptors.response.use(

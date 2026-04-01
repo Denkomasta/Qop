@@ -7,7 +7,6 @@ using Sqeez.Api.Enums;
 using Sqeez.Api.Services;
 using Sqeez.Api.Services.Interfaces;
 using System.Text;
-using Xunit;
 
 namespace Sqeez.Api.Tests.Services
 {
@@ -34,7 +33,7 @@ namespace Sqeez.Api.Tests.Services
 
             _mockConfigService.Setup(c => c.GetConfigAsync())
                 .ReturnsAsync(ServiceResult<SystemConfigDto>.Ok(
-                    new SystemConfigDto("Sqeez", "", "", "en", "24/25", true, true, 50, 3)
+                    new SystemConfigDto("Sqeez", "", "", "en", "24/25", true, true, 50, 50, 3)
                 ));
 
             _service = new LocalFileStorageService(_mockEnv.Object, _mockLogger.Object, _mockConfigService.Object);

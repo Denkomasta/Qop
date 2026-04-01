@@ -30,7 +30,10 @@ namespace Sqeez.Api.Tests.Services
 
         private async Task<SqeezDbContext> GetSeededContextAsync()
         {
-            var context = new SqeezDbContext(_dbContextOptions);
+            var options = new DbContextOptionsBuilder<SqeezDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+            var context = new SqeezDbContext(options);
 
             var student = new Student { Id = 1, Username = "teststudent", Email = "test@test.com", PasswordHash = "hash", CurrentXP = 0 };
             var subject = new Subject { Id = 1, Name = "Math", Code = "M1" };
@@ -38,7 +41,7 @@ namespace Sqeez.Api.Tests.Services
 
             var quiz = new Quiz { Id = 1, SubjectId = 1, Title = "Test Quiz", MaxRetries = 5 };
 
-            var question1 = new QuizQuestion { Id = 1, QuizId = 1, Difficulty = 5, Title = "MCQ" };
+            var question1 = new QuizQuestion { Id = 1, QuizId = 1, Difficulty = 5, Title = "Strict MCQ", IsStrictMultipleChoice = true };
             var opt1 = new QuizOption { Id = 1, QuizQuestionId = 1, IsCorrect = true, Text = "A" };
             var opt2 = new QuizOption { Id = 2, QuizQuestionId = 1, IsCorrect = true, Text = "B" };
             var opt3 = new QuizOption { Id = 3, QuizQuestionId = 1, IsCorrect = false, Text = "C" };
@@ -46,12 +49,17 @@ namespace Sqeez.Api.Tests.Services
             var question2 = new QuizQuestion { Id = 2, QuizId = 1, Difficulty = 10, Title = "FreeText" };
             var opt4 = new QuizOption { Id = 4, QuizQuestionId = 2, IsCorrect = true, IsFreeText = true, Text = "Earth" };
 
+            var question3 = new QuizQuestion { Id = 3, QuizId = 1, Difficulty = 5, Title = "Non-Strict MCQ", IsStrictMultipleChoice = false };
+            var opt5 = new QuizOption { Id = 5, QuizQuestionId = 3, IsCorrect = true, Text = "Correct Option 1" };
+            var opt6 = new QuizOption { Id = 6, QuizQuestionId = 3, IsCorrect = true, Text = "Correct Option 2" };
+            var opt7 = new QuizOption { Id = 7, QuizQuestionId = 3, IsCorrect = false, Text = "Incorrect Option" };
+
             context.Students.Add(student);
             context.Subjects.Add(subject);
             context.Enrollments.Add(enrollment);
             context.Quizzes.Add(quiz);
-            context.QuizQuestions.AddRange(question1, question2);
-            context.QuizOptions.AddRange(opt1, opt2, opt3, opt4);
+            context.QuizQuestions.AddRange(question1, question2, question3);
+            context.QuizOptions.AddRange(opt1, opt2, opt3, opt4, opt5, opt6, opt7);
 
             await context.SaveChangesAsync();
             return context;
@@ -106,7 +114,64 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
-        public async Task SubmitAnswerAsync_MultipleChoice_PerfectMatch_AwardsFullPoints()
+        public async Task SubmitAnswerAsync_NotStrict_SelectsOneCorrect_AwardsFullPoints()
+        {
+            await using var context = await GetSeededContextAsync();
+
+            var attempt = new QuizAttempt { Id = 1, QuizId = 1, EnrollmentId = 1, Status = AttemptStatus.Created };
+            context.QuizAttempts.Add(attempt);
+            await context.SaveChangesAsync();
+
+            var service = new QuizAttemptService(context, _mockLogger.Object, _mockBadgeService.Object);
+
+            var dto = new SubmitQuestionResponseDto(QuizQuestionId: 3, ResponseTimeMs: 5000, null, new List<long> { 5 });
+
+            var result = await service.SubmitAnswerAsync(1, 1, dto);
+
+            Assert.True(result.Success);
+            Assert.Equal(5, result.Data!.Score);
+        }
+
+        [Fact]
+        public async Task SubmitAnswerAsync_NotStrict_SelectsMultiple_AwardsZeroPoints()
+        {
+            await using var context = await GetSeededContextAsync();
+
+            var attempt = new QuizAttempt { Id = 1, QuizId = 1, EnrollmentId = 1, Status = AttemptStatus.Created };
+            context.QuizAttempts.Add(attempt);
+            await context.SaveChangesAsync();
+
+            var service = new QuizAttemptService(context, _mockLogger.Object, _mockBadgeService.Object);
+
+            var dto = new SubmitQuestionResponseDto(QuizQuestionId: 3, ResponseTimeMs: 5000, null, new List<long> { 5, 6 });
+
+            var result = await service.SubmitAnswerAsync(1, 1, dto);
+
+            Assert.True(result.Success);
+            Assert.Equal(0, result.Data!.Score);
+        }
+
+        [Fact]
+        public async Task SubmitAnswerAsync_NotStrict_SelectsOneIncorrect_AwardsZeroPoints()
+        {
+            await using var context = await GetSeededContextAsync();
+
+            var attempt = new QuizAttempt { Id = 1, QuizId = 1, EnrollmentId = 1, Status = AttemptStatus.Created };
+            context.QuizAttempts.Add(attempt);
+            await context.SaveChangesAsync();
+
+            var service = new QuizAttemptService(context, _mockLogger.Object, _mockBadgeService.Object);
+
+            var dto = new SubmitQuestionResponseDto(QuizQuestionId: 3, ResponseTimeMs: 5000, null, new List<long> { 7 });
+
+            var result = await service.SubmitAnswerAsync(1, 1, dto);
+
+            Assert.True(result.Success);
+            Assert.Equal(0, result.Data!.Score);
+        }
+
+        [Fact]
+        public async Task SubmitAnswerAsync_StrictMultipleChoice_PerfectMatch_AwardsFullPoints()
         {
             await using var context = await GetSeededContextAsync();
             var attempt = new QuizAttempt { Id = 1, QuizId = 1, EnrollmentId = 1, Status = AttemptStatus.Created };
@@ -125,7 +190,7 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
-        public async Task SubmitAnswerAsync_MultipleChoice_PartialMatch_AwardsZeroPoints()
+        public async Task SubmitAnswerAsync_StrictMultipleChoice_PartialMatch_AwardsZeroPoints()
         {
             await using var context = await GetSeededContextAsync();
             var attempt = new QuizAttempt { Id = 1, QuizId = 1, EnrollmentId = 1, Status = AttemptStatus.Created };
@@ -143,7 +208,7 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
-        public async Task SubmitAnswerAsync_FreeText_LeavesScoreAtZeroForManualGrading()
+        public async Task SubmitAnswerAsync_FreeText_LeavesScoreAtNullForManualGrading()
         {
             await using var context = await GetSeededContextAsync();
             var attempt = new QuizAttempt { Id = 1, QuizId = 1, EnrollmentId = 1, Status = AttemptStatus.Created };
@@ -157,8 +222,8 @@ namespace Sqeez.Api.Tests.Services
             var result = await service.SubmitAnswerAsync(1, 1, dto);
 
             Assert.True(result.Success);
-            Assert.Equal(0, result.Data!.Score);
-            Assert.Null(result.Data.NextQuestionId);
+            Assert.Null(result.Data!.Score);
+            Assert.Equal(3, result.Data.NextQuestionId);
         }
 
         [Fact]
@@ -234,7 +299,8 @@ namespace Sqeez.Api.Tests.Services
                 Responses = new List<QuizQuestionResponse>
                 {
                     new QuizQuestionResponse { QuizQuestionId = 1 },
-                    new QuizQuestionResponse { QuizQuestionId = 2 }
+                    new QuizQuestionResponse { QuizQuestionId = 2 },
+                    new QuizQuestionResponse { QuizQuestionId = 3 }
                 }
             };
             context.QuizAttempts.Add(attempt);
@@ -333,7 +399,8 @@ namespace Sqeez.Api.Tests.Services
                 Responses = new List<QuizQuestionResponse>
                 {
                     new QuizQuestionResponse { QuizQuestionId = 1, Score = 5 },
-                    new QuizQuestionResponse { QuizQuestionId = 2, Score = 10 }
+                    new QuizQuestionResponse { QuizQuestionId = 2, Score = 10 },
+                    new QuizQuestionResponse { QuizQuestionId = 3, Score = 5 },
                 }
             };
             context.QuizAttempts.Add(attempt);
@@ -347,13 +414,13 @@ namespace Sqeez.Api.Tests.Services
 
             Assert.True(result.Success);
             Assert.Equal(AttemptStatus.Completed, result.Data!.Status);
-            Assert.Equal(15, result.Data.TotalScore);
+            Assert.Equal(20, result.Data.TotalScore);
 
             var student = await context.Students.FindAsync(1L);
-            Assert.Equal(15, student!.CurrentXP);
+            Assert.Equal(20, student!.CurrentXP);
 
             _mockBadgeService.Verify(b => b.EvaluateAndAwardBadgesAsync(1,
-                It.Is<BadgeEvaluationMetrics>(m => m.TotalScore == 15 && m.ScorePercentage == 100m)),
+                It.Is<BadgeEvaluationMetrics>(m => m.TotalScore == 20 && m.ScorePercentage == 100m)),
                 Times.Once);
         }
 

@@ -48,7 +48,7 @@ namespace Sqeez.Api.Tests.Services
                 // Fake the global config so Registration is open and Max Sessions = 3
                 mockConfigService.Setup(c => c.GetConfigAsync())
                     .ReturnsAsync(ServiceResult<SystemConfigDto>.Ok(
-                        new SystemConfigDto("Sqeez", "", "", "en", "24/25", true, true, 10, 3)
+                        new SystemConfigDto("Sqeez", "", "", "en", "24/25", true, true, 10, 10, 3)
                     ));
             }
 

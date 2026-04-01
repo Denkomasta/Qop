@@ -5,6 +5,7 @@ using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Models.QuizSystem;
 using Sqeez.Api.Services;
+using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Tests.Services
 {
@@ -24,7 +25,9 @@ namespace Sqeez.Api.Tests.Services
         private QuizOptionService CreateService(SqeezDbContext context)
         {
             var mockLogger = new Mock<ILogger<QuizOptionService>>();
-            return new QuizOptionService(context, mockLogger.Object);
+            var mockMediaAssetService = new Mock<IMediaAssetService>();
+
+            return new QuizOptionService(context, mockLogger.Object, mockMediaAssetService.Object);
         }
 
         [Fact]
@@ -49,7 +52,11 @@ namespace Sqeez.Api.Tests.Services
         public async Task DeleteQuizOptionAsync_WhenExists_DeletesOption()
         {
             var context = await GetInMemoryDbContext();
-            var option = new QuizOption { Text = "To Delete", QuizQuestionId = 1 };
+            var question = new QuizQuestion { Title = "Parent Question", QuizId = 1 };
+            context.QuizQuestions.Add(question);
+            await context.SaveChangesAsync();
+
+            var option = new QuizOption { Text = "To Delete", QuizQuestionId = question.Id };
             context.QuizOptions.Add(option);
             await context.SaveChangesAsync();
 
@@ -57,7 +64,8 @@ namespace Sqeez.Api.Tests.Services
 
             var result = await service.DeleteQuizOptionAsync(option.Id);
 
-            Assert.True(result.Success);
+            Assert.True(result.Success, result.ErrorMessage);
+
             var dbOption = await context.QuizOptions.FindAsync(option.Id);
             Assert.Null(dbOption);
         }

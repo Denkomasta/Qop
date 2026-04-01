@@ -6,7 +6,6 @@ using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Models.System;
 using Sqeez.Api.Services;
-using Xunit;
 
 namespace Sqeez.Api.Tests.Services
 {
@@ -55,7 +54,7 @@ namespace Sqeez.Api.Tests.Services
         {
             await using var context = GetContext();
 
-            context.Add(new SystemConfig { Id = 1, SchoolName = "Test High School", MaxFileUploadSizeMB = 99 });
+            context.Add(new SystemConfig { Id = 1, SchoolName = "Test High School", MaxAvatarAndBadgeUploadSizeMB = 99, MaxQuizMediaUploadSizeMB = 100 });
             await context.SaveChangesAsync();
 
             var service = new SystemConfigService(context, _mockLogger.Object, _cache);
@@ -64,10 +63,12 @@ namespace Sqeez.Api.Tests.Services
 
             Assert.True(result.Success);
             Assert.Equal("Test High School", result.Data!.SchoolName);
-            Assert.Equal(99, result.Data.MaxFileUploadSizeMB);
+            Assert.Equal(99, result.Data.MaxAvatarAndBadgeUploadSizeMB);
+            Assert.Equal(100, result.Data.MaxQuizMediaUploadSizeMB);
 
             Assert.True(_cache.TryGetValue("GlobalSystemConfig", out SystemConfigDto? cachedConfig));
-            Assert.Equal(99, cachedConfig!.MaxFileUploadSizeMB);
+            Assert.Equal(99, cachedConfig!.MaxAvatarAndBadgeUploadSizeMB);
+            Assert.Equal(100, cachedConfig!.MaxQuizMediaUploadSizeMB);
         }
 
         [Fact]
@@ -76,7 +77,7 @@ namespace Sqeez.Api.Tests.Services
             await using var context = GetContext();
             var service = new SystemConfigService(context, _mockLogger.Object, _cache);
 
-            var fakeCachedDto = new SystemConfigDto("Cached School", "", "", "en", "24/25", true, true, 5, 1);
+            var fakeCachedDto = new SystemConfigDto("Cached School", "", "", "en", "24/25", true, true, 5, 10, 1);
             _cache.Set("GlobalSystemConfig", fakeCachedDto);
 
             var result = await service.GetConfigAsync();
@@ -92,7 +93,7 @@ namespace Sqeez.Api.Tests.Services
         {
             await using var context = GetContext();
 
-            context.Add(new SystemConfig { Id = 1, SchoolName = "Old School", MaxFileUploadSizeMB = 10 });
+            context.Add(new SystemConfig { Id = 1, SchoolName = "Old School", MaxAvatarAndBadgeUploadSizeMB = 10, MaxQuizMediaUploadSizeMB = 20 });
             await context.SaveChangesAsync();
 
             var service = new SystemConfigService(context, _mockLogger.Object, _cache);
@@ -100,18 +101,20 @@ namespace Sqeez.Api.Tests.Services
             var dto = new UpdateSystemConfigDto(
                 SchoolName: null, LogoUrl: null, SupportEmail: null, DefaultLanguage: null, CurrentAcademicYear: null,
                 AllowPublicRegistration: null, RequireEmailVerification: null,
-                MaxFileUploadSizeMB: 50, MaxActiveSessionsPerUser: null
+                MaxAvatarAndBadgeUploadSizeMB: 50, MaxQuizMediaUploadSizeMB: 60, MaxActiveSessionsPerUser: null
             );
 
             var result = await service.UpdateConfigAsync(dto);
 
             Assert.True(result.Success);
-            Assert.Equal(50, result.Data!.MaxFileUploadSizeMB);
+            Assert.Equal(50, result.Data!.MaxAvatarAndBadgeUploadSizeMB);
+            Assert.Equal(60, result.Data!.MaxQuizMediaUploadSizeMB);
 
             Assert.Equal("Old School", result.Data.SchoolName);
 
             _cache.TryGetValue("GlobalSystemConfig", out SystemConfigDto? cachedConfig);
-            Assert.Equal(50, cachedConfig!.MaxFileUploadSizeMB);
+            Assert.Equal(50, cachedConfig!.MaxAvatarAndBadgeUploadSizeMB);
+            Assert.Equal(60, cachedConfig!.MaxQuizMediaUploadSizeMB);
         }
     }
 }

@@ -5,6 +5,7 @@ using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Models.QuizSystem;
 using Sqeez.Api.Services;
+using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Tests.Services
 {
@@ -24,7 +25,9 @@ namespace Sqeez.Api.Tests.Services
         private QuizQuestionService CreateService(SqeezDbContext context)
         {
             var mockLogger = new Mock<ILogger<QuizQuestionService>>();
-            return new QuizQuestionService(context, mockLogger.Object);
+            var mockMediaAssetService = new Mock<IMediaAssetService>();
+
+            return new QuizQuestionService(context, mockLogger.Object, mockMediaAssetService.Object);
         }
 
         [Fact]

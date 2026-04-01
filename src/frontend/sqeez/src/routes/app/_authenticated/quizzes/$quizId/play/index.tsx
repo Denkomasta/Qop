@@ -114,7 +114,7 @@ function QuizTakePage() {
           correctOptionIds={state.currentCorrectOptionIds}
           userFreeTextAnswer={state.freeTextValue}
           correctFreeTextAnswer={state.correctFreeTextAnswer}
-          timeSpentMs={state.lastResponseTimeMs}
+          timeSpentMs={state.lastResponseTimeMs || 0}
           onContinue={actions.handleRecapContinue}
           isLastQuestion={state.nextQuestionId === null}
         />

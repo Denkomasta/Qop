@@ -83,6 +83,17 @@ namespace Sqeez.Api.Controllers
             return Ok(new { message = "Email verified successfully. You are now logged in." });
         }
 
+        [HttpPost("resend-verification")]
+        public async Task<ActionResult> ResendVerificationEmail([FromBody] ResendVerificationDto dto)
+        {
+            var result = await _authService.ResendVerificationEmailAsync(dto);
+
+            if (!result.Success)
+                return HandleServiceResult(result);
+
+            return Ok(new { message = "If an account with that email exists and is unverified, a new link has been sent." });
+        }
+
         [HttpPost("login")]
         public async Task<ActionResult> Login(LoginDTO loginDto)
         {

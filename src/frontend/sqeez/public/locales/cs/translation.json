@@ -368,7 +368,11 @@
   "error": {
     "generic": "Nastala chyba. Prosím zkuste to později.",
     "invalidCredentials": "Neplatný e-mail nebo heslo. Prosím zkuste to znovu.",
-    "serverError": "Na serveru nastal problém. Prosím zkuste to později."
+    "serverError": "Na serveru nastal problém. Prosím zkuste to později.",
+    "unverifiedEmail": "Váš e-mail není ověřen.",
+    "alreadyVerified": "Tento e-mail je již ověřen.",
+    "userNotFound": "Uživatel nebyl nalezen.",
+    "tooManyRequests": "Před dalším pokusem prosím chvíli počkejte."
   },
   "errors": {
     "userNotFound": "Uživatele se nepovedlo najít.",
@@ -517,7 +521,9 @@
     "createAccount": "Vytvořte si účet!",
     "hidePassword": "Skrýt heslo",
     "showPassword": "Zobrazit heslo",
-    "emailPlaceholder": "name@example.com"
+    "emailPlaceholder": "name@example.com",
+    "resendSuccess": "Ověřovací e-mail byl odeslán! Zkontrolujte si prosím schránku.",
+    "resendVerification": "Znovu odeslat ověřovací e-mail"
   },
   "logout": {
     "title": "Potvrzení odhlášení",

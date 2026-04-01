@@ -391,7 +391,11 @@
   "error": {
     "generic": "An error occurred. Please try again later.",
     "invalidCredentials": "Invalid email or password. Please try again.",
-    "serverError": "An error occurred on the server. Please try again later."
+    "serverError": "An error occurred on the server. Please try again later.",
+    "unverifiedEmail": "Your email is not verified.",
+    "alreadyVerified": "This email is already verified.",
+    "userNotFound": "User not found.",
+    "tooManyRequests": "Please wait a couple of minutes before requesting another email."
   },
   "errors": {
     "userNotFound": "User not found.",
@@ -517,7 +521,9 @@
     "createAccount": "Create an account!",
     "hidePassword": "Hide password",
     "showPassword": "Show password",
-    "emailPlaceholder": "name@example.com"
+    "emailPlaceholder": "name@example.com",
+    "resendSuccess": "Verification email sent! Please check your inbox.",
+    "resendVerification": "Resend verification email"
   },
   "logout": {
     "title": "Confirm Logout",

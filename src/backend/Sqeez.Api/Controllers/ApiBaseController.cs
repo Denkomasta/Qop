@@ -47,6 +47,9 @@ namespace Sqeez.Api.Controllers
                 ServiceError.Conflict => Conflict(new { error = result.ErrorMessage }),
                 ServiceError.Unauthorized => Unauthorized(new { error = result.ErrorMessage }),
                 ServiceError.ValidationFailed => BadRequest(new { error = result.ErrorMessage }),
+                ServiceError.Forbidden => StatusCode(StatusCodes.Status403Forbidden, new { error = result.ErrorMessage }),
+                ServiceError.InternalError => StatusCode(StatusCodes.Status500InternalServerError, new { error = result.ErrorMessage }),
+                ServiceError.TooManyRequests => StatusCode(StatusCodes.Status429TooManyRequests, new { error = result.ErrorMessage }),
                 _ => BadRequest(new { error = result.ErrorMessage })
             };
         }

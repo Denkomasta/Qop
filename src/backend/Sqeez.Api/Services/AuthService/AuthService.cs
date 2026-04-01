@@ -174,6 +174,47 @@ namespace Sqeez.Api.Services.AuthService
             return ServiceResult<AuthResponseDto>.Ok(response);
         }
 
+        public async Task<ServiceResult<bool>> ResendVerificationEmailAsync(ResendVerificationDto dto)
+        {
+            var user = await _context.Students.FirstOrDefaultAsync(u => u.Email == dto.Email);
+
+            if (user == null)
+                return ServiceResult<bool>.Failure("User not found.", ServiceError.NotFound);
+
+            if (user.IsEmailVerified)
+                return ServiceResult<bool>.Failure("This email is already verified.", ServiceError.BadRequest);
+
+            string verificationToken;
+
+            if (!string.IsNullOrEmpty(user.EmailVerificationToken) && user.EmailVerificationTokenExpiry > DateTime.UtcNow)
+            {
+                var timeSinceLastEmail = DateTime.UtcNow.AddHours(24) - user.EmailVerificationTokenExpiry.Value;
+
+                if (timeSinceLastEmail < TimeSpan.FromMinutes(5))
+                {
+                    return ServiceResult<bool>.Failure("Please wait a couple of minutes before requesting another email.", ServiceError.TooManyRequests);
+                }
+
+                verificationToken = user.EmailVerificationToken;
+
+                user.EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(24);
+            }
+            else
+            {
+                verificationToken = Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32));
+                user.EmailVerificationToken = verificationToken;
+                user.EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(24);
+            }
+
+            await _context.SaveChangesAsync();
+
+            string verificationLink = $"{_frontendUrl}/verify-email?token={verificationToken}&rememberMe={dto.RememberMe.ToString().ToLower()}";
+
+            await _emailService.SendVerificationEmailAsync(user.Email, verificationLink);
+
+            return ServiceResult<bool>.Ok(true);
+        }
+
         public async Task<ServiceResult<AuthResponseDto>> RefreshTokenAsync(RefreshTokenDto dto)
         {
             var session = await _context.UserSessions

@@ -24,6 +24,23 @@ paths:
       responses:
         "200":
           description: OK
+  /api/auth/verify-email:
+    post:
+      tags:
+        - Auth
+      parameters:
+        - name: token
+          in: query
+          schema:
+            type: string
+        - name: rememberMe
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: OK
   /api/auth/login:
     post:
       tags:

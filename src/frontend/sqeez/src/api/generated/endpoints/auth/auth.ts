@@ -20,7 +20,13 @@ import type {
   UseQueryResult,
 } from '@tanstack/react-query'
 
-import type { LoginDTO, RegisterDTO, UpdateRoleDTO, UserDTO } from '../../model'
+import type {
+  LoginDTO,
+  PostApiAuthVerifyEmailParams,
+  RegisterDTO,
+  UpdateRoleDTO,
+  UserDTO,
+} from '../../model'
 
 import { customInstance } from '../../../custom-axios'
 import type { ErrorType } from '../../../custom-axios'
@@ -110,6 +116,86 @@ export const usePostApiAuthRegister = <
 > => {
   return useMutation(
     getPostApiAuthRegisterMutationOptions(options),
+    queryClient,
+  )
+}
+export const postApiAuthVerifyEmail = (
+  params?: PostApiAuthVerifyEmailParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/api/auth/verify-email`, method: 'POST', params, signal },
+    options,
+  )
+}
+
+export const getPostApiAuthVerifyEmailMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postApiAuthVerifyEmail>>,
+    TError,
+    { params?: PostApiAuthVerifyEmailParams },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postApiAuthVerifyEmail>>,
+  TError,
+  { params?: PostApiAuthVerifyEmailParams },
+  TContext
+> => {
+  const mutationKey = ['postApiAuthVerifyEmail']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postApiAuthVerifyEmail>>,
+    { params?: PostApiAuthVerifyEmailParams }
+  > = (props) => {
+    const { params } = props ?? {}
+
+    return postApiAuthVerifyEmail(params, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type PostApiAuthVerifyEmailMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postApiAuthVerifyEmail>>
+>
+
+export type PostApiAuthVerifyEmailMutationError = ErrorType<unknown>
+
+export const usePostApiAuthVerifyEmail = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof postApiAuthVerifyEmail>>,
+      TError,
+      { params?: PostApiAuthVerifyEmailParams },
+      TContext
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof postApiAuthVerifyEmail>>,
+  TError,
+  { params?: PostApiAuthVerifyEmailParams },
+  TContext
+> => {
+  return useMutation(
+    getPostApiAuthVerifyEmailMutationOptions(options),
     queryClient,
   )
 }

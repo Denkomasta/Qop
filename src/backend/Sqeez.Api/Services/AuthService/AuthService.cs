@@ -145,30 +145,33 @@ namespace Sqeez.Api.Services.AuthService
 
             if (!isSuperUser)
             {
-                string verificationLink = $"{_frontendUrl}/verify-email?token={verificationToken}";
+                string verificationLink = $"{_frontendUrl}/verify-email?token={verificationToken}&rememberMe={dto.RememberMe.ToString().ToLower()}";
                 await _emailService.SendVerificationEmailAsync(user.Email, verificationLink);
             }
 
             return ServiceResult<bool>.Ok(true);
         }
 
-        public async Task<ServiceResult<bool>> VerifyEmailAsync(string token)
+        public async Task<ServiceResult<AuthResponseDto>> VerifyEmailAsync(string token, bool rememberMe)
         {
             var user = await _context.Students.FirstOrDefaultAsync(u => u.EmailVerificationToken == token);
 
             if (user == null)
-                return ServiceResult<bool>.Failure("Invalid verification token.", ServiceError.NotFound);
+                return ServiceResult<AuthResponseDto>.Failure("Invalid verification token.", ServiceError.NotFound);
 
             if (user.EmailVerificationTokenExpiry < DateTime.UtcNow)
-                return ServiceResult<bool>.Failure("Verification token has expired. Please request a new one.", ServiceError.Unauthorized);
+                return ServiceResult<AuthResponseDto>.Failure("Verification token has expired. Please request a new one.", ServiceError.Unauthorized);
 
             user.IsEmailVerified = true;
             user.EmailVerificationToken = null;
             user.EmailVerificationTokenExpiry = null;
+            user.LastSeen = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
 
-            return ServiceResult<bool>.Ok(true);
+            var response = await GenerateAuthResponseAndSessionAsync(user, rememberMe);
+
+            return ServiceResult<AuthResponseDto>.Ok(response);
         }
 
         public async Task<ServiceResult<AuthResponseDto>> RefreshTokenAsync(RefreshTokenDto dto)

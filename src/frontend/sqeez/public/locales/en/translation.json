@@ -783,5 +783,23 @@
     "maxQuizMediaSizeHelp": "Maximum file size for quiz videos, audio, and large images.",
     "maxActiveSessions": "Max Active Sessions Per User",
     "maxActiveSessionsHelp": "How many devices a user can be logged into simultaneously."
+  },
+  "verifyEmail": {
+    "invalidLinkTitle": "Invalid Link",
+    "invalidLinkDesc": "No verification token was found. Please make sure you clicked the exact link sent to your email.",
+    "readyTitle": "Ready to Verify",
+    "readyTitleUser": "Ready to Verify, {{name}}?",
+    "readyDesc": "Click the button below to securely verify your email address and activate your account.",
+    "verifyButton": "Verify My Email",
+    "verifyingTitle": "Verifying Email",
+    "verifyingDesc": "Please wait while we confirm your email address...",
+    "failedTitle": "Verification Failed",
+    "failedDescFallback": "This verification link is invalid, expired, or has already been used.",
+    "successTitle": "Email Verified!",
+    "successDesc": "Your email has been successfully verified. Your account is now active.",
+    "alreadyLoggedInMsg": "Note: You are currently logged in to Sqeez.",
+    "goToApp": "Go to Dashboard",
+    "goToLogin": "Go to Login",
+    "logInToSqeez": "Log In to Sqeez"
   }
 }

@@ -69,16 +69,18 @@ namespace Sqeez.Api.Controllers
         }
 
         [HttpPost("verify-email")]
-        public async Task<ActionResult> VerifyEmail([FromQuery] string token)
+        public async Task<ActionResult> VerifyEmail([FromQuery] string token, [FromQuery] bool rememberMe = false)
         {
             if (string.IsNullOrEmpty(token))
                 return BadRequest(new { message = "Token is required." });
 
-            var result = await _authService.VerifyEmailAsync(token);
+            var result = await _authService.VerifyEmailAsync(token, rememberMe);
 
-            if (!result.Success) return HandleServiceResult(result);
+            if (!result.Success || result.Data == null) return HandleServiceResult(result);
 
-            return Ok(new { message = "Email verified successfully. You can now log in." });
+            SetTokens(result.Data, rememberMe);
+
+            return Ok(new { message = "Email verified successfully. You are now logged in." });
         }
 
         [HttpPost("login")]

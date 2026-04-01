@@ -3,6 +3,7 @@ using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Academics;
+using Sqeez.Api.Models.Import;
 using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services.SubjectService
@@ -11,6 +12,28 @@ namespace Sqeez.Api.Services.SubjectService
     {
         public SubjectService(SqeezDbContext context, ILogger<SubjectService> logger)
             : base(context, logger) { }
+
+        private static SubjectDto MapSubjectToDto(Subject subject)
+        {
+            if (subject == null) return null!;
+
+            return new SubjectDto(
+                Id: subject.Id,
+                Name: subject.Name,
+                Code: subject.Code,
+                Description: subject.Description,
+                StartDate: subject.StartDate,
+                EndDate: subject.EndDate,
+                TeacherId: subject.TeacherId,
+                TeacherName: subject.Teacher != null
+                    ? $"{subject.Teacher.FirstName} {subject.Teacher.LastName}"
+                    : null,
+                SchoolClassId: subject.SchoolClassId,
+                SchoolClassName: subject.SchoolClass?.Name,
+                EnrollmentCount: subject.Enrollments?.Count ?? 0,
+                QuizCount: subject.Quizzes?.Count ?? 0
+            );
+        }
 
         public async Task<ServiceResult<PagedResponse<SubjectDto>>> GetAllSubjectsAsync(SubjectFilterDto filter)
         {
@@ -170,6 +193,43 @@ namespace Sqeez.Api.Services.SubjectService
                 0));
         }
 
+        public async Task<ServiceResult<BulkOperationResult<SubjectDto>>> CreateSubjectsBulkAsync(IEnumerable<Subject> subjects)
+        {
+            var bulkResult = new BulkOperationResult<SubjectDto>();
+            var subjectList = subjects.ToList();
+            if (!subjectList.Any()) return ServiceResult<BulkOperationResult<SubjectDto>>.Ok(bulkResult);
+
+            var incomingCodes = subjectList.Where(s => !string.IsNullOrWhiteSpace(s.Code)).Select(s => s.Code.ToLower()).ToList();
+            var existingCodes = await _context.Subjects
+                .Where(s => incomingCodes.Contains(s.Code.ToLower()))
+                .Select(s => s.Code.ToLower())
+                .ToHashSetAsync();
+
+            var validSubjectsToInsert = new List<Subject>();
+
+            foreach (var subject in subjectList)
+            {
+                if (existingCodes.Contains(subject.Code.ToLower()))
+                {
+                    bulkResult.SkippedMessages.Add($"Subject '{subject.Name}' skipped: Code '{subject.Code}' already exists.");
+                    continue;
+                }
+
+                validSubjectsToInsert.Add(subject);
+                existingCodes.Add(subject.Code.ToLower());
+            }
+
+            if (validSubjectsToInsert.Any())
+            {
+                await _context.Subjects.AddRangeAsync(validSubjectsToInsert);
+                await _context.SaveChangesAsync();
+
+                bulkResult.Created = validSubjectsToInsert.Select(MapSubjectToDto).ToList();
+            }
+
+            return ServiceResult<BulkOperationResult<SubjectDto>>.Ok(bulkResult);
+        }
+
         public async Task<ServiceResult<SubjectDto>> PatchSubjectAsync(long id, PatchSubjectDto dto)
         {
             _logger.LogInformation("Attempting to patch subject with ID: {Id}", id);
@@ -192,7 +252,8 @@ namespace Sqeez.Api.Services.SubjectService
             if (!string.IsNullOrWhiteSpace(dto.Description))
             {
                 subject.Description = dto.Description;
-            } else
+            }
+            else
             {
                 subject.Description = null;
             }

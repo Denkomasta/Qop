@@ -1,0 +1,6 @@
+Class Name,Academic Year,Subject Name,Subject Code,First Name,Last Name,Email,Password
+9.A,2025/2026,Mathematics,MATH-9A,Jan,Novák,jan.novak@example.com,Password123!
+9.A,2025/2026,Mathematics,MATH-9A,Petra,Svobodová,petra.s@example.com,SecurePass88!
+10.B,2025/2026,Physics,PHYS-10B,Martin,Černý,martin.cerny@example.com,PhysicsIsCool1!
+10.B,2025/2026,History,HIST-10B,Lucie,Bílá,lucie.bila@example.com,History2026*
+8.C,2025/2026,Biology,BIO-8C,Tomáš,Marný,tomas.m@example.com,BioHazard99?

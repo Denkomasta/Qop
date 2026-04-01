@@ -2,6 +2,7 @@
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
+using Sqeez.Api.Models.Import;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services.Interfaces;
 
@@ -304,6 +305,60 @@ namespace Sqeez.Api.Services.UserService
             await _context.SaveChangesAsync();
 
             return ServiceResult<StudentDto>.Ok(MapUserToDto(newUser));
+        }
+
+        public async Task<ServiceResult<BulkOperationResult<StudentDto>>> CreateStudentsBulkAsync(IEnumerable<Student> students)
+        {
+            var bulkResult = new BulkOperationResult<StudentDto>();
+            var studentList = students.ToList();
+
+            if (!studentList.Any())
+                return ServiceResult<BulkOperationResult<StudentDto>>.Ok(bulkResult);
+
+            var incomingEmails = studentList.Select(s => s.Email.ToLower()).ToList();
+            var incomingUsernames = studentList.Select(s => s.Username.ToLower()).ToList();
+
+            var existingRecords = await _context.Students
+                .Where(s => incomingEmails.Contains(s.Email.ToLower()) ||
+                            incomingUsernames.Contains(s.Username.ToLower()))
+                .Select(s => new
+                {
+                    Email = s.Email.ToLower(),
+                    Username = s.Username.ToLower()
+                })
+                .ToListAsync();
+
+            var existingEmails = existingRecords.Select(r => r.Email).ToHashSet();
+            var existingUsernames = existingRecords.Select(r => r.Username).ToHashSet();
+
+            var validStudentsToInsert = new List<Student>();
+
+            foreach (var student in studentList)
+            {
+                bool isDuplicateEmail = existingEmails.Contains(student.Email.ToLower());
+                bool isDuplicateUsername = existingUsernames.Contains(student.Username.ToLower());
+
+                if (isDuplicateEmail || isDuplicateUsername)
+                {
+                    string reason = isDuplicateEmail ? "Email already exists" : "Derived username already exists";
+                    bulkResult.SkippedMessages.Add($"Student '{student.Email}' skipped: {reason}.");
+                    continue;
+                }
+
+                validStudentsToInsert.Add(student);
+                existingEmails.Add(student.Email.ToLower());
+                existingUsernames.Add(student.Username.ToLower());
+            }
+
+            if (validStudentsToInsert.Any())
+            {
+                await _context.Students.AddRangeAsync(validStudentsToInsert);
+                await _context.SaveChangesAsync();
+
+                bulkResult.Created = validStudentsToInsert.Select(MapUserToDto).ToList();
+            }
+
+            return ServiceResult<BulkOperationResult<StudentDto>>.Ok(bulkResult);
         }
 
         public async Task<ServiceResult<bool>> ArchiveUserAsync(long id)

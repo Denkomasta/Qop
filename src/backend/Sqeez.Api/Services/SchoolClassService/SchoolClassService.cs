@@ -3,6 +3,7 @@ using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Academics;
+using Sqeez.Api.Models.Import;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services.Interfaces;
 
@@ -12,6 +13,24 @@ namespace Sqeez.Api.Services
     {
         public SchoolClassService(SqeezDbContext context, ILogger<SchoolClassService> logger) : base(context, logger)
         {
+        }
+
+        private static SchoolClassDto MapClassToDto(SchoolClass schoolClass)
+        {
+            if (schoolClass == null) return null!;
+
+            return new SchoolClassDto(
+                Id: schoolClass.Id,
+                Name: schoolClass.Name,
+                AcademicYear: schoolClass.AcademicYear,
+                Section: schoolClass.Section,
+                TeacherId: schoolClass.Teacher?.Id,
+                TeacherName: schoolClass.Teacher != null
+                    ? $"{schoolClass.Teacher.FirstName} {schoolClass.Teacher.LastName}"
+                    : null,
+                StudentCount: schoolClass.Students?.Count ?? 0,
+                SubjectCount: schoolClass.Subjects?.Count ?? 0
+            );
         }
 
         public async Task<ServiceResult<PagedResponse<SchoolClassDto>>> GetAllClassesAsync(SchoolClassFilterDto filter)
@@ -185,6 +204,42 @@ namespace Sqeez.Api.Services
                 _logger.LogError(ex, "Error creating school class {Name}", dto.Name);
                 return ServiceResult<SchoolClassDto>.Failure("Internal error occurred while creating class.", ServiceError.InternalError);
             }
+        }
+
+        public async Task<ServiceResult<BulkOperationResult<SchoolClassDto>>> EnsureClassesExistAsync(IEnumerable<string> classNames)
+        {
+            var bulkResult = new BulkOperationResult<SchoolClassDto>();
+
+            var cleanedNames = classNames.Where(n => !string.IsNullOrWhiteSpace(n)).Select(n => n.Trim()).Distinct().ToList();
+            if (!cleanedNames.Any()) return ServiceResult<BulkOperationResult<SchoolClassDto>>.Ok(bulkResult);
+
+            var lowerNames = cleanedNames.Select(n => n.ToLower()).ToList();
+
+            var existingClasses = await _context.SchoolClasses
+                .Where(c => lowerNames.Contains(c.Name.ToLower()))
+                .ToListAsync();
+
+            bulkResult.Existing = existingClasses.Select(MapClassToDto).ToList();
+
+            var existingNamesLower = existingClasses.Select(c => c.Name.ToLower()).ToHashSet();
+
+            var currentDate = DateTime.UtcNow;
+            string defaultAcademicYear = $"{(currentDate.Month >= 8 ? currentDate.Year : currentDate.Year - 1)}/{(currentDate.Month >= 8 ? currentDate.Year + 1 : currentDate.Year)}";
+
+            var classesToCreate = cleanedNames
+                .Where(n => !existingNamesLower.Contains(n.ToLower()))
+                .Select(n => new SchoolClass { Name = n, AcademicYear = defaultAcademicYear, Section = "Imported" })
+                .ToList();
+
+            if (classesToCreate.Any())
+            {
+                await _context.SchoolClasses.AddRangeAsync(classesToCreate);
+                await _context.SaveChangesAsync();
+
+                bulkResult.Created = classesToCreate.Select(MapClassToDto).ToList();
+            }
+
+            return ServiceResult<BulkOperationResult<SchoolClassDto>>.Ok(bulkResult);
         }
 
         public async Task<ServiceResult<SchoolClassDto>> PatchClassAsync(long id, PatchSchoolClassDto dto)

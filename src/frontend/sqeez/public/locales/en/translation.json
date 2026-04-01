@@ -558,7 +558,24 @@
     "register": "Register",
     "disabledTitle": "Registration Disabled",
     "disabledMessage": "Public registration is currently turned off. Please contact your system administrator or school to create an account.",
-    "backToLogin": "Go to Login"
+    "backToLogin": "Go to Login",
+    "confirmPassword": "Confirm Password",
+    "checkEmailTitle": "Check your email",
+    "checkEmailDesc": "We sent a verification link to",
+    "validation": {
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "usernameMin": "Username must be at least 3 characters",
+      "usernameMax": "Username cannot exceed 20 characters",
+      "usernameFormat": "Username can only contain letters, numbers, dashes, and underscores",
+      "emailInvalid": "Invalid email address",
+      "passwordMin": "Password must be at least 8 characters",
+      "passwordUppercase": "Password must contain at least one uppercase letter",
+      "passwordLowercase": "Password must contain at least one lowercase letter",
+      "passwordNumber": "Password must contain at least one number",
+      "passwordSpecial": "Password must contain at least one special character",
+      "passwordsMatch": "Passwords do not match"
+    }
   },
   "subject": {
     "notFound": "Subject Not Found",

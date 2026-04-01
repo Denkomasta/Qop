@@ -51,7 +51,7 @@ function VerifyEmailPage() {
               queryKey: getGetApiAuthMeQueryKey(),
             })
             navigate({ to: '/app', replace: true })
-          }, 1500)
+          }, 2000)
         },
       },
     )

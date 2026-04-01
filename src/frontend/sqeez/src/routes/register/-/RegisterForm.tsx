@@ -1,56 +1,31 @@
+import { useState } from 'react'
 import { Mail, Lock, BookOpen, Loader2, User as UserIcon } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { Input } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { useTranslation } from 'react-i18next'
-import { Link, useSearch } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { useForm, Controller, type SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
 import { usePostApiAuthRegister as useRegister } from '@/api/generated/endpoints/auth/auth'
-import { useAuthSuccess } from '@/hooks/useAuthSuccess'
-
-const registerSchema = z.object({
-  firstName: z.string().min(1, { message: 'First name is required' }),
-  lastName: z.string().min(1, { message: 'Last name is required' }),
-  username: z
-    .string()
-    .min(3, { message: 'Username must be at least 3 characters' })
-    .max(20, { message: 'Username cannot exceed 20 characters' })
-    .regex(/^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$/, {
-      message:
-        'Username can only contain letters, numbers, dashes, and underscores',
-    }),
-  email: z.email({ message: 'Invalid email address' }),
-  password: z
-    .string()
-    .min(8, { message: 'Password must be at least 8 characters' })
-    .regex(/[A-Z]/, {
-      message: 'Password must contain at least one uppercase letter',
-    })
-    .regex(/[a-z]/, {
-      message: 'Password must contain at least one lowercase letter',
-    })
-    .regex(/[0-9]/, { message: 'Password must contain at least one number' })
-    .regex(/[^A-Za-z0-9]/, {
-      message: 'Password must contain at least one special character',
-    }),
-  remember: z.boolean(),
-})
-
-type RegisterFormValues = z.infer<typeof registerSchema>
+import {
+  getRegisterSchema,
+  type RegisterFormValues,
+} from '@/schemas/registerSchema'
 
 export function RegisterForm() {
   const { t } = useTranslation()
-  const search = useSearch({ strict: false })
-  const handleAuthSuccess = useAuthSuccess()
+  const registerSchema = getRegisterSchema(t)
+
+  const [isSuccess, setIsSuccess] = useState(false)
 
   const {
     register,
     handleSubmit,
     setError,
     control,
+    getValues,
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -60,21 +35,15 @@ export function RegisterForm() {
       username: '',
       email: '',
       password: '',
+      confirmPassword: '',
       remember: false,
     },
   })
 
   const { mutate, isPending } = useRegister({
     mutation: {
-      onSuccess: async () => {
-        try {
-          await handleAuthSuccess(search?.redirect)
-        } catch {
-          setError('root', {
-            type: 'manual',
-            message: t('error.serverError'),
-          })
-        }
+      onSuccess: () => {
+        setIsSuccess(true)
       },
       onError: () => {
         setError('root', {
@@ -96,6 +65,30 @@ export function RegisterForm() {
         rememberMe: values.remember,
       },
     })
+  }
+
+  if (isSuccess) {
+    return (
+      <div className="flex w-full max-w-md animate-in flex-col items-center gap-6 text-center duration-500 zoom-in-95 fade-in">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-50">
+          <Mail className="h-10 w-10 text-green-500" />
+        </div>
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            {t('register.checkEmailTitle')}
+          </h1>
+          <p className="leading-relaxed text-muted-foreground">
+            {t('register.checkEmailDesc')} <br />
+            <span className="font-semibold text-foreground">
+              {getValues('email')}
+            </span>
+          </p>
+        </div>
+        <Button asChild className="mt-4 h-11 w-full rounded-xl">
+          <Link to="/login">{t('register.backToLogin')}</Link>
+        </Button>
+      </div>
+    )
   }
 
   return (
@@ -172,6 +165,17 @@ export function RegisterForm() {
           label={t('login.password')}
           placeholder="••••••••"
           error={errors.password?.message}
+          disabled={isPending}
+          icon={<Lock className="h-4 w-4" />}
+        />
+
+        <Input
+          {...register('confirmPassword')}
+          id="confirmPassword"
+          type="password"
+          label={t('register.confirmPassword', 'Confirm Password')}
+          placeholder="••••••••"
+          error={errors.confirmPassword?.message}
           disabled={isPending}
           icon={<Lock className="h-4 w-4" />}
         />

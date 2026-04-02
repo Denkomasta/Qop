@@ -85,7 +85,9 @@ namespace Sqeez.Api.Services.AuthService
 
             if (user == null) return ServiceResult<AuthResponseDto>.Failure("Invalid email or password.", ServiceError.NotFound);
 
-            if (!user.IsEmailVerified)
+            var config = await _configService.GetConfigAsync();
+
+            if (!user.IsEmailVerified && (config.Data?.RequireEmailVerification ?? true))
                 return ServiceResult<AuthResponseDto>.Failure("Please verify your email address before logging in.", ServiceError.Unauthorized);
 
             bool isValid = BC.Verify(dto.Password.Trim(), user.PasswordHash);

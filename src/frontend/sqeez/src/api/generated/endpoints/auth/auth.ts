@@ -21,10 +21,12 @@ import type {
 } from '@tanstack/react-query'
 
 import type {
+  ForgotPasswordDto,
   LoginDTO,
   PostApiAuthVerifyEmailParams,
   RegisterDTO,
   ResendVerificationDto,
+  ResetPasswordDto,
   UpdateRoleDTO,
   UserDTO,
 } from '../../model'
@@ -283,6 +285,178 @@ export const usePostApiAuthResendVerification = <
 > => {
   return useMutation(
     getPostApiAuthResendVerificationMutationOptions(options),
+    queryClient,
+  )
+}
+export const postApiAuthForgotPassword = (
+  forgotPasswordDto: ForgotPasswordDto,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    {
+      url: `/api/auth/forgot-password`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: forgotPasswordDto,
+      signal,
+    },
+    options,
+  )
+}
+
+export const getPostApiAuthForgotPasswordMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postApiAuthForgotPassword>>,
+    TError,
+    { data: ForgotPasswordDto },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postApiAuthForgotPassword>>,
+  TError,
+  { data: ForgotPasswordDto },
+  TContext
+> => {
+  const mutationKey = ['postApiAuthForgotPassword']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postApiAuthForgotPassword>>,
+    { data: ForgotPasswordDto }
+  > = (props) => {
+    const { data } = props ?? {}
+
+    return postApiAuthForgotPassword(data, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type PostApiAuthForgotPasswordMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postApiAuthForgotPassword>>
+>
+export type PostApiAuthForgotPasswordMutationBody = ForgotPasswordDto
+export type PostApiAuthForgotPasswordMutationError = ErrorType<unknown>
+
+export const usePostApiAuthForgotPassword = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof postApiAuthForgotPassword>>,
+      TError,
+      { data: ForgotPasswordDto },
+      TContext
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof postApiAuthForgotPassword>>,
+  TError,
+  { data: ForgotPasswordDto },
+  TContext
+> => {
+  return useMutation(
+    getPostApiAuthForgotPasswordMutationOptions(options),
+    queryClient,
+  )
+}
+export const postApiAuthResetPassword = (
+  resetPasswordDto: ResetPasswordDto,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    {
+      url: `/api/auth/reset-password`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: resetPasswordDto,
+      signal,
+    },
+    options,
+  )
+}
+
+export const getPostApiAuthResetPasswordMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postApiAuthResetPassword>>,
+    TError,
+    { data: ResetPasswordDto },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postApiAuthResetPassword>>,
+  TError,
+  { data: ResetPasswordDto },
+  TContext
+> => {
+  const mutationKey = ['postApiAuthResetPassword']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postApiAuthResetPassword>>,
+    { data: ResetPasswordDto }
+  > = (props) => {
+    const { data } = props ?? {}
+
+    return postApiAuthResetPassword(data, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type PostApiAuthResetPasswordMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postApiAuthResetPassword>>
+>
+export type PostApiAuthResetPasswordMutationBody = ResetPasswordDto
+export type PostApiAuthResetPasswordMutationError = ErrorType<unknown>
+
+export const usePostApiAuthResetPassword = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof postApiAuthResetPassword>>,
+      TError,
+      { data: ResetPasswordDto },
+      TContext
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof postApiAuthResetPassword>>,
+  TError,
+  { data: ResetPasswordDto },
+  TContext
+> => {
+  return useMutation(
+    getPostApiAuthResetPasswordMutationOptions(options),
     queryClient,
   )
 }

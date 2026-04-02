@@ -215,6 +215,48 @@ namespace Sqeez.Api.Services.AuthService
             return ServiceResult<bool>.Ok(true);
         }
 
+        public async Task<ServiceResult<bool>> ForgotPasswordAsync(string email)
+        {
+            var user = await _context.Students.FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+                return ServiceResult<bool>.Ok(true);
+
+            string resetToken = Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32));
+
+            user.PasswordResetToken = resetToken;
+            user.PasswordResetTokenExpiry = DateTime.UtcNow.AddMinutes(15);
+
+            await _context.SaveChangesAsync();
+
+            string resetLink = $"{_frontendUrl}/reset-password?token={resetToken}";
+
+            await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink);
+
+            return ServiceResult<bool>.Ok(true);
+        }
+
+        public async Task<ServiceResult<bool>> ResetPasswordAsync(ResetPasswordDto dto)
+        {
+            var user = await _context.Students.FirstOrDefaultAsync(u => u.PasswordResetToken == dto.Token);
+
+            if (user == null)
+                return ServiceResult<bool>.Failure("Invalid password reset token.", ServiceError.BadRequest);
+
+            if (user.PasswordResetTokenExpiry < DateTime.UtcNow)
+                return ServiceResult<bool>.Failure("This password reset link has expired. Please request a new one.", ServiceError.Unauthorized);
+
+            string salt = BC.GenerateSalt(12);
+            user.PasswordHash = BC.HashPassword(dto.NewPassword.Trim(), salt);
+
+            user.PasswordResetToken = null;
+            user.PasswordResetTokenExpiry = null;
+
+            await _context.SaveChangesAsync();
+
+            return ServiceResult<bool>.Ok(true);
+        }
+
         public async Task<ServiceResult<AuthResponseDto>> RefreshTokenAsync(RefreshTokenDto dto)
         {
             var session = await _context.UserSessions

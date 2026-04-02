@@ -38,6 +38,25 @@ namespace Sqeez.Api.Services.EmailService
             await SendEmailAsync(email, subject, htmlBody);
         }
 
+        public async Task SendPasswordResetEmailAsync(string email, string resetLink)
+        {
+            var subject = "Reset your Sqeez password";
+
+            var htmlBody = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto;'>
+                    <h2>Password Reset Request</h2>
+                    <p>We received a request to reset your password for your Sqeez account. Click the button below to set a new password:</p>
+                    <a href='{resetLink}' style='display: inline-block; padding: 10px 20px; color: white; background-color: #dc3545; text-decoration: none; border-radius: 5px; margin-top: 15px;'>Reset Password</a>
+                    <p style='margin-top: 20px; font-size: 12px; color: #666;'>
+                        If the button doesn't work, copy and paste this link into your browser:<br/>
+                        {resetLink}
+                    </p>
+                    <p>This link will expire in 15 minutes. If you did not request a password reset, you can safely ignore this email; your password will remain unchanged.</p>
+                </div>";
+
+            await SendEmailAsync(email, subject, htmlBody);
+        }
+
         private async Task SendEmailAsync(string toEmail, string subject, string htmlBody)
         {
             try

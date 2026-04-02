@@ -12,7 +12,7 @@ using Sqeez.Api.Data;
 namespace Sqeez.Api.Migrations
 {
     [DbContext(typeof(SqeezDbContext))]
-    [Migration("20260401142153_InitialCreate")]
+    [Migration("20260402190556_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -545,6 +545,15 @@ namespace Sqeez.Api.Migrations
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordResetToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("PasswordResetTokenExpiry")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PendingNewEmail")
                         .HasColumnType("text");
 
                     b.Property<int>("Role")

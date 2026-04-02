@@ -70,4 +70,16 @@ namespace Sqeez.Api.DTOs
         string Email,
         bool RememberMe = false
     );
+
+    public record ForgotPasswordDto(
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email format.")]
+        string Email
+    );
+
+    public record ResetPasswordDto(
+        string Token,
+
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$", ErrorMessage = "Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character.")]
+        string NewPassword
+    );
 }

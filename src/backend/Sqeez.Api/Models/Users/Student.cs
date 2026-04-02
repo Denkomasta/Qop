@@ -20,6 +20,9 @@ namespace Sqeez.Api.Models.Users
         public bool IsEmailVerified { get; set; } = false;
         public string? EmailVerificationToken { get; set; }
         public DateTime? EmailVerificationTokenExpiry { get; set; }
+        public string? PendingNewEmail { get; set; }
+        public string? PasswordResetToken { get; set; }
+        public DateTime? PasswordResetTokenExpiry { get; set; }
 
         public long? SchoolClassId { get; set; }
         public SchoolClass? SchoolClass { get; set; }

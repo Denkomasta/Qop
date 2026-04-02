@@ -148,7 +148,18 @@ namespace Sqeez.Api.Services.AuthService
             if (!isSuperUser)
             {
                 string verificationLink = $"{_frontendUrl}/verify-email?token={verificationToken}&rememberMe={dto.RememberMe.ToString().ToLower()}";
-                await _emailService.SendVerificationEmailAsync(user.Email, verificationLink);
+
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _emailService.SendVerificationEmailAsync(user.Email, verificationLink);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to send background email.");
+                    }
+                });
             }
 
             return ServiceResult<bool>.Ok(true);
@@ -212,7 +223,17 @@ namespace Sqeez.Api.Services.AuthService
 
             string verificationLink = $"{_frontendUrl}/verify-email?token={verificationToken}&rememberMe={dto.RememberMe.ToString().ToLower()}";
 
-            await _emailService.SendVerificationEmailAsync(user.Email, verificationLink);
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await _emailService.SendVerificationEmailAsync(user.Email, verificationLink);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send background email.");
+                }
+            });
 
             return ServiceResult<bool>.Ok(true);
         }
@@ -239,7 +260,17 @@ namespace Sqeez.Api.Services.AuthService
 
             string resetLink = $"{_frontendUrl}/reset-password?token={resetToken}";
 
-            await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink);
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send background reset email.");
+                }
+            });
 
             return ServiceResult<bool>.Ok(true);
         }

@@ -94,6 +94,28 @@ namespace Sqeez.Api.Controllers
             return Ok(new { message = "If an account with that email exists and is unverified, a new link has been sent." });
         }
 
+        [HttpPost("forgot-password")]
+        public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+        {
+            var result = await _authService.ForgotPasswordAsync(dto.Email);
+
+            if (!result.Success)
+                return HandleServiceResult(result);
+
+            return Ok(new { message = "If an account with that email exists, a password reset link has been sent." });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+        {
+            var result = await _authService.ResetPasswordAsync(dto);
+
+            if (!result.Success)
+                return HandleServiceResult(result);
+
+            return Ok(new { message = "Your password has been successfully reset." });
+        }
+
         [HttpPost("login")]
         public async Task<ActionResult> Login(LoginDTO loginDto)
         {

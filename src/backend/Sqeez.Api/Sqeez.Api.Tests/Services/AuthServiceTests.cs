@@ -53,8 +53,9 @@ namespace Sqeez.Api.Tests.Services
             }
 
             var mockLogger = new Mock<ILogger<AuthService>>();
+            var mockMail = new Mock<IEmailService>();
 
-            return new AuthService(context, mockConfig.Object, mockTokenService.Object, mockConfigService.Object, mockLogger.Object);
+            return new AuthService(context, mockConfig.Object, mockTokenService.Object, mockMail.Object, mockConfigService.Object, mockLogger.Object);
         }
 
         [Fact]
@@ -67,7 +68,8 @@ namespace Sqeez.Api.Tests.Services
                 Username = "LoginUser",
                 Email = "login@sqeez.com",
                 PasswordHash = BC.HashPassword(password),
-                LastSeen = DateTime.UtcNow.AddMinutes(-2)
+                LastSeen = DateTime.UtcNow.AddMinutes(-2),
+                IsEmailVerified = true
             };
             context.Students.Add(user);
             await context.SaveChangesAsync();
@@ -116,7 +118,7 @@ namespace Sqeez.Api.Tests.Services
             var result = await service.RegisterAsync(registerDto);
 
             Assert.True(result.Success);
-            Assert.NotNull(result.Data!.AccessToken);
+            Assert.True(result.Data);
 
             var savedUser = await context.Students.FirstOrDefaultAsync(u => u.Email == "normal@sqeez.com");
             Assert.NotNull(savedUser);
@@ -280,7 +282,7 @@ namespace Sqeez.Api.Tests.Services
         {
             var context = await GetInMemoryDbContext();
             string password = "Password123!";
-            var user = new Student { Username = "RememberMeTrue", Email = "true@sqeez.com", PasswordHash = BC.HashPassword(password) };
+            var user = new Student { Username = "RememberMeTrue", Email = "true@sqeez.com", PasswordHash = BC.HashPassword(password), IsEmailVerified = true };
             context.Students.Add(user);
             await context.SaveChangesAsync();
 
@@ -303,7 +305,7 @@ namespace Sqeez.Api.Tests.Services
         {
             var context = await GetInMemoryDbContext();
             string password = "Password123!";
-            var user = new Student { Username = "RememberMeFalse", Email = "false@sqeez.com", PasswordHash = BC.HashPassword(password) };
+            var user = new Student { Username = "RememberMeFalse", Email = "false@sqeez.com", PasswordHash = BC.HashPassword(password), IsEmailVerified = true };
             context.Students.Add(user);
             await context.SaveChangesAsync();
 

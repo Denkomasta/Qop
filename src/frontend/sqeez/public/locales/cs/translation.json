@@ -823,5 +823,23 @@
     "goToApp": "Přejít na Dashboard",
     "goToLogin": "Přejít na přihlášení",
     "logInToSqeez": "Přihlásit se do Sqeez"
+  },
+  "forgotPassword": {
+    "title": "Zapomněli jste heslo?",
+    "subtitle": "Nebojte se, pošleme vám instrukce k obnovení.",
+    "sendLink": "Odeslat odkaz k obnovení",
+    "backToLogin": "Zpět na přihlášení",
+    "checkEmailTitle": "Zkontrolujte si e-mail",
+    "checkEmailDesc": "Pokud účet existuje, odeslali jsme odkaz na obnovení hesla na"
+  },
+  "resetPassword": {
+    "title": "Nastavit nové heslo",
+    "subtitle": "Vaše nové heslo se musí lišit od dříve používaných hesel.",
+    "newPassword": "Nové heslo",
+    "resetButton": "Obnovit heslo",
+    "successToast": "Heslo bylo úspěšně obnoveno! Nyní se můžete přihlásit.",
+    "invalidLinkTitle": "Neplatný odkaz",
+    "invalidLinkDesc": "Tento odkaz na obnovení hesla chybí nebo je neplatný. Požádejte prosím o nový.",
+    "requestNewLink": "Požádat o nový odkaz"
   }
 }

@@ -60,6 +60,44 @@ paths:
       responses:
         "200":
           description: OK
+  /api/auth/forgot-password:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/auth/reset-password:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordDto"
+        required: true
+      responses:
+        "200":
+          description: OK
   /api/auth/login:
     post:
       tags:
@@ -3507,6 +3545,13 @@ components:
             - $ref: "#/components/schemas/EntityTagHeaderValue"
         enableRangeProcessing:
           type: boolean
+    ForgotPasswordDto:
+      required:
+        - email
+      type: object
+      properties:
+        email:
+          type: string
     GradeQuestionResponseDto:
       required:
         - score
@@ -4701,6 +4746,16 @@ components:
         rememberMe:
           type: boolean
           default: false
+    ResetPasswordDto:
+      required:
+        - token
+        - newPassword
+      type: object
+      properties:
+        token:
+          type: string
+        newPassword:
+          type: string
     SchoolClassBasicDto:
       type: object
       properties:

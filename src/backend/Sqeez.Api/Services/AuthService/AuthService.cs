@@ -222,6 +222,12 @@ namespace Sqeez.Api.Services.AuthService
             if (user == null)
                 return ServiceResult<bool>.Ok(true);
 
+            if (user.PasswordResetTokenExpiry.HasValue &&
+                user.PasswordResetTokenExpiry.Value > DateTime.UtcNow.AddMinutes(10))
+            {
+                return ServiceResult<bool>.Ok(true);
+            }
+
             string resetToken = Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32));
 
             user.PasswordResetToken = resetToken;

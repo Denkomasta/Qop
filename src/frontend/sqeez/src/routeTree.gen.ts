@@ -11,10 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VerifyEmailIndexRouteImport } from './routes/verify-email/index'
+import { Route as ResetPasswordIndexRouteImport } from './routes/reset-password/index'
 import { Route as RegisterIndexRouteImport } from './routes/register/index'
 import { Route as LogoutIndexRouteImport } from './routes/logout/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as HelpIndexRouteImport } from './routes/help/index'
+import { Route as ForgotPasswordIndexRouteImport } from './routes/forgot-password/index'
 import { Route as AboutIndexRouteImport } from './routes/about/index'
 import { Route as AppAuthenticatedRouteImport } from './routes/app/_authenticated'
 import { Route as AppAuthenticatedIndexRouteImport } from './routes/app/_authenticated/index'
@@ -56,6 +58,11 @@ const VerifyEmailIndexRoute = VerifyEmailIndexRouteImport.update({
   path: '/verify-email/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordIndexRoute = ResetPasswordIndexRouteImport.update({
+  id: '/reset-password/',
+  path: '/reset-password/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterIndexRoute = RegisterIndexRouteImport.update({
   id: '/register/',
   path: '/register/',
@@ -74,6 +81,11 @@ const LoginIndexRoute = LoginIndexRouteImport.update({
 const HelpIndexRoute = HelpIndexRouteImport.update({
   id: '/help/',
   path: '/help/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordIndexRoute = ForgotPasswordIndexRouteImport.update({
+  id: '/forgot-password/',
+  path: '/forgot-password/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutIndexRoute = AboutIndexRouteImport.update({
@@ -256,10 +268,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppAuthenticatedRouteWithChildren
   '/about/': typeof AboutIndexRoute
+  '/forgot-password/': typeof ForgotPasswordIndexRoute
   '/help/': typeof HelpIndexRoute
   '/login/': typeof LoginIndexRoute
   '/logout/': typeof LogoutIndexRoute
   '/register/': typeof RegisterIndexRoute
+  '/reset-password/': typeof ResetPasswordIndexRoute
   '/verify-email/': typeof VerifyEmailIndexRoute
   '/app/admin': typeof AppAuthenticatedAdminRouteWithChildren
   '/app/teacher': typeof AppAuthenticatedTeacherRouteWithChildren
@@ -293,10 +307,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutIndexRoute
+  '/forgot-password': typeof ForgotPasswordIndexRoute
   '/help': typeof HelpIndexRoute
   '/login': typeof LoginIndexRoute
   '/logout': typeof LogoutIndexRoute
   '/register': typeof RegisterIndexRoute
+  '/reset-password': typeof ResetPasswordIndexRoute
   '/verify-email': typeof VerifyEmailIndexRoute
   '/app/admin': typeof AppAuthenticatedAdminRouteWithChildren
   '/app/teacher': typeof AppAuthenticatedTeacherRouteWithChildren
@@ -332,10 +348,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app/_authenticated': typeof AppAuthenticatedRouteWithChildren
   '/about/': typeof AboutIndexRoute
+  '/forgot-password/': typeof ForgotPasswordIndexRoute
   '/help/': typeof HelpIndexRoute
   '/login/': typeof LoginIndexRoute
   '/logout/': typeof LogoutIndexRoute
   '/register/': typeof RegisterIndexRoute
+  '/reset-password/': typeof ResetPasswordIndexRoute
   '/verify-email/': typeof VerifyEmailIndexRoute
   '/app/_authenticated/admin': typeof AppAuthenticatedAdminRouteWithChildren
   '/app/_authenticated/teacher': typeof AppAuthenticatedTeacherRouteWithChildren
@@ -372,10 +390,12 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/about/'
+    | '/forgot-password/'
     | '/help/'
     | '/login/'
     | '/logout/'
     | '/register/'
+    | '/reset-password/'
     | '/verify-email/'
     | '/app/admin'
     | '/app/teacher'
@@ -409,10 +429,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/forgot-password'
     | '/help'
     | '/login'
     | '/logout'
     | '/register'
+    | '/reset-password'
     | '/verify-email'
     | '/app/admin'
     | '/app/teacher'
@@ -447,10 +469,12 @@ export interface FileRouteTypes {
     | '/'
     | '/app/_authenticated'
     | '/about/'
+    | '/forgot-password/'
     | '/help/'
     | '/login/'
     | '/logout/'
     | '/register/'
+    | '/reset-password/'
     | '/verify-email/'
     | '/app/_authenticated/admin'
     | '/app/_authenticated/teacher'
@@ -486,10 +510,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppAuthenticatedRoute: typeof AppAuthenticatedRouteWithChildren
   AboutIndexRoute: typeof AboutIndexRoute
+  ForgotPasswordIndexRoute: typeof ForgotPasswordIndexRoute
   HelpIndexRoute: typeof HelpIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   LogoutIndexRoute: typeof LogoutIndexRoute
   RegisterIndexRoute: typeof RegisterIndexRoute
+  ResetPasswordIndexRoute: typeof ResetPasswordIndexRoute
   VerifyEmailIndexRoute: typeof VerifyEmailIndexRoute
 }
 
@@ -507,6 +533,13 @@ declare module '@tanstack/react-router' {
       path: '/verify-email'
       fullPath: '/verify-email/'
       preLoaderRoute: typeof VerifyEmailIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password/': {
+      id: '/reset-password/'
+      path: '/reset-password'
+      fullPath: '/reset-password/'
+      preLoaderRoute: typeof ResetPasswordIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register/': {
@@ -535,6 +568,13 @@ declare module '@tanstack/react-router' {
       path: '/help'
       fullPath: '/help/'
       preLoaderRoute: typeof HelpIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password/': {
+      id: '/forgot-password/'
+      path: '/forgot-password'
+      fullPath: '/forgot-password/'
+      preLoaderRoute: typeof ForgotPasswordIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about/': {
@@ -858,10 +898,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppAuthenticatedRoute: AppAuthenticatedRouteWithChildren,
   AboutIndexRoute: AboutIndexRoute,
+  ForgotPasswordIndexRoute: ForgotPasswordIndexRoute,
   HelpIndexRoute: HelpIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   LogoutIndexRoute: LogoutIndexRoute,
   RegisterIndexRoute: RegisterIndexRoute,
+  ResetPasswordIndexRoute: ResetPasswordIndexRoute,
   VerifyEmailIndexRoute: VerifyEmailIndexRoute,
 }
 export const routeTree = rootRouteImport

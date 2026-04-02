@@ -178,14 +178,12 @@ export function LoginForm() {
           disabled={isPending || resendMutation.isPending}
           icon={<Lock className="h-4 w-4" />}
           rightTopChip={
-            <>
-              <a
-                href="#"
-                className="text-xs font-medium text-primary transition-colors hover:text-primary/80"
-              >
-                {t('login.forgotPassword')}
-              </a>
-            </>
+            <Link
+              to="/forgot-password"
+              className="text-xs font-medium text-primary transition-colors hover:text-primary/80"
+            >
+              {t('login.forgotPassword')}
+            </Link>
           }
         />
 

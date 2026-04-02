@@ -824,5 +824,23 @@
     "goToApp": "Go to Dashboard",
     "goToLogin": "Go to Login",
     "logInToSqeez": "Log In to Sqeez"
+  },
+  "forgotPassword": {
+    "title": "Forgot Password?",
+    "subtitle": "No worries, we'll send you reset instructions.",
+    "sendLink": "Send Reset Link",
+    "backToLogin": "Back to log in",
+    "checkEmailTitle": "Check your email",
+    "checkEmailDesc": "If an account exists, we have sent a password reset link to"
+  },
+  "resetPassword": {
+    "title": "Set new password",
+    "subtitle": "Your new password must be different from previous used passwords.",
+    "newPassword": "New Password",
+    "resetButton": "Reset Password",
+    "successToast": "Password reset successfully! You can now log in.",
+    "invalidLinkTitle": "Invalid Link",
+    "invalidLinkDesc": "This password reset link is missing or invalid. Please request a new one.",
+    "requestNewLink": "Request New Link"
   }
 }

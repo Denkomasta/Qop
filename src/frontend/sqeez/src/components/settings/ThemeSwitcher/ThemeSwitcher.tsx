@@ -25,7 +25,7 @@ export function ThemeSwitcher() {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>Themes</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <ScrollArea className="h-72">
+        <ScrollArea className="max-h-72">
           {DAISY_THEMES.map((themeName) => (
             <DropdownMenuItem
               key={themeName}

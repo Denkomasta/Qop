@@ -14,6 +14,7 @@ import SqeezLogo from '@/components/icons/logos/SqeezLogo'
 import { SimpleAvatar } from '@/components/ui/Avatar'
 import type { UserDTO } from '@/api/generated/model'
 import { getImageUrl } from '@/lib/imageHelpers'
+import { useTranslation } from 'react-i18next'
 
 export interface LinkProps {
   to: string
@@ -43,6 +44,7 @@ export function Navbar({
   user,
   isRegisterEnabled,
 }: NavbarProps) {
+  const { t } = useTranslation()
   const avatarUrl = getImageUrl(user?.avatarUrl)
 
   return (
@@ -102,7 +104,7 @@ export function Navbar({
               </>
             )}
             <LanguageSwitcher />
-            <ThemeSwitcher />
+            <ThemeSwitcher title={t('common.themes')} />
           </div>
 
           <Sheet>
@@ -157,7 +159,7 @@ export function Navbar({
                   </>
                 )}
                 <LanguageSwitcher />
-                <ThemeSwitcher />
+                <ThemeSwitcher title={t('common.themes')} />
               </nav>
             </SheetContent>
           </Sheet>

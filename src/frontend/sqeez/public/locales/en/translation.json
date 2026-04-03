@@ -223,7 +223,8 @@
     },
     "notEarned": "Not earned yet",
     "requirements": "Requirements",
-    "title": "All badges"
+    "title": "All badges",
+    "noResults": "No badges found"
   },
   "brandingPanel": {
     "title": "Learn with fun, compete with friends",
@@ -315,7 +316,8 @@
     "deleteAll": "Delete All",
     "deleting": "Deleting...",
     "close": "Close",
-    "copied": "Successfully copied!"
+    "copied": "Successfully copied!",
+    "themes": "Themes"
   },
   "dashboard": {
     "administration": "Administration",

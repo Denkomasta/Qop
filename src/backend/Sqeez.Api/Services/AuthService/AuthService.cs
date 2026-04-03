@@ -24,7 +24,7 @@ namespace Sqeez.Api.Services.AuthService
             _tokenService = tokenService;
             _configService = configService;
             _superUserEmail = config["SUPER_USER_EMAIL"]?.Trim().ToLower() ?? string.Empty;
-            _frontendUrl = config["FRONTEND_URL"]?.Trim().TrimEnd('/') ?? "http://localhost:3000";
+            _frontendUrl = config["FrontendUrl"]?.Trim().TrimEnd('/') ?? "http://localhost:3000";
         }
 
         private async Task<AuthResponseDto> GenerateAuthResponseAndSessionAsync(Student user, bool rememberMe = false)

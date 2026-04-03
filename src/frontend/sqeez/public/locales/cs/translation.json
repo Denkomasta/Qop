@@ -317,7 +317,8 @@
     "deleting": "Mažu...",
     "close": "Zavřít",
     "copied": "Úspěšně zkopírováno!",
-    "themes": "Motivy"
+    "themes": "Motivy",
+    "more": "Další"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -365,7 +366,11 @@
     "adminBadges": "Správa odznaků",
     "adminBadgesDescription": "Vytvářejte, upravujte a nastavujte odznaky úspěchů a pravidla pro XP odměny na platformě.",
     "adminImport": "Import dat",
-    "adminImportDescription": "Import tříd, předmětů a uživatelů z CSV souborů."
+    "adminImportDescription": "Import tříd, předmětů a uživatelů z CSV souborů.",
+    "title": "Přehled",
+    "quizEditor": "Editor kvízů",
+    "users": "Uživatelé",
+    "settings": "Nastavení"
   },
   "error": {
     "generic": "Nastala chyba. Prosím zkuste to později.",

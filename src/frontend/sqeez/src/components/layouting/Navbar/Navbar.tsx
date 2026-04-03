@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui'
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -50,6 +52,8 @@ export function Navbar({
   const avatarUrl = getImageUrl(user?.avatarUrl)
 
   const dynamicMaxVisible = useResponsiveMaxVisible()
+
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const tabItems = navLinks.map((link) => ({
     id: link.to,
@@ -112,7 +116,7 @@ export function Navbar({
             <ThemeSwitcher title={t('common.themes')} />
           </div>
 
-          <Sheet>
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu className="h-5 w-5" />
@@ -122,6 +126,9 @@ export function Navbar({
               <div className="flex h-full flex-col">
                 <SheetHeader className="border-b p-6 text-left">
                   <SheetTitle>{navigationText}</SheetTitle>
+                  <SheetDescription className="sr-only">
+                    {navigationText}
+                  </SheetDescription>
                 </SheetHeader>
 
                 <div className="flex-1 overflow-y-auto p-4">
@@ -133,6 +140,7 @@ export function Navbar({
                         <Link
                           key={link.to}
                           to={link.to}
+                          onClick={() => setIsMobileMenuOpen(false)}
                           className="rounded-lg px-4 py-3 text-base font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                           activeProps={{
                             className:
@@ -152,6 +160,7 @@ export function Navbar({
                     <div className="flex flex-col gap-4">
                       <Link
                         to="/app/profile"
+                        onClick={() => setIsMobileMenuOpen(false)}
                         className="flex items-center gap-3 rounded-xl border bg-background p-3 shadow-sm transition-colors hover:bg-accent"
                       >
                         <SimpleAvatar
@@ -162,10 +171,10 @@ export function Navbar({
                         />
                         <div className="flex flex-col overflow-hidden">
                           <span className="truncate text-sm font-semibold text-foreground">
-                            {user?.username || t('common.user', 'User')}
+                            {user?.username || t('common.user')}
                           </span>
                           <span className="truncate text-xs text-muted-foreground">
-                            {t('common.viewProfile', 'View profile')}
+                            {t('common.viewProfile')}
                           </span>
                         </div>
                       </Link>
@@ -177,7 +186,12 @@ export function Navbar({
                       </div>
 
                       <Button variant="destructive" className="w-full" asChild>
-                        <Link to="/logout">{logoutButtonText}</Link>
+                        <Link
+                          to="/logout"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          {logoutButtonText}
+                        </Link>
                       </Button>
                     </div>
                   ) : (
@@ -188,11 +202,21 @@ export function Navbar({
                         <ThemeSwitcher title={t('common.themes')} />
                       </div>
                       <Button className="w-full" asChild>
-                        <Link to="/login">{loginButtonText}</Link>
+                        <Link
+                          to="/login"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          {loginButtonText}
+                        </Link>
                       </Button>
                       {isRegisterEnabled && (
                         <Button variant="outline" className="w-full" asChild>
-                          <Link to="/register">{registerButtonText}</Link>
+                          <Link
+                            to="/register"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {registerButtonText}
+                          </Link>
                         </Button>
                       )}
                     </div>

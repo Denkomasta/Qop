@@ -223,7 +223,8 @@
     },
     "notEarned": "Ještě nezískáno",
     "requirements": "Požadavky",
-    "title": "Všechny odznaky"
+    "title": "Všechny odznaky",
+    "noResults": "Odznaky nenalezeny"
   },
   "brandingPanel": {
     "title": "Učte se zábavně, soutěžte s přáteli",
@@ -315,7 +316,8 @@
     "deleteAll": "Smazat vše",
     "deleting": "Mažu...",
     "close": "Zavřít",
-    "copied": "Úspěšně zkopírováno!"
+    "copied": "Úspěšně zkopírováno!",
+    "themes": "Motivy"
   },
   "dashboard": {
     "administration": "Administrativa",

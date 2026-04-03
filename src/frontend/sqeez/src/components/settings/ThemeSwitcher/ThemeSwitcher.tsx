@@ -12,18 +12,18 @@ import {
 import { ScrollArea } from '@/components/ui/ScrollArea'
 import { DAISY_THEMES } from '@/constants/themes'
 
-export function ThemeSwitcher() {
+export function ThemeSwitcher({ title = 'Themes' }: { title?: string }) {
   const { theme: currentTheme, setTheme } = useTheme()
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon">
-          <Palette className="h-5 w-5" />
+          <Palette className="size-5" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>Themes</DropdownMenuLabel>
+        <DropdownMenuLabel>{title}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <ScrollArea className="max-h-72">
           {DAISY_THEMES.map((themeName) => (
@@ -34,7 +34,7 @@ export function ThemeSwitcher() {
             >
               {themeName}
               {currentTheme === themeName && (
-                <Check className="h-4 w-4 opacity-50" />
+                <Check className="size-4 opacity-50" />
               )}
             </DropdownMenuItem>
           ))}

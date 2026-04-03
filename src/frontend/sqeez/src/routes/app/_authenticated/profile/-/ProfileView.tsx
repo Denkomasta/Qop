@@ -38,6 +38,7 @@ import { AvatarUploadModal } from './AvatarUploadModal'
 import { Link } from '@tanstack/react-router'
 import { StudentBadge } from '@/components/ui/StudentBadge'
 import { useSystemConfig } from '@/hooks/useSystemConfig'
+import { formatPhoneForDb, formatPhoneForDisplay } from '@/lib/phoneHelpers'
 
 type EditFieldState = {
   key: string
@@ -120,8 +121,10 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
         break
       }
       case 'phoneNumber': {
-        const phoneRegex = /^\+?[0-9\s\-()]{7,15}$/
-        if (trimmedValue && !phoneRegex.test(trimmedValue))
+        const cleanedPhone = trimmedValue.replace(/[\s\-()]/g, '')
+        const phoneRegex = /^(?:\+|00)?[0-9]{7,15}$/
+
+        if (trimmedValue && !phoneRegex.test(cleanedPhone))
           return t('errors.invalidPhone')
         break
       }
@@ -169,9 +172,14 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
       const discriminator =
         discriminatorMap[profileData.role as UserRole] ?? 'student'
 
+      let finalValue = editValue.trim()
+      if (editingField.key === 'phoneNumber') {
+        finalValue = formatPhoneForDb(finalValue)
+      }
+
       const payload: PatchStudentDto = {
         role: discriminator,
-        [editingField.key]: editValue.trim(),
+        [editingField.key]: finalValue,
       }
 
       await updateProfile.mutateAsync({
@@ -276,7 +284,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
             <CardContent className="space-y-6">
               <div className="grid gap-4 sm:grid-cols-2">
                 <EditableInfoItem
-                  icon={<UserIcon className="h-4 w-4" />}
+                  icon={<UserIcon className="size-4" />}
                   label={t('common.username')}
                   value={profileData.username ?? 'john_doe'}
                   fieldKey="username"
@@ -284,7 +292,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
                   onEdit={handleEditClick}
                 />
                 <EditableInfoItem
-                  icon={<Mail className="h-4 w-4" />}
+                  icon={<Mail className="size-4" />}
                   label={t('common.email')}
                   value={profileData.email ?? 'john_doe@sqeez.com'}
                   fieldKey="email"
@@ -292,7 +300,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
                   onEdit={handleEditClick}
                 />
                 <EditableInfoItem
-                  icon={<Shield className="h-4 w-4" />}
+                  icon={<Shield className="size-4" />}
                   label={t('common.role')}
                   value={profileData.role ?? 'Student'}
                   fieldKey="role"
@@ -302,7 +310,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
 
                 {profileData.department && (
                   <EditableInfoItem
-                    icon={<Briefcase className="h-4 w-4" />}
+                    icon={<Briefcase className="size-4" />}
                     label={t('common.department')}
                     value={profileData.department}
                     fieldKey="department"
@@ -313,9 +321,9 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
 
                 {profileData.phoneNumber && (
                   <EditableInfoItem
-                    icon={<Phone className="h-4 w-4" />}
+                    icon={<Phone className="size-4" />}
                     label={t('common.phoneNumber')}
-                    value={profileData.phoneNumber}
+                    value={formatPhoneForDisplay(profileData.phoneNumber)}
                     fieldKey="phoneNumber"
                     canEdit={isOwnProfile}
                     onEdit={handleEditClick}

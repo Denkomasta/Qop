@@ -64,7 +64,7 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
   const totalPages = Number(
     pagedCatalog?.totalPages || Math.ceil(totalBadges / PAGE_SIZE),
   )
-  const earnedCount = earnedBadgesMap.size
+  const earnedCount = filterStatus === 'locked' ? 0 : earnedBadgesMap.size
 
   const isSelectedBadgeEarned = selectedBadge
     ? earnedBadgesMap.has(Number(selectedBadge.id))
@@ -83,16 +83,16 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
               to="/app/profile/$userId"
               params={{ userId: (idToFetch ?? 0).toString() }}
             >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              {t('common.backToProfile', 'Back to Profile')}
+              <ArrowLeft className="mr-2 size-4" />
+              {t('common.backToProfile')}
             </Link>
           </Button>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              {t('badges.title', 'All Badges')}
+              {t('badges.title')}
             </h1>
             <p className="font-medium text-muted-foreground">
-              {earnedCount} / {totalBadges} {t('badges.earned', 'Earned')}
+              {earnedCount} / {totalBadges} {t('badges.earned')}
             </p>
           </div>
         </div>
@@ -115,8 +115,8 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
             setSearchQuery(newQuery)
             setPageNumber(1)
           }}
-          placeholder={t('badges.search', 'Search badges...')}
-          icon={<Search className="h-4 w-4" />}
+          placeholder={t('admin.badges.search')}
+          icon={<Search className="size-4" />}
           className="sm:max-w-xs"
         />
 
@@ -176,7 +176,7 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
                 })
               ) : (
                 <div className="col-span-full py-12 text-center text-muted-foreground">
-                  {t('badges.noResults', 'No badges found.')}
+                  {t('badges.noResults')}
                 </div>
               )}
             </div>

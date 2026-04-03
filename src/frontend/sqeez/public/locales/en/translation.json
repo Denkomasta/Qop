@@ -317,7 +317,8 @@
     "deleting": "Deleting...",
     "close": "Close",
     "copied": "Successfully copied!",
-    "themes": "Themes"
+    "themes": "Themes",
+    "more": "More"
   },
   "dashboard": {
     "administration": "Administration",
@@ -365,7 +366,11 @@
     "adminBadges": "Manage Badges",
     "adminBadgesDescription": "Create, configure, and manage achievement badges and XP reward rules for the platform.",
     "adminImport": "Data Import",
-    "adminImportDescription": "Import classes, subjects and users from CSV files."
+    "adminImportDescription": "Import classes, subjects and users from CSV files.",
+    "title": "Dashboard",
+    "quizEditor": "Quiz Editor",
+    "users": "Users",
+    "settings": "Settings"
   },
   "enrollments": {
     "confirmDelete": "Are you sure you want to unenroll from this subject? This action cannot be undone.",

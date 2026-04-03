@@ -8,12 +8,12 @@ import { useSystemConfig } from '@/hooks/useSystemConfig'
 import { useAuthStore } from '@/store/useAuthStore'
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const RootLayout = () => {
   const { t } = useTranslation()
-  const { setUser, logout } = useAuthStore()
+  const { setUser, logout, isAdmin, isTeacher } = useAuthStore()
   const currentYear = new Date().getFullYear()
 
   const {
@@ -40,12 +40,49 @@ const RootLayout = () => {
     }
   }, [user, error, setUser, logout])
 
-  const navLinks = [{ to: '/', label: t('common.home') }]
-  const footerLinks = [
-    { to: '/help', label: t('footer.help') },
-    { to: '/privacy', label: t('footer.privacy') },
-    { to: '/terms', label: t('footer.terms') },
-  ]
+  const navLinks = useMemo(() => {
+    if (!user) {
+      return [{ to: '/', label: t('common.home') }]
+    }
+
+    return [
+      { to: '/app', label: t('dashboard.title', 'Dashboard') },
+      { to: '/app/subjects', label: t('dashboard.subjects') },
+      { to: '/app/quizzes', label: t('dashboard.quizzes') },
+      { to: '/app/leaderboards', label: t('dashboard.leaderboards') },
+
+      ...(isTeacher
+        ? [
+            {
+              to: '/app/teacher/quizzes',
+              label: t('dashboard.quizEditor'),
+            },
+          ]
+        : []),
+
+      ...(isAdmin
+        ? [
+            {
+              to: '/app/admin/users',
+              label: t('dashboard.users'),
+            },
+            {
+              to: '/app/admin/settings',
+              label: t('dashboard.settings'),
+            },
+          ]
+        : []),
+    ]
+  }, [user, isTeacher, isAdmin, t])
+
+  const footerLinks = useMemo(
+    () => [
+      { to: '/help', label: t('footer.help') },
+      { to: '/privacy', label: t('footer.privacy') },
+      { to: '/terms', label: t('footer.terms') },
+    ],
+    [t],
+  )
 
   if (isLoading || isSystemConfigLoading) {
     return (

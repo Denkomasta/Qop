@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  sqeez-postgres:
+    image: postgres:latest
+    container_name: sqeez_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: TodoSecurePassword
+      POSTGRES_DB: SqeezDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  backend:
+    build: 
+      context: ./backend/Sqeez.Api
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - ./backend/Sqeez.Api/.env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=sqeez-postgres;Port=5432;Database=SqeezDb;Username=postgres;Password=TodoSecurePassword
+    networks:
+      - app-network
+    depends_on:
+      - sqeez-postgres
+    volumes:
+      - backend-wwwroot:/app/wwwroot
+      - backend-secure:/app/SecureStorage
+
+  frontend:
+    build:
+      context: ./frontend/sqeez
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_BASE_URL=/api
+        - VITE_PORT=80
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  pgdata:
+  backend-wwwroot:
+  backend-secure:

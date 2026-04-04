@@ -91,7 +91,7 @@ namespace Sqeez.Api.Tests.Services
             var context = await GetInMemoryDbContext();
 
             // Seed a Teacher so the validation passes
-            var teacher = new Teacher { Username = "Mr. Smith", Email = "smith@sqeez.com", Role = UserRole.Teacher };
+            var teacher = new Teacher { Username = "Mr. Smith", Email = "smith@sqeez.org", Role = UserRole.Teacher };
             context.Teachers.Add(teacher);
 
             var subject = new Subject { Name = "Old Name", Code = "OLD1", StartDate = DateTime.UtcNow };
@@ -142,7 +142,7 @@ namespace Sqeez.Api.Tests.Services
             context.Subjects.Add(subject);
 
             // Add an enrollment to trigger the soft delete
-            var student = new Student { Username = "TestStudent", Email = "student@sqeez.com" };
+            var student = new Student { Username = "TestStudent", Email = "student@sqeez.org" };
             context.Enrollments.Add(new Enrollment { Student = student, Subject = subject, EnrolledAt = DateTime.UtcNow });
 
             await context.SaveChangesAsync();

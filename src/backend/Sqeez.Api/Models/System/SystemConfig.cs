@@ -7,7 +7,7 @@
         // --- BRANDING & UI ---
         public string SchoolName { get; set; } = "Sqeez";
         public string LogoUrl { get; set; } = string.Empty;
-        public string SupportEmail { get; set; } = "support@sqeez.com";
+        public string SupportEmail { get; set; } = "support@sqeez.org";
         public string DefaultLanguage { get; set; } = "en";
 
         // --- ACADEMICS ---

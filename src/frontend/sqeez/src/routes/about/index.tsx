@@ -40,7 +40,7 @@ function About() {
                 <p>{t('about.story.p2')}</p>
               </div>
 
-              <div className="relative flex aspect-square items-center justify-center rounded-3xl border border-border bg-secondary/50 p-8 shadow-inner lg:aspect-auto lg:h-[500px]">
+              <div className="relative flex aspect-square items-center justify-center rounded-3xl border border-border bg-secondary/50 p-8 shadow-inner lg:aspect-auto lg:h-125">
                 <div className="absolute inset-0 flex items-center justify-center opacity-10">
                   <Brain className="h-64 w-64 text-primary" />
                 </div>

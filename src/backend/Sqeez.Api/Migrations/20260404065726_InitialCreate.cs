@@ -444,7 +444,7 @@ namespace Sqeez.Api.Migrations
             migrationBuilder.InsertData(
                 table: "SystemConfigs",
                 columns: new[] { "Id", "AllowPublicRegistration", "CurrentAcademicYear", "DefaultLanguage", "LogoUrl", "MaxActiveSessionsPerUser", "MaxAvatarAndBadgeUploadSizeMB", "MaxQuizMediaUploadSizeMB", "RequireEmailVerification", "SchoolName", "SupportEmail" },
-                values: new object[] { 1, false, "2025/2026", "en", "", 3, 5, 50, true, "Sqeez", "support@sqeez.com" });
+                values: new object[] { 1, false, "2025/2026", "en", "", 3, 5, 50, true, "Sqeez", "support@sqeez.org" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_BadgeRules_BadgeId",

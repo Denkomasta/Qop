@@ -495,7 +495,7 @@ namespace Sqeez.Api.Migrations
                             MaxQuizMediaUploadSizeMB = 50,
                             RequireEmailVerification = true,
                             SchoolName = "Sqeez",
-                            SupportEmail = "support@sqeez.com"
+                            SupportEmail = "support@sqeez.org"
                         });
                 });
 

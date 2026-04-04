@@ -294,7 +294,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
                 <EditableInfoItem
                   icon={<Mail className="size-4" />}
                   label={t('common.email')}
-                  value={profileData.email ?? 'john_doe@sqeez.com'}
+                  value={profileData.email ?? 'john_doe@sqeez.org'}
                   fieldKey="email"
                   canEdit={isOwnProfile}
                   onEdit={handleEditClick}

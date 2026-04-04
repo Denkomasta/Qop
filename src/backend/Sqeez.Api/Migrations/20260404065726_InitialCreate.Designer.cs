@@ -12,7 +12,7 @@ using Sqeez.Api.Data;
 namespace Sqeez.Api.Migrations
 {
     [DbContext(typeof(SqeezDbContext))]
-    [Migration("20260402190556_InitialCreate")]
+    [Migration("20260404065726_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -498,7 +498,7 @@ namespace Sqeez.Api.Migrations
                             MaxQuizMediaUploadSizeMB = 50,
                             RequireEmailVerification = true,
                             SchoolName = "Sqeez",
-                            SupportEmail = "support@sqeez.com"
+                            SupportEmail = "support@sqeez.org"
                         });
                 });
 

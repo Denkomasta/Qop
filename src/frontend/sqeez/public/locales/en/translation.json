@@ -224,7 +224,12 @@
     "notEarned": "Not earned yet",
     "requirements": "Requirements",
     "title": "All badges",
-    "noResults": "No badges found"
+    "noResults": "No badges found",
+    "filter": {
+      "all": "All",
+      "earned": "Earned",
+      "locked": "Locked"
+    }
   },
   "brandingPanel": {
     "title": "Learn with fun, compete with friends",
@@ -319,7 +324,8 @@
     "copied": "Successfully copied!",
     "themes": "Themes",
     "more": "More",
-    "viewProfile": "View profile"
+    "viewProfile": "View profile",
+    "viewAll": "View All"
   },
   "dashboard": {
     "administration": "Administration",
@@ -437,7 +443,8 @@
     "rights": "All rights reserved.",
     "help": "Help",
     "privacy": "Privacy",
-    "terms": "Terms"
+    "terms": "Terms",
+    "about": "About"
   },
   "help": {
     "hero": {
@@ -555,13 +562,15 @@
     "clickToSelect": "Click to select an image",
     "avatarUpdated": "Profile picture updated successfully!",
     "avatarUpdateFailed": "An error occurred while uploading your avatar.",
-
     "title": "My Profile",
     "userTitle": "Profile of {{name}}",
     "accountDetails": "Account Details",
     "description": "Your personal and organizational information.",
     "editModalDescription": "Make changes to your {{field}} here. Click save when you're done.",
-    "viewOnlyDescription": "Personal and organizational information of your friend."
+    "viewOnlyDescription": "Personal and organizational information of your friend.",
+    "recentBadges": "Recent Badges",
+    "badgesDescription": "Your most recently earned achievements.",
+    "noBadges": "No badges earned yet."
   },
   "register": {
     "title": "Create your account",
@@ -850,5 +859,63 @@
     "invalidLinkTitle": "Invalid Link",
     "invalidLinkDesc": "This password reset link is missing or invalid. Please request a new one.",
     "requestNewLink": "Request New Link"
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: {{date}}",
+    "acceptance": {
+      "title": "1. Acceptance of Terms",
+      "p1": "By accessing or using this educational platform, you agree to be bound by these rules. This instance is powered by open-source software, but your usage is governed by the administrators of this specific server."
+    },
+    "accounts": {
+      "title": "2. User Accounts & Roles",
+      "p1": "Whether you are registering as a student, teacher, or administrator, you must provide accurate information.",
+      "rule1": "You are entirely responsible for maintaining the security of your password and account.",
+      "rule2": "You may not share your account credentials or attempt to access other users' accounts."
+    },
+    "conduct": {
+      "title": "3. Acceptable Use & Academic Integrity",
+      "p1": "As an educational platform, we expect honest and respectful behavior from all users.",
+      "rule1": "Users must not engage in cheating, exploiting system bugs, or artificially inflating scores.",
+      "rule2": "Creating quizzes or content that is offensive, illegal, or harassing is strictly prohibited."
+    },
+    "content": {
+      "title": "4. User-Generated Content",
+      "p1": "Educators and users retain ownership of the quizzes and materials they create. However, by creating content on this instance, you grant the administrators the right to store, display, and distribute it within the platform."
+    },
+    "liability": {
+      "title": "5. Limitation of Liability",
+      "p1": "This open-source software and this hosted instance are provided 'as is' without warranties of any kind. The instance administrators are not liable for any lost data, interrupted service, or the accuracy of user-generated quizzes."
+    },
+    "contact": {
+      "title": "Questions about our Terms?",
+      "desc": "If you have any questions, please contact your instance administrator at: "
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: {{date}}",
+    "intro": {
+      "title": "1. Who We Are & Where Your Data Goes",
+      "p1": "This platform runs on self-hosted, open-source software. This means all of your data is processed and kept strictly on the servers managed by the administrator of this specific instance. The creators of the open-source project have zero access to your data, and we do not sell your data to any third-party advertisers."
+    },
+    "collection": {
+      "title": "2. What Information We Collect",
+      "p1": "We collect the absolute minimum amount of data required to make the educational platform work:",
+      "rule1": "Account Data: When you register, we collect your name and email address to create and verify your account.",
+      "rule2": "Educational Data: We store your quiz results, earned badges, XP, and overall progress to track your academic performance."
+    },
+    "storage": {
+      "title": "3. How We Store Your Data",
+      "p1": "Your data, including your name and email, is stored securely in our instance's PostgreSQL database. Passwords are cryptographically hashed and never stored as plain text. We use session cookies and local storage solely to keep you logged in and functional while using the app."
+    },
+    "rights": {
+      "title": "4. Your Rights",
+      "p1": "You have the right to request access to the personal data we hold about you, or ask us to correct or delete it entirely. If you wish to delete your account and all associated quiz data, please contact the administrator."
+    },
+    "contact": {
+      "title": "Privacy Questions?",
+      "desc": "To exercise your data rights or ask questions about how we handle privacy, contact the instance administrator at: "
+    }
   }
 }

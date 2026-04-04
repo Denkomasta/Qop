@@ -77,6 +77,7 @@ const RootLayout = () => {
 
   const footerLinks = useMemo(
     () => [
+      { to: '/about', label: t('footer.about') },
       { to: '/help', label: t('footer.help') },
       { to: '/privacy', label: t('footer.privacy') },
       { to: '/terms', label: t('footer.terms') },

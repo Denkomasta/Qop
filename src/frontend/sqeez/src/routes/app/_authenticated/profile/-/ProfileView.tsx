@@ -337,13 +337,10 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
             <CardHeader className="flex flex-row items-center justify-between pb-4">
               <div className="space-y-1">
                 <CardTitle className="text-xl">
-                  {t('profile.recentBadges', 'Recent Badges')}{' '}
+                  {t('profile.recentBadges')}{' '}
                 </CardTitle>
                 <CardDescription className="text-base">
-                  {t(
-                    'profile.badgesDescription',
-                    'Your most recently earned achievements.',
-                  )}
+                  {t('profile.badgesDescription')}
                 </CardDescription>
               </div>
 
@@ -352,7 +349,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
                   to="/app/badges/$userId"
                   params={{ userId: (idToFetch ?? 0).toString() }}
                 >
-                  {t('common.viewAll', 'View All')}
+                  {t('common.viewAll')}
                 </Link>
               </Button>
             </CardHeader>
@@ -373,7 +370,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
                 <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-8 text-center">
                   <Shield className="mb-2 h-8 w-8 text-muted-foreground/50" />
                   <p className="text-sm font-medium text-muted-foreground">
-                    {t('profile.noBadges', 'No badges earned yet.')}
+                    {t('profile.noBadges')}
                   </p>
                 </div>
               )}

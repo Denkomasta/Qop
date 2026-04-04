@@ -15,7 +15,7 @@ namespace Sqeez.Api.Tests.Services
 {
     public class AuthServiceTests
     {
-        private const string SuperUserEmail = "founder@sqeez.com";
+        private const string SuperUserEmail = "founder@sqeez.org";
 
         private async Task<SqeezDbContext> GetInMemoryDbContext()
         {
@@ -66,7 +66,7 @@ namespace Sqeez.Api.Tests.Services
             var user = new Student
             {
                 Username = "LoginUser",
-                Email = "login@sqeez.com",
+                Email = "login@sqeez.org",
                 PasswordHash = BC.HashPassword(password),
                 LastSeen = DateTime.UtcNow.AddMinutes(-2),
                 IsEmailVerified = true
@@ -75,7 +75,7 @@ namespace Sqeez.Api.Tests.Services
             await context.SaveChangesAsync();
 
             var service = CreateService(context);
-            var loginDto = new LoginDTO("login@sqeez.com", password);
+            var loginDto = new LoginDTO("login@sqeez.org", password);
 
             var result = await service.LoginAsync(loginDto);
 
@@ -95,12 +95,12 @@ namespace Sqeez.Api.Tests.Services
         public async Task LoginAsync_WithInvalidPassword_ReturnsUnauthorized()
         {
             var context = await GetInMemoryDbContext();
-            var user = new Student { Email = "login@sqeez.com", PasswordHash = BC.HashPassword("CorrectPassword") };
+            var user = new Student { Email = "login@sqeez.org", PasswordHash = BC.HashPassword("CorrectPassword") };
             context.Students.Add(user);
             await context.SaveChangesAsync();
 
             var service = CreateService(context);
-            var loginDto = new LoginDTO("login@sqeez.com", "WrongPassword");
+            var loginDto = new LoginDTO("login@sqeez.org", "WrongPassword");
 
             var result = await service.LoginAsync(loginDto);
 
@@ -113,14 +113,14 @@ namespace Sqeez.Api.Tests.Services
         {
             var context = await GetInMemoryDbContext();
             var service = CreateService(context);
-            var registerDto = new RegisterDTO("Tonda", "Svoboda", "NewUser", "normal@sqeez.com", "pwd");
+            var registerDto = new RegisterDTO("Tonda", "Svoboda", "NewUser", "normal@sqeez.org", "pwd");
 
             var result = await service.RegisterAsync(registerDto);
 
             Assert.True(result.Success);
             Assert.True(result.Data);
 
-            var savedUser = await context.Students.FirstOrDefaultAsync(u => u.Email == "normal@sqeez.com");
+            var savedUser = await context.Students.FirstOrDefaultAsync(u => u.Email == "normal@sqeez.org");
             Assert.NotNull(savedUser);
             Assert.Equal(UserRole.Student, savedUser.Role);
             Assert.True(BC.Verify("pwd", savedUser.PasswordHash));
@@ -146,11 +146,11 @@ namespace Sqeez.Api.Tests.Services
         public async Task RegisterAsync_WithExistingEmail_ReturnsConflict()
         {
             var context = await GetInMemoryDbContext();
-            context.Students.Add(new Student { Username = "FirstUser", Email = "taken@sqeez.com" });
+            context.Students.Add(new Student { Username = "FirstUser", Email = "taken@sqeez.org" });
             await context.SaveChangesAsync();
 
             var service = CreateService(context);
-            var registerDto = new RegisterDTO("Tonda", "Druhy", "SecondUser", "taken@sqeez.com", "pwd");
+            var registerDto = new RegisterDTO("Tonda", "Druhy", "SecondUser", "taken@sqeez.org", "pwd");
 
             var result = await service.RegisterAsync(registerDto);
 
@@ -162,7 +162,7 @@ namespace Sqeez.Api.Tests.Services
         public async Task RefreshTokenAsync_WhenValid_ReturnsNewTokensAndRevokesOld()
         {
             var context = await GetInMemoryDbContext();
-            var user = new Student { Username = "RefreshUser", Email = "refresh@sqeez.com", LastSeen = DateTime.UtcNow.AddMinutes(-2) };
+            var user = new Student { Username = "RefreshUser", Email = "refresh@sqeez.org", LastSeen = DateTime.UtcNow.AddMinutes(-2) };
             context.Students.Add(user);
             await context.SaveChangesAsync();
 
@@ -193,7 +193,7 @@ namespace Sqeez.Api.Tests.Services
         public async Task LogoutAsync_WhenUserExists_SetsLastSeenAndRevokesSessions()
         {
             var context = await GetInMemoryDbContext();
-            var user = new Student { Username = "OnlineUser", Email = "online@sqeez.com", LastSeen = DateTime.UtcNow.AddMinutes(-2) };
+            var user = new Student { Username = "OnlineUser", Email = "online@sqeez.org", LastSeen = DateTime.UtcNow.AddMinutes(-2) };
             context.Students.Add(user);
 
             var session = new UserSession { UserId = user.Id, RefreshToken = "my-token", IsRevoked = false };
@@ -220,7 +220,7 @@ namespace Sqeez.Api.Tests.Services
         {
             var context = await GetInMemoryDbContext();
 
-            var performingAdmin = new Admin { Username = "Admin2", Email = "admin2@sqeez.com" };
+            var performingAdmin = new Admin { Username = "Admin2", Email = "admin2@sqeez.org" };
             var superUser = new Admin { Username = "Founder", Email = SuperUserEmail, Role = UserRole.Admin };
 
             context.Admins.AddRange(performingAdmin, superUser);
@@ -239,8 +239,8 @@ namespace Sqeez.Api.Tests.Services
         public async Task UpdateUserRoleAsync_WhenNormalAdminCreatesAdmin_ReturnsForbidden()
         {
             var context = await GetInMemoryDbContext();
-            var performingAdmin = new Admin { Username = "Admin2", Email = "admin2@sqeez.com" };
-            var targetStudent = new Student { Username = "Student", Email = "student@sqeez.com", Role = UserRole.Student };
+            var performingAdmin = new Admin { Username = "Admin2", Email = "admin2@sqeez.org" };
+            var targetStudent = new Student { Username = "Student", Email = "student@sqeez.org", Role = UserRole.Student };
 
             context.Students.AddRange(performingAdmin, targetStudent);
             await context.SaveChangesAsync();
@@ -260,7 +260,7 @@ namespace Sqeez.Api.Tests.Services
             var context = await GetInMemoryDbContext();
 
             var founder = new Admin { Username = "Founder", Email = SuperUserEmail };
-            var targetStudent = new Student { Username = "Student", Email = "student@sqeez.com", Role = UserRole.Student };
+            var targetStudent = new Student { Username = "Student", Email = "student@sqeez.org", Role = UserRole.Student };
 
             context.Students.AddRange(founder, targetStudent);
             await context.SaveChangesAsync();
@@ -282,13 +282,13 @@ namespace Sqeez.Api.Tests.Services
         {
             var context = await GetInMemoryDbContext();
             string password = "Password123!";
-            var user = new Student { Username = "RememberMeTrue", Email = "true@sqeez.com", PasswordHash = BC.HashPassword(password), IsEmailVerified = true };
+            var user = new Student { Username = "RememberMeTrue", Email = "true@sqeez.org", PasswordHash = BC.HashPassword(password), IsEmailVerified = true };
             context.Students.Add(user);
             await context.SaveChangesAsync();
 
             var service = CreateService(context);
             // RememberMe = true
-            var loginDto = new LoginDTO("true@sqeez.com", password, true);
+            var loginDto = new LoginDTO("true@sqeez.org", password, true);
 
             await service.LoginAsync(loginDto);
 
@@ -305,13 +305,13 @@ namespace Sqeez.Api.Tests.Services
         {
             var context = await GetInMemoryDbContext();
             string password = "Password123!";
-            var user = new Student { Username = "RememberMeFalse", Email = "false@sqeez.com", PasswordHash = BC.HashPassword(password), IsEmailVerified = true };
+            var user = new Student { Username = "RememberMeFalse", Email = "false@sqeez.org", PasswordHash = BC.HashPassword(password), IsEmailVerified = true };
             context.Students.Add(user);
             await context.SaveChangesAsync();
 
             var service = CreateService(context);
             // RememberMe = false
-            var loginDto = new LoginDTO("false@sqeez.com", password, false);
+            var loginDto = new LoginDTO("false@sqeez.org", password, false);
 
             await service.LoginAsync(loginDto);
 

@@ -224,7 +224,12 @@
     "notEarned": "Ještě nezískáno",
     "requirements": "Požadavky",
     "title": "Všechny odznaky",
-    "noResults": "Odznaky nenalezeny"
+    "noResults": "Odznaky nenalezeny",
+    "filter": {
+      "all": "Vše",
+      "earned": "Získané",
+      "locked": "Uzamčené"
+    }
   },
   "brandingPanel": {
     "title": "Učte se zábavně, soutěžte s přáteli",
@@ -319,7 +324,8 @@
     "copied": "Úspěšně zkopírováno!",
     "themes": "Motivy",
     "more": "Další",
-    "viewProfile": "Zobrazit profil"
+    "viewProfile": "Zobrazit profil",
+    "viewAll": "Zobrazit vše"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -437,7 +443,8 @@
     "rights": "Všechna práva vyhrazena.",
     "help": "Nápověda",
     "privacy": "Soukromí",
-    "terms": "Podmínky"
+    "terms": "Podmínky",
+    "about": "O nás"
   },
   "help": {
     "hero": {
@@ -555,13 +562,15 @@
     "clickToSelect": "Klikněte pro výběr obrázku",
     "avatarUpdated": "Profilový obrázek byl úspěšně nahrán!",
     "avatarUpdateFailed": "Při nahrávání obrázku došlo k chybě.",
-
     "title": "Můj profil",
     "userTitle": "Profil uživatele {{name}}",
     "accountDetails": "Detaily účtu",
     "description": "Vaše osobní a organizační informace.",
     "editModalDescription": "Zde proveďte změny v položce {{field}}. Až budete hotovi, klikněte na uložit.",
-    "viewOnlyDescription": "Osobní a organizační informace tvého kamaráda."
+    "viewOnlyDescription": "Osobní a organizační informace tvého kamaráda.",
+    "recentBadges": "Nedávné odznaky",
+    "badgesDescription": "Vaše naposledy získané úspěchy.",
+    "noBadges": "Zatím žádné získané odznaky."
   },
   "register": {
     "title": "Vytvořte si účet",
@@ -849,5 +858,63 @@
     "invalidLinkTitle": "Neplatný odkaz",
     "invalidLinkDesc": "Tento odkaz na obnovení hesla chybí nebo je neplatný. Požádejte prosím o nový.",
     "requestNewLink": "Požádat o nový odkaz"
+  },
+  "terms": {
+    "title": "Podmínky služby",
+    "lastUpdated": "Naposledy aktualizováno: {{date}}",
+    "acceptance": {
+      "title": "1. Přijetí podmínek",
+      "p1": "Přístupem k této vzdělávací platformě nebo jejím používáním souhlasíte s těmito pravidly. Tato instance běží na open-source softwaru, ale vaše používání se řídí pravidly administrátorů tohoto konkrétního serveru."
+    },
+    "accounts": {
+      "title": "2. Uživatelské účty a role",
+      "p1": "Ať už se registrujete jako student, učitel nebo administrátor, musíte poskytnout přesné informace.",
+      "rule1": "Jste plně zodpovědní za zachování bezpečnosti vašeho hesla a účtu.",
+      "rule2": "Nesmíte sdílet své přihlašovací údaje ani se pokoušet o přístup k účtům jiných uživatelů."
+    },
+    "conduct": {
+      "title": "3. Přijatelné použití a akademická integrita",
+      "p1": "Jakožto vzdělávací platforma očekáváme od všech uživatelů čestné a respektující chování.",
+      "rule1": "Uživatelé se nesmí podílet na podvádění, zneužívání chyb systému nebo umělém navyšování skóre.",
+      "rule2": "Vytváření kvízů nebo obsahu, který je urážlivý, nelegální nebo obtěžující, je přísně zakázáno."
+    },
+    "content": {
+      "title": "4. Obsah vytvářený uživateli",
+      "p1": "Vyučující a uživatelé si ponechávají vlastnictví kvízů a materiálů, které vytvoří. Vytvořením obsahu v této instanci však udělujete administrátorům právo jej ukládat, zobrazovat a distribuovat v rámci platformy."
+    },
+    "liability": {
+      "title": "5. Omezení odpovědnosti",
+      "p1": "Tento open-source software a tato hostovaná instance jsou poskytovány 'tak, jak jsou', bez jakýchkoli záruk. Administrátoři instance nenesou odpovědnost za jakoukoli ztrátu dat, přerušené služby nebo přesnost uživatelsky vytvořených kvízů."
+    },
+    "contact": {
+      "title": "Máte dotazy k našim podmínkám?",
+      "desc": "Máte-li jakékoli dotazy, kontaktujte prosím administrátora vaší instance na adrese: "
+    }
+  },
+  "privacy": {
+    "title": "Zásady ochrany osobních údajů",
+    "lastUpdated": "Naposledy aktualizováno: {{date}}",
+    "intro": {
+      "title": "1. Kdo jsme a kam putují vaše data",
+      "p1": "Tato platforma běží na open-source softwaru na vlastním serveru (self-hosted). To znamená, že veškerá vaše data jsou zpracovávána a uchovávána výhradně na serverech spravovaných administrátorem této konkrétní instance. Tvůrci open-source projektu nemají k vašim datům žádný přístup a vaše data neprodáváme žádným inzerentům třetích stran."
+    },
+    "collection": {
+      "title": "2. Jaké informace shromažďujeme",
+      "p1": "Shromažďujeme pouze naprosté minimum dat potřebných k fungování této vzdělávací platformy:",
+      "rule1": "Údaje o účtu: Při registraci shromažďujeme vaše jméno a e-mailovou adresu pro vytvoření a ověření vašeho účtu.",
+      "rule2": "Vzdělávací data: Ukládáme vaše výsledky v kvízech, získané odznaky, XP a celkový pokrok pro sledování vašich studijních výsledků."
+    },
+    "storage": {
+      "title": "3. Jak uchováváme vaše data",
+      "p1": "Vaše data, včetně vašeho jména a e-mailu, jsou bezpečně uložena v PostgreSQL databázi naší instance. Hesla jsou kryptograficky hašována a nikdy se neukládají v čistém textu. Soubory cookie relace a místní úložiště (local storage) používáme výhradně k tomu, abyste zůstali přihlášeni a mohli aplikaci bez problémů používat."
+    },
+    "rights": {
+      "title": "4. Vaše práva",
+      "p1": "Máte právo požádat o přístup k osobním údajům, které o vás uchováváme, nebo nás požádat o jejich opravu či úplné smazání. Pokud si přejete smazat svůj účet a všechna přidružená data z kvízů, kontaktujte administrátora."
+    },
+    "contact": {
+      "title": "Máte dotazy k soukromí?",
+      "desc": "Chcete-li uplatnit svá práva na data nebo máte dotazy ohledně toho, jak nakládáme se soukromím, kontaktujte administrátora instance na adrese: "
+    }
   }
 }

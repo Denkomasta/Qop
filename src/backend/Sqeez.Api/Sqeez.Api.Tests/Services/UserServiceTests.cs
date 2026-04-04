@@ -41,7 +41,7 @@ namespace Sqeez.Api.Tests.Services
         public async Task GetUserByIdAsync_WhenUserExists_ReturnsCorrectPolymorphicDto()
         {
             var context = await GetInMemoryDbContext();
-            var admin = new Admin { Username = "TestAdmin", Email = "admin@sqeez.com", Role = UserRole.Admin, PhoneNumber = "123456789" };
+            var admin = new Admin { Username = "TestAdmin", Email = "admin@sqeez.org", Role = UserRole.Admin, PhoneNumber = "123456789" };
             context.Students.Add(admin);
             await context.SaveChangesAsync();
 
@@ -81,7 +81,7 @@ namespace Sqeez.Api.Tests.Services
             var createDto = new CreateAdminDto
             {
                 Username = "NewAdmin",
-                Email = "new@sqeez.com",
+                Email = "new@sqeez.org",
                 Password = "pwd",
                 Department = "IT",
                 PhoneNumber = "+1234567890"
@@ -93,7 +93,7 @@ namespace Sqeez.Api.Tests.Services
             var resultDto = Assert.IsType<AdminDto>(result.Data);
             Assert.Equal("IT", resultDto.Department);
 
-            var savedUser = await context.Students.FirstOrDefaultAsync(a => a.Email == "new@sqeez.com");
+            var savedUser = await context.Students.FirstOrDefaultAsync(a => a.Email == "new@sqeez.org");
             var savedAdmin = Assert.IsType<Admin>(savedUser);
             Assert.Equal("+1234567890", savedAdmin.PhoneNumber);
             Assert.Equal(UserRole.Admin, savedAdmin.Role);
@@ -103,11 +103,11 @@ namespace Sqeez.Api.Tests.Services
         public async Task CreateUserAsync_WhenEmailAlreadyExists_ReturnsConflict()
         {
             var context = await GetInMemoryDbContext();
-            context.Students.Add(new Student { Username = "Existing", Email = "conflict@sqeez.com", Role = UserRole.Student });
+            context.Students.Add(new Student { Username = "Existing", Email = "conflict@sqeez.org", Role = UserRole.Student });
             await context.SaveChangesAsync();
 
             var service = CreateService(context);
-            var createDto = new CreateTeacherDto { Username = "Duplicate", Email = "conflict@sqeez.com", Password = "pwd" };
+            var createDto = new CreateTeacherDto { Username = "Duplicate", Email = "conflict@sqeez.org", Password = "pwd" };
 
             var result = await service.CreateUserAsync(createDto);
 
@@ -123,7 +123,7 @@ namespace Sqeez.Api.Tests.Services
         public async Task PatchUserAsync_WhenAdminExists_UpdatesBaseAndDerivedProperties()
         {
             var context = await GetInMemoryDbContext();
-            var admin = new Admin { Username = "OldName", Email = "old@sqeez.com", Role = UserRole.Admin, Department = "OldDept" };
+            var admin = new Admin { Username = "OldName", Email = "old@sqeez.org", Role = UserRole.Admin, Department = "OldDept" };
             context.Students.Add(admin);
             await context.SaveChangesAsync();
 
@@ -148,7 +148,7 @@ namespace Sqeez.Api.Tests.Services
         public async Task ArchiveUserAsync_WhenUserExists_SoftDeletesUser()
         {
             var context = await GetInMemoryDbContext();
-            var student = new Student { Username = "ToBeDeleted", Email = "delete@sqeez.com", Role = UserRole.Student };
+            var student = new Student { Username = "ToBeDeleted", Email = "delete@sqeez.org", Role = UserRole.Student };
             context.Students.Add(student);
             await context.SaveChangesAsync();
 
@@ -211,8 +211,8 @@ namespace Sqeez.Api.Tests.Services
         {
             var context = await GetInMemoryDbContext();
             context.Students.AddRange(
-                new Student { Username = "JohnDoe", Email = "john@sqeez.com", Role = UserRole.Student },
-                new Teacher { Username = "JaneSmith", Email = "jane@sqeez.com", Role = UserRole.Teacher }
+                new Student { Username = "JohnDoe", Email = "john@sqeez.org", Role = UserRole.Student },
+                new Teacher { Username = "JaneSmith", Email = "jane@sqeez.org", Role = UserRole.Teacher }
             );
             await context.SaveChangesAsync();
 

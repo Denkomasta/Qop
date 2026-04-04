@@ -18,6 +18,8 @@ import {
 } from '@/components/ui/Accordion'
 import { FeatureCard } from '@/components/ui/Card'
 import { CtaSection } from '@/components/ui/Section'
+import { useSystemConfig } from '@/hooks/useSystemConfig'
+import { Spinner } from '@/components/ui/Spinner'
 
 export const Route = createFileRoute('/help/')({
   component: Help,
@@ -25,6 +27,7 @@ export const Route = createFileRoute('/help/')({
 
 function Help() {
   const { t } = useTranslation()
+  const { config, isLoading: isSystemConfigLoading } = useSystemConfig()
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
@@ -129,9 +132,18 @@ function Help() {
           title={t('help.contact.title')}
           subtitle={t('help.contact.subtitle')}
           actionButton={
-            <Button size="lg" className="h-12 gap-2 px-8">
-              <Mail className="h-4 w-4" />
-              {t('help.contact.btn')}
+            <Button size="lg" className="h-12 gap-2 px-8" asChild>
+              {isSystemConfigLoading ? (
+                <Spinner size="default" />
+              ) : (
+                <a
+                  href={`mailto:${config?.supportEmail}`}
+                  className="font-semibold text-primary hover:underline"
+                >
+                  <Mail className="size-4" />
+                  {t('help.contact.btn')}
+                </a>
+              )}
             </Button>
           }
         />

@@ -53,6 +53,24 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
+      - name: Download Migration Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: database-migration-script
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: ./db-artifacts
+
+      - name: Copy Migration Script to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "db-artifacts/migrate.sql"
+          target: "/root/Sqeez/src"
+          strip_components: 1
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         env:
@@ -65,10 +83,14 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           envs: GITHUB_TOKEN,GITHUB_ACTOR,REPO_OWNER
           script: |
+            # Assuming this is where both your docker-compose.yml AND your .env file live
             cd /root/Sqeez/src
             
             # Pull the updated docker-compose.yml
             git pull origin main
+            
+            # --- NEW: Extract database credentials dynamically from your .env file ---
+            export $(grep -v '^#' .env | xargs -d '\n')
             
             # Convert owner to lowercase for the compose file
             export GHCR_OWNER=$(echo "$REPO_OWNER" | tr '[:upper:]' '[:lower:]')
@@ -76,8 +98,22 @@ jobs:
             # Log in securely
             echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
             
-            # Pull pre-built images and run
+            # Pull pre-built images
             docker compose pull
+            
+            # 1. Start the Postgres service specifically
+            docker compose up -d sqeez-postgres
+            
+            # 2. Wait a few seconds to ensure the healthcheck passes before migrating
+            sleep 5
+            
+            # 3. Execute the migration script against the sqeez_db container
+            cat ./migrate.sql | docker exec -i sqeez_db psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+            
+            # 4. Clean up the script so it doesn't linger on the server
+            rm ./migrate.sql
+            
+            # Now bring up the rest of the application (backend & frontend)
             docker compose up -d
             
             # Log out

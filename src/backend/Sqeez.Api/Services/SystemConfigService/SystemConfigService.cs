@@ -41,6 +41,11 @@ namespace Sqeez.Api.Services
                 Priority = CacheItemPriority.NeverRemove
             });
 
+            //_cache.Set(ConfigCacheKey, dto, new MemoryCacheEntryOptions
+            //{
+            //    AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1)
+            //});
+
             return ServiceResult<SystemConfigDto>.Ok(dto);
         }
 

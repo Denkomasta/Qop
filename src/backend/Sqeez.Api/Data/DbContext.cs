@@ -21,7 +21,6 @@ namespace Sqeez.Api.Data
         public DbSet<SchoolClass> SchoolClasses { get; set; } = null!;
         public DbSet<Subject> Subjects { get; set; } = null!;
         public DbSet<Enrollment> Enrollments { get; set; } = null!;
-        public DbSet<Level> Levels { get; set; } = null!;
         public DbSet<Badge> Badges { get; set; } = null!;
         public DbSet<StudentBadge> StudentBadges { get; set; } = null!;
         public DbSet<Quiz> Quizzes { get; set; } = null!;
@@ -98,7 +97,7 @@ namespace Sqeez.Api.Data
                 .HasMany(qo => qo.Responses)
                 .WithMany(qqr => qqr.Options)
                 .UsingEntity(j => j.ToTable("QuizOptionResponses"));
-        
+
             // 5. Explicitly configure SchoolClass relationships    
             // Relationship A: A SchoolClass has many Students
             modelBuilder.Entity<SchoolClass>()

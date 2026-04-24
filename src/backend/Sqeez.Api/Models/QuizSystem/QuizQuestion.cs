@@ -7,6 +7,7 @@ namespace Sqeez.Api.Models.QuizSystem
         public long Id { get; set; }
         public string? Title { get; set; }
         public int Difficulty { get; set; }
+        //public int Penalty { get; set; }
         public int TimeLimit { get; set; }
         public bool IsStrictMultipleChoice { get; set; }
 

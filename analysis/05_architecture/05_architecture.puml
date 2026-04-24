@@ -1,0 +1,41 @@
+@startuml
+skinparam packageStyle folder
+skinparam defaultTextAlignment center
+skinparam shadowing true
+
+package "Klientské prostředí (Zařízení uživatele)" #E8F4FA {
+    rectangle "Klientská Aplikace (SPA)\n- Běží ve webovém prohlížeči\n- Uživatelské rozhraní" as spa #FFFFFF
+}
+
+package "Serverová infrastruktura (Sqeez Server)" #F9F9F9 {
+    
+    package "Vrstva směrování" #E8F4FA {
+        rectangle "Reverzní Proxy\n- Terminace šifrování (HTTPS)\n- Směrování požadavků" as proxy #FFFFFF
+    }
+
+    package "Prezentační vrstva API" #EAF4E8 {
+        rectangle "Aplikační Kontrolery\n- Příjem REST API volání\n- Validace vstupů (DTO)" as api #FFFFFF
+    }
+
+    package "Vrstva obchodní logiky" #FDF4E6 {
+        rectangle "Doménové Služby\n- Obchodní pravidla\n- Logika gamifikace" as services #FFFFFF
+    }
+
+    package "Vrstva přístupu k datům" #F4E8FA {
+        rectangle "Objektově-Relační Mapování (ORM)\n- Správa kontextu\n- Sledování změn entit" as orm #FFFFFF
+    }
+
+    database "Relační Databáze" as db #FFFFFF
+    rectangle "Souborové Úložiště" as storage #FFFFFF
+}
+
+spa --> proxy : Volá REST API
+proxy .up.> spa : Dodává statické soubory\n(při 1. načtení aplikace)
+proxy --> api : Přeposílá API požadavky
+
+api --> services : Zpracovává logiku
+services --> storage : Čte/Zapisuje soubory
+services --> orm : Komunikuje s databází
+
+orm --> db : Spouští databázové transakce
+@enduml

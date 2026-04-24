@@ -49,6 +49,24 @@ jobs:
 
       - name: Test
         run: dotnet test src/backend/Sqeez.Api/Sqeez.Api.Tests/Sqeez.Api.Tests.csproj -c Release --verbosity normal
+      
+      - name: Install EF Core CLI
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Generate Idempotent Migration Script
+        run: |
+          mkdir -p db-artifacts
+          dotnet ef migrations script \
+            --idempotent \
+            --output db-artifacts/migrate.sql \
+            --project src/backend/Sqeez.Api/Sqeez.Api.csproj
+          
+      - name: Upload Migration Script as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-migration-script
+          path: db-artifacts/migrate.sql
+          retention-days: 7
 
   # --- Frontend CI (Yarn / Build Only) ---
   frontend-ci:

@@ -6,7 +6,7 @@ services:
     container_name: sqeez_db
     restart: always
     env_file:
-      - ./backend/Sqeez.Api/.env
+      - .env
     ports:
       - "5432:5432"
     volumes:
@@ -14,7 +14,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-postgres}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -23,7 +23,7 @@ services:
     image: ghcr.io/${GHCR_OWNER}/sqeez-backend:latest
     restart: always
     env_file:
-      - ./backend/Sqeez.Api/.env
+      - .env
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:8080
@@ -36,7 +36,6 @@ services:
     depends_on:
       sqeez-postgres:
         condition: service_healthy
-    entrypoint: ["/bin/sh", "-c", "dotnet Sqeez.Api.dll seed && dotnet Sqeez.Api.dll"]
 
   frontend:
     image: ghcr.io/${GHCR_OWNER}/sqeez-frontend:latest

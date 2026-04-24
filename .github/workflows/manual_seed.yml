@@ -1,0 +1,20 @@
+name: Manual Database Seed
+
+on:
+  workflow_dispatch:
+
+jobs:
+  seed-database:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Seed via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /root/Sqeez/src
+            
+            # Start the backend container just to run the seed command, then delete it
+            docker compose run --rm backend dotnet Sqeez.Api.dll seed

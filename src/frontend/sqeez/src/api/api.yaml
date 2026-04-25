@@ -3123,6 +3123,13 @@ components:
             - integer
             - string
           format: int64
+        penalty:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int32
         mediaAssetId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
@@ -3315,6 +3322,7 @@ components:
         - id
         - title
         - difficulty
+        - penalty
         - timeLimit
         - isStrictMultipleChoice
         - quizId
@@ -3333,6 +3341,13 @@ components:
         difficulty:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
+            - integer
+            - string
+          format: int32
+        penalty:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
             - integer
             - string
           format: int32
@@ -4054,6 +4069,13 @@ components:
             - integer
             - string
           format: int32
+        penalty:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int32
         timeLimit:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
@@ -4653,6 +4675,7 @@ components:
         - id
         - title
         - difficulty
+        - penalty
         - timeLimit
         - isStrictMultipleChoice
         - quizId
@@ -4671,6 +4694,13 @@ components:
         difficulty:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
+            - integer
+            - string
+          format: int32
+        penalty:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
             - integer
             - string
           format: int32

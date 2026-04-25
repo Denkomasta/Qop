@@ -13,11 +13,8 @@ export interface PatchQuizQuestionDto {
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   difficulty?: number | string | null
-  /**
-   * @nullable
-   * @pattern ^-?(?:0|[1-9]\d*)$
-   */
-  penalty?: number | string | null
+  /** @nullable */
+  hasPenalty?: boolean | null
   /**
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$

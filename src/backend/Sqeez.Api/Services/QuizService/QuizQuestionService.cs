@@ -51,12 +51,13 @@ namespace Sqeez.Api.Services
                     q.Id,
                     q.Title ?? string.Empty,
                     q.Difficulty,
-                    q.Penalty,
+                    q.HasPenalty,
                     q.TimeLimit,
                     q.IsStrictMultipleChoice,
                     q.QuizId,
                     q.MediaAssetId,
-                    q.Options.Count
+                    q.Options.Count,
+                    q.PenaltyPoints
                 ))
                 .ToListAsync();
 
@@ -77,12 +78,13 @@ namespace Sqeez.Api.Services
                     q.Id,
                     q.Title ?? string.Empty,
                     q.Difficulty,
-                    q.Penalty,
+                    q.HasPenalty,
                     q.TimeLimit,
                     q.IsStrictMultipleChoice,
                     q.QuizId,
                     q.MediaAssetId,
-                    q.Options.Count
+                    q.Options.Count,
+                    q.PenaltyPoints
                 ))
                 .FirstOrDefaultAsync();
 
@@ -116,7 +118,7 @@ namespace Sqeez.Api.Services
             {
                 Title = dto.Title,
                 Difficulty = dto.Difficulty,
-                Penalty = dto.Penalty,
+                HasPenalty = dto.HasPenalty,
                 TimeLimit = dto.TimeLimit,
                 QuizId = dto.QuizId,
                 MediaAssetId = dto.MediaAssetId
@@ -129,12 +131,13 @@ namespace Sqeez.Api.Services
                 question.Id,
                 question.Title,
                 question.Difficulty,
-                question.Penalty,
+                question.HasPenalty,
                 question.TimeLimit,
                 question.IsStrictMultipleChoice,
                 question.QuizId,
                 question.MediaAssetId,
-                0)); // 0 Options on initial creation
+                0,  // 0 Options on initial creation
+                question.PenaltyPoints));
         }
 
         public async Task<ServiceResult<QuizQuestionDto>> PatchQuizQuestionAsync(long id, PatchQuizQuestionDto dto)
@@ -156,7 +159,7 @@ namespace Sqeez.Api.Services
 
             if (dto.Title != null) question.Title = dto.Title;
             if (dto.Difficulty.HasValue) question.Difficulty = dto.Difficulty.Value;
-            if (dto.Penalty.HasValue) question.Penalty = dto.Penalty.Value;
+            if (dto.HasPenalty.HasValue) question.HasPenalty = dto.HasPenalty.Value;
             if (dto.TimeLimit.HasValue) question.TimeLimit = dto.TimeLimit.Value;
             if (dto.IsStrictMultipleChoice.HasValue) question.IsStrictMultipleChoice = dto.IsStrictMultipleChoice.Value;
 
@@ -194,12 +197,13 @@ namespace Sqeez.Api.Services
                 question.Id,
                 question.Title ?? string.Empty,
                 question.Difficulty,
-                question.Penalty,
+                question.HasPenalty,
                 question.TimeLimit,
                 question.IsStrictMultipleChoice,
                 question.QuizId,
                 question.MediaAssetId,
-                question.Options.Count));
+                question.Options.Count,
+                question.PenaltyPoints));
         }
 
         public async Task<ServiceResult<bool>> DeleteQuizQuestionAsync(long id)
@@ -258,7 +262,8 @@ namespace Sqeez.Api.Services
                     q.Id,
                     q.Title ?? string.Empty,
                     q.Difficulty,
-                    q.Penalty,
+                    q.HasPenalty,
+                    q.PenaltyPoints,
                     q.TimeLimit,
                     q.IsStrictMultipleChoice,
                     q.QuizId,

@@ -117,6 +117,8 @@ export function QuizQuestionEditor({ quizId }: QuizQuestionEditorProps) {
             quizId={quizId}
             questionId={activeQuestionId.toString()}
             currentDifficulty={Number(question?.difficulty ?? 1)}
+            hasPenalty={question?.hasPenalty ?? false}
+            calculatedPenalty={Number(question?.calculatedPenalty ?? 0)}
           />
 
           <QuestionTimeLimitEditor

@@ -17,6 +17,11 @@ export interface PatchQuizQuestionDto {
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
+  penalty?: number | string | null
+  /**
+   * @nullable
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   timeLimit?: number | string | null
   /**
    * @nullable

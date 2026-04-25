@@ -48,6 +48,7 @@
         long Id,
         string Title,
         int Difficulty,
+        int? Penalty,
         int TimeLimit,
         bool IsStrictMultipleChoice,
         long QuizId,
@@ -67,12 +68,14 @@
         int Difficulty,
         int TimeLimit,
         long QuizId,
+        int? Penalty = null,
         long? MediaAssetId = null,
         bool IsStrictMultipleChoice = false);
 
     public record PatchQuizQuestionDto(
         string? Title = null,
         int? Difficulty = null,
+        int? Penalty = null,
         int? TimeLimit = null,
         long? MediaAssetId = null,
         bool? IsStrictMultipleChoice = null
@@ -122,6 +125,7 @@
         long Id,
         string Title,
         int Difficulty,
+        int? Penalty,
         int TimeLimit,
         bool IsStrictMultipleChoice,
         long QuizId,

@@ -17,6 +17,11 @@ export interface CreateQuizQuestionDto {
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
+  penalty?: number | string | null
+  /**
+   * @nullable
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   mediaAssetId?: number | string | null
   isStrictMultipleChoice?: boolean
 }

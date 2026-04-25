@@ -5,7 +5,17 @@ export const calculateLevel = (xp?: number | string) => {
 
   if (Number.isNaN(parsedXp) || parsedXp < 0) return 1
 
-  return Math.floor(parsedXp / 100) + 1
+  // Multiplier: adjusts the overall speed (higher number = faster leveling)
+  const MULTIPLIER = 0.05
+
+  // Exponent: determines the size of the "jumps" between levels.
+  // 0.5 = huge jumps (the previous square root version)
+  // 1.0 = linear (every level requires the exact same amount of XP)
+  // 0.8 = ideal compromise, jumps grow smoothly and more slowly
+  const EXPONENT = 0.85
+
+  // Level = floor of (multiplier * XP^exponent) + 1
+  return Math.floor(MULTIPLIER * Math.pow(parsedXp, EXPONENT)) + 1
 }
 
 export const formatName = (

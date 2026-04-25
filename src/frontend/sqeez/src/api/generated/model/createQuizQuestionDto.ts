@@ -13,11 +13,7 @@ export interface CreateQuizQuestionDto {
   timeLimit: number | string
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   quizId: number | string
-  /**
-   * @nullable
-   * @pattern ^-?(?:0|[1-9]\d*)$
-   */
-  penalty?: number | string | null
+  hasPenalty?: boolean
   /**
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$

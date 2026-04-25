@@ -48,12 +48,13 @@
         long Id,
         string Title,
         int Difficulty,
-        int? Penalty,
+        bool HasPenalty,
         int TimeLimit,
         bool IsStrictMultipleChoice,
         long QuizId,
         long? MediaAssetId,
-        int QuizOptions);
+        int QuizOptions,
+        int CalculatedPenalty);
 
     public class QuizQuestionFilterDto : PagedFilterDto
     {
@@ -68,18 +69,31 @@
         int Difficulty,
         int TimeLimit,
         long QuizId,
-        int? Penalty = null,
+        bool HasPenalty = false,
         long? MediaAssetId = null,
         bool IsStrictMultipleChoice = false);
 
     public record PatchQuizQuestionDto(
         string? Title = null,
         int? Difficulty = null,
-        int? Penalty = null,
+        bool? HasPenalty = null,
         int? TimeLimit = null,
         long? MediaAssetId = null,
         bool? IsStrictMultipleChoice = null
         );
+
+    public record DetailedQuizQuestionDto(
+        long Id,
+        string Title,
+        int Difficulty,
+        bool HasPenalty,
+        int CalculatedPenalty,
+        int TimeLimit,
+        bool IsStrictMultipleChoice,
+        long QuizId,
+        long? MediaAssetId,
+        List<StudentQuizOptionDto> Options
+    );
 
     public record QuizOptionDto(
         long Id,
@@ -119,17 +133,5 @@
         bool IsFreeText,
         long QuizQuestionId,
         long? MediaAssetId
-    );
-
-    public record DetailedQuizQuestionDto(
-        long Id,
-        string Title,
-        int Difficulty,
-        int? Penalty,
-        int TimeLimit,
-        bool IsStrictMultipleChoice,
-        long QuizId,
-        long? MediaAssetId,
-        List<StudentQuizOptionDto> Options
     );
 }

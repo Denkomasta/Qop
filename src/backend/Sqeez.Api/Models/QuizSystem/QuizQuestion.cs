@@ -7,7 +7,7 @@ namespace Sqeez.Api.Models.QuizSystem
         public long Id { get; set; }
         public string? Title { get; set; }
         public int Difficulty { get; set; }
-        public int? Penalty { get; set; }
+        public bool HasPenalty { get; set; }
         public int TimeLimit { get; set; }
         public bool IsStrictMultipleChoice { get; set; }
 
@@ -20,5 +20,7 @@ namespace Sqeez.Api.Models.QuizSystem
 
         // Navigation Properties
         public ICollection<QuizOption> Options { get; set; } = new List<QuizOption>();
+
+        public int PenaltyPoints => HasPenalty ? (int)Math.Floor(Difficulty / 2.0) : 0;
     }
 }

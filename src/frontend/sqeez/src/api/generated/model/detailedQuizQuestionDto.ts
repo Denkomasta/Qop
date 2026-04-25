@@ -12,11 +12,9 @@ export interface DetailedQuizQuestionDto {
   title: string
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   difficulty: number | string
-  /**
-   * @nullable
-   * @pattern ^-?(?:0|[1-9]\d*)$
-   */
-  penalty: number | string | null
+  hasPenalty: boolean
+  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  calculatedPenalty: number | string
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   timeLimit: number | string
   isStrictMultipleChoice: boolean

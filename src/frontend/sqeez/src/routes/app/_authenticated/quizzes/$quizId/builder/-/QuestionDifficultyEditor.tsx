@@ -5,7 +5,7 @@ import {
 } from '@/api/generated/endpoints/quizzes/quizzes'
 import { useQueryClient } from '@tanstack/react-query'
 import { cn } from '@/lib/utils'
-import { Lock } from 'lucide-react'
+import { Lock, Scale } from 'lucide-react'
 import { handleQuizMutationError } from '@/lib/quizHelpers'
 import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
 
@@ -13,19 +13,23 @@ interface QuestionDifficultyEditorProps {
   quizId: string
   questionId: string
   currentDifficulty: number
+  hasPenalty: boolean
+  calculatedPenalty: number
 }
 
 export function QuestionDifficultyEditor({
   quizId,
   questionId,
   currentDifficulty,
+  hasPenalty,
+  calculatedPenalty,
 }: QuestionDifficultyEditorProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
 
   const isLocked = useQuizEditorUIStore((s) => s.isLocked)
 
-  const { mutate: updateDifficulty, isPending } =
+  const { mutate: updateQuestion, isPending } =
     usePatchApiQuizzesQuizIdQuestionsQuestionId({
       mutation: {
         onSuccess: (updatedQuestionData) => {
@@ -46,10 +50,20 @@ export function QuestionDifficultyEditor({
   const handleDifficultyChange = (level: number) => {
     if (level === currentDifficulty || isLocked) return
 
-    updateDifficulty({
+    updateQuestion({
       quizId,
       questionId,
       data: { difficulty: level },
+    })
+  }
+
+  const handleTogglePenalty = () => {
+    if (isLocked) return
+
+    updateQuestion({
+      quizId,
+      questionId,
+      data: { hasPenalty: !hasPenalty },
     })
   }
 
@@ -87,11 +101,37 @@ export function QuestionDifficultyEditor({
         ))}
       </div>
 
-      <p className="px-1 text-[10px] text-muted-foreground italic">
-        {currentDifficulty <= 2 && t('editor.difficultyEasy')}
-        {currentDifficulty === 3 && t('editor.difficultyMedium')}
-        {currentDifficulty >= 4 && t('editor.difficultyHard')}
-      </p>
+      <div className="flex items-center justify-between px-1">
+        <p className="text-[10px] text-muted-foreground italic">
+          {currentDifficulty <= 2 && t('editor.difficultyEasy')}
+          {currentDifficulty === 3 && t('editor.difficultyMedium')}
+          {currentDifficulty >= 4 && t('editor.difficultyHard')}
+        </p>
+
+        <button
+          onClick={handleTogglePenalty}
+          disabled={isPending || isLocked}
+          title={t(
+            'editor.togglePenaltyDesc',
+            'Toggle whether incorrect answers deduct points',
+          )}
+          className={cn(
+            'flex items-center gap-1.5 rounded px-2 py-0.5 text-[10px] font-semibold transition-all hover:scale-105 active:scale-95',
+            hasPenalty
+              ? 'border border-rose-200 bg-rose-100 text-rose-700 dark:border-rose-800 dark:bg-rose-900/40 dark:text-rose-300'
+              : 'border border-transparent bg-muted/50 text-muted-foreground hover:bg-muted',
+          )}
+        >
+          <Scale className="h-3 w-3" />
+          <span className="text-emerald-600 dark:text-emerald-400">
+            +{currentDifficulty}
+          </span>
+          <span>/</span>
+          <span className={hasPenalty ? '' : 'opacity-50'}>
+            -{calculatedPenalty}
+          </span>
+        </button>
+      </div>
     </div>
   )
 }

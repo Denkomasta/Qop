@@ -3123,13 +3123,9 @@ components:
             - integer
             - string
           format: int64
-        penalty:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - "null"
-            - integer
-            - string
-          format: int32
+        hasPenalty:
+          type: boolean
+          default: false
         mediaAssetId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
@@ -3322,7 +3318,8 @@ components:
         - id
         - title
         - difficulty
-        - penalty
+        - hasPenalty
+        - calculatedPenalty
         - timeLimit
         - isStrictMultipleChoice
         - quizId
@@ -3344,10 +3341,11 @@ components:
             - integer
             - string
           format: int32
-        penalty:
+        hasPenalty:
+          type: boolean
+        calculatedPenalty:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
-            - "null"
             - integer
             - string
           format: int32
@@ -4069,13 +4067,10 @@ components:
             - integer
             - string
           format: int32
-        penalty:
-          pattern: ^-?(?:0|[1-9]\d*)$
+        hasPenalty:
           type:
             - "null"
-            - integer
-            - string
-          format: int32
+            - boolean
         timeLimit:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
@@ -4675,12 +4670,13 @@ components:
         - id
         - title
         - difficulty
-        - penalty
+        - hasPenalty
         - timeLimit
         - isStrictMultipleChoice
         - quizId
         - mediaAssetId
         - quizOptions
+        - calculatedPenalty
       type: object
       properties:
         id:
@@ -4697,13 +4693,8 @@ components:
             - integer
             - string
           format: int32
-        penalty:
-          pattern: ^-?(?:0|[1-9]\d*)$
-          type:
-            - "null"
-            - integer
-            - string
-          format: int32
+        hasPenalty:
+          type: boolean
         timeLimit:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
@@ -4726,6 +4717,12 @@ components:
             - string
           format: int64
         quizOptions:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        calculatedPenalty:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer

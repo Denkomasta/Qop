@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Sqeez.Api.Constants;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
@@ -98,7 +99,8 @@ namespace Sqeez.Api.Services
                 .Where(q => q.Id == dto.QuizQuestionID)
                 .Select(q => new
                 {
-                    HasAttempts = _context.QuizAttempts.Any(a => a.QuizId == q.QuizId)
+                    HasAttempts = _context.QuizAttempts.Any(a => a.QuizId == q.QuizId),
+                    OptionCount = q.Options.Count
                 })
                 .FirstOrDefaultAsync();
 
@@ -109,6 +111,11 @@ namespace Sqeez.Api.Services
                 return ServiceResult<QuizOptionDto>.Failure(
                     "Cannot add new options because students have already started or completed this quiz.",
                     ServiceError.Conflict);
+
+            if (questionData.OptionCount >= QuizConstants.MaxOptionsPerQuestion)
+                return ServiceResult<QuizOptionDto>.Failure(
+                    $"A quiz question can have a maximum of {QuizConstants.MaxOptionsPerQuestion} options.",
+                    ServiceError.ValidationFailed);
 
             if (dto.MediaAssetId.HasValue)
             {

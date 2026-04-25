@@ -381,18 +381,37 @@ namespace Sqeez.Api.Services.AuthService
 
             bool isSuperUser = performingAdmin.Email == _superUserEmail;
 
-            // Prevent role modifications to the Super User account, even by themselves
+            // 1. Prevent role modifications to the Super User account (Already Handled)
             if (user.Email == _superUserEmail)
             {
                 _logger.LogWarning("Attempted modification of Super User: {Email} by {Email}", _superUserEmail, performingAdmin.Email);
                 return ServiceResult<bool>.Failure("Forbidden operation.", ServiceError.Forbidden);
             }
 
-            // Only Super User can assign Admin role, and no one can create another Admin
+            // 2. Only Super User can assign Admin role, and no one can create another Admin
             if (newRole == UserRole.Admin && !isSuperUser)
             {
                 _logger.LogWarning("Admin {Email} tried to create another Admin.", performingAdmin.Email);
                 return ServiceResult<bool>.Failure("Forbidden operation.", ServiceError.Forbidden);
+            }
+
+            // 3. Prevent modifying a Teacher's/Admin's role if they are tied to Subjects or Classes
+            if (user.Role != UserRole.Student && newRole == UserRole.Student)
+            {
+                // Safely cast the base Student entity to a Teacher entity to access Teacher-specific properties
+                if (user is Teacher teacher)
+                {
+                    bool hasClasses = teacher.ManagedClassId.HasValue;
+                    bool hasSubjects = await _context.Subjects.AnyAsync(s => s.TeacherId == userId);
+
+                    if (hasSubjects || hasClasses)
+                    {
+                        _logger.LogWarning("Attempted to downgrade Teacher/Admin {Id} who has active dependencies.", userId);
+                        return ServiceResult<bool>.Failure(
+                            "Cannot change this user to a Student because they are currently assigned to a subject or manage a school class. Please reassign their duties first.",
+                            ServiceError.Conflict);
+                    }
+                }
             }
 
             try

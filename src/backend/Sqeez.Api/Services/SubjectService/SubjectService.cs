@@ -2,6 +2,7 @@
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
+using Sqeez.Api.Extensions;
 using Sqeez.Api.Models.Academics;
 using Sqeez.Api.Models.Import;
 using Sqeez.Api.Services.Interfaces;
@@ -49,16 +50,12 @@ namespace Sqeez.Api.Services.SubjectService
                     if (filter.IsActive.Value)
                     {
                         // ACTIVE: Started, and hasn't ended.
-                        query = query.Where(s =>
-                            s.StartDate <= now &&
-                            (s.EndDate == null || s.EndDate > now));
+                        query = query.WhereIsActive();
                     }
                     else
                     {
                         // INACTIVE: Hasn't started yet, or already ended.
-                        query = query.Where(s =>
-                            s.StartDate > now ||
-                            (s.EndDate != null && s.EndDate <= now));
+                        query = query.WhereIsInactive();
                     }
                 }
 

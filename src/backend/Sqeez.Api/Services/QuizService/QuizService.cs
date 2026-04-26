@@ -2,6 +2,7 @@
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
+using Sqeez.Api.Extensions;
 using Sqeez.Api.Models.QuizSystem;
 using Sqeez.Api.Services.Interfaces;
 
@@ -42,20 +43,15 @@ namespace Sqeez.Api.Services
 
             if (filter.IsActive.HasValue)
             {
-                var now = DateTime.UtcNow;
                 if (filter.IsActive.Value)
                 {
                     // Active: Published in the past, and (No closing date OR closing date is in the future)
-                    query = query.Where(q => q.PublishDate != null &&
-                                             q.PublishDate <= now &&
-                                             (q.ClosingDate == null || q.ClosingDate > now));
+                    query = query.WhereIsActive();
                 }
                 else
                 {
                     // Inactive: Not published, published in future, or closing date has passed
-                    query = query.Where(q => q.PublishDate == null ||
-                                             q.PublishDate > now ||
-                                             (q.ClosingDate != null && q.ClosingDate <= now));
+                    query = query.WhereIsInactive();
                 }
             }
 
@@ -118,10 +114,29 @@ namespace Sqeez.Api.Services
             return ServiceResult<QuizDto>.Ok(quiz);
         }
 
-        public async Task<ServiceResult<QuizDto>> CreateQuizAsync(CreateQuizDto dto)
+        public async Task<ServiceResult<QuizDto>> CreateQuizAsync(CreateQuizDto dto, long currentUserId)
         {
-            var subjectExists = await _context.Subjects.AnyAsync(s => s.Id == dto.SubjectId);
-            if (!subjectExists) return ServiceResult<QuizDto>.Failure("Subject not found.", ServiceError.NotFound);
+            var subject = await _context.Subjects.FindAsync(dto.SubjectId);
+
+            if (subject == null)
+                return ServiceResult<QuizDto>.Failure("Subject not found.", ServiceError.NotFound);
+
+            if (subject.TeacherId != currentUserId)
+            {
+                return ServiceResult<QuizDto>.Failure("You do not have permission to add quizzes to this subject.", ServiceError.Forbidden);
+            }
+
+            if (subject.HasEnded)
+                return ServiceResult<QuizDto>.Failure(
+                    "Cannot create quizzes for a subject that is closed.",
+                    ServiceError.Forbidden);
+
+            if (dto.ClosingDate.HasValue && subject.EndDate.HasValue && dto.ClosingDate.Value > subject.EndDate.Value)
+            {
+                return ServiceResult<QuizDto>.Failure(
+                    $"The quiz closing date cannot be later than the subject's end date ({subject.EndDate.Value:yyyy-MM-dd}).",
+                    ServiceError.ValidationFailed);
+            }
 
             var quiz = new Quiz
             {
@@ -142,27 +157,51 @@ namespace Sqeez.Api.Services
                 quiz.PublishDate, quiz.ClosingDate, quiz.SubjectId, 0, 0));
         }
 
-        public async Task<ServiceResult<QuizDto>> PatchQuizAsync(long id, PatchQuizDto dto)
+        public async Task<ServiceResult<QuizDto>> PatchQuizAsync(long id, PatchQuizDto dto, long currentUserId)
         {
             var quiz = await _context.Quizzes
+                .Include(q => q.Subject)
                 .Include(q => q.QuizQuestions)
                 .Include(q => q.QuizAttempts)
                 .FirstOrDefaultAsync(q => q.Id == id);
 
             if (quiz == null) return ServiceResult<QuizDto>.Failure("Quiz not found.", ServiceError.NotFound);
 
+            if (quiz.Subject.TeacherId != currentUserId)
+            {
+                return ServiceResult<QuizDto>.Failure("You do not have permission to modify this quiz.", ServiceError.Forbidden);
+            }
+
+            // Determine the target subject
+            var targetSubject = quiz.Subject;
+            if (dto.SubjectId.HasValue && dto.SubjectId.Value != quiz.SubjectId)
+            {
+                targetSubject = await _context.Subjects.FindAsync(dto.SubjectId.Value);
+                if (targetSubject == null) return ServiceResult<QuizDto>.Failure("Target subject not found.", ServiceError.NotFound);
+
+                // Prevent moving the quiz into a closed subject
+                if (targetSubject.HasEnded)
+                {
+                    return ServiceResult<QuizDto>.Failure("Cannot move a quiz into a closed subject.", ServiceError.Forbidden);
+                }
+            }
+
+            var intendedClosingDate = dto.ClosingDate.HasValue ? dto.ClosingDate.Value : quiz.ClosingDate;
+
+            // Validate the intended closing date against the target subject's end date
+            if (intendedClosingDate.HasValue && targetSubject.EndDate.HasValue && intendedClosingDate.Value > targetSubject.EndDate.Value)
+            {
+                return ServiceResult<QuizDto>.Failure(
+                    $"The quiz closing date cannot be later than the subject's end date ({targetSubject.EndDate.Value:yyyy-MM-dd}).",
+                    ServiceError.ValidationFailed);
+            }
+
             if (!string.IsNullOrWhiteSpace(dto.Title)) quiz.Title = dto.Title;
             if (dto.Description != null) quiz.Description = dto.Description;
             if (dto.MaxRetries.HasValue) quiz.MaxRetries = dto.MaxRetries.Value;
             if (dto.PublishDate.HasValue) quiz.PublishDate = dto.PublishDate.Value;
             if (dto.ClosingDate.HasValue) quiz.ClosingDate = dto.ClosingDate.Value;
-
-            if (dto.SubjectId.HasValue && dto.SubjectId.Value != quiz.SubjectId)
-            {
-                var subjectExists = await _context.Subjects.AnyAsync(s => s.Id == dto.SubjectId.Value);
-                if (!subjectExists) return ServiceResult<QuizDto>.Failure("Subject not found.", ServiceError.NotFound);
-                quiz.SubjectId = dto.SubjectId.Value;
-            }
+            if (dto.SubjectId.HasValue) quiz.SubjectId = dto.SubjectId.Value;
 
             await _context.SaveChangesAsync();
 
@@ -171,13 +210,27 @@ namespace Sqeez.Api.Services
                 quiz.PublishDate, quiz.ClosingDate, quiz.SubjectId, quiz.QuizQuestions.Count, quiz.QuizAttempts.Count));
         }
 
-        public async Task<ServiceResult<bool>> DeleteQuizAsync(long id)
+        public async Task<ServiceResult<bool>> DeleteQuizAsync(long id, long currentUserId, bool isAdmin)
         {
             var quiz = await _context.Quizzes
+                .Include(q => q.Subject)
                 .Include(q => q.QuizAttempts)
                 .FirstOrDefaultAsync(q => q.Id == id);
 
             if (quiz == null) return ServiceResult<bool>.Failure("Quiz not found.", ServiceError.NotFound);
+
+            if (!isAdmin && quiz.Subject.TeacherId != currentUserId)
+            {
+                return ServiceResult<bool>.Failure("You do not have permission to delete this quiz.", ServiceError.Forbidden);
+            }
+
+            // NEW: Prevent deleting the quiz if the subject has officially ended
+            if (quiz.Subject.HasEnded)
+            {
+                return ServiceResult<bool>.Failure(
+                    "Cannot delete a quiz that belongs to a subject that has already ended.",
+                    ServiceError.Forbidden);
+            }
 
             if (quiz.QuizAttempts.Any())
             {

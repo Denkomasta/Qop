@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from '@tanstack/react-router'
-import { UserMinus } from 'lucide-react'
+import { GraduationCap, UserMinus } from 'lucide-react'
 
 import { DataTable, type ColumnDef } from '@/components/ui/Table/DataTable'
 import { SimpleAvatar } from '@/components/ui/Avatar'
@@ -13,12 +13,14 @@ interface SubjectStudentsTableProps {
   students: StudentDto[]
   isLoading: boolean
   onRemoveStudent?: (student: StudentDto) => void
+  onEditMark?: (student: StudentDto) => void
 }
 
 export function SubjectStudentsTable({
   students,
   isLoading,
   onRemoveStudent,
+  onEditMark,
 }: SubjectStudentsTableProps) {
   const { t } = useTranslation()
 
@@ -59,16 +61,28 @@ export function SubjectStudentsTable({
       ? [
           {
             header: '',
-            className: 'text-right w-[80px]',
+            className: 'text-right w-[120px]',
             cell: (student: StudentDto) => (
-              <div className="flex justify-end">
-                <button
-                  onClick={() => onRemoveStudent(student)}
-                  className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:ring-2 focus-visible:ring-destructive focus-visible:outline-none"
-                  title={t('subject.removeFromSubject')}
-                >
-                  <UserMinus className="h-4 w-4" />
-                </button>
+              <div className="flex justify-end gap-2">
+                {onEditMark && (
+                  <button
+                    onClick={() => onEditMark(student)}
+                    className="flex h-8 w-8 items-center justify-center rounded-md text-primary transition-colors hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+                    title={t('subject.gradeStudent', 'Grade Student')}
+                  >
+                    <GraduationCap className="h-4 w-4" />
+                  </button>
+                )}
+
+                {onRemoveStudent && (
+                  <button
+                    onClick={() => onRemoveStudent(student)}
+                    className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:ring-2 focus-visible:ring-destructive focus-visible:outline-none"
+                    title={t('subject.removeFromSubject')}
+                  >
+                    <UserMinus className="h-4 w-4" />
+                  </button>
+                )}
               </div>
             ),
           },

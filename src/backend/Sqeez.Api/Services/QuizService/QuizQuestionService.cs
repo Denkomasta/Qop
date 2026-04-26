@@ -16,9 +16,14 @@ namespace Sqeez.Api.Services
             _mediaAssetService = mas;
         }
 
-        public async Task<ServiceResult<PagedResponse<QuizQuestionDto>>> GetAllQuizQuestionsAsync(QuizQuestionFilterDto filter)
+        public async Task<ServiceResult<PagedResponse<QuizQuestionDto>>> GetAllQuizQuestionsAsync(QuizQuestionFilterDto filter, long currentUserId, bool isAdmin)
         {
             var query = _context.QuizQuestions.AsNoTracking();
+
+            if (!isAdmin)
+            {
+                query = query.Where(q => q.Quiz.Subject.TeacherId == currentUserId);
+            }
 
             if (filter.QuizId.HasValue)
             {
@@ -70,28 +75,36 @@ namespace Sqeez.Api.Services
             });
         }
 
-        public async Task<ServiceResult<QuizQuestionDto>> GetQuizQuestionByIdAsync(long id)
+        public async Task<ServiceResult<QuizQuestionDto>> GetQuizQuestionByIdAsync(long id, long currentUserId)
         {
             var question = await _context.QuizQuestions
+                .Include(q => q.Quiz)
+                    .ThenInclude(quiz => quiz.Subject)
                 .Where(q => q.Id == id)
-                .Select(q => new QuizQuestionDto(
-                    q.Id,
-                    q.Title ?? string.Empty,
-                    q.Difficulty,
-                    q.HasPenalty,
-                    q.TimeLimit,
-                    q.IsStrictMultipleChoice,
-                    q.QuizId,
-                    q.MediaAssetId,
-                    q.Options.Count,
-                    q.PenaltyPoints
-                ))
                 .FirstOrDefaultAsync();
 
             if (question == null)
                 return ServiceResult<QuizQuestionDto>.Failure("Quiz question not found.", ServiceError.NotFound);
 
-            return ServiceResult<QuizQuestionDto>.Ok(question);
+            if (question.Quiz.Subject.TeacherId != currentUserId)
+            {
+                return ServiceResult<QuizQuestionDto>.Failure("You do not have permission to view this question.", ServiceError.Forbidden);
+            }
+
+            var dto = new QuizQuestionDto(
+                    question.Id,
+                    question.Title ?? string.Empty,
+                    question.Difficulty,
+                    question.HasPenalty,
+                    question.TimeLimit,
+                    question.IsStrictMultipleChoice,
+                    question.QuizId,
+                    question.MediaAssetId,
+                    _context.QuizOptions.Count(o => o.QuizQuestionId == question.Id),
+                    question.PenaltyPoints
+                );
+
+            return ServiceResult<QuizQuestionDto>.Ok(dto);
         }
 
         public async Task<ServiceResult<QuizQuestionDto>> CreateQuizQuestionAsync(CreateQuizQuestionDto dto, long currentUserId)
@@ -294,34 +307,67 @@ namespace Sqeez.Api.Services
             }
         }
 
-        public async Task<ServiceResult<DetailedQuizQuestionDto>> GetDetailedQuizQuestionByIdAsync(long id, long quizId)
+        public async Task<ServiceResult<DetailedQuizQuestionDto>> GetDetailedQuizQuestionByIdAsync(long id, long quizId, long currentUserId, string role)
         {
             var question = await _context.QuizQuestions
-                .Where(q => q.Id == id)
-                .Select(q => new DetailedQuizQuestionDto(
-                    q.Id,
-                    q.Title ?? string.Empty,
-                    q.Difficulty,
-                    q.HasPenalty,
-                    q.PenaltyPoints,
-                    q.TimeLimit,
-                    q.IsStrictMultipleChoice,
-                    q.QuizId,
-                    q.MediaAssetId,
-                    q.Options.Select(o => new StudentQuizOptionDto(
+                .Include(q => q.Options)
+                .Include(q => q.Quiz)
+                    .ThenInclude(quiz => quiz.Subject)
+                        .ThenInclude(subject => subject.Enrollments)
+                .FirstOrDefaultAsync(q => q.Id == id && q.QuizId == quizId);
+
+            if (question == null)
+                return ServiceResult<DetailedQuizQuestionDto>.Failure("Quiz question not found.", ServiceError.NotFound);
+
+            bool isTeacherOfSubject = question.Quiz.Subject.TeacherId == currentUserId;
+            bool isEnrolledStudent = question.Quiz.Subject.Enrollments.Any(e => e.StudentId == currentUserId && e.ArchivedAt == null);
+            bool isAdmin = role == "Admin";
+
+            if (isTeacherOfSubject)
+            {
+                // Access granted.
+            }
+            else if (isEnrolledStudent)
+            {
+                // Access conditionally granted. Enforce the active attempt rule.
+                bool hasActiveAttempt = await _context.QuizAttempts.AnyAsync(a =>
+                    a.QuizId == quizId &&
+                    a.Enrollment.StudentId == currentUserId &&
+                    (a.Status == AttemptStatus.Created || a.Status == AttemptStatus.Started));
+
+                if (!hasActiveAttempt)
+                {
+                    return ServiceResult<DetailedQuizQuestionDto>.Failure(
+                        "You cannot view quiz questions unless you have an active attempt in progress. Please start the quiz first.",
+                        ServiceError.Forbidden);
+                }
+            }
+            else
+            {
+                return ServiceResult<DetailedQuizQuestionDto>.Failure("You do not have permission to view this detailed question.", ServiceError.Forbidden);
+            }
+
+            // Map and Return safely
+            var dto = new DetailedQuizQuestionDto(
+                    question.Id,
+                    question.Title ?? string.Empty,
+                    question.Difficulty,
+                    question.HasPenalty,
+                    question.PenaltyPoints,
+                    question.TimeLimit,
+                    question.IsStrictMultipleChoice,
+                    question.QuizId,
+                    question.MediaAssetId,
+                    question.Options.Select(o => new StudentQuizOptionDto(
                         o.Id,
                         o.IsFreeText ? null : o.Text,
                         o.IsFreeText,
                         o.QuizQuestionId,
                         o.MediaAssetId
                     )).ToList()
-                ))
-                .FirstOrDefaultAsync();
+                );
 
-            if (question == null || question.QuizId != quizId)
-                return ServiceResult<DetailedQuizQuestionDto>.Failure("Quiz question not found.", ServiceError.NotFound);
-
-            return ServiceResult<DetailedQuizQuestionDto>.Ok(question);
+            return ServiceResult<DetailedQuizQuestionDto>.Ok(dto);
         }
     }
 }

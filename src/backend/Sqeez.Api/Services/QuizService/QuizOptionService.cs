@@ -16,9 +16,15 @@ namespace Sqeez.Api.Services
             _mediaAssetService = mas;
         }
 
-        public async Task<ServiceResult<PagedResponse<QuizOptionDto>>> GetAllQuizOptionsAsync(QuizOptionFilterDto filter)
+        public async Task<ServiceResult<PagedResponse<QuizOptionDto>>> GetAllQuizOptionsAsync(QuizOptionFilterDto filter, long currentUserId, bool isAdmin)
         {
             var query = _context.QuizOptions.AsNoTracking();
+
+            // Only return the teacher's own options
+            if (!isAdmin)
+            {
+                query = query.Where(o => o.QuizQuestion.Quiz.Subject.TeacherId == currentUserId);
+            }
 
             if (filter.QuizQuestionId.HasValue)
             {
@@ -72,25 +78,26 @@ namespace Sqeez.Api.Services
             });
         }
 
-        public async Task<ServiceResult<QuizOptionDto>> GetQuizOptionByIdAsync(long id)
+        public async Task<ServiceResult<QuizOptionDto>> GetQuizOptionByIdAsync(long id, long currentUserId)
         {
             var option = await _context.QuizOptions
-                .Where(o => o.Id == id)
-                .Select(o => new QuizOptionDto(
-                    o.Id,
-                    o.Text,
-                    o.IsFreeText,
-                    o.IsCorrect,
-                    o.QuizQuestionId,
-                    o.MediaAssetId,
-                    o.Responses.Count
-                ))
-                .FirstOrDefaultAsync();
+                .Include(o => o.Responses)
+                .Include(o => o.QuizQuestion)
+                    .ThenInclude(q => q.Quiz)
+                        .ThenInclude(quiz => quiz.Subject)
+                .FirstOrDefaultAsync(o => o.Id == id);
 
             if (option == null)
                 return ServiceResult<QuizOptionDto>.Failure("Quiz option not found.", ServiceError.NotFound);
 
-            return ServiceResult<QuizOptionDto>.Ok(option);
+            if (option.QuizQuestion.Quiz.Subject.TeacherId != currentUserId)
+            {
+                return ServiceResult<QuizOptionDto>.Failure("You do not have permission to view options for this subject.", ServiceError.Forbidden);
+            }
+
+            return ServiceResult<QuizOptionDto>.Ok(new QuizOptionDto(
+                option.Id, option.Text, option.IsFreeText, option.IsCorrect,
+                option.QuizQuestionId, option.MediaAssetId, option.Responses.Count));
         }
 
         public async Task<ServiceResult<QuizOptionDto>> CreateQuizOptionAsync(CreateQuizOptionDto dto, long currentUserId)

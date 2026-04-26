@@ -24,6 +24,7 @@ import { toast } from 'sonner'
 import type { StudentDto } from '@/api/generated/model'
 import { ConfirmModal } from '@/components/ui'
 import { formatName } from '@/lib/userHelpers'
+import { StudentGradingModal } from './StudentGradingModal'
 
 export function SubjectDetailsPage({
   subjectId,
@@ -40,6 +41,8 @@ export function SubjectDetailsPage({
   const [studentToRemove, setStudentToRemove] = useState<StudentDto | null>(
     null,
   )
+  const [studentToGrade, setStudentToGrade] = useState<StudentDto | null>(null)
+
   const pageSize = 15
 
   const { data: subjectData, isLoading: isLoadingSubject } =
@@ -83,6 +86,9 @@ export function SubjectDetailsPage({
       console.error('Failed to remove student:', error)
     }
   }
+
+  const canEditEnrollments =
+    isAdmin || subjectData?.teacherId === useAuthStore.getState().user?.id
 
   const isLoading = isLoadingSubject || isLoadingStudents
   const students = studentsResponse?.data || []
@@ -171,7 +177,10 @@ export function SubjectDetailsPage({
           <SubjectStudentsTable
             students={students}
             isLoading={isLoading}
-            onRemoveStudent={isAdmin ? setStudentToRemove : undefined}
+            onRemoveStudent={
+              canEditEnrollments ? setStudentToRemove : undefined
+            }
+            onEditMark={canEditEnrollments ? setStudentToGrade : undefined}
           />
 
           {!isLoading && totalPages > 1 && (
@@ -198,6 +207,13 @@ export function SubjectDetailsPage({
         confirmText={t('common.remove')}
         isDestructive={true}
         isLoading={removeStudentMutation.isPending}
+      />
+
+      <StudentGradingModal
+        isOpen={!!studentToGrade}
+        onClose={() => setStudentToGrade(null)}
+        student={studentToGrade}
+        subjectId={Number(subjectId)}
       />
     </div>
   )

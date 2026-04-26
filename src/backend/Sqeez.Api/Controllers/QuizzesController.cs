@@ -59,18 +59,20 @@ namespace Sqeez.Api.Controllers
 
         #region --- 2. QUIZ QUESTIONS ---
 
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("{quizId}/questions")]
         public async Task<ActionResult<PagedResponse<QuizQuestionDto>>> GetQuestions(long quizId, [FromQuery] QuizQuestionFilterDto filter)
         {
             filter.QuizId = quizId;
-            var result = await _questionService.GetAllQuizQuestionsAsync(filter);
+            var result = await _questionService.GetAllQuizQuestionsAsync(filter, CurrentUserId, IsCurrentUserAdmin);
             return HandleServiceResult(result);
         }
 
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("{quizId}/questions/{questionId}")]
         public async Task<ActionResult<QuizQuestionDto>> GetQuestion(long quizId, long questionId)
         {
-            var result = await _questionService.GetQuizQuestionByIdAsync(questionId);
+            var result = await _questionService.GetQuizQuestionByIdAsync(questionId, CurrentUserId);
             return HandleServiceResult(result);
         }
 
@@ -103,7 +105,7 @@ namespace Sqeez.Api.Controllers
         [HttpGet("{quizId}/questions/{questionId}/detailed")]
         public async Task<ActionResult<DetailedQuizQuestionDto>> GetDetailedQuestion(long quizId, long questionId)
         {
-            var result = await _questionService.GetDetailedQuizQuestionByIdAsync(questionId, quizId);
+            var result = await _questionService.GetDetailedQuizQuestionByIdAsync(questionId, quizId, CurrentUserId, GetUserRoleFromClaims() ?? "");
             return HandleServiceResult(result);
         }
 
@@ -111,18 +113,20 @@ namespace Sqeez.Api.Controllers
 
         #region --- 3. QUIZ OPTIONS ---
 
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("{quizId}/questions/{questionId}/options")]
         public async Task<ActionResult<PagedResponse<QuizOptionDto>>> GetOptions(long quizId, long questionId, [FromQuery] QuizOptionFilterDto filter)
         {
             filter.QuizQuestionId = questionId;
-            var result = await _optionService.GetAllQuizOptionsAsync(filter);
+            var result = await _optionService.GetAllQuizOptionsAsync(filter, CurrentUserId, IsCurrentUserAdmin);
             return HandleServiceResult(result);
         }
 
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("{quizId}/questions/{questionId}/options/{optionId}")]
         public async Task<ActionResult<QuizOptionDto>> GetOption(long quizId, long questionId, long optionId)
         {
-            var result = await _optionService.GetQuizOptionByIdAsync(optionId);
+            var result = await _optionService.GetQuizOptionByIdAsync(optionId, CurrentUserId);
             return HandleServiceResult(result);
         }
 

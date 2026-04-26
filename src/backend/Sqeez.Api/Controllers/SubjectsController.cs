@@ -145,7 +145,7 @@ namespace Sqeez.Api.Controllers
         {
             // Force the subjectId from the route into the DTO
             var safeDto = dto with { SubjectId = subjectId };
-            var result = await _quizService.CreateQuizAsync(safeDto);
+            var result = await _quizService.CreateQuizAsync(safeDto, CurrentUserId);
             return HandleServiceResult(result);
         }
     }

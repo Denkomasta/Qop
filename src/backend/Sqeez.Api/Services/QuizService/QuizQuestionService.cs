@@ -94,20 +94,30 @@ namespace Sqeez.Api.Services
             return ServiceResult<QuizQuestionDto>.Ok(question);
         }
 
-        public async Task<ServiceResult<QuizQuestionDto>> CreateQuizQuestionAsync(CreateQuizQuestionDto dto)
+        public async Task<ServiceResult<QuizQuestionDto>> CreateQuizQuestionAsync(CreateQuizQuestionDto dto, long currentUserId)
         {
-            var quizData = await _context.Quizzes
-                .Where(q => q.Id == dto.QuizId)
-                .Select(q => new
-                {
-                    HasAttempts = _context.QuizAttempts.Any(a => a.QuizId == q.Id)
-                })
-                .FirstOrDefaultAsync();
+            var quiz = await _context.Quizzes
+                .Include(q => q.Subject)
+                .Include(q => q.QuizAttempts)
+                .FirstOrDefaultAsync(q => q.Id == dto.QuizId);
 
-            if (quizData == null)
+            if (quiz == null)
                 return ServiceResult<QuizQuestionDto>.Failure("The specified Quiz does not exist.", ServiceError.NotFound);
 
-            if (quizData.HasAttempts)
+            if (quiz.Subject.TeacherId != currentUserId)
+            {
+                return ServiceResult<QuizQuestionDto>.Failure("You do not have permission to modify questions in this quiz.", ServiceError.Forbidden);
+            }
+
+            // Prevent adding questions if the subject is closed
+            if (quiz.Subject.HasEnded)
+            {
+                return ServiceResult<QuizQuestionDto>.Failure(
+                    "Cannot add questions to a quiz that belongs to a closed subject.",
+                    ServiceError.Forbidden);
+            }
+
+            if (quiz.QuizAttempts.Any())
             {
                 return ServiceResult<QuizQuestionDto>.Failure(
                     "Cannot add new questions to this quiz because students have already started or completed it.",
@@ -140,14 +150,29 @@ namespace Sqeez.Api.Services
                 question.PenaltyPoints));
         }
 
-        public async Task<ServiceResult<QuizQuestionDto>> PatchQuizQuestionAsync(long id, PatchQuizQuestionDto dto)
+        public async Task<ServiceResult<QuizQuestionDto>> PatchQuizQuestionAsync(long id, PatchQuizQuestionDto dto, long currentUserId)
         {
             var question = await _context.QuizQuestions
                 .Include(q => q.Options)
+                .Include(q => q.Quiz)
+                    .ThenInclude(quiz => quiz.Subject)
                 .FirstOrDefaultAsync(q => q.Id == id);
 
             if (question == null)
                 return ServiceResult<QuizQuestionDto>.Failure("Quiz question not found.", ServiceError.NotFound);
+
+            if (question.Quiz.Subject.TeacherId != currentUserId)
+            {
+                return ServiceResult<QuizQuestionDto>.Failure("You do not have permission to modify questions in this quiz.", ServiceError.Forbidden);
+            }
+
+            // Prevent modifying the question if the subject has officially ended
+            if (question.Quiz.Subject.HasEnded)
+            {
+                return ServiceResult<QuizQuestionDto>.Failure(
+                    "Cannot modify a question that belongs to a subject that has already ended.",
+                    ServiceError.Forbidden);
+            }
 
             bool hasAttempts = await _context.QuizAttempts.AnyAsync(a => a.QuizId == question.QuizId);
             if (hasAttempts)
@@ -206,14 +231,29 @@ namespace Sqeez.Api.Services
                 question.PenaltyPoints));
         }
 
-        public async Task<ServiceResult<bool>> DeleteQuizQuestionAsync(long id)
+        public async Task<ServiceResult<bool>> DeleteQuizQuestionAsync(long id, long currentUserId, bool isAdmin)
         {
             var question = await _context.QuizQuestions
                 .Include(q => q.Options)
+                .Include(q => q.Quiz)
+                    .ThenInclude(quiz => quiz.Subject)
                 .FirstOrDefaultAsync(q => q.Id == id);
 
             if (question == null)
                 return ServiceResult<bool>.Failure("Quiz question not found.", ServiceError.NotFound);
+
+            if (!isAdmin && question.Quiz.Subject.TeacherId != currentUserId)
+            {
+                return ServiceResult<bool>.Failure("You do not have permission to delete this question.", ServiceError.Forbidden);
+            }
+
+            // Prevent deleting the question if the subject has officially ended
+            if (question.Quiz.Subject.HasEnded)
+            {
+                return ServiceResult<bool>.Failure(
+                    "Cannot delete a question that belongs to a subject that has already ended.",
+                    ServiceError.Forbidden);
+            }
 
             bool hasAttempts = await _context.QuizAttempts.AnyAsync(a => a.QuizId == question.QuizId);
             if (hasAttempts)

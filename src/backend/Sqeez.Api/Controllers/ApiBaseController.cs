@@ -7,6 +7,17 @@ namespace Sqeez.Api.Controllers
     [ApiController]
     public class ApiBaseController : ControllerBase
     {
+        protected long CurrentUserId
+        {
+            get
+            {
+                var idString = GetUserIdFromClaims();
+                return long.TryParse(idString, out long id) ? id : 0;
+            }
+        }
+
+        protected bool IsCurrentUserAdmin => GetUserRoleFromClaims() == "Admin";
+
         protected string? GetUserIdFromClaims()
         {
             return User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;

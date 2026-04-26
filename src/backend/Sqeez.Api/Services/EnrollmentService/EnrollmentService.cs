@@ -74,7 +74,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<EnrollmentDto>.Ok(dto);
         }
 
-        public async Task<ServiceResult<EnrollmentDto>> PatchEnrollmentAsync(long id, PatchEnrollmentDto dto)
+        public async Task<ServiceResult<EnrollmentDto>> PatchEnrollmentAsync(long id, PatchEnrollmentDto dto, long currentUserId)
         {
             var enrollment = await _context.Enrollments
                 .Include(e => e.QuizAttempts)
@@ -82,7 +82,13 @@ namespace Sqeez.Api.Services
                 .Include(e => e.Subject)
                 .FirstOrDefaultAsync(e => e.Id == id);
 
-            if (enrollment == null) return ServiceResult<EnrollmentDto>.Failure("Enrollment not found.", ServiceError.NotFound);
+            if (enrollment == null)
+                return ServiceResult<EnrollmentDto>.Failure("Enrollment not found.", ServiceError.NotFound);
+
+            if (enrollment.Subject.TeacherId != currentUserId)
+            {
+                return ServiceResult<EnrollmentDto>.Failure("You do not have permission to grade this student. Only the subject's teacher can set the mark.", ServiceError.Forbidden);
+            }
 
             if (dto.RemoveMark == true)
             {

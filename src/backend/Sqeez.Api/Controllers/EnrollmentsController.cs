@@ -46,7 +46,7 @@ namespace Sqeez.Api.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult<EnrollmentDto>> PatchEnrollment(long id, [FromBody] PatchEnrollmentDto dto)
         {
-            var result = await _enrollmentService.PatchEnrollmentAsync(id, dto);
+            var result = await _enrollmentService.PatchEnrollmentAsync(id, dto, CurrentUserId);
             return HandleServiceResult(result);
         }
 

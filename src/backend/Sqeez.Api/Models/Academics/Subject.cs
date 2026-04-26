@@ -1,5 +1,5 @@
-﻿using Sqeez.Api.Models.Users;
-using Sqeez.Api.Models.QuizSystem;
+﻿using Sqeez.Api.Models.QuizSystem;
+using Sqeez.Api.Models.Users;
 
 namespace Sqeez.Api.Models.Academics
 {
@@ -22,5 +22,11 @@ namespace Sqeez.Api.Models.Academics
         // Navigation Properties
         public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
         public ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
+
+        public bool HasEnded =>
+            EndDate.HasValue && EndDate.Value < DateTime.UtcNow;
+        public bool IsActive =>
+            StartDate <= DateTime.UtcNow &&
+            (!EndDate.HasValue || EndDate.Value >= DateTime.UtcNow);
     }
 }

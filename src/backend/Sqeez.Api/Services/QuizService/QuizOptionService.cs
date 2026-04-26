@@ -93,26 +93,39 @@ namespace Sqeez.Api.Services
             return ServiceResult<QuizOptionDto>.Ok(option);
         }
 
-        public async Task<ServiceResult<QuizOptionDto>> CreateQuizOptionAsync(CreateQuizOptionDto dto)
+        public async Task<ServiceResult<QuizOptionDto>> CreateQuizOptionAsync(CreateQuizOptionDto dto, long currentUserId)
         {
-            var questionData = await _context.QuizQuestions
-                .Where(q => q.Id == dto.QuizQuestionID)
-                .Select(q => new
-                {
-                    HasAttempts = _context.QuizAttempts.Any(a => a.QuizId == q.QuizId),
-                    OptionCount = q.Options.Count
-                })
-                .FirstOrDefaultAsync();
+            var question = await _context.QuizQuestions
+                .Include(q => q.Options)
+                .Include(q => q.Quiz)
+                    .ThenInclude(quiz => quiz.Subject)
+                .FirstOrDefaultAsync(q => q.Id == dto.QuizQuestionID);
 
-            if (questionData == null)
+            if (question == null)
                 return ServiceResult<QuizOptionDto>.Failure("The specified Quiz Question does not exist.", ServiceError.NotFound);
 
-            if (questionData.HasAttempts)
+            if (question.Quiz.Subject.TeacherId != currentUserId)
+            {
+                return ServiceResult<QuizOptionDto>.Failure("You do not have permission to modify options in this quiz.", ServiceError.Forbidden);
+            }
+
+            // Prevent adding options if the subject has officially ended
+            if (question.Quiz.Subject.HasEnded)
+            {
+                return ServiceResult<QuizOptionDto>.Failure(
+                    "Cannot add options to a question that belongs to a subject that has already ended.",
+                    ServiceError.Forbidden);
+            }
+
+            bool hasAttempts = await _context.QuizAttempts.AnyAsync(a => a.QuizId == question.QuizId);
+            if (hasAttempts)
+            {
                 return ServiceResult<QuizOptionDto>.Failure(
                     "Cannot add new options because students have already started or completed this quiz.",
                     ServiceError.Conflict);
+            }
 
-            if (questionData.OptionCount >= QuizConstants.MaxOptionsPerQuestion)
+            if (question.Options.Count >= QuizConstants.MaxOptionsPerQuestion)
                 return ServiceResult<QuizOptionDto>.Failure(
                     $"A quiz question can have a maximum of {QuizConstants.MaxOptionsPerQuestion} options.",
                     ServiceError.ValidationFailed);
@@ -146,15 +159,30 @@ namespace Sqeez.Api.Services
                 0)); // 0 responses upon creation
         }
 
-        public async Task<ServiceResult<QuizOptionDto>> PatchQuizOptionAsync(long id, PatchQuizOptionDto dto)
+        public async Task<ServiceResult<QuizOptionDto>> PatchQuizOptionAsync(long id, PatchQuizOptionDto dto, long currentUserId)
         {
             var option = await _context.QuizOptions
                 .Include(o => o.Responses)
                 .Include(o => o.QuizQuestion)
+                    .ThenInclude(q => q.Quiz)
+                        .ThenInclude(quiz => quiz.Subject)
                 .FirstOrDefaultAsync(o => o.Id == id);
 
             if (option == null)
                 return ServiceResult<QuizOptionDto>.Failure("Quiz option not found.", ServiceError.NotFound);
+
+            if (option.QuizQuestion.Quiz.Subject.TeacherId != currentUserId)
+            {
+                return ServiceResult<QuizOptionDto>.Failure("You do not have permission to modify options in this quiz.", ServiceError.Forbidden);
+            }
+
+            // Prevent modifying the option if the subject has officially ended
+            if (option.QuizQuestion.Quiz.Subject.HasEnded)
+            {
+                return ServiceResult<QuizOptionDto>.Failure(
+                    "Cannot modify an option that belongs to a subject that has already ended.",
+                    ServiceError.Forbidden);
+            }
 
             bool hasAttempts = await _context.QuizAttempts.AnyAsync(a => a.QuizId == option.QuizQuestion.QuizId);
             if (hasAttempts)
@@ -208,14 +236,29 @@ namespace Sqeez.Api.Services
                 option.Responses.Count));
         }
 
-        public async Task<ServiceResult<bool>> DeleteQuizOptionAsync(long id)
+        public async Task<ServiceResult<bool>> DeleteQuizOptionAsync(long id, long currentUserId, bool isAdmin)
         {
             var option = await _context.QuizOptions
                  .Include(o => o.QuizQuestion)
+                    .ThenInclude(q => q.Quiz)
+                        .ThenInclude(quiz => quiz.Subject)
                  .FirstOrDefaultAsync(o => o.Id == id);
 
             if (option == null)
                 return ServiceResult<bool>.Failure("Quiz option not found.", ServiceError.NotFound);
+
+            if (!isAdmin && option.QuizQuestion.Quiz.Subject.TeacherId != currentUserId)
+            {
+                return ServiceResult<bool>.Failure("You do not have permission to delete this option.", ServiceError.Forbidden);
+            }
+
+            // Prevent deleting the option if the subject has officially ended
+            if (option.QuizQuestion.Quiz.Subject.HasEnded)
+            {
+                return ServiceResult<bool>.Failure(
+                    "Cannot delete an option that belongs to a subject that has already ended.",
+                    ServiceError.Forbidden);
+            }
 
             bool hasAttempts = await _context.QuizAttempts.AnyAsync(a => a.QuizId == option.QuizQuestion.QuizId);
             if (hasAttempts)

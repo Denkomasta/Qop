@@ -43,7 +43,7 @@ namespace Sqeez.Api.Controllers
         [HttpPatch("{quizId}")]
         public async Task<ActionResult<QuizDto>> PatchQuiz(long quizId, [FromBody] PatchQuizDto dto)
         {
-            var result = await _quizService.PatchQuizAsync(quizId, dto);
+            var result = await _quizService.PatchQuizAsync(quizId, dto, CurrentUserId);
             return HandleServiceResult(result);
         }
 
@@ -51,7 +51,7 @@ namespace Sqeez.Api.Controllers
         [HttpDelete("{quizId}")]
         public async Task<ActionResult<bool>> DeleteQuiz(long quizId)
         {
-            var result = await _quizService.DeleteQuizAsync(quizId);
+            var result = await _quizService.DeleteQuizAsync(quizId, CurrentUserId, IsCurrentUserAdmin);
             return HandleServiceResult(result);
         }
 
@@ -79,7 +79,7 @@ namespace Sqeez.Api.Controllers
         public async Task<ActionResult<QuizQuestionDto>> CreateQuestion(long quizId, [FromBody] CreateQuizQuestionDto dto)
         {
             var safeDto = dto with { QuizId = quizId };
-            var result = await _questionService.CreateQuizQuestionAsync(safeDto);
+            var result = await _questionService.CreateQuizQuestionAsync(safeDto, CurrentUserId);
             return HandleServiceResult(result);
         }
 
@@ -87,7 +87,7 @@ namespace Sqeez.Api.Controllers
         [HttpPatch("{quizId}/questions/{questionId}")]
         public async Task<ActionResult<QuizQuestionDto>> PatchQuestion(long quizId, long questionId, [FromBody] PatchQuizQuestionDto dto)
         {
-            var result = await _questionService.PatchQuizQuestionAsync(questionId, dto);
+            var result = await _questionService.PatchQuizQuestionAsync(questionId, dto, CurrentUserId);
             return HandleServiceResult(result);
         }
 
@@ -95,7 +95,7 @@ namespace Sqeez.Api.Controllers
         [HttpDelete("{quizId}/questions/{questionId}")]
         public async Task<ActionResult<bool>> DeleteQuestion(long quizId, long questionId)
         {
-            var result = await _questionService.DeleteQuizQuestionAsync(questionId);
+            var result = await _questionService.DeleteQuizQuestionAsync(questionId, CurrentUserId, IsCurrentUserAdmin);
             return HandleServiceResult(result);
         }
 
@@ -131,7 +131,7 @@ namespace Sqeez.Api.Controllers
         public async Task<ActionResult<QuizOptionDto>> CreateOption(long quizId, long questionId, [FromBody] CreateQuizOptionDto dto)
         {
             var safeDto = dto with { QuizQuestionID = questionId };
-            var result = await _optionService.CreateQuizOptionAsync(safeDto);
+            var result = await _optionService.CreateQuizOptionAsync(safeDto, CurrentUserId);
             return HandleServiceResult(result);
         }
 
@@ -139,7 +139,7 @@ namespace Sqeez.Api.Controllers
         [HttpPatch("{quizId}/questions/{questionId}/options/{optionId}")]
         public async Task<ActionResult<QuizOptionDto>> PatchOption(long quizId, long questionId, long optionId, [FromBody] PatchQuizOptionDto dto)
         {
-            var result = await _optionService.PatchQuizOptionAsync(optionId, dto);
+            var result = await _optionService.PatchQuizOptionAsync(optionId, dto, CurrentUserId);
             return HandleServiceResult(result);
         }
 
@@ -147,7 +147,7 @@ namespace Sqeez.Api.Controllers
         [HttpDelete("{quizId}/questions/{questionId}/options/{optionId}")]
         public async Task<ActionResult<bool>> DeleteOption(long quizId, long questionId, long optionId)
         {
-            var result = await _optionService.DeleteQuizOptionAsync(optionId);
+            var result = await _optionService.DeleteQuizOptionAsync(optionId, CurrentUserId, IsCurrentUserAdmin);
             return HandleServiceResult(result);
         }
 

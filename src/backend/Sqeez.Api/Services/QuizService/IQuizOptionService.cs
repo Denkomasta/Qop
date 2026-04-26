@@ -6,9 +6,9 @@ namespace Sqeez.Api.Services.Interfaces
     {
         Task<ServiceResult<PagedResponse<QuizOptionDto>>> GetAllQuizOptionsAsync(QuizOptionFilterDto filter);
 
-        Task<ServiceResult<QuizOptionDto>> GetQuizOptionByIdAsync(long id);
-        Task<ServiceResult<QuizOptionDto>> CreateQuizOptionAsync(CreateQuizOptionDto dto);
-        Task<ServiceResult<QuizOptionDto>> PatchQuizOptionAsync(long id, PatchQuizOptionDto dto);
-        Task<ServiceResult<bool>> DeleteQuizOptionAsync(long id);
+        Task<ServiceResult<QuizOptionDto>> GetQuizOptionByIdAsync(long id, long currentUserId);
+        Task<ServiceResult<QuizOptionDto>> CreateQuizOptionAsync(CreateQuizOptionDto dto, long currentUserId);
+        Task<ServiceResult<QuizOptionDto>> PatchQuizOptionAsync(long id, PatchQuizOptionDto dto, long currentUserId);
+        Task<ServiceResult<bool>> DeleteQuizOptionAsync(long id, long currentUserId, bool isAdmin);
     }
 }

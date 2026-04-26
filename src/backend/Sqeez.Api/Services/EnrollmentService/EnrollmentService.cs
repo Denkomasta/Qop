@@ -133,8 +133,15 @@ namespace Sqeez.Api.Services
 
             if (!dto.StudentIds.Any()) return ServiceResult<BulkEnrollmentResultDto>.Ok(new BulkEnrollmentResultDto());
 
-            if (!await _context.Subjects.AnyAsync(s => s.Id == subjectId))
+            var subject = await _context.Subjects.FindAsync(subjectId);
+
+            if (subject == null)
                 return ServiceResult<BulkEnrollmentResultDto>.Failure("Subject not found.", ServiceError.NotFound);
+
+            if (subject.HasEnded)
+                return ServiceResult<BulkEnrollmentResultDto>.Failure(
+                    "Cannot enroll students because this subject is closed.",
+                    ServiceError.Forbidden);
 
             var existingStudentIds = await _context.Enrollments
                 .Where(e => e.SubjectId == subjectId && dto.StudentIds.Contains(e.StudentId))

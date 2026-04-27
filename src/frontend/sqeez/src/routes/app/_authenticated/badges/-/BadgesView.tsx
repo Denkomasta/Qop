@@ -15,6 +15,7 @@ import {
 import { BadgeDetailsModal } from './BadgeDetailsModal'
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { Pagination } from '@/components/ui/Pagination'
+import { useGetApiUsersId } from '@/api/generated/endpoints/user/user'
 
 export function BadgesView({ targetUserId }: { targetUserId?: number }) {
   const { t } = useTranslation()
@@ -29,6 +30,11 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
   )
   const [pageNumber, setPageNumber] = useState(1)
   const PAGE_SIZE = 12
+
+  const { data: userData, isLoading: isLoadingUser } = useGetApiUsersId(
+    idToFetch,
+    { query: { enabled: !!idToFetch } },
+  )
 
   const { data: earnedBadges, isLoading: isLoadingEarned } =
     useGetApiBadgesStudentStudentId(idToFetch, {
@@ -51,7 +57,8 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
     return new Map(earnedBadges?.map((b) => [Number(b.badgeId), b]) || [])
   }, [earnedBadges])
 
-  if (isLoadingEarned) {
+  // 2. Updated to wait for both user data and earned badges to load
+  if (isLoadingEarned || isLoadingUser) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
         <Spinner size="lg" />
@@ -74,6 +81,11 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
     ? earnedBadgesMap.get(Number(selectedBadge.id))?.earnedAt
     : undefined
 
+  // Helper to determine the title
+  const displayName = userData?.firstName
+    ? `${userData.firstName} ${userData.lastName}`.trim()
+    : undefined
+
   return (
     <div className="container mx-auto max-w-7xl p-6">
       <div className="mb-8 flex flex-col gap-4">
@@ -89,7 +101,11 @@ export function BadgesView({ targetUserId }: { targetUserId?: number }) {
           </Button>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              {t('badges.title')}
+              {displayName
+                ? t('badges.userTitle', {
+                    name: displayName,
+                  })
+                : t('badges.title')}
             </h1>
             <p className="font-medium text-muted-foreground">
               {earnedCount} / {totalBadges} {t('badges.earned')}

@@ -127,7 +127,8 @@
       "deleteClassTitle": "Smazat školní třídu",
       "deleteClassDesc": "Opravdu chcete smazat třídu \"{{className}}\"? Tuto akci nelze vrátit zpět a může ovlivnit zapsané studenty a předměty.",
       "classDeleted": "Školní třída byla úspěšně smazána",
-      "cannotDelete": "Nelze smazat třídu se zapsanými studenty nebo přiřazeným učitelem."
+      "cannotDelete": "Nelze smazat třídu se zapsanými studenty nebo přiřazeným učitelem.",
+      "removeTeacher": "Odebrat stávajícího učitele"
     },
     "import": {
       "title": "Import dat",
@@ -215,6 +216,7 @@
     "earned": "Získáno",
     "earnedOn": "Získáno",
     "locked": "Uzamčeno",
+    "userTitle": "Odznaky uživatele {{name}}",
     "metrics": {
       "scorePercentage": "Procentuální úspěšnost",
       "totalScore": "Celkové skóre",

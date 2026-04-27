@@ -331,7 +331,9 @@
     "noSearchResults": "No results found.",
     "totalCount": "Total: {{count}}",
     "pageOf": "Page {{current}} of {{total}}",
-    "noDescription": "No description provided."
+    "noDescription": "No description provided.",
+    "enrolled": "enrolled",
+    "active": "active"
   },
   "dashboard": {
     "administration": "Administration",
@@ -627,7 +629,10 @@
     "noStudentsEnrolled": "No students currently enrolled in this subject.",
     "removeConfirmDesc": "Are you sure you want to remove {{studentName}} from this subject?",
     "studentRemoved": "Student removed from subject successfully",
-    "gradeStudent": "Grade student"
+    "gradeStudent": "Grade student",
+    "materials": "Course Materials & Roster",
+    "clearMark": "Clear mark",
+    "enrollmentNotFound": "Enrollment not found"
   },
   "system": {
     "name": "Sqeez"

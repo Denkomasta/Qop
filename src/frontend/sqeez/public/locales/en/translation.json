@@ -327,6 +327,10 @@
     "viewProfile": "View profile",
     "viewAll": "View All",
     "settings": "Settings",
+    "search": "Search...",
+    "noSearchResults": "No results found.",
+    "totalCount": "Total: {{count}}",
+    "pageOf": "Page {{current}} of {{total}}",
     "noDescription": "No description provided."
   },
   "dashboard": {

@@ -25,6 +25,7 @@ import type { StudentDto } from '@/api/generated/model'
 import { ConfirmModal } from '@/components/ui'
 import { formatName } from '@/lib/userHelpers'
 import { StudentGradingModal } from './StudentGradingModal'
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 
 export function SubjectDetailsPage({
   subjectId,
@@ -33,7 +34,6 @@ export function SubjectDetailsPage({
 }) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
-
   const { isAdmin } = useAuthStore()
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -42,20 +42,25 @@ export function SubjectDetailsPage({
     null,
   )
   const [studentToGrade, setStudentToGrade] = useState<StudentDto | null>(null)
-
   const pageSize = 15
 
   const { data: subjectData, isLoading: isLoadingSubject } =
-    useGetApiSubjectsId(Number(subjectId))
+    useGetApiSubjectsId(Number(subjectId), { query: { enabled: !!subjectId } })
 
-  const { data: studentsResponse, isLoading: isLoadingStudents } =
-    useGetApiUsers({
+  const {
+    data: studentsResponse,
+    isLoading: isLoadingStudents,
+    isFetching: isFetchingStudents,
+  } = useGetApiUsers(
+    {
       Role: 'Student',
       SubjectId: Number(subjectId),
       SearchTerm: searchQuery || undefined,
       PageNumber: pageNumber,
       PageSize: pageSize,
-    })
+    },
+    { query: { placeholderData: (prev) => prev } },
+  )
 
   const removeStudentMutation = useDeleteApiSubjectsSubjectIdEnrollments({
     mutation: {
@@ -64,7 +69,6 @@ export function SubjectDetailsPage({
         queryClient.invalidateQueries({
           queryKey: getGetApiSubjectsIdQueryKey(Number(subjectId)),
         })
-
         toast.success(t('subject.studentRemoved'))
         setStudentToRemove(null)
       },
@@ -74,13 +78,10 @@ export function SubjectDetailsPage({
 
   const handleRemoveConfirm = async () => {
     if (!studentToRemove?.id) return
-
     try {
       await removeStudentMutation.mutateAsync({
         subjectId: Number(subjectId),
-        data: {
-          studentIds: [studentToRemove.id],
-        },
+        data: { studentIds: [studentToRemove.id] },
       })
     } catch (error) {
       console.error('Failed to remove student:', error)
@@ -88,103 +89,109 @@ export function SubjectDetailsPage({
   }
 
   const canEditEnrollments =
-    isAdmin || subjectData?.teacherId === useAuthStore.getState().user?.id
+    subjectData?.teacherId === useAuthStore.getState().user?.id
+  const canRemoveStudents = isAdmin
+  const isLoading = isLoadingSubject || (isLoadingStudents && !studentsResponse)
 
-  const isLoading = isLoadingSubject || isLoadingStudents
   const students = studentsResponse?.data || []
   const totalPages = Number(studentsResponse?.totalPages || 1)
   const totalCount = studentsResponse?.totalCount || 0
 
-  return (
-    <div className="flex h-full flex-col bg-background">
-      <div className="border-b border-border bg-card p-6">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6">
-          <Link
-            to="/app/subjects"
-            className="flex w-fit items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            {t('subject.backToSubjects')}
-          </Link>
+  const backPath = isAdmin
+    ? '/app/admin/subjects'
+    : canEditEnrollments
+      ? '/app/teacher/subjects'
+      : '/app/subjects'
 
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-500">
-                <BookCopy className="h-8 w-8" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h1 className="text-3xl font-bold tracking-tight">
-                    {subjectData?.name}
-                  </h1>
-                  <Badge variant="secondary" className="uppercase">
-                    {subjectData?.code}
-                  </Badge>
-                </div>
-                <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
-                  <span>
-                    {t('common.teacher')}:{' '}
-                    <strong className="text-foreground">
-                      {subjectData?.teacherName || t('admin.unassigned')}
-                    </strong>
-                  </span>
-                  <span>
-                    {t('admin.schoolClass')}:{' '}
-                    <strong className="text-foreground">
-                      {subjectData?.schoolClassName || t('admin.unassigned')}
-                    </strong>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {isAdmin && (
-              <Button variant="outline" className="gap-2">
-                <UserPlus className="h-4 w-4" />
-                {t('subject.enrollStudent')}
-              </Button>
-            )}
-          </div>
-
-          <div className="flex items-center">
-            <DebouncedInput
-              id="subject-student-search"
-              value={searchQuery}
-              onChange={(val) => {
-                setSearchQuery(val)
-                setPageNumber(1)
-              }}
-              placeholder={t('admin.searchStudents')}
-              icon={<Search className="h-4 w-4" />}
-              className="max-w-md bg-background"
-              hideErrors
-            />
-          </div>
-        </div>
+  const ControlsNode = (
+    <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <DebouncedInput
+        id="subject-student-search"
+        value={searchQuery}
+        onChange={(val) => {
+          setSearchQuery(val)
+          setPageNumber(1)
+        }}
+        placeholder={t('admin.searchStudents')}
+        icon={<Search className="h-4 w-4" />}
+        className="w-full bg-background sm:max-w-xs"
+        hideErrors
+      />
+      <div className="text-sm font-medium whitespace-nowrap text-muted-foreground">
+        {t('common.totalCount', {
+          count: Number(totalCount),
+          defaultValue: `Total: ${Number(totalCount)}`,
+        })}
       </div>
+    </div>
+  )
 
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">
-              {t('subject.enrolledStudents')}
-            </h2>
-            <span className="text-sm text-muted-foreground">
-              {totalCount} {t('common.students')}
+  return (
+    <>
+      <PageLayout
+        variant="app"
+        containerClassName="max-w-7xl"
+        isLoading={isLoading}
+        title={
+          <div className="flex flex-col items-start gap-4">
+            <Link
+              to={backPath}
+              className="flex w-fit items-center gap-2 text-sm font-normal text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              {t('subject.backToSubjects', 'Back to Subjects')}
+            </Link>
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-500">
+                <BookCopy className="h-6 w-6" />
+              </div>
+              <span>{subjectData?.name}</span>
+            </div>
+          </div>
+        }
+        titleBadge={
+          <Badge variant="secondary" className="mt-8 uppercase shadow-sm">
+            {subjectData?.code}
+          </Badge>
+        }
+        subtitle={
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+            <span>
+              {t('common.teacher')}:{' '}
+              <strong className="text-foreground">
+                {subjectData?.teacherName || t('admin.unassigned')}
+              </strong>
+            </span>
+            <span>
+              {t('admin.schoolClass')}:{' '}
+              <strong className="text-foreground">
+                {subjectData?.schoolClassName || t('admin.unassigned')}
+              </strong>
             </span>
           </div>
-
+        }
+        headerActions={
+          isAdmin && (
+            <Button variant="outline" className="mt-8 gap-2 shadow-sm">
+              <UserPlus className="h-4 w-4" />
+              {t('subject.enrollStudent')}
+            </Button>
+          )
+        }
+        headerControls={ControlsNode}
+      >
+        <div
+          className={`transition-opacity duration-200 ${isFetchingStudents && !isLoadingStudents ? 'opacity-50' : 'opacity-100'}`}
+        >
           <SubjectStudentsTable
             students={students}
-            isLoading={isLoading}
-            onRemoveStudent={
-              canEditEnrollments ? setStudentToRemove : undefined
-            }
+            isLoading={isLoadingStudents && !studentsResponse}
+            onRemoveStudent={canRemoveStudents ? setStudentToRemove : undefined}
             onEditMark={canEditEnrollments ? setStudentToGrade : undefined}
           />
 
-          {!isLoading && totalPages > 1 && (
-            <div className="mt-6 flex justify-center">
+          {totalPages > 1 && (
+            <div className="mt-8 flex justify-center">
               <Pagination
                 currentPage={pageNumber}
                 totalPages={totalPages}
@@ -193,7 +200,8 @@ export function SubjectDetailsPage({
             </div>
           )}
         </div>
-      </div>
+      </PageLayout>
+
       <ConfirmModal
         isOpen={!!studentToRemove}
         onClose={() => setStudentToRemove(null)}
@@ -215,6 +223,6 @@ export function SubjectDetailsPage({
         student={studentToGrade}
         subjectId={Number(subjectId)}
       />
-    </div>
+    </>
   )
 }

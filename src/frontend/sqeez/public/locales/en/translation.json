@@ -626,7 +626,8 @@
     "removeFromSubject": "Remove from subject",
     "noStudentsEnrolled": "No students currently enrolled in this subject.",
     "removeConfirmDesc": "Are you sure you want to remove {{studentName}} from this subject?",
-    "studentRemoved": "Student removed from subject successfully"
+    "studentRemoved": "Student removed from subject successfully",
+    "gradeStudent": "Grade student"
   },
   "system": {
     "name": "Sqeez"

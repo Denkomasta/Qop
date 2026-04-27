@@ -725,7 +725,8 @@
     "selectSingleHint": "Select one answer",
     "pendingGrading": "Pending Grading",
     "pendingGradingDesc": "Your teacher will review this answer soon!",
-    "expectedAnswer": "Expected Answer"
+    "expectedAnswer": "Expected Answer",
+    "viewStats": "Stats"
   },
   "editor": {
     "questionsTitle": "Questions",

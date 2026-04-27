@@ -333,7 +333,8 @@
     "pageOf": "Page {{current}} of {{total}}",
     "noDescription": "No description provided.",
     "enrolled": "enrolled",
-    "active": "active"
+    "active": "active",
+    "unknownUser": "Unknown User"
   },
   "dashboard": {
     "administration": "Administration",
@@ -740,7 +741,15 @@
     "totalAttempts": "Total Attempts",
     "averageScore": "Average Score",
     "passRate": "Pass Rate",
-    "attemptHistory": "Attempt History"
+    "attemptHistory": "Attempt History",
+    "questionAnalysis": "Question Analysis",
+    "questionAnalysisDesc": "See how students answered each individual question.",
+    "responses": "responses",
+    "avgScore": "avg. score",
+    "avgTime": "avg. time",
+    "highLowScore": "High / Low Score",
+    "avgCompletionTime": "Avg. Time",
+    "points": "pts"
   },
   "editor": {
     "questionsTitle": "Questions",

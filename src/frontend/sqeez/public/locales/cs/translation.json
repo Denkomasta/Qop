@@ -327,7 +327,11 @@
     "viewProfile": "Zobrazit profil",
     "viewAll": "Zobrazit vše",
     "settings": "Nastavení",
-    "noDescription": "Není k dispozici žádný popis."
+    "noDescription": "Není k dispozici žádný popis.",
+    "search": "Hledat...",
+    "noSearchResults": "Nebyly nalezeny žádné výsledky.",
+    "totalCount": "Celkem: {{count}}",
+    "pageOf": "Strana {{current}} z {{total}}"
   },
   "dashboard": {
     "administration": "Administrativa",

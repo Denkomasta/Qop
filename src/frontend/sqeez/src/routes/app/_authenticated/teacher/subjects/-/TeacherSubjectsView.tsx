@@ -55,12 +55,6 @@ export function TeacherSubjectsView() {
           {t('teacherSubjects.title')}
         </h1>
       }
-      headerActions={
-        <Button size="lg" className="flex items-center gap-2 shadow-sm">
-          <Plus className="h-5 w-5" />
-          {t('teacherSubjects.createButton', 'Create Subject')}
-        </Button>
-      }
       isLoading={isLoading && !subjectsResponse}
       isFetching={isFetching}
       items={subjects}

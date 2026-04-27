@@ -57,7 +57,7 @@ export function SubjectStudentsTable({
       ),
     },
     // Optional Action Column (e.g., for Teachers/Admins to remove a student)
-    ...(onRemoveStudent
+    ...(onRemoveStudent || onEditMark
       ? [
           {
             header: '',
@@ -68,7 +68,7 @@ export function SubjectStudentsTable({
                   <button
                     onClick={() => onEditMark(student)}
                     className="flex h-8 w-8 items-center justify-center rounded-md text-primary transition-colors hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
-                    title={t('subject.gradeStudent', 'Grade Student')}
+                    title={t('subject.gradeStudent')}
                   >
                     <GraduationCap className="h-4 w-4" />
                   </button>

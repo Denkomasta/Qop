@@ -9,6 +9,7 @@ import {
   History,
   BookOpen,
   Edit,
+  BarChart,
 } from 'lucide-react'
 import {
   Card,
@@ -75,7 +76,7 @@ export function QuizListView({
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
         <Spinner size="lg" />
         <p className="animate-pulse font-medium text-muted-foreground">
-          {t('common.loading', 'Loading')}...
+          {t('common.loading')}...
         </p>
       </div>
     )
@@ -103,7 +104,7 @@ export function QuizListView({
             setSearchQuery(newQuery)
             setPageNumber(1)
           }}
-          placeholder={t('quiz.search', 'Search quizzes...')}
+          placeholder={t('quiz.search')}
           icon={<Search className="h-4 w-4" />}
           className="sm:max-w-xs"
           hideErrors
@@ -150,6 +151,8 @@ export function QuizListView({
           {quizzes.length > 0 ? (
             quizzes.map((quiz) => {
               const hasAttempts = Number(quiz.quizAttempts) > 0
+
+              const targetSubjectId = subject?.id || 0
 
               return (
                 <Card
@@ -224,34 +227,50 @@ export function QuizListView({
                     </div>
                   </CardContent>
 
-                  <CardFooter className="pt-3">
-                    <Link
-                      to={
-                        role === 'Teacher'
-                          ? '/app/quizzes/$quizId/builder'
-                          : '/app/quizzes/$quizId'
-                      }
-                      params={{ quizId: quiz.id.toString() }}
-                      className="group flex w-full items-center justify-center gap-2 rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
-                    >
-                      {role === 'Teacher' ? (
-                        <>
+                  <CardFooter className="border-t bg-muted/10 pt-3">
+                    {role === 'Teacher' ? (
+                      <div className="flex w-full gap-2">
+                        <Link
+                          to="/app/quizzes/$quizId/builder"
+                          params={{ quizId: quiz.id.toString() }}
+                          className="group flex flex-1 items-center justify-center gap-2 rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
+                        >
                           <Edit className="h-4 w-4" />
-                          {t('dashboard.editQuiz')}
-                        </>
-                      ) : (
-                        <>
-                          <PlayCircle className="h-4 w-4" />
-                          {hasAttempts
-                            ? quiz.maxRetries &&
-                              quiz.quizAttempts >= quiz.maxRetries
-                              ? t('quiz.viewResults')
-                              : t('quiz.retakeQuiz')
-                            : t('quiz.startQuiz')}
-                        </>
-                      )}
-                      <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </Link>
+                          <span className="hidden sm:inline">
+                            {t('dashboard.editQuiz')}
+                          </span>
+                        </Link>
+
+                        <Link
+                          to="/app/teacher/subjects/$subjectId/quizzes/$quizId"
+                          params={{
+                            subjectId: String(targetSubjectId),
+                            quizId: quiz.id.toString(),
+                          }}
+                          className="group flex flex-1 items-center justify-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-700"
+                        >
+                          <BarChart className="h-4 w-4" />
+                          <span className="hidden sm:inline">
+                            {t('quiz.viewStats')}
+                          </span>
+                        </Link>
+                      </div>
+                    ) : (
+                      <Link
+                        to="/app/quizzes/$quizId"
+                        params={{ quizId: quiz.id.toString() }}
+                        className="group flex w-full items-center justify-center gap-2 rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
+                      >
+                        <PlayCircle className="h-4 w-4" />
+                        {hasAttempts
+                          ? quiz.maxRetries &&
+                            quiz.quizAttempts >= quiz.maxRetries
+                            ? t('quiz.viewResults')
+                            : t('quiz.retakeQuiz')
+                          : t('quiz.startQuiz')}
+                        <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </Link>
+                    )}
                   </CardFooter>
                 </Card>
               )

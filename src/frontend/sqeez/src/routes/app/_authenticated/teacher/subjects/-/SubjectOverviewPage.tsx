@@ -153,8 +153,11 @@ export function SubjectOverviewPage({
               </Link>
 
               <Link
-                to="/app/subjects/$subjectId/quizzes"
-                params={{ subjectId: subjectId.toString() }}
+                to="/app/teacher/quizzes"
+                search={{
+                  subjectId: subjectId.toString(),
+                  activeOnly: true,
+                }}
                 className="group outline-none"
               >
                 <Card className="h-full ring-primary transition-all hover:border-primary hover:shadow-md focus-visible:ring-2">

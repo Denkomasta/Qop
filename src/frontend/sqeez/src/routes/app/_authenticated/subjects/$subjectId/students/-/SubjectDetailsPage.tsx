@@ -139,7 +139,7 @@ export function SubjectDetailsPage({
               className="flex w-fit items-center gap-2 text-sm font-normal text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
-              {t('subject.backToSubjects', 'Back to Subjects')}
+              {t('subject.backToSubjects')}
             </Link>
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-500">

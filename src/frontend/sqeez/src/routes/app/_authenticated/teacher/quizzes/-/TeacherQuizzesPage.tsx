@@ -10,19 +10,29 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { CreateQuizModal } from './CreateQuizModal'
 import { CollapsibleSidebar } from '@/components/ui/CollapsibleSidebar'
 
+import { Route } from '../index'
+
 export function TeacherQuizzesPage() {
   const { t } = useTranslation()
   const { user } = useAuthStore()
 
   const userId = user?.id
 
+  const search = Route.useSearch()
+  const navigate = Route.useNavigate()
+  const selectedSubjectId = search.subjectId || 'all'
+  const showActiveOnly = search.activeOnly ?? false
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [pageNumber, setPageNumber] = useState(1)
-  const [showActiveOnly, setShowActiveOnly] = useState(false)
-  const [selectedSubjectId, setSelectedSubjectId] = useState<string | number>(
-    'all',
-  )
+
+  const setShowActiveOnly = (activeOnly: boolean) => {
+    navigate({
+      search: (prev) => ({ ...prev, activeOnly }),
+    })
+    setPageNumber(1)
+  }
 
   const { data: subjectsData, isLoading: isLoadingSubjects } =
     useGetApiSubjects({ TeacherId: userId }, { query: { enabled: !!userId } })
@@ -90,16 +100,18 @@ export function TeacherQuizzesPage() {
         title={t('dashboard.filterBySubject')}
         icon={<Filter className="h-4 w-4 text-primary" />}
         expandedWidth="w-full lg:w-75"
-        expandTooltip={t('dashboard.showFilters', 'Show filters')}
-        collapseTooltip={t('dashboard.hideFilters', 'Hide filters')}
+        expandTooltip={t('dashboard.showFilters')}
+        collapseTooltip={t('dashboard.hideFilters')}
         className="border-b lg:border-r lg:border-b-0"
       >
         <div className="sticky top-6 px-3">
           <ScrollableSelectList
             options={subjectOptions}
-            selectedId={selectedSubjectId}
+            selectedId={isAllSubjects ? 'all' : Number(selectedSubjectId)}
             onSelect={(id) => {
-              setSelectedSubjectId(id)
+              navigate({
+                search: (prev) => ({ ...prev, subjectId: String(id) }),
+              })
               setPageNumber(1)
             }}
             isLoading={isLoadingSubjects}
@@ -125,8 +137,8 @@ export function TeacherQuizzesPage() {
           setPageNumber={setPageNumber}
           emptyStateMessage={t('dashboard.createFirstQuizPrompt')}
           subject={
-            selectedSubjectId !== 'all'
-              ? subjects.find((s) => s.id === selectedSubjectId)
+            !isAllSubjects
+              ? subjects.find((s) => s.id === Number(selectedSubjectId))
               : undefined
           }
           showActiveToggle={true}

@@ -622,6 +622,7 @@
     "noDescription": "Pro tento předmět nebyl zadán žádný popis.",
     "enrolledStudents": "Zapsaní studenti",
     "totalQuizzes": "Celkem kvízů",
+    "backToSubject": "Zpět na předmět",
     "backToSubjects": "Zpět na předměty",
     "enrollStudent": "Zapsat studenta",
     "removeFromSubject": "Odebrat z předmětu",
@@ -724,7 +725,8 @@
     "selectSingleHint": "Vyberte jednu odpověď",
     "pendingGrading": "Čeká na ohodnocení",
     "pendingGradingDesc": "Váš učitel tuto odpověď brzy zkontroluje!",
-    "expectedAnswer": "Očekávaná odpověď"
+    "expectedAnswer": "Očekávaná odpověď",
+    "viewStats": "Statistiky"
   },
   "editor": {
     "questionsTitle": "Otázky",

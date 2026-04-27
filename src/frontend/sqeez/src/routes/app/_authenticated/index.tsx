@@ -122,6 +122,13 @@ function DashboardLaunchpad() {
 
   const teacherLinks: NavCard[] = [
     {
+      title: t('dashboard.teacherSubjects'),
+      description: t('dashboard.teacherSubjectsDescription'),
+      icon: <Library className="h-8 w-8" />,
+      href: '/app/teacher/subjects',
+      colorClass: 'bg-blue-500/10 text-blue-500',
+    },
+    {
       title: t('dashboard.manageQuizzes'),
       description: t('dashboard.manageQuizzesDescription'),
       icon: <GraduationCap className="h-8 w-8" />,

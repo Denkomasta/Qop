@@ -325,7 +325,9 @@
     "themes": "Themes",
     "more": "More",
     "viewProfile": "View profile",
-    "viewAll": "View All"
+    "viewAll": "View All",
+    "settings": "Settings",
+    "noDescription": "No description provided."
   },
   "dashboard": {
     "administration": "Administration",
@@ -377,7 +379,9 @@
     "title": "Dashboard",
     "quizEditor": "Quiz Editor",
     "users": "Users",
-    "settings": "Settings"
+    "settings": "Settings",
+    "teacherSubjects": "Manage Subjects",
+    "teacherSubjectsDescription": "Manage your assigned teaching subjects and materials"
   },
   "enrollments": {
     "confirmDelete": "Are you sure you want to unenroll from this subject? This action cannot be undone.",
@@ -917,5 +921,16 @@
       "title": "Privacy Questions?",
       "desc": "To exercise your data rights or ask questions about how we handle privacy, contact the instance administrator at: "
     }
+  },
+  "teacherSubjects": {
+    "title": "My Subjects",
+    "subtitle": "Manage your assigned teaching subjects and materials.",
+    "createButton": "Create Subject",
+    "manageSubject": "Manage Subject",
+    "students": "Students",
+    "emptyTitle": "No Subjects Assigned",
+    "emptyDescription": "You aren't assigned to teach any subjects yet. Contact your administrator or create a new one.",
+    "enrolledCount": "Enrolled Students",
+    "quizCount": "Total Quizzes"
   }
 }

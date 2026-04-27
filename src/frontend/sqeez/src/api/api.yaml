@@ -1127,6 +1127,66 @@ paths:
             text/json:
               schema:
                 type: boolean
+  /api/quizzes/{quizId}/statistics/summary:
+    get:
+      tags:
+        - QuizStatistics
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/QuizSummaryStatDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizSummaryStatDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/QuizSummaryStatDto"
+  /api/quizzes/{quizId}/statistics/questions:
+    get:
+      tags:
+        - QuizStatistics
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/QuestionStatDto"
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/QuestionStatDto"
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/QuestionStatDto"
   /api/quizzes:
     get:
       tags:
@@ -3653,6 +3713,27 @@ components:
         - Video
         - Audio
         - Document
+    OptionStatDto:
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        text:
+          type:
+            - "null"
+            - string
+        pickCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        isCorrect:
+          type: boolean
     PagedResponseOfBadgeDto:
       type: object
       properties:
@@ -4421,6 +4502,41 @@ components:
               - integer
               - string
             format: int64
+    QuestionStatDto:
+      type: object
+      properties:
+        id:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        questionText:
+          type:
+            - "null"
+            - string
+        totalAnswers:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/OptionStatDto"
+        averageScore:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+          type:
+            - number
+            - string
+          format: double
+        averageResponseTimeSeconds:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+          type:
+            - number
+            - string
+          format: double
     QuizAttemptDetailDto:
       required:
         - id
@@ -4728,6 +4844,51 @@ components:
             - integer
             - string
           format: int32
+    QuizSummaryStatDto:
+      type: object
+      properties:
+        quizId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int64
+        totalAttempts:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        completedAttempts:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        averageScore:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+          type:
+            - number
+            - string
+          format: double
+        highestScore:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        lowestScore:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        averageCompletionTimeMinutes:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+          type:
+            - number
+            - string
+          format: double
     RegisterDTO:
       required:
         - firstName
@@ -5502,6 +5663,7 @@ tags:
   - name: Import
   - name: MediaAssets
   - name: QuizAttempts
+  - name: QuizStatistics
   - name: Quizzes
   - name: SchoolClasses
   - name: Subjects

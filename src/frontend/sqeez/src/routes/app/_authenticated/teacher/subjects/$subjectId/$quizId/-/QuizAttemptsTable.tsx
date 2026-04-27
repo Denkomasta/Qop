@@ -1,17 +1,15 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from '@tanstack/react-router'
-import { Eye, CheckCircle2, XCircle } from 'lucide-react'
+import { Eye, Clock } from 'lucide-react'
 
 import { DataTable, type ColumnDef } from '@/components/ui/Table/DataTable'
 import { SimpleAvatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge/Badge'
 import { Button } from '@/components/ui/Button'
-import { getImageUrl } from '@/lib/imageHelpers'
-import { formatName } from '@/lib/userHelpers'
+import type { QuizAttemptDto } from '@/api/generated/model'
 
-// Replace 'any' with your actual generated DTO (e.g., QuizAttemptDto)
 interface QuizAttemptsTableProps {
-  attempts: any[]
+  attempts: QuizAttemptDto[]
   isLoading?: boolean
 }
 
@@ -21,77 +19,77 @@ export function QuizAttemptsTable({
 }: QuizAttemptsTableProps) {
   const { t } = useTranslation()
 
-  const columns: ColumnDef<any>[] = [
+  const columns: ColumnDef<QuizAttemptDto>[] = [
     {
-      header: t('common.student', 'Student'),
-      cell: (attempt) => (
-        <div className="flex items-center gap-3">
-          <SimpleAvatar
-            url={getImageUrl(attempt.studentAvatarUrl)}
-            firstName={attempt.studentFirstName}
-            lastName={attempt.studentLastName}
-            wrapperClassName="size-8 shrink-0"
-          />
-          <div className="flex flex-col">
-            <span className="font-medium text-foreground">
-              {formatName(attempt.studentFirstName, attempt.studentLastName)}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {attempt.studentEmail || attempt.studentUsername}
-            </span>
+      header: t('common.student'),
+      cell: (attempt) => {
+        const nameParts = (attempt.studentName || '').split(' ')
+        const firstName = nameParts[0] || ''
+        const lastName = nameParts.slice(1).join(' ') || ''
+
+        return (
+          <div className="flex items-center gap-3">
+            <SimpleAvatar
+              firstName={firstName}
+              lastName={lastName}
+              wrapperClassName="size-8 shrink-0"
+            />
+            <div className="flex flex-col">
+              <span className="font-medium text-foreground">
+                {attempt.studentName || t('common.unknownUser')}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                ID: {attempt.studentId || '-'}
+              </span>
+            </div>
           </div>
-        </div>
-      ),
+        )
+      },
     },
     {
-      header: t('quiz.submittedAt', 'Submitted'),
+      header: t('quiz.submittedAt'),
       cell: (attempt) => (
         <span className="text-muted-foreground">
-          {attempt.submittedAt ? (
-            new Date(attempt.submittedAt).toLocaleString()
+          {attempt.endTime ? (
+            new Date(attempt.endTime).toLocaleString()
           ) : (
-            <span className="italic">
-              {t('quiz.inProgress', 'In Progress')}
+            <span className="flex items-center gap-1 italic">
+              <Clock className="h-3 w-3" />
+              {t('quiz.inProgress')}
             </span>
           )}
         </span>
       ),
     },
     {
-      header: t('quiz.status', 'Status'),
-      cell: (attempt) => (
-        <Badge
-          variant={attempt.isGraded ? 'default' : 'secondary'}
-          className="shadow-none"
-        >
-          {attempt.isGraded
-            ? t('quiz.graded', 'Graded')
-            : t('quiz.pendingGrade', 'Pending')}
-        </Badge>
-      ),
+      header: t('quiz.status'),
+      cell: (attempt) => {
+        const statusStr = String(attempt.status)
+        const isCompleted = statusStr === 'Completed' || statusStr === '2'
+
+        return (
+          <Badge
+            variant={isCompleted ? 'default' : 'secondary'}
+            className="shadow-none"
+          >
+            {isCompleted ? t('quiz.completed') : t('quiz.inProgress')}
+          </Badge>
+        )
+      },
     },
     {
       header: t('quiz.score', 'Score'),
       cell: (attempt) => {
-        const isPassed = attempt.score >= (attempt.passMark || 50)
-
-        if (!attempt.submittedAt) {
+        if (!attempt.endTime) {
           return <span className="text-muted-foreground">-</span>
         }
 
+        const score = Number(attempt.totalScore || 0)
+
         return (
           <div className="flex items-center gap-2">
-            {isPassed ? (
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-            ) : (
-              <XCircle className="h-4 w-4 text-destructive" />
-            )}
-            <span
-              className={`font-bold ${
-                isPassed ? 'text-emerald-600' : 'text-destructive'
-              }`}
-            >
-              {attempt.score}%
+            <span className="font-bold text-foreground">
+              {score} {t('quiz.points')}
             </span>
           </div>
         )
@@ -103,8 +101,11 @@ export function QuizAttemptsTable({
       cell: (attempt) => (
         <div className="flex justify-end gap-2">
           <Link
-            to="/app/quizzes/attempts/$attemptId"
-            params={{ attemptId: attempt.id.toString() }}
+            to="/app/quizzes/$quizId/attempts/$attemptId"
+            params={{
+              quizId: String(attempt.quizId),
+              attemptId: String(attempt.id),
+            }}
           >
             <Button
               variant="ghost"
@@ -125,8 +126,8 @@ export function QuizAttemptsTable({
       data={attempts}
       columns={columns}
       isLoading={isLoading}
-      emptyMessage={t('quiz.noAttemptsYet')}
-      keyExtractor={(attempt) => attempt.id ?? 'unknown'}
+      emptyMessage={t('quiz.noAttemptsYet', 'No attempts yet.')}
+      keyExtractor={(attempt) => String(attempt.id)}
     />
   )
 }

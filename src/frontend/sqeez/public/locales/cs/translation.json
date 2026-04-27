@@ -333,7 +333,8 @@
     "totalCount": "Celkem: {{count}}",
     "pageOf": "Strana {{current}} z {{total}}",
     "enrolled": "zapsáno",
-    "active": "aktivní"
+    "active": "aktivní",
+    "unknownUser": "Neznámý uživatel"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -740,7 +741,15 @@
     "totalAttempts": "Celkový počet pokusů",
     "averageScore": "Průměrné skóre",
     "passRate": "Úspěšnost",
-    "attemptHistory": "Historie pokusů"
+    "attemptHistory": "Historie pokusů",
+    "questionAnalysis": "Analýza otázek",
+    "questionAnalysisDesc": "Podívejte se, jak studenti odpovídali na jednotlivé otázky.",
+    "responses": "odpovědí",
+    "avgScore": "prům. skóre",
+    "avgTime": "prům. čas",
+    "highLowScore": "Nejvyšší / Nejnižší",
+    "avgCompletionTime": "Průměrný čas",
+    "points": "b."
   },
   "editor": {
     "questionsTitle": "Otázky",

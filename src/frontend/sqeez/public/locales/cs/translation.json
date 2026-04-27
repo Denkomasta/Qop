@@ -325,7 +325,9 @@
     "themes": "Motivy",
     "more": "Další",
     "viewProfile": "Zobrazit profil",
-    "viewAll": "Zobrazit vše"
+    "viewAll": "Zobrazit vše",
+    "settings": "Nastavení",
+    "noDescription": "Není k dispozici žádný popis."
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -377,7 +379,9 @@
     "title": "Přehled",
     "quizEditor": "Editor kvízů",
     "users": "Uživatelé",
-    "settings": "Nastavení"
+    "settings": "Nastavení",
+    "teacherSubjects": "Správa předmětů",
+    "teacherSubjectsDescription": "Spravujte své přidělené vyučovací předměty a materiály"
   },
   "error": {
     "generic": "Nastala chyba. Prosím zkuste to později.",
@@ -916,5 +920,16 @@
       "title": "Máte dotazy k soukromí?",
       "desc": "Chcete-li uplatnit svá práva na data nebo máte dotazy ohledně toho, jak nakládáme se soukromím, kontaktujte administrátora instance na adrese: "
     }
+  },
+  "teacherSubjects": {
+    "title": "Moje předměty",
+    "subtitle": "Spravujte své přidělené vyučovací předměty a materiály.",
+    "createButton": "Vytvořit předmět",
+    "manageSubject": "Spravovat předmět",
+    "students": "Studenti",
+    "emptyTitle": "Žádné přiřazené předměty",
+    "emptyDescription": "Zatím vám nebyly přiděleny žádné předměty k výuce. Kontaktujte svého administrátora nebo vytvořte nový.",
+    "enrolledCount": "Zapsaní studenti",
+    "quizCount": "Celkem kvízů"
   }
 }

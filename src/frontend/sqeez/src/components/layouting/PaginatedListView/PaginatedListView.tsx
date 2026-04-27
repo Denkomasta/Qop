@@ -10,8 +10,8 @@ interface PaginatedListViewProps<T> {
   backButtonNode?: ReactNode
   headerActions?: ReactNode
   items: T[]
-  renderItem: (item: T) => ReactNode
-  totalCount: number
+  renderItem: (item: T, index: number) => ReactNode
+  totalCount?: number
   emptyStateMessage: ReactNode | string
   isLoading: boolean
   isFetching?: boolean
@@ -22,6 +22,9 @@ interface PaginatedListViewProps<T> {
   totalPages?: number
   setPageNumber?: (page: number) => void
   filtersNode?: ReactNode
+  gridClassName?: string
+  containerClassName?: string
+  layoutVariant?: 'default' | 'app'
 }
 
 export function PaginatedListView<T>({
@@ -41,58 +44,68 @@ export function PaginatedListView<T>({
   totalPages,
   setPageNumber,
   filtersNode,
+  gridClassName = 'grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
+  containerClassName,
+  layoutVariant = 'default',
 }: PaginatedListViewProps<T>) {
   const { t } = useTranslation()
 
+  const ControlsNode =
+    setSearchQuery || filtersNode || totalCount !== undefined ? (
+      <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {setSearchQuery && (
+          <DebouncedInput
+            id="list-search"
+            value={searchQuery || ''}
+            onChange={(newQuery) => {
+              setSearchQuery(newQuery)
+              if (setPageNumber) setPageNumber(1)
+            }}
+            placeholder={searchPlaceholder || t('common.search', 'Search...')}
+            icon={<Search className="h-4 w-4" />}
+            className="w-full sm:max-w-xs"
+            hideErrors
+          />
+        )}
+
+        <div className="flex items-center gap-4">
+          {filtersNode && <div>{filtersNode}</div>}
+
+          {totalCount !== undefined && (
+            <div className="text-sm font-medium whitespace-nowrap text-muted-foreground">
+              {t('common.totalCount', {
+                count: totalCount,
+                defaultValue: `Total: ${totalCount}`,
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    ) : undefined
+
   return (
     <PageLayout
+      containerClassName={containerClassName}
+      variant={layoutVariant}
       isLoading={isLoading}
       title={
-        <div className="flex items-center gap-3">
+        <>
           {backButtonNode}
           {titleNode}
-          <span className="text-lg font-medium text-muted-foreground">
-            {t('common.totalCount', {
-              count: totalCount,
-              defaultValue: `(${totalCount})`,
-            })}
-          </span>
-        </div>
+        </>
       }
       headerActions={headerActions}
+      headerControls={ControlsNode}
     >
-      {(setSearchQuery || filtersNode) && (
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          {setSearchQuery && (
-            <DebouncedInput
-              id="list-search"
-              value={searchQuery || ''}
-              onChange={(newQuery) => {
-                setSearchQuery(newQuery)
-                if (setPageNumber) setPageNumber(1)
-              }}
-              placeholder={searchPlaceholder || t('common.search', 'Search...')}
-              icon={<Search className="h-4 w-4" />}
-              className="sm:max-w-xs"
-              hideErrors
-            />
-          )}
-
-          {filtersNode && <div>{filtersNode}</div>}
-        </div>
-      )}
-
       <div
         className={`transition-opacity duration-200 ${isFetching && !isLoading ? 'opacity-50' : 'opacity-100'}`}
       >
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className={gridClassName}>
           {items.length > 0 ? (
-            items.map((item) => renderItem(item))
+            items.map((item, index) => renderItem(item, index))
           ) : (
             <div className="col-span-full py-12 text-center text-muted-foreground">
-              {searchQuery
-                ? t('common.noSearchResults', 'No results found.')
-                : emptyStateMessage}
+              {searchQuery ? t('common.noSearchResults') : emptyStateMessage}
             </div>
           )}
         </div>

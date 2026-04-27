@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { SubjectDetailsPage } from '../../../subjects/$subjectId/students/-/SubjectDetailsPage'
+import { SubjectOverviewPage } from '../-/SubjectOverviewPage'
 
 export const Route = createFileRoute(
   '/app/_authenticated/teacher/subjects/$subjectId/',
@@ -10,5 +10,5 @@ export const Route = createFileRoute(
 function OtherClassRoute() {
   const { subjectId } = Route.useParams()
 
-  return <SubjectDetailsPage subjectId={Number(subjectId)} />
+  return <SubjectOverviewPage subjectId={Number(subjectId)} />
 }

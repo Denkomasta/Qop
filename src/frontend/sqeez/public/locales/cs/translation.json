@@ -331,7 +331,9 @@
     "search": "Hledat...",
     "noSearchResults": "Nebyly nalezeny žádné výsledky.",
     "totalCount": "Celkem: {{count}}",
-    "pageOf": "Strana {{current}} z {{total}}"
+    "pageOf": "Strana {{current}} z {{total}}",
+    "enrolled": "zapsáno",
+    "active": "aktivní"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -626,7 +628,10 @@
     "noStudentsEnrolled": "V tomto předmětu nejsou aktuálně zapsáni žádní studenti.",
     "removeConfirmDesc": "Opravdu chcete odebrat studenta {{studentName}} z tohoto předmětu?",
     "studentRemoved": "Student byl úspěšně odebrán z předmětu",
-    "gradeStudent": "Oznámkovat studenta"
+    "gradeStudent": "Oznámkovat studenta",
+    "materials": "Materiály kurzu a seznam studentů",
+    "clearMark": "Vymazat známku",
+    "enrollmentNotFound": "Zápis nenalezen"
   },
   "system": {
     "name": "Sqeez"

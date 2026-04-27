@@ -89,22 +89,17 @@ export function StudentGradingModal({
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      title={t('subject.gradeStudent', 'Grade Student')}
+      title={t('subject.gradeStudent')}
     >
       <div className="flex flex-col gap-6 py-4">
         {isFetchingEnrollment ? (
           <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
             <Loader2 className="mb-4 h-8 w-8 animate-spin" />
-            <p>{t('common.loading', 'Loading...')}</p>
+            <p>{t('common.loading')}</p>
           </div>
         ) : !enrollmentId ? (
           <div className="py-8 text-center text-destructive">
-            <p>
-              {t(
-                'subject.enrollmentNotFound',
-                'No active enrollment found for this student.',
-              )}
-            </p>
+            <p>{t('subject.enrollmentNotFound')}</p>
           </div>
         ) : (
           <>
@@ -140,7 +135,7 @@ export function StudentGradingModal({
                 disabled={patchMarkMutation.isPending || displayMark === null}
               >
                 <Trash2 className="h-4 w-4" />
-                {t('common.clearMark', 'Clear')}
+                {t('subject.clearMark')}
               </Button>
 
               <div className="flex gap-3">

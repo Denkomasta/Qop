@@ -61,7 +61,7 @@ export function PaginatedListView<T>({
               setSearchQuery(newQuery)
               if (setPageNumber) setPageNumber(1)
             }}
-            placeholder={searchPlaceholder || t('common.search', 'Search...')}
+            placeholder={searchPlaceholder || t('common.search')}
             icon={<Search className="h-4 w-4" />}
             className="w-full sm:max-w-xs"
             hideErrors

@@ -6,9 +6,10 @@ import {
   FileSignature,
   Users,
   Target,
-  Award,
   Search,
   Settings,
+  Clock,
+  TrendingUp,
 } from 'lucide-react'
 
 import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
@@ -19,100 +20,13 @@ import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { Pagination } from '@/components/ui/Pagination'
 
 import { QuizAttemptsTable } from './QuizAttemptsTable'
-import { QuestionAnalysis, type QuestionStat } from './QuestionAnalysis'
-
-// ==========================================
-// 🛑 MOCK DATA (Remove when API is ready)
-// ==========================================
-const MOCK_QUIZ_DATA = {
-  title: 'Midterm Examination: React Fundamentals',
-  publishDate: '2024-03-15T10:00:00Z',
-  averageScore: 76,
-  passRate: 85,
-}
-
-const MOCK_QUESTIONS: QuestionStat[] = [
-  {
-    id: 1,
-    questionText: 'What is the primary purpose of React?',
-    totalAnswers: 4,
-    options: [
-      {
-        id: 'a',
-        text: 'Building user interfaces',
-        pickCount: 3,
-        isCorrect: true,
-      },
-      { id: 'b', text: 'Managing databases', pickCount: 0, isCorrect: false },
-      { id: 'c', text: 'Server-side routing', pickCount: 1, isCorrect: false },
-      { id: 'd', text: 'Styling web pages', pickCount: 0, isCorrect: false },
-    ],
-  },
-  {
-    id: 2,
-    questionText:
-      'Which hook is used to manage local state in a functional component?',
-    totalAnswers: 4,
-    options: [
-      { id: 'a', text: 'useEffect', pickCount: 1, isCorrect: false },
-      { id: 'b', text: 'useState', pickCount: 2, isCorrect: true },
-      { id: 'c', text: 'useContext', pickCount: 0, isCorrect: false },
-      { id: 'd', text: 'useReducer', pickCount: 1, isCorrect: false },
-    ],
-  },
-]
-
-const MOCK_ATTEMPTS = [
-  {
-    id: 1,
-    studentAvatarUrl: 'https://i.pravatar.cc/150?u=1',
-    studentFirstName: 'Alice',
-    studentLastName: 'Smith',
-    studentEmail: 'alice.smith@school.edu',
-    studentUsername: 'asmith',
-    submittedAt: '2024-04-20T14:30:00Z',
-    isGraded: true,
-    score: 92,
-    passMark: 50,
-  },
-  {
-    id: 2,
-    studentAvatarUrl: null,
-    studentFirstName: 'Bob',
-    studentLastName: 'Johnson',
-    studentEmail: 'bob.j@school.edu',
-    studentUsername: 'bjohnson',
-    submittedAt: '2024-04-21T09:15:00Z',
-    isGraded: true,
-    score: 45, // Failed
-    passMark: 50,
-  },
-  {
-    id: 3,
-    studentAvatarUrl: 'https://i.pravatar.cc/150?u=3',
-    studentFirstName: 'Charlie',
-    studentLastName: 'Brown',
-    studentEmail: 'charlie.b@school.edu',
-    studentUsername: 'cbrown',
-    submittedAt: null, // In Progress
-    isGraded: false,
-    score: 0,
-    passMark: 50,
-  },
-  {
-    id: 4,
-    studentAvatarUrl: null,
-    studentFirstName: 'Diana',
-    studentLastName: 'Prince',
-    studentEmail: 'dprince@school.edu',
-    studentUsername: 'dprince',
-    submittedAt: '2024-04-21T11:45:00Z',
-    isGraded: false, // Pending Grade
-    score: 88,
-    passMark: 50,
-  },
-]
-// ==========================================
+import { useGetApiQuizzesQuizId } from '@/api/generated/endpoints/quizzes/quizzes'
+import {
+  useGetApiQuizzesQuizIdStatisticsQuestions,
+  useGetApiQuizzesQuizIdStatisticsSummary,
+} from '@/api/generated/endpoints/quiz-statistics/quiz-statistics'
+import { useGetApiQuizAttemptsQuizQuizId } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
+import { QuestionAnalysis } from './QuestionAnalysis'
 
 export function QuizStatisticsPage({
   subjectId,
@@ -126,40 +40,54 @@ export function QuizStatisticsPage({
   const [pageNumber, setPageNumber] = useState(1)
   const pageSize = 15
 
-  // 1. Fetch Quiz Data (MOCKED)
-  // const { data: quizData, isLoading: isLoadingQuiz } = useGetApiQuizzesId(Number(quizId))
-  const quizData = MOCK_QUIZ_DATA
-  const isLoadingQuiz = false
+  console.log(subjectId, quizId)
 
-  // 2. Fetch Attempts Data (MOCKED)
-  // const { data: attemptsResponse, isLoading: isLoadingAttempts, isFetching } = useGetApiQuizzesIdAttempts(...)
-
-  // Filter mock attempts based on search query just to make the UI feel alive
-  const filteredAttempts = MOCK_ATTEMPTS.filter(
-    (a) =>
-      a.studentFirstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.studentLastName.toLowerCase().includes(searchQuery.toLowerCase()),
+  const { data: quizData, isLoading: isLoadingQuiz } = useGetApiQuizzesQuizId(
+    Number(quizId),
   )
 
-  const attemptsResponse = {
-    data: filteredAttempts,
-    totalCount: filteredAttempts.length,
-    totalPages: 1,
-  }
-  const isLoadingAttempts = false
-  const isFetching = false
+  const { data: quizStatisticsData, isLoading: isLoadingStatistics } =
+    useGetApiQuizzesQuizIdStatisticsSummary(Number(quizId), {
+      query: { enabled: !!quizId },
+    })
 
-  const questionStats = MOCK_QUESTIONS
+  const {
+    data: attemptsResponse,
+    isLoading: isLoadingAttempts,
+    isFetching,
+  } = useGetApiQuizAttemptsQuizQuizId(
+    Number(quizId),
+    {
+      pageNumber,
+      pageSize,
+    },
+    { query: { enabled: !!quizId } },
+  )
+
+  const { data: questionStats } = useGetApiQuizzesQuizIdStatisticsQuestions(
+    Number(quizId),
+    { query: { enabled: !!quizId } },
+  )
 
   const attempts = attemptsResponse?.data || []
-  const totalAttempts = Number(attemptsResponse?.totalCount || 0)
+  const totalTableCount = Number(attemptsResponse?.totalCount || 0)
   const totalPages = Number(attemptsResponse?.totalPages || 1)
 
-  const isLoading = isLoadingQuiz || (isLoadingAttempts && !attemptsResponse)
+  const isLoading =
+    isLoadingQuiz ||
+    isLoadingStatistics ||
+    (isLoadingAttempts && !attemptsResponse)
 
-  // STATS Mapping
-  const averageScore = quizData?.averageScore || 0
-  const passRate = quizData?.passRate || 0
+  const statsTotalAttempts = Number(quizStatisticsData?.totalAttempts || 0)
+  const statsCompletedAttempts = Number(
+    quizStatisticsData?.completedAttempts || 0,
+  )
+  const averageScore = Number(quizStatisticsData?.averageScore || 0)
+  const highestScore = Number(quizStatisticsData?.highestScore || 0)
+  const lowestScore = Number(quizStatisticsData?.lowestScore || 0)
+  const avgTimeMinutes = Number(
+    quizStatisticsData?.averageCompletionTimeMinutes || 0,
+  )
 
   return (
     <PageLayout
@@ -170,6 +98,10 @@ export function QuizStatisticsPage({
         <div className="flex flex-col items-start gap-4">
           <Link
             to="/app/teacher/quizzes"
+            search={{
+              subjectId: subjectId,
+              activeOnly: true,
+            }}
             className="flex w-fit items-center gap-2 text-sm font-normal text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -208,22 +140,22 @@ export function QuizStatisticsPage({
               setSearchQuery(val)
               setPageNumber(1)
             }}
-            placeholder={t('quiz.searchStudents')}
+            placeholder={t('quiz.searchStudents', 'Search students...')}
             icon={<Search className="h-4 w-4" />}
             className="w-full bg-background sm:max-w-xs"
             hideErrors
           />
           <div className="text-sm font-medium whitespace-nowrap text-muted-foreground">
             {t('common.totalCount', {
-              count: totalAttempts,
-              defaultValue: `Total: ${totalAttempts}`,
+              count: totalTableCount,
+              defaultValue: `Total: ${totalTableCount}`,
             })}
           </div>
         </div>
       }
     >
       <div className="flex flex-col gap-8">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card className="border-border shadow-sm transition-shadow hover:shadow-md">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -232,7 +164,10 @@ export function QuizStatisticsPage({
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{totalAttempts}</div>
+              <div className="text-3xl font-bold">{statsTotalAttempts}</div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {statsCompletedAttempts} {t('quiz.completed')}
+              </p>
             </CardContent>
           </Card>
 
@@ -245,7 +180,7 @@ export function QuizStatisticsPage({
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-blue-600">
-                {averageScore}%
+                {averageScore.toFixed(1)}
               </div>
             </CardContent>
           </Card>
@@ -253,19 +188,38 @@ export function QuizStatisticsPage({
           <Card className="border-border shadow-sm transition-shadow hover:shadow-md">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t('quiz.passRate')}
+                {t('quiz.highLowScore')}
               </CardTitle>
-              <Award className="h-4 w-4 text-emerald-500" />
+              <TrendingUp className="h-4 w-4 text-emerald-500" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-emerald-600">
-                {passRate}%
+                {highestScore}{' '}
+                <span className="text-xl font-medium text-muted-foreground/50">
+                  /
+                </span>{' '}
+                {lowestScore}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-border shadow-sm transition-shadow hover:shadow-md">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {t('quiz.avgCompletionTime')}
+              </CardTitle>
+              <Clock className="h-4 w-4 text-orange-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-orange-600">
+                {avgTimeMinutes.toFixed(1)}{' '}
+                <span className="text-sm font-normal">min</span>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <QuestionAnalysis questions={questionStats} />
+        <QuestionAnalysis questions={questionStats ?? []} />
 
         <div
           className={`transition-opacity duration-200 ${isFetching && !isLoadingAttempts ? 'opacity-50' : 'opacity-100'}`}

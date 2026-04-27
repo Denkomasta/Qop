@@ -27,6 +27,7 @@ export function EnrollmentsView() {
 
   const [page, setPage] = useState(1)
   const pageSize = 12
+  const UNSUCCESFUL_MARK = 5
 
   const {
     data: enrollmentsResponse,
@@ -127,10 +128,14 @@ export function EnrollmentsView() {
             topRightSlot={
               enrollment.mark !== null && enrollment.mark !== undefined ? (
                 <Badge
-                  variant="default"
+                  variant={
+                    enrollment.mark === UNSUCCESFUL_MARK
+                      ? 'destructive'
+                      : 'success'
+                  }
                   className="shrink-0 text-sm font-bold shadow-sm"
                 >
-                  {enrollment.mark}%
+                  {enrollment.mark}
                 </Badge>
               ) : (
                 <Badge

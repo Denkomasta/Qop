@@ -625,7 +625,8 @@
     "removeFromSubject": "Odebrat z předmětu",
     "noStudentsEnrolled": "V tomto předmětu nejsou aktuálně zapsáni žádní studenti.",
     "removeConfirmDesc": "Opravdu chcete odebrat studenta {{studentName}} z tohoto předmětu?",
-    "studentRemoved": "Student byl úspěšně odebrán z předmětu"
+    "studentRemoved": "Student byl úspěšně odebrán z předmětu",
+    "gradeStudent": "Oznámkovat studenta"
   },
   "system": {
     "name": "Sqeez"

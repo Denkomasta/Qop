@@ -1,17 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/store/useAuthStore'
-import { Button } from '@/components/ui/Button'
-import {
-  BookCopy,
-  Users,
-  Settings,
-  Library,
-  FileSignature,
-  School,
-  Plus,
-} from 'lucide-react'
-import { Link } from '@tanstack/react-router'
+import { BookCopy, Users, Library, FileSignature, School } from 'lucide-react'
 
 import { useGetApiSubjects } from '@/api/generated/endpoints/subjects/subjects'
 import type { SubjectDto } from '@/api/generated/model'
@@ -112,21 +102,6 @@ export function TeacherSubjectsView() {
                 </span>
               </div>
             </>
-          }
-          actionsSlot={
-            <Link
-              to="/app/teacher/subjects/$subjectId/settings"
-              params={{ subjectId: subject.id.toString() }}
-            >
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 text-muted-foreground transition-colors hover:bg-secondary/80 hover:text-foreground"
-              >
-                <Settings className="h-4 w-4" />
-                {t('common.settings')}
-              </Button>
-            </Link>
           }
         />
       )}

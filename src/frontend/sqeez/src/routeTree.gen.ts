@@ -32,6 +32,7 @@ import { Route as AppAuthenticatedClassIndexRouteImport } from './routes/app/_au
 import { Route as AppAuthenticatedProfileUserIdRouteImport } from './routes/app/_authenticated/profile/$userId'
 import { Route as AppAuthenticatedClassClassIdRouteImport } from './routes/app/_authenticated/class/$classId'
 import { Route as AppAuthenticatedBadgesUserIdRouteImport } from './routes/app/_authenticated/badges/$userId'
+import { Route as AppAuthenticatedTeacherSubjectsIndexRouteImport } from './routes/app/_authenticated/teacher/subjects/index'
 import { Route as AppAuthenticatedTeacherQuizzesIndexRouteImport } from './routes/app/_authenticated/teacher/quizzes/index'
 import { Route as AppAuthenticatedSubjectsSubjectIdIndexRouteImport } from './routes/app/_authenticated/subjects/$subjectId/index'
 import { Route as AppAuthenticatedQuizzesQuizIdIndexRouteImport } from './routes/app/_authenticated/quizzes/$quizId/index'
@@ -173,6 +174,12 @@ const AppAuthenticatedBadgesUserIdRoute =
     path: '/badges/$userId',
     getParentRoute: () => AppAuthenticatedRoute,
   } as any)
+const AppAuthenticatedTeacherSubjectsIndexRoute =
+  AppAuthenticatedTeacherSubjectsIndexRouteImport.update({
+    id: '/subjects/',
+    path: '/subjects/',
+    getParentRoute: () => AppAuthenticatedTeacherRoute,
+  } as any)
 const AppAuthenticatedTeacherQuizzesIndexRoute =
   AppAuthenticatedTeacherQuizzesIndexRouteImport.update({
     id: '/quizzes/',
@@ -310,6 +317,7 @@ export interface FileRoutesByFullPath {
   '/app/quizzes/$quizId/': typeof AppAuthenticatedQuizzesQuizIdIndexRoute
   '/app/subjects/$subjectId/': typeof AppAuthenticatedSubjectsSubjectIdIndexRoute
   '/app/teacher/quizzes/': typeof AppAuthenticatedTeacherQuizzesIndexRoute
+  '/app/teacher/subjects/': typeof AppAuthenticatedTeacherSubjectsIndexRoute
   '/app/quizzes/$quizId/attempts/$attemptId': typeof AppAuthenticatedQuizzesQuizIdAttemptsAttemptIdRoute
   '/app/quizzes/$quizId/attempts/': typeof AppAuthenticatedQuizzesQuizIdAttemptsIndexRoute
   '/app/quizzes/$quizId/builder/': typeof AppAuthenticatedQuizzesQuizIdBuilderIndexRoute
@@ -351,6 +359,7 @@ export interface FileRoutesByTo {
   '/app/quizzes/$quizId': typeof AppAuthenticatedQuizzesQuizIdIndexRoute
   '/app/subjects/$subjectId': typeof AppAuthenticatedSubjectsSubjectIdIndexRoute
   '/app/teacher/quizzes': typeof AppAuthenticatedTeacherQuizzesIndexRoute
+  '/app/teacher/subjects': typeof AppAuthenticatedTeacherSubjectsIndexRoute
   '/app/quizzes/$quizId/attempts/$attemptId': typeof AppAuthenticatedQuizzesQuizIdAttemptsAttemptIdRoute
   '/app/quizzes/$quizId/attempts': typeof AppAuthenticatedQuizzesQuizIdAttemptsIndexRoute
   '/app/quizzes/$quizId/builder': typeof AppAuthenticatedQuizzesQuizIdBuilderIndexRoute
@@ -394,6 +403,7 @@ export interface FileRoutesById {
   '/app/_authenticated/quizzes/$quizId/': typeof AppAuthenticatedQuizzesQuizIdIndexRoute
   '/app/_authenticated/subjects/$subjectId/': typeof AppAuthenticatedSubjectsSubjectIdIndexRoute
   '/app/_authenticated/teacher/quizzes/': typeof AppAuthenticatedTeacherQuizzesIndexRoute
+  '/app/_authenticated/teacher/subjects/': typeof AppAuthenticatedTeacherSubjectsIndexRoute
   '/app/_authenticated/quizzes/$quizId/attempts/$attemptId': typeof AppAuthenticatedQuizzesQuizIdAttemptsAttemptIdRoute
   '/app/_authenticated/quizzes/$quizId/attempts/': typeof AppAuthenticatedQuizzesQuizIdAttemptsIndexRoute
   '/app/_authenticated/quizzes/$quizId/builder/': typeof AppAuthenticatedQuizzesQuizIdBuilderIndexRoute
@@ -438,6 +448,7 @@ export interface FileRouteTypes {
     | '/app/quizzes/$quizId/'
     | '/app/subjects/$subjectId/'
     | '/app/teacher/quizzes/'
+    | '/app/teacher/subjects/'
     | '/app/quizzes/$quizId/attempts/$attemptId'
     | '/app/quizzes/$quizId/attempts/'
     | '/app/quizzes/$quizId/builder/'
@@ -479,6 +490,7 @@ export interface FileRouteTypes {
     | '/app/quizzes/$quizId'
     | '/app/subjects/$subjectId'
     | '/app/teacher/quizzes'
+    | '/app/teacher/subjects'
     | '/app/quizzes/$quizId/attempts/$attemptId'
     | '/app/quizzes/$quizId/attempts'
     | '/app/quizzes/$quizId/builder'
@@ -521,6 +533,7 @@ export interface FileRouteTypes {
     | '/app/_authenticated/quizzes/$quizId/'
     | '/app/_authenticated/subjects/$subjectId/'
     | '/app/_authenticated/teacher/quizzes/'
+    | '/app/_authenticated/teacher/subjects/'
     | '/app/_authenticated/quizzes/$quizId/attempts/$attemptId'
     | '/app/_authenticated/quizzes/$quizId/attempts/'
     | '/app/_authenticated/quizzes/$quizId/builder/'
@@ -708,6 +721,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAuthenticatedBadgesUserIdRouteImport
       parentRoute: typeof AppAuthenticatedRoute
     }
+    '/app/_authenticated/teacher/subjects/': {
+      id: '/app/_authenticated/teacher/subjects/'
+      path: '/subjects'
+      fullPath: '/app/teacher/subjects/'
+      preLoaderRoute: typeof AppAuthenticatedTeacherSubjectsIndexRouteImport
+      parentRoute: typeof AppAuthenticatedTeacherRoute
+    }
     '/app/_authenticated/teacher/quizzes/': {
       id: '/app/_authenticated/teacher/quizzes/'
       path: '/quizzes'
@@ -862,12 +882,15 @@ const AppAuthenticatedAdminRouteWithChildren =
 
 interface AppAuthenticatedTeacherRouteChildren {
   AppAuthenticatedTeacherQuizzesIndexRoute: typeof AppAuthenticatedTeacherQuizzesIndexRoute
+  AppAuthenticatedTeacherSubjectsIndexRoute: typeof AppAuthenticatedTeacherSubjectsIndexRoute
 }
 
 const AppAuthenticatedTeacherRouteChildren: AppAuthenticatedTeacherRouteChildren =
   {
     AppAuthenticatedTeacherQuizzesIndexRoute:
       AppAuthenticatedTeacherQuizzesIndexRoute,
+    AppAuthenticatedTeacherSubjectsIndexRoute:
+      AppAuthenticatedTeacherSubjectsIndexRoute,
   }
 
 const AppAuthenticatedTeacherRouteWithChildren =

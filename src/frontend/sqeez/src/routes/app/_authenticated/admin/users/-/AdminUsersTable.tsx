@@ -34,20 +34,20 @@ export function AdminUsersTable({
       case 'Admin':
         return (
           <Badge className="bg-destructive hover:bg-destructive/80">
-            <ShieldAlert className="mr-1 h-3 w-3" /> Admin
+            <ShieldAlert className="mr-1 h-3 w-3" /> {t('common.admin')}
           </Badge>
         )
       case 'Teacher':
         return (
           <Badge className="bg-blue-600 hover:bg-blue-700">
-            <BookOpen className="mr-1 h-3 w-3" /> Teacher
+            <BookOpen className="mr-1 h-3 w-3" /> {t('common.teacher')}
           </Badge>
         )
       case 'Student':
       default:
         return (
           <Badge variant="secondary">
-            <GraduationCap className="mr-1 h-3 w-3" /> Student
+            <GraduationCap className="mr-1 h-3 w-3" /> {t('common.student')}
           </Badge>
         )
     }

@@ -40,8 +40,6 @@ export function QuizStatisticsPage({
   const [pageNumber, setPageNumber] = useState(1)
   const pageSize = 15
 
-  console.log(subjectId, quizId)
-
   const { data: quizData, isLoading: isLoadingQuiz } = useGetApiQuizzesQuizId(
     Number(quizId),
   )

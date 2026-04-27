@@ -726,7 +726,21 @@
     "pendingGrading": "Čeká na ohodnocení",
     "pendingGradingDesc": "Váš učitel tuto odpověď brzy zkontroluje!",
     "expectedAnswer": "Očekávaná odpověď",
-    "viewStats": "Statistiky"
+    "viewStats": "Statistiky",
+    "noAttemptsYet": "Zatím žádné pokusy",
+    "noStudentAttemptsDesc": "Studenti zatím neodevzdali žádné odpovědi k tomuto kvízu.",
+    "submittedAt": "Odevzdáno",
+    "status": "Stav",
+    "score": "Skóre",
+    "graded": "Ohodnoceno",
+    "pendingGrade": "Čeká na hodnocení",
+    "review": "Zkontrolovat",
+    "editQuiz": "Upravit nastavení",
+    "searchStudents": "Hledat pokusy studentů...",
+    "totalAttempts": "Celkový počet pokusů",
+    "averageScore": "Průměrné skóre",
+    "passRate": "Úspěšnost",
+    "attemptHistory": "Historie pokusů"
   },
   "editor": {
     "questionsTitle": "Otázky",

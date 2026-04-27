@@ -127,7 +127,8 @@
       "deleteClassTitle": "Delete School Class",
       "deleteClassDesc": "Are you sure you want to delete the class \"{{className}}\"? This action cannot be undone and may affect enrolled students and subjects.",
       "classDeleted": "School class deleted successfully",
-      "cannotDelete": "Cannot delete class with enrolled students or assigned teacher."
+      "cannotDelete": "Cannot delete class with enrolled students or assigned teacher.",
+      "removeTeacher": "Remove current teacher"
     },
     "import": {
       "title": "Data Import",
@@ -215,6 +216,7 @@
     "earned": "Earned",
     "earnedOn": "Earned on",
     "locked": "Locked",
+    "userTitle": "{{name}}'s Badges",
     "metrics": {
       "scorePercentage": "Score percentage",
       "totalScore": "Total score",

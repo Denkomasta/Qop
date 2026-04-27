@@ -93,7 +93,7 @@ export function TeacherModificationModal({
     {
       id: '',
       title: t('admin.classes.unassigned'),
-      subtitle: t('admin.classes.removeTeacher', 'Remove current teacher'),
+      subtitle: t('admin.classes.removeTeacher'),
     },
     ...teachers.map((teacher) => ({
       id: Number(teacher.id),

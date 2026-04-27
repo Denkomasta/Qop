@@ -726,7 +726,21 @@
     "pendingGrading": "Pending Grading",
     "pendingGradingDesc": "Your teacher will review this answer soon!",
     "expectedAnswer": "Expected Answer",
-    "viewStats": "Stats"
+    "viewStats": "Stats",
+    "noAttemptsYet": "No attempts yet",
+    "noStudentAttemptsDesc": "Students have not submitted any answers for this quiz.",
+    "submittedAt": "Submitted",
+    "status": "Status",
+    "score": "Score",
+    "graded": "Graded",
+    "pendingGrade": "Pending",
+    "review": "Review",
+    "editQuiz": "Edit Settings",
+    "searchStudents": "Search student attempts...",
+    "totalAttempts": "Total Attempts",
+    "averageScore": "Average Score",
+    "passRate": "Pass Rate",
+    "attemptHistory": "Attempt History"
   },
   "editor": {
     "questionsTitle": "Questions",

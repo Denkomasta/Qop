@@ -242,7 +242,7 @@ export function QuizListView({
                         </Link>
 
                         <Link
-                          to="/app/teacher/subjects/$subjectId/quizzes/$quizId"
+                          to="/app/teacher/subjects/$subjectId/$quizId"
                           params={{
                             subjectId: String(targetSubjectId),
                             quizId: quiz.id.toString(),

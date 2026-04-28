@@ -1,4 +1,5 @@
-﻿using Sqeez.Api.DTOs;
+﻿using FileTypeChecker;
+using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Services.Interfaces;
 
@@ -62,14 +63,51 @@ namespace Sqeez.Api.Services
                         ServiceError.ValidationFailed);
                 }
             }
-
-            if (string.IsNullOrEmpty(extension) || !_allowedExtensions.Contains(extension))
+            else if (string.IsNullOrEmpty(extension) || !_allowedExtensions.Contains(extension))
             {
                 var allowed = string.Join(", ", _allowedExtensions);
                 return ServiceResult<string>.Failure(
                     $"Invalid file type '{extension}'. Allowed types are: {allowed}",
                     ServiceError.ValidationFailed);
             }
+
+            using var readStream = file.OpenReadStream();
+            bool isSignatureValid = false;
+
+            try
+            {
+                if (FileTypeValidator.IsTypeRecognizable(readStream))
+                {
+                    var fileType = FileTypeValidator.GetFileType(readStream);
+
+                    var recognizedExt = "." + fileType.Extension.ToLowerInvariant();
+
+                    if (recognizedExt == ".jpeg") recognizedExt = ".jpg";
+                    var expectedExt = extension == ".jpeg" ? ".jpg" : extension;
+
+                    if (recognizedExt == expectedExt)
+                    {
+                        isSignatureValid = true;
+                    }
+                    else
+                    {
+                        _logger.LogWarning("File spoofing detected: User claims {UserExt} but file is actually {RealExt}", extension, recognizedExt);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to read file signature for {FileName}", file.FileName);
+            }
+
+            if (!isSignatureValid)
+            {
+                return ServiceResult<string>.Failure(
+                    "The file content does not match its extension or is corrupted. Spoofing suspected.",
+                    ServiceError.ValidationFailed);
+            }
+
+            readStream.Position = 0;
 
             try
             {
@@ -78,13 +116,11 @@ namespace Sqeez.Api.Services
 
                 if (isPublic)
                 {
-                    // Saves straight to /wwwroot/badges or /wwwroot/avatars
                     rootFolder = _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-                    returnedUrlPrefix = ""; // No prefix needed!
+                    returnedUrlPrefix = "";
                 }
                 else
                 {
-                    // Saves to /SecureStorage/...
                     rootFolder = Path.Combine(_env.ContentRootPath ?? Directory.GetCurrentDirectory(), "SecureStorage");
                     returnedUrlPrefix = "/secure";
                 }
@@ -95,9 +131,9 @@ namespace Sqeez.Api.Services
                 var uniqueFileName = $"{Guid.NewGuid()}{extension}";
                 var filePath = Path.Combine(targetDirectory, uniqueFileName);
 
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                using (var writeStream = new FileStream(filePath, FileMode.Create))
                 {
-                    await file.CopyToAsync(fileStream);
+                    await readStream.CopyToAsync(writeStream);
                 }
 
                 var finalUrl = string.IsNullOrEmpty(returnedUrlPrefix)
@@ -161,24 +197,34 @@ namespace Sqeez.Api.Services
                 if (string.IsNullOrWhiteSpace(fileUrl) || fileUrl.Contains(".."))
                     return Task.FromResult(ServiceResult<bool>.Failure("Invalid file path.", ServiceError.ValidationFailed));
 
-                string physicalPath;
+                string rootPath;
+                string relativePath;
 
                 if (fileUrl.StartsWith("/secure/"))
                 {
-                    var relativePath = fileUrl.Replace("/secure/", "").Replace('/', Path.DirectorySeparatorChar);
-                    var rootPath = Path.Combine(_env.ContentRootPath ?? Directory.GetCurrentDirectory(), "SecureStorage");
-                    physicalPath = Path.Combine(rootPath, relativePath);
+                    relativePath = fileUrl.Replace("/secure/", "").Replace('/', Path.DirectorySeparatorChar);
+                    rootPath = Path.Combine(_env.ContentRootPath ?? Directory.GetCurrentDirectory(), "SecureStorage");
                 }
                 else
                 {
-                    var relativePath = fileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
-                    var rootPath = _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-                    physicalPath = Path.Combine(rootPath, relativePath);
+                    relativePath = fileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+                    rootPath = _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
                 }
 
-                if (File.Exists(physicalPath))
+                var physicalPath = Path.Combine(rootPath, relativePath);
+
+                var fullRootPath = Path.GetFullPath(rootPath);
+                var fullPhysicalPath = Path.GetFullPath(physicalPath);
+
+                if (!fullPhysicalPath.StartsWith(fullRootPath))
                 {
-                    File.Delete(physicalPath);
+                    _logger.LogWarning("Path traversal attempt detected during deletion for path: {FileUrl}", fileUrl);
+                    return Task.FromResult(ServiceResult<bool>.Failure("Access denied.", ServiceError.Forbidden));
+                }
+
+                if (File.Exists(fullPhysicalPath))
+                {
+                    File.Delete(fullPhysicalPath);
                 }
 
                 return Task.FromResult(ServiceResult<bool>.Ok(true));

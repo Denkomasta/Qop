@@ -24,6 +24,7 @@ import { Pagination } from '@/components/ui/Pagination'
 
 import { useGetApiQuizAttemptsQuizQuizId } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
 import { formatDateTime, formatDuration } from '@/lib/dateHelpers'
+import { useQuizStore } from '@/store/useQuizStore'
 
 export const Route = createFileRoute(
   '/app/_authenticated/quizzes/$quizId/results/',
@@ -34,6 +35,7 @@ export const Route = createFileRoute(
 function QuizResultsSummaryPage() {
   const { t } = useTranslation()
   const { quizId } = Route.useParams()
+  const { actions } = useQuizStore()
 
   const [pageNumber, setPageNumber] = useState(1)
   const PAGE_SIZE = 10
@@ -54,7 +56,7 @@ function QuizResultsSummaryPage() {
       case 'Completed':
         return (
           <Badge variant="default" className="bg-green-500 hover:bg-green-600">
-            {t('quiz.statusCompleted', 'Completed')}
+            {t('quiz.statusCompleted')}
           </Badge>
         )
       case 'InProgress':
@@ -63,7 +65,7 @@ function QuizResultsSummaryPage() {
             variant="secondary"
             className="bg-amber-500 text-white hover:bg-amber-600"
           >
-            {t('quiz.statusInProgress', 'In Progress')}
+            {t('quiz.statusInProgress')}
           </Badge>
         )
       default:
@@ -93,6 +95,9 @@ function QuizResultsSummaryPage() {
             params={{ quizId }}
             search={{
               attemptId: undefined,
+            }}
+            onClick={() => {
+              actions.resetQuiz()
             }}
           >
             <PlayCircle className="mr-2 h-5 w-5" />
@@ -166,6 +171,9 @@ function QuizResultsSummaryPage() {
                         params={{ quizId }}
                         search={{
                           attemptId: Number(attempt.id),
+                        }}
+                        onClick={() => {
+                          actions.resetQuiz()
                         }}
                       >
                         {t('common.resume')}

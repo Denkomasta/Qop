@@ -147,14 +147,16 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
   const answerMutation = usePostApiQuizAttemptsIdAnswer()
   const completeMutation = usePostApiQuizAttemptsIdComplete()
 
-  const handleAnswerSubmit = async () => {
+  const handleAnswerSubmit = async (isTimeout = false) => {
+    if (answerMutation.isPending) return
+
     if (!state.attemptId || !state.currentQuestionId) return
 
     const hasSelection =
       state.selectedOptionIds.length > 0 ||
       state.freeTextValue.trim().length > 0
 
-    if (!hasSelection) {
+    if (!hasSelection && !isTimeout) {
       toast.warning(t('quiz.selectAnswerWarning'))
       return
     }
@@ -177,6 +179,7 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
       const correctIds = response.correctOptionIds
 
       const isFullyCorrect =
+        state.selectedOptionIds.length > 0 &&
         state.selectedOptionIds.length === correctIds.length &&
         state.selectedOptionIds.every((id) => correctIds.includes(id))
 
@@ -196,6 +199,8 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
   }
 
   const handleRecapContinue = async () => {
+    if (completeMutation.isPending) return
+
     if (state.nextQuestionId !== null) {
       actions.continueToNext()
     } else {

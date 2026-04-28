@@ -1,23 +1,55 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Clock } from 'lucide-react'
 import { formatTimer } from '@/lib/dateHelpers'
+import { cn } from '@/lib/utils'
 
-export function LiveTimer() {
-  const [elapsedSeconds, setElapsedSeconds] = useState(0)
+interface LiveTimerProps {
+  timeLimit: number
+  onTimeUp?: () => void
+}
+
+export function LiveTimer({ timeLimit, onTimeUp }: LiveTimerProps) {
+  const isCountdown = timeLimit > 0
+  const [seconds, setSeconds] = useState(isCountdown ? timeLimit : 0)
+
+  const onTimeUpRef = useRef(onTimeUp)
+  const hasFiredRef = useRef(false)
 
   useEffect(() => {
+    onTimeUpRef.current = onTimeUp
+  }, [onTimeUp])
+
+  useEffect(() => {
+    if (isCountdown && seconds <= 0) return
+
     const intervalId = setInterval(() => {
-      setElapsedSeconds((prev) => prev + 1)
+      setSeconds((prev) => (isCountdown ? prev - 1 : prev + 1))
     }, 1000)
 
     return () => clearInterval(intervalId)
-  }, [])
+  }, [isCountdown, seconds <= 0])
+
+  useEffect(() => {
+    if (isCountdown && seconds <= 0 && !hasFiredRef.current) {
+      hasFiredRef.current = true
+      onTimeUpRef.current?.()
+    }
+  }, [isCountdown, seconds])
+
+  const isUrgent = isCountdown && seconds <= 10 && seconds > 0
 
   return (
-    <div className="flex items-center gap-1.5 text-foreground/80">
-      <Clock className="h-4 w-4" />
-      <span className="w-10 text-right tabular-nums">
-        {formatTimer(elapsedSeconds)}
+    <div
+      className={cn(
+        'flex items-center gap-2 text-xl transition-colors',
+        isUrgent
+          ? 'animate-pulse font-bold text-rose-500'
+          : 'font-semibold text-foreground/80',
+      )}
+    >
+      <Clock className="h-6 w-6" />
+      <span className="w-16 text-right tabular-nums">
+        {formatTimer(seconds)}
       </span>
     </div>
   )

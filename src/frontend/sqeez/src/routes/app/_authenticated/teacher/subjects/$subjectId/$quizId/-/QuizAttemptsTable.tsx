@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from '@tanstack/react-router'
-import { Eye, Clock } from 'lucide-react'
+import { Eye, Clock, AlertCircle } from 'lucide-react'
 
 import { DataTable, type ColumnDef } from '@/components/ui/Table/DataTable'
 import { SimpleAvatar } from '@/components/ui/Avatar'
@@ -65,20 +65,38 @@ export function QuizAttemptsTable({
       header: t('quiz.status'),
       cell: (attempt) => {
         const statusStr = String(attempt.status)
-        const isCompleted = statusStr === 'Completed' || statusStr === '2'
+        const isCompleted = statusStr === 'Completed'
+        const isPending = statusStr === 'PendingCorrection'
+
+        if (isCompleted) {
+          return (
+            <Badge variant="default" className="shadow-none">
+              {t('quiz.completed')}
+            </Badge>
+          )
+        }
+
+        if (isPending) {
+          return (
+            <Badge
+              variant="secondary"
+              className="gap-1.5 bg-orange-500/10 text-orange-600 shadow-none hover:bg-orange-500/20 dark:text-orange-400"
+            >
+              <AlertCircle className="h-3 w-3" />
+              {t('quiz.pendingCorrection')}
+            </Badge>
+          )
+        }
 
         return (
-          <Badge
-            variant={isCompleted ? 'default' : 'secondary'}
-            className="shadow-none"
-          >
-            {isCompleted ? t('quiz.completed') : t('quiz.inProgress')}
+          <Badge variant="secondary" className="shadow-none">
+            {t('quiz.inProgress')}
           </Badge>
         )
       },
     },
     {
-      header: t('quiz.score', 'Score'),
+      header: t('quiz.score'),
       cell: (attempt) => {
         if (!attempt.endTime) {
           return <span className="text-muted-foreground">-</span>
@@ -86,10 +104,16 @@ export function QuizAttemptsTable({
 
         const score = Number(attempt.totalScore || 0)
 
+        const statusStr = String(attempt.status)
+        const isPending = statusStr === 'PendingCorrection'
+
         return (
           <div className="flex items-center gap-2">
-            <span className="font-bold text-foreground">
+            <span
+              className={`font-bold ${isPending ? 'text-muted-foreground' : 'text-foreground'}`}
+            >
               {score} {t('quiz.points')}
+              {isPending && '*'}
             </span>
           </div>
         )
@@ -126,7 +150,7 @@ export function QuizAttemptsTable({
       data={attempts}
       columns={columns}
       isLoading={isLoading}
-      emptyMessage={t('quiz.noAttemptsYet', 'No attempts yet.')}
+      emptyMessage={t('quiz.noAttemptsYet')}
       keyExtractor={(attempt) => String(attempt.id)}
     />
   )

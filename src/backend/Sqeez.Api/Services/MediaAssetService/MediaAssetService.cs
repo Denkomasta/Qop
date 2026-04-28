@@ -172,13 +172,13 @@ namespace Sqeez.Api.Services
 
             string fileUrlToDelete = asset.LocationUrl;
 
-            _context.MediaAssets.Remove(asset);
-
             try
             {
-                await _context.SaveChangesAsync();
-
                 await _fileStorageService.DeleteFileAsync(fileUrlToDelete);
+
+                _context.MediaAssets.Remove(asset);
+
+                await _context.SaveChangesAsync();
 
                 return ServiceResult<bool>.Ok(true);
             }
@@ -198,13 +198,13 @@ namespace Sqeez.Api.Services
 
             string fileUrl = asset.LocationUrl;
 
-            _context.MediaAssets.Remove(asset);
-            await _context.SaveChangesAsync();
-
             if (!string.IsNullOrWhiteSpace(fileUrl))
             {
                 await _fileStorageService.DeleteFileAsync(fileUrl);
             }
+
+            _context.MediaAssets.Remove(asset);
+            await _context.SaveChangesAsync();
 
             return ServiceResult<bool>.Ok(true);
         }

@@ -1,6 +1,14 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from '@tanstack/react-router'
-import { Trophy, Target, BarChart, ArrowRight, ListTodo } from 'lucide-react'
+import {
+  Trophy,
+  Target,
+  BarChart,
+  ArrowRight,
+  ListTodo,
+  Clock,
+  Info,
+} from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { BadgeUnlockNotification } from '@/components/quizzes/BadgeUnlockNotification'
 import type { StudentBadgeBasicDto } from '@/api/generated/model'
@@ -12,6 +20,7 @@ interface QuizRecapScreenProps {
   totalQuestions: number
   correctCount: number
   badges?: StudentBadgeBasicDto[]
+  isPendingCorrection?: boolean
   resetQuiz: () => void
 }
 
@@ -21,6 +30,7 @@ export function QuizRecapScreen({
   totalQuestions,
   correctCount,
   badges,
+  isPendingCorrection = false,
   resetQuiz,
 }: QuizRecapScreenProps) {
   const { t } = useTranslation()
@@ -30,30 +40,51 @@ export function QuizRecapScreen({
 
   const isPassing = scorePercentage >= 50
 
+  const headerThemeClasses = isPendingCorrection
+    ? 'border-blue-700 bg-blue-500'
+    : isPassing
+      ? 'border-emerald-700 bg-emerald-500'
+      : 'border-rose-700 bg-rose-500'
+
+  const iconColorClass = isPendingCorrection
+    ? 'text-blue-500'
+    : isPassing
+      ? 'text-emerald-500'
+      : 'text-rose-500'
+
+  const scoreColorClass = isPendingCorrection
+    ? 'text-blue-500'
+    : isPassing
+      ? 'text-emerald-500'
+      : 'text-rose-500'
+
   return (
     <div className="flex min-h-[calc(100vh-4rem)] w-full animate-in flex-col items-center justify-center p-4 duration-500 zoom-in-95 fade-in md:p-6 lg:p-8">
       <div className="w-full max-w-2xl overflow-hidden rounded-[2rem] border-4 border-foreground/10 bg-card shadow-xl">
         <div
           className={cn(
             'flex flex-col items-center justify-center border-b-8 p-8 text-center text-white sm:p-10',
-            isPassing
-              ? 'border-emerald-700 bg-emerald-500'
-              : 'border-rose-700 bg-rose-500',
+            headerThemeClasses,
           )}
         >
           <div className="relative mb-4">
             <div className="absolute inset-0 animate-ping rounded-full bg-white/20" />
             <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-lg md:h-24 md:w-24">
-              <Trophy
-                className={cn(
-                  'h-10 w-10 md:h-12 md:w-12',
-                  isPassing ? 'text-emerald-500' : 'text-rose-500',
-                )}
-              />
+              {isPendingCorrection ? (
+                <Clock
+                  className={cn('h-10 w-10 md:h-12 md:w-12', iconColorClass)}
+                />
+              ) : (
+                <Trophy
+                  className={cn('h-10 w-10 md:h-12 md:w-12', iconColorClass)}
+                />
+              )}
             </div>
           </div>
           <h1 className="text-3xl font-black tracking-widest drop-shadow-sm md:text-4xl">
-            {t('quiz.quizComplete', 'Quiz Complete!')}
+            {isPendingCorrection
+              ? t('quiz.pendingReviewTitle')
+              : t('quiz.quizComplete')}
           </h1>
           <p className="mt-2 text-lg font-bold tracking-wide opacity-90 md:text-xl">
             {quizTitle}
@@ -61,17 +92,34 @@ export function QuizRecapScreen({
         </div>
 
         <div className="p-6 md:p-8">
+          {isPendingCorrection && (
+            <div className="mb-8 flex items-start gap-3 rounded-2xl border-4 border-blue-200 bg-blue-50 p-4 text-blue-800 dark:border-blue-900/50 dark:bg-blue-900/20 dark:text-blue-300">
+              <Info className="mt-0.5 h-5 w-5 shrink-0" />
+              <div className="flex flex-col">
+                <span className="font-bold">{t('quiz.partialScoreTitle')}</span>
+                <span className="text-sm font-medium opacity-90">
+                  {t(
+                    'quiz.pendingReviewMessage',
+                    'Your final score is pending. Some free-text answers require manual correction by the teacher.',
+                  )}
+                </span>
+              </div>
+            </div>
+          )}
+
           <div className="mb-8 flex flex-col items-center justify-center space-y-1">
             <span className="text-xs font-black tracking-widest text-muted-foreground uppercase md:text-sm">
-              {t('quiz.finalScore')}
+              {isPendingCorrection
+                ? t('quiz.currentScore')
+                : t('quiz.finalScore')}
             </span>
             <div
               className={cn(
                 'text-7xl font-black tracking-tighter drop-shadow-sm md:text-[5rem]',
-                isPassing ? 'text-emerald-500' : 'text-rose-500',
+                scoreColorClass,
               )}
             >
-              {scorePercentage}%
+              {scorePercentage}%{isPendingCorrection && '*'}
             </div>
           </div>
 

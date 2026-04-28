@@ -18,6 +18,7 @@ interface QuizState {
   freeTextValue: string
   earnedBadges: StudentBadgeBasicDto[]
   currentCorrectOptionIds: (number | string)[]
+  isPendingCorrection: boolean | null
 
   actions: {
     initResume: (attemptId: number) => void
@@ -33,7 +34,10 @@ interface QuizState {
       isFullyCorrect: boolean
     }) => void
     continueToNext: () => void
-    completeQuiz: (badges?: StudentBadgeBasicDto[]) => void
+    completeQuiz: (
+      badges?: StudentBadgeBasicDto[],
+      isPendingCorrection?: boolean,
+    ) => void
     resetQuiz: () => void
   }
 }
@@ -53,6 +57,7 @@ const initialState = {
   freeTextValue: '',
   earnedBadges: [],
   currentCorrectOptionIds: [],
+  isPendingCorrection: null,
 }
 
 export const useQuizStore = create<QuizState>()(
@@ -110,10 +115,11 @@ export const useQuizStore = create<QuizState>()(
           correctFreeTextAnswer: null,
         })),
 
-      completeQuiz: (badges) =>
+      completeQuiz: (badges, isPendingCorrection) =>
         set((state) => ({
           phase: 'completed',
           earnedBadges: badges || state.earnedBadges,
+          isPendingCorrection: isPendingCorrection ?? state.isPendingCorrection,
         })),
 
       resetQuiz: () => set(initialState),

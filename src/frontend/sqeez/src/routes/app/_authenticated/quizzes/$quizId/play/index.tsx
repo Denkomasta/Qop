@@ -129,6 +129,7 @@ function QuizTakePage() {
           correctCount={state.correctAnswersCount}
           badges={state.earnedBadges}
           resetQuiz={actions.resetEngine}
+          isPendingCorrection={state.isPendingCorrection || false}
         />
       )
 

@@ -755,7 +755,10 @@
     "freeText": "Free Text",
     "submittedAnswers": "Submitted Answers",
     "noAnswersYet": "No answers submitted yet.",
-    "pendingCorrection": "Pending Correction"
+    "pendingCorrection": "Pending Correction",
+    "partialScoreTitle": "Partial Score",
+    "pendingReviewMessage": "Your final score is pending. Some free-text answers require manual correction by the teacher.",
+    "currentScore": "Current Score"
   },
   "editor": {
     "questionsTitle": "Questions",

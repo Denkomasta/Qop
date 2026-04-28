@@ -206,6 +206,7 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
           })
           actions.completeQuiz(
             !response.earnedBadges ? undefined : response.earnedBadges,
+            response.status === 'PendingCorrection',
           )
         } else {
           actions.completeQuiz()

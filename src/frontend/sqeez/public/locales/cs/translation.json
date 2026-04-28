@@ -635,7 +635,9 @@
     "gradeStudent": "Oznámkovat studenta",
     "materials": "Materiály kurzu a seznam studentů",
     "clearMark": "Vymazat známku",
-    "enrollmentNotFound": "Zápis nenalezen"
+    "enrollmentNotFound": "Zápis nenalezen",
+    "viewSubject": "Zobrazit předmět",
+    "relatedSubject": "Související předmět"
   },
   "system": {
     "name": "Sqeez"

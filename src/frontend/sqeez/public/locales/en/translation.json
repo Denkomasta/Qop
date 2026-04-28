@@ -635,7 +635,9 @@
     "gradeStudent": "Grade student",
     "materials": "Course Materials & Roster",
     "clearMark": "Clear mark",
-    "enrollmentNotFound": "Enrollment not found"
+    "enrollmentNotFound": "Enrollment not found",
+    "viewSubject": "View Subject",
+    "relatedSubject": "Related Subject"
   },
   "system": {
     "name": "Sqeez"

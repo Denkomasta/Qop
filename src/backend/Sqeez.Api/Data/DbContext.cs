@@ -98,6 +98,10 @@ namespace Sqeez.Api.Data
                 .WithMany(qqr => qqr.Options)
                 .UsingEntity(j => j.ToTable("QuizOptionResponses"));
 
+            modelBuilder.Entity<QuizQuestionResponse>()
+                .HasIndex(r => new { r.QuizAttemptId, r.QuizQuestionId })
+                .IsUnique();
+
             // 5. Explicitly configure SchoolClass relationships    
             // Relationship A: A SchoolClass has many Students
             modelBuilder.Entity<SchoolClass>()

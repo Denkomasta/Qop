@@ -246,13 +246,9 @@ namespace Sqeez.Api.Services.SubjectService
             if (!string.IsNullOrWhiteSpace(dto.Name)) subject.Name = dto.Name;
             if (!string.IsNullOrWhiteSpace(dto.Code)) subject.Code = dto.Code;
 
-            if (!string.IsNullOrWhiteSpace(dto.Description))
+            if (dto.Description != null)
             {
-                subject.Description = dto.Description;
-            }
-            else
-            {
-                subject.Description = null;
+                subject.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description;
             }
 
             if (dto.StartDate.HasValue) subject.StartDate = dto.StartDate.Value;
@@ -267,6 +263,16 @@ namespace Sqeez.Api.Services.SubjectService
                 }
                 else if (dto.TeacherId.Value != subject.TeacherId)
                 {
+                    // Prevent assigning a teacher who is already enrolled as a student
+                    bool isAlreadyEnrolled = subject.Enrollments.Any(e => e.StudentId == dto.TeacherId.Value);
+
+                    if (isAlreadyEnrolled)
+                    {
+                        return ServiceResult<SubjectDto>.Failure(
+                            "This user is currently enrolled in the subject as a student and cannot be assigned as its teacher.",
+                            ServiceError.Forbidden);
+                    }
+
                     var teacherExists = await _context.Teachers.AnyAsync(t => t.Id == dto.TeacherId.Value);
                     if (!teacherExists)
                         return ServiceResult<SubjectDto>.Failure("Provided Teacher ID is invalid.", ServiceError.ValidationFailed);

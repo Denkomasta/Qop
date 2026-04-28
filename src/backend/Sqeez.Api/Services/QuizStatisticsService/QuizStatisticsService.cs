@@ -75,6 +75,8 @@ namespace Sqeez.Api.Services
             if (quiz.Subject.TeacherId != teacherId)
                 return ServiceResult<IEnumerable<QuestionStatDto>>.Failure("You do not have permission to view statistics for this quiz.", ServiceError.Forbidden);
 
+            var validStatuses = new[] { AttemptStatus.Completed, AttemptStatus.PendingCorrection };
+
             var questionStats = await _context.QuizQuestions
                 .AsNoTracking()
                 .Where(q => q.QuizId == quizId)
@@ -82,24 +84,33 @@ namespace Sqeez.Api.Services
                 {
                     Id = q.Id,
                     QuestionText = q.Title,
+                    IsFreeText = q.Options.Any(o => o.IsFreeText),
 
                     TotalAnswers = _context.QuizQuestionResponses
-                        .Count(r => r.QuizQuestionId == q.Id && r.QuizAttempt.Status == AttemptStatus.Completed),
+                        .Count(r => r.QuizQuestionId == q.Id && validStatuses.Contains(r.QuizAttempt.Status)),
 
                     Options = q.Options.Select(o => new OptionStatDto
                     {
                         Id = o.Id,
                         Text = o.Text,
                         IsCorrect = o.IsCorrect,
-                        PickCount = o.Responses.Count(r => r.QuizAttempt.Status == AttemptStatus.Completed)
+                        // PickCount is irrelevant for free text options, force to 0 to avoid confusion
+                        PickCount = o.IsFreeText ? 0 : o.Responses.Count(r => validStatuses.Contains(r.QuizAttempt.Status))
                     }).ToList(),
 
+                    // Fetch the actual text answers submitted by students
+                    SubmittedFreeTextAnswers = _context.QuizQuestionResponses
+                        .Where(r => r.QuizQuestionId == q.Id && r.FreeTextAnswer != null && validStatuses.Contains(r.QuizAttempt.Status))
+                        .Select(r => r.FreeTextAnswer!)
+                        .ToList(),
+
+                    // Average score ignores nulls automatically, which is perfect here
                     AverageScore = _context.QuizQuestionResponses
-                        .Where(r => r.QuizQuestionId == q.Id && r.QuizAttempt.Status == AttemptStatus.Completed)
+                        .Where(r => r.QuizQuestionId == q.Id && validStatuses.Contains(r.QuizAttempt.Status))
                         .Average(r => (double?)r.Score) ?? 0,
 
                     AverageResponseTimeSeconds = (_context.QuizQuestionResponses
-                        .Where(r => r.QuizQuestionId == q.Id && r.QuizAttempt.Status == AttemptStatus.Completed)
+                        .Where(r => r.QuizQuestionId == q.Id && validStatuses.Contains(r.QuizAttempt.Status))
                         .Average(r => (double?)r.ResponseTimeMs) ?? 0) / 1000.0
                 })
                 .ToListAsync();

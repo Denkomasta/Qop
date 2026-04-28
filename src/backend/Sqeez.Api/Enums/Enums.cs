@@ -2,7 +2,7 @@
 {
     public enum UserRole { Student, Teacher, Admin }
 
-    public enum AttemptStatus { Created, Started, Completed, Abandoned }
+    public enum AttemptStatus { Created, Started, Completed, PendingCorrection, Abandoned }
 
     public enum MediaType { Image, Video, Audio, Document }
     public enum ServiceError

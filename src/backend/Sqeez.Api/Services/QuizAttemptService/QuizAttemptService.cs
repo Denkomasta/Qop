@@ -200,35 +200,18 @@ namespace Sqeez.Api.Services
             return ServiceResult<long?>.Ok(nextQuestionId);
         }
 
-        public async Task<ServiceResult<QuizAttemptDto>> CompleteAttemptAsync(long attemptId, long studentId)
+        private async Task<ServiceResult<List<StudentBadgeBasicDto>>> ProcessCompletedAttemptRewardsAsync(QuizAttempt attempt, long studentId)
         {
-            // Fetch the attempt and responses so we can calculate the final score.
-            var attempt = await _context.QuizAttempts
-                .Include(a => a.Enrollment)
-                .Include(a => a.Responses)
-                .FirstOrDefaultAsync(a => a.Id == attemptId);
-
-            if (attempt == null) return ServiceResult<QuizAttemptDto>.Failure("Attempt not found.", ServiceError.NotFound);
-            if (attempt.Enrollment.StudentId != studentId) return ServiceResult<QuizAttemptDto>.Failure("Access denied.", ServiceError.Forbidden);
-            if (attempt.Status != AttemptStatus.Started) return ServiceResult<QuizAttemptDto>.Failure("This attempt is already completed.", ServiceError.Conflict);
-
-            attempt.Status = AttemptStatus.Completed;
-            attempt.EndTime = DateTime.UtcNow;
-            attempt.TotalScore = attempt.Responses.Sum(r => r.Score ?? 0);
-
-            // Find their highest score from previous completed attempts of this quiz
             int previousHighScore = await _context.QuizAttempts
                 .Where(a => a.QuizId == attempt.QuizId &&
                             a.Enrollment.StudentId == studentId &&
                             a.Status == AttemptStatus.Completed &&
-                            a.Id != attemptId)
+                            a.Id != attempt.Id)
                 .Select(a => (int?)a.TotalScore)
                 .MaxAsync() ?? 0;
 
-            // Calculate the difference. If they scored lower than their best, this results in 0.
             int xpToAward = Math.Max(0, attempt.TotalScore - previousHighScore);
 
-            // Only hit the database to update the student if they actually earned new XP
             if (xpToAward > 0)
             {
                 var student = await _context.Students.FindAsync(studentId);
@@ -246,7 +229,6 @@ namespace Sqeez.Api.Services
 
             decimal scorePercentage = maxPossibleScore > 0 ? ((decimal)attempt.TotalScore / maxPossibleScore) * 100 : 0;
 
-            // Calculate Total Attempts
             int totalAttempts = await _context.QuizAttempts
                 .CountAsync(a => a.QuizId == attempt.QuizId &&
                                  a.Enrollment.StudentId == studentId &&
@@ -265,12 +247,75 @@ namespace Sqeez.Api.Services
 
             if (!newBadges.Success)
             {
-                return ServiceResult<QuizAttemptDto>.Failure(newBadges.ErrorMessage ?? "Badge evaluation failed", ServiceError.InternalError);
+                return ServiceResult<List<StudentBadgeBasicDto>>.Failure(newBadges.ErrorMessage ?? "Badge evaluation failed", ServiceError.InternalError);
             }
+
+            var studentBadges = newBadges.Data?.Select(b => new StudentBadgeBasicDto
+            {
+                BadgeId = b.BadgeId,
+                Name = b.Name,
+                IconUrl = b.IconUrl,
+                EarnedAt = b.EarnedAt
+            }).ToList() ?? new List<StudentBadgeBasicDto>();
+
+            return ServiceResult<List<StudentBadgeBasicDto>>.Ok(studentBadges);
+        }
+
+        public async Task<ServiceResult<QuizAttemptDto>> CompleteAttemptAsync(long attemptId, long studentId)
+        {
+            var attempt = await _context.QuizAttempts
+                .Include(a => a.Enrollment)
+                .Include(a => a.Responses)
+                .FirstOrDefaultAsync(a => a.Id == attemptId);
+
+            if (attempt == null)
+                return ServiceResult<QuizAttemptDto>.Failure("Attempt not found.", ServiceError.NotFound);
+
+            if (attempt.Enrollment.StudentId != studentId)
+                return ServiceResult<QuizAttemptDto>.Failure("Access denied.", ServiceError.Forbidden);
+
+            if (attempt.Status != AttemptStatus.Started)
+                return ServiceResult<QuizAttemptDto>.Failure("This attempt is already completed.", ServiceError.Conflict);
+
+            bool requiresManualGrading = attempt.Responses.Any(r => r.Score == null);
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            attempt.Status = requiresManualGrading ? AttemptStatus.PendingCorrection : AttemptStatus.Completed;
+            attempt.EndTime = DateTime.UtcNow;
+            attempt.TotalScore = attempt.Responses.Sum(r => r.Score ?? 0);
+
+            await _context.SaveChangesAsync();
+
+            if (requiresManualGrading)
+            {
+                // Commit the transaction since we successfully set it to PendingCorrection
+                await transaction.CommitAsync();
+
+                return ServiceResult<QuizAttemptDto>.Ok(new QuizAttemptDto(
+                    attempt.Id, attempt.QuizId, attempt.EnrollmentId, attempt.StartTime,
+                    attempt.EndTime, attempt.Status, attempt.TotalScore, attempt.Mark,
+                    EarnedBadges: null));
+            }
+
+            var rewardResult = await ProcessCompletedAttemptRewardsAsync(attempt, studentId);
+
+            if (!rewardResult.Success)
+            {
+                // If badge evaluation or XP fails, roll the whole thing back
+                await transaction.RollbackAsync();
+
+                return ServiceResult<QuizAttemptDto>.Failure(
+                    rewardResult.ErrorMessage ?? "Failed to process attempt rewards.",
+                    ServiceError.InternalError);
+            }
+
+            await transaction.CommitAsync();
 
             return ServiceResult<QuizAttemptDto>.Ok(new QuizAttemptDto(
                 attempt.Id, attempt.QuizId, attempt.EnrollmentId, attempt.StartTime,
-                attempt.EndTime, attempt.Status, attempt.TotalScore, attempt.Mark, EarnedBadges: newBadges.Data));
+                attempt.EndTime, attempt.Status, attempt.TotalScore, attempt.Mark,
+                EarnedBadges: rewardResult.Data));
         }
 
         public async Task<ServiceResult<QuizAttemptDetailDto>> GetAttemptDetailsAsync(long attemptId, long currentUserId, string currentUserRole)
@@ -352,29 +397,55 @@ namespace Sqeez.Api.Services
 
         public async Task<ServiceResult<QuestionResponseDto>> GradeFreeTextResponseAsync(long responseId, long teacherId, GradeQuestionResponseDto dto)
         {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
             var response = await _context.QuizQuestionResponses
                 .Include(r => r.Options)
                 .Include(r => r.QuizAttempt)
                     .ThenInclude(a => a.Quiz)
                         .ThenInclude(q => q.Subject)
                 .Include(r => r.QuizAttempt)
-                    .ThenInclude(a => a.Responses) // Need all responses to recalculate total score
+                    .ThenInclude(a => a.Responses)
+                .Include(r => r.QuizAttempt)
+                    .ThenInclude(a => a.Enrollment)
                 .FirstOrDefaultAsync(r => r.Id == responseId);
 
             if (response == null) return ServiceResult<QuestionResponseDto>.Failure("Response not found.", ServiceError.NotFound);
 
-            // Security Check
             if (response.QuizAttempt.Quiz.Subject.TeacherId != teacherId)
                 return ServiceResult<QuestionResponseDto>.Failure("You can only grade responses for your own subjects.", ServiceError.Forbidden);
 
-            // Update the manual grade and like status
             response.Score = dto.Score;
             response.IsLiked = dto.IsLiked;
 
-            // Recalculate the overall QuizAttempt TotalScore since the teacher changed a grade!
-            response.QuizAttempt.TotalScore = response.QuizAttempt.Responses.Sum(r => r.Score ?? 0);
+            var attempt = response.QuizAttempt;
+            attempt.TotalScore = attempt.Responses.Sum(r => r.Score ?? 0);
 
-            await _context.SaveChangesAsync();
+            // Check if there are any remaining ungraded questions
+            bool isFullyGraded = !attempt.Responses.Any(r => r.Score == null);
+
+            if (isFullyGraded && attempt.Status == AttemptStatus.PendingCorrection)
+            {
+                attempt.Status = AttemptStatus.Completed;
+
+                // Save the completed status FIRST before evaluating rewards
+                await _context.SaveChangesAsync();
+
+                // Call our extracted reward logic
+                var rewardResult = await ProcessCompletedAttemptRewardsAsync(attempt, attempt.Enrollment.StudentId);
+
+                if (!rewardResult.Success)
+                {
+                    await transaction.RollbackAsync();
+                    return ServiceResult<QuestionResponseDto>.Failure(rewardResult?.ErrorMessage ?? "Internal error", ServiceError.InternalError);
+                }
+            }
+            else
+            {
+                await _context.SaveChangesAsync();
+            }
+
+            await transaction.CommitAsync();
 
             return ServiceResult<QuestionResponseDto>.Ok(new QuestionResponseDto(
                 response.Id, response.QuizQuestionId, response.ResponseTimeMs,

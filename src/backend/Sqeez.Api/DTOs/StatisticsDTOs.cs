@@ -23,9 +23,11 @@
     {
         public long Id { get; set; }
         public string? QuestionText { get; set; }
+        public bool IsFreeText { get; set; }
         public int TotalAnswers { get; set; }
-        public List<OptionStatDto> Options { get; set; } = new();
         public double AverageScore { get; set; }
         public double AverageResponseTimeSeconds { get; set; }
+        public List<OptionStatDto> Options { get; set; } = new();
+        public List<string> SubmittedFreeTextAnswers { get; set; } = new();
     }
 }

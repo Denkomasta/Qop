@@ -27,6 +27,7 @@ import { useGetApiQuizzesQuizId } from '@/api/generated/endpoints/quizzes/quizze
 import { useGetApiSubjectsId } from '@/api/generated/endpoints/subjects/subjects'
 import { useAuthStore } from '@/store/useAuthStore'
 import { formatDateTime } from '@/lib/dateHelpers'
+import { useQuizStore } from '@/store/useQuizStore'
 
 export const Route = createFileRoute('/app/_authenticated/quizzes/$quizId/')({
   component: QuizDetailsPage,
@@ -37,6 +38,7 @@ function QuizDetailsPage() {
   const { quizId } = Route.useParams()
   const navigate = useNavigate()
   const { user } = useAuthStore()
+  const { actions } = useQuizStore()
 
   const { data: quiz, isLoading } = useGetApiQuizzesQuizId(
     Number(quizId),
@@ -169,7 +171,7 @@ function QuizDetailsPage() {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-sm font-medium text-primary">
                     <BookOpen className="size-4" />
-                    {t('subject.relatedSubject', 'Related Subject')}
+                    {t('subject.relatedSubject')}
                   </div>
                   <h3 className="text-lg font-semibold text-foreground">
                     {subject.name}
@@ -189,7 +191,7 @@ function QuizDetailsPage() {
                     to="/app/subjects/$subjectId"
                     params={{ subjectId: subject.id.toString() }}
                   >
-                    {t('subject.viewSubject', 'View Subject')}
+                    {t('subject.viewSubject')}
                   </Link>
                 </Button>
               </CardContent>
@@ -267,6 +269,9 @@ function QuizDetailsPage() {
                       to="/app/quizzes/$quizId/play"
                       params={{ quizId: quizId.toString() }}
                       search={{ attemptId: undefined }}
+                      onClick={() => {
+                        actions.resetQuiz()
+                      }}
                     >
                       <PlayCircle className="mr-2 size-5" />
                       {hasAttempts ? t('quiz.retakeQuiz') : t('quiz.startQuiz')}

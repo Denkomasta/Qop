@@ -17,7 +17,7 @@ interface ActiveQuestionScreenProps {
   hasSelection: boolean
   onSelectOption: (optId: number | string) => void
   onChangeFreeText: (text: string) => void
-  onSubmit: () => Promise<void>
+  onSubmit: (isTimeout: boolean) => Promise<void>
   renderMediaAsset?: (
     assetId: number | string,
     isOption?: boolean,
@@ -47,6 +47,8 @@ export function ActiveQuestionScreen({
     )
   }
 
+  const timeLimit = Number(question.timeLimit || 0)
+
   return (
     <div className="flex min-h-[calc(100vh-4rem)] w-full animate-in flex-col justify-center p-4 duration-500 fade-in md:p-6 md:px-12 lg:p-8 lg:px-16">
       <div className="mb-6 space-y-2">
@@ -57,7 +59,11 @@ export function ActiveQuestionScreen({
               total: totalQuestions,
             })}
           </span>
-          <LiveTimer key={question.id} />
+          <LiveTimer
+            key={question.id}
+            timeLimit={timeLimit}
+            onTimeUp={() => onSubmit(true)}
+          />
         </div>
 
         <div className="h-2.5 w-full overflow-hidden rounded-full bg-secondary">
@@ -82,8 +88,8 @@ export function ActiveQuestionScreen({
       <div className="mt-8 flex justify-end">
         <AsyncButton
           size="lg"
-          onClick={onSubmit}
-          disabled={!hasSelection}
+          onClick={() => onSubmit(false)}
+          disabled={!hasSelection && timeLimit === 0}
           className="w-full shadow-md sm:w-auto"
           loadingText={t('common.submitting')}
         >

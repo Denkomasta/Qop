@@ -106,7 +106,7 @@ export function QuestionRecapScreen({
 
                 <div className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border-4 border-blue-700 bg-blue-500 p-6 text-center text-white">
                   <span className="shrink-0 text-sm font-bold tracking-widest text-blue-100 uppercase">
-                    {t('quiz.expectedAnswer', 'Expected Answer')}
+                    {t('quiz.expectedAnswer')}
                   </span>
                   <div className="max-h-48 flex-1 overflow-y-auto pr-2">
                     <span className="w-full text-2xl font-black break-words md:text-3xl">

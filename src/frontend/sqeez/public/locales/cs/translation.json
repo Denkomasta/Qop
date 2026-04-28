@@ -755,7 +755,10 @@
     "freeText": "Volný text",
     "submittedAnswers": "Odevzdané odpovědi",
     "noAnswersYet": "Zatím nebyly odevzdány žádné odpovědi.",
-    "pendingCorrection": "Čeká na opravu"
+    "pendingCorrection": "Čeká na opravu",
+    "partialScoreTitle": "Průběžné skóre",
+    "pendingReviewMessage": "Vaše konečné skóre zatím není k dispozici. Některé volné odpovědi vyžadují manuální opravu učitelem.",
+    "currentScore": "Průběžné skóre"
   },
   "editor": {
     "questionsTitle": "Otázky",

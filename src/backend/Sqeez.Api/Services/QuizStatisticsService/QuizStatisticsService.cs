@@ -25,10 +25,7 @@ namespace Sqeez.Api.Services
             if (quiz.Subject.TeacherId != teacherId)
                 return ServiceResult<QuizSummaryStatDto>.Failure("You do not have permission to view statistics for this quiz.", ServiceError.Forbidden);
 
-            var attemptsQuery = _context.QuizAttempts
-                .AsNoTracking()
-                .Where(a => a.QuizId == quizId);
-
+            var attemptsQuery = _context.QuizAttempts.Where(a => a.QuizId == quizId);
             var totalAttempts = await attemptsQuery.CountAsync();
 
             if (totalAttempts == 0)
@@ -36,19 +33,27 @@ namespace Sqeez.Api.Services
                 return ServiceResult<QuizSummaryStatDto>.Ok(new QuizSummaryStatDto { QuizId = quizId });
             }
 
-            var completedAttempts = await attemptsQuery
+            var completedData = await attemptsQuery
                 .Where(a => a.Status == AttemptStatus.Completed)
+                .Select(a => new
+                {
+                    a.TotalScore,
+                    a.StartTime,
+                    a.EndTime
+                })
                 .ToListAsync();
 
             var summary = new QuizSummaryStatDto
             {
                 QuizId = quizId,
                 TotalAttempts = totalAttempts,
-                CompletedAttempts = completedAttempts.Count,
-                AverageScore = completedAttempts.Any() ? completedAttempts.Average(a => a.TotalScore) : 0,
-                HighestScore = completedAttempts.Any() ? completedAttempts.Max(a => a.TotalScore) : 0,
-                LowestScore = completedAttempts.Any() ? completedAttempts.Min(a => a.TotalScore) : 0,
-                AverageCompletionTimeMinutes = completedAttempts
+                CompletedAttempts = completedData.Count,
+
+                AverageScore = completedData.Any() ? completedData.Average(a => a.TotalScore) : 0,
+                HighestScore = completedData.Any() ? completedData.Max(a => a.TotalScore) : 0,
+                LowestScore = completedData.Any() ? completedData.Min(a => a.TotalScore) : 0,
+
+                AverageCompletionTimeMinutes = completedData
                     .Where(a => a.StartTime.HasValue && a.EndTime.HasValue)
                     .Select(a => (a.EndTime!.Value - a.StartTime!.Value).TotalMinutes)
                     .DefaultIfEmpty(0)
@@ -91,11 +96,11 @@ namespace Sqeez.Api.Services
 
                     AverageScore = _context.QuizQuestionResponses
                         .Where(r => r.QuizQuestionId == q.Id && r.QuizAttempt.Status == AttemptStatus.Completed)
-                        .Average(r => r.Score ?? 0),
+                        .Average(r => (double?)r.Score) ?? 0,
 
-                    AverageResponseTimeSeconds = _context.QuizQuestionResponses
+                    AverageResponseTimeSeconds = (_context.QuizQuestionResponses
                         .Where(r => r.QuizQuestionId == q.Id && r.QuizAttempt.Status == AttemptStatus.Completed)
-                        .Average(r => r.ResponseTimeMs) / 1000.0
+                        .Average(r => (double?)r.ResponseTimeMs) ?? 0) / 1000.0
                 })
                 .ToListAsync();
 

@@ -751,7 +751,11 @@
     "avgTime": "prům. čas",
     "highLowScore": "Nejvyšší / Nejnižší",
     "avgCompletionTime": "Průměrný čas",
-    "points": "b."
+    "points": "b.",
+    "freeText": "Volný text",
+    "submittedAnswers": "Odevzdané odpovědi",
+    "noAnswersYet": "Zatím nebyly odevzdány žádné odpovědi.",
+    "pendingCorrection": "Čeká na opravu"
   },
   "editor": {
     "questionsTitle": "Otázky",

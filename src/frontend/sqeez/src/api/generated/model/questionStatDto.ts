@@ -11,11 +11,13 @@ export interface QuestionStatDto {
   id?: number | string
   /** @nullable */
   questionText?: string | null
+  isFreeText?: boolean
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   totalAnswers?: number | string
-  options?: OptionStatDto[]
   /** @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$ */
   averageScore?: number | string
   /** @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$ */
   averageResponseTimeSeconds?: number | string
+  options?: OptionStatDto[]
+  submittedFreeTextAnswers?: string[]
 }

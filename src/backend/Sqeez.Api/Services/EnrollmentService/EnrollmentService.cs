@@ -149,6 +149,13 @@ namespace Sqeez.Api.Services
                     "Cannot enroll students because this subject is closed.",
                     ServiceError.Forbidden);
 
+            if (dto.StudentIds.Contains(subject.TeacherId ?? 0))
+            {
+                return ServiceResult<BulkEnrollmentResultDto>.Failure(
+                    "A teacher cannot be enrolled as a student in their own subject.",
+                    ServiceError.ValidationFailed);
+            }
+
             var existingStudentIds = await _context.Enrollments
                 .Where(e => e.SubjectId == subjectId && dto.StudentIds.Contains(e.StudentId))
                 .Select(e => e.StudentId)

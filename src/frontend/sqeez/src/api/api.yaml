@@ -2925,6 +2925,7 @@ components:
         - Created
         - Started
         - Completed
+        - PendingCorrection
         - Abandoned
     AvatarUploadResponseDto:
       required:
@@ -4515,16 +4516,14 @@ components:
           type:
             - "null"
             - string
+        isFreeText:
+          type: boolean
         totalAnswers:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
           format: int32
-        options:
-          type: array
-          items:
-            $ref: "#/components/schemas/OptionStatDto"
         averageScore:
           pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
           type:
@@ -4537,6 +4536,14 @@ components:
             - number
             - string
           format: double
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/OptionStatDto"
+        submittedFreeTextAnswers:
+          type: array
+          items:
+            type: string
     QuizAttemptDetailDto:
       required:
         - id

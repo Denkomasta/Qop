@@ -1,5 +1,13 @@
 import { useTranslation } from 'react-i18next'
-import { CheckCircle2, XCircle, Clock, Target, Users } from 'lucide-react'
+import {
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Target,
+  Users,
+  MessageSquare,
+  Lightbulb,
+} from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import type { QuestionStatDto } from '@/api/generated/model'
 
@@ -33,6 +41,10 @@ export function QuestionAnalysis({
             question.averageResponseTimeSeconds || 0,
           )
 
+          const expectedOption =
+            (question.options || []).find((o) => o.isCorrect) ||
+            (question.options || [])[0]
+
           return (
             <Card key={question.id} className="border-border shadow-sm">
               <CardHeader className="pb-3">
@@ -63,60 +75,107 @@ export function QuestionAnalysis({
                       {avgTimeSeconds.toFixed(1)}s {t('quiz.avgTime')}
                     </span>
                   </div>
+                  {question.isFreeText && (
+                    <div className="flex items-center gap-1.5 rounded-md bg-muted/50 px-2 py-1">
+                      <MessageSquare className="h-3.5 w-3.5" />
+                      <span>{t('quiz.freeText')}</span>
+                    </div>
+                  )}
                 </div>
 
-                <div className="flex flex-col gap-4">
-                  {(question.options || []).map((option) => {
-                    const pickCount = Number(option.pickCount || 0)
-
-                    const percentage =
-                      totalAnswers > 0
-                        ? Math.round((pickCount / totalAnswers) * 100)
-                        : 0
-
-                    return (
-                      <div key={option.id} className="flex flex-col gap-1.5">
-                        <div className="flex items-start justify-between gap-4 text-sm">
-                          <div className="flex flex-1 items-start gap-2">
-                            {option.isCorrect ? (
-                              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                            ) : (
-                              <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/30" />
-                            )}
-                            <span
-                              className={
-                                option.isCorrect
-                                  ? 'font-medium text-foreground'
-                                  : 'text-muted-foreground'
-                              }
-                            >
-                              {option.text}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2 text-right">
-                            <span className="font-medium text-foreground">
-                              {percentage}%
-                            </span>
-                            <span className="w-12 text-xs text-muted-foreground">
-                              ({pickCount})
-                            </span>
-                          </div>
+                {question.isFreeText ? (
+                  <div className="flex flex-col gap-5">
+                    {expectedOption && (
+                      <div className="flex flex-col gap-1.5 rounded-md border border-emerald-500/20 bg-emerald-500/10 p-3">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                          <Lightbulb className="h-3.5 w-3.5" />
+                          {t('quiz.expectedAnswer')}
                         </div>
-
-                        <div className="ml-6 h-2 overflow-hidden rounded-full bg-muted">
-                          <div
-                            className={`h-full rounded-full transition-all duration-1000 ease-out ${
-                              option.isCorrect
-                                ? 'bg-emerald-500'
-                                : 'bg-primary/40'
-                            }`}
-                            style={{ width: `${percentage}%` }}
-                          />
-                        </div>
+                        <span className="text-sm font-medium text-foreground">
+                          {expectedOption.text}
+                        </span>
                       </div>
-                    )
-                  })}
-                </div>
+                    )}
+
+                    <div className="flex flex-col gap-3">
+                      <div className="text-sm font-medium text-muted-foreground">
+                        {t('quiz.submittedAnswers')}
+                      </div>
+                      {question.submittedFreeTextAnswers &&
+                      question.submittedFreeTextAnswers.length > 0 ? (
+                        <div className="flex max-h-48 flex-col gap-2 overflow-y-auto rounded-md border border-border p-2">
+                          {question.submittedFreeTextAnswers.map(
+                            (answer, i) => (
+                              <div
+                                key={i}
+                                className="rounded-sm bg-muted/40 px-3 py-2 text-sm text-foreground"
+                              >
+                                {answer}
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground italic">
+                          {t('quiz.noAnswersYet')}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-4">
+                    {(question.options || []).map((option) => {
+                      const pickCount = Number(option.pickCount || 0)
+
+                      const percentage =
+                        totalAnswers > 0
+                          ? Math.round((pickCount / totalAnswers) * 100)
+                          : 0
+
+                      return (
+                        <div key={option.id} className="flex flex-col gap-1.5">
+                          <div className="flex items-start justify-between gap-4 text-sm">
+                            <div className="flex flex-1 items-start gap-2">
+                              {option.isCorrect ? (
+                                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                              ) : (
+                                <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/30" />
+                              )}
+                              <span
+                                className={
+                                  option.isCorrect
+                                    ? 'font-medium text-foreground'
+                                    : 'text-muted-foreground'
+                                }
+                              >
+                                {option.text}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-right">
+                              <span className="font-medium text-foreground">
+                                {percentage}%
+                              </span>
+                              <span className="w-12 text-xs text-muted-foreground">
+                                ({pickCount})
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="ml-6 h-2 overflow-hidden rounded-full bg-muted">
+                            <div
+                              className={`h-full rounded-full transition-all duration-1000 ease-out ${
+                                option.isCorrect
+                                  ? 'bg-emerald-500'
+                                  : 'bg-primary/40'
+                              }`}
+                              style={{ width: `${percentage}%` }}
+                            />
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
               </CardContent>
             </Card>
           )

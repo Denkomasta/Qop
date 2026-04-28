@@ -5,4 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type AttemptStatus = 'Created' | 'Started' | 'Completed' | 'Abandoned'
+export type AttemptStatus =
+  | 'Created'
+  | 'Started'
+  | 'Completed'
+  | 'PendingCorrection'
+  | 'Abandoned'

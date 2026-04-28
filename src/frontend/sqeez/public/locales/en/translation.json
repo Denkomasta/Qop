@@ -751,7 +751,11 @@
     "avgTime": "avg. time",
     "highLowScore": "High / Low Score",
     "avgCompletionTime": "Avg. Time",
-    "points": "pts"
+    "points": "pts",
+    "freeText": "Free Text",
+    "submittedAnswers": "Submitted Answers",
+    "noAnswersYet": "No answers submitted yet.",
+    "pendingCorrection": "Pending Correction"
   },
   "editor": {
     "questionsTitle": "Questions",

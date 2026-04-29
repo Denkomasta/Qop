@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Sqeez.Api.Data;
@@ -32,6 +33,7 @@ namespace Sqeez.Api.Tests.Services
         {
             var options = new DbContextOptionsBuilder<SqeezDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
             var context = new SqeezDbContext(options);
 

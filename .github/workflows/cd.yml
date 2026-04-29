@@ -83,13 +83,12 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           envs: GITHUB_TOKEN,GITHUB_ACTOR,REPO_OWNER
           script: |
-            # Assuming this is where both your docker-compose.yml AND your .env file live
             cd /root/Sqeez/src
             
             # Pull the updated docker-compose.yml
             git pull origin main
             
-            # --- NEW: Extract database credentials dynamically from your .env file ---
+            # Extract database credentials dynamically from your .env file ---
             export $(grep -v '^#' .env | xargs -d '\n')
             
             # Convert owner to lowercase for the compose file
@@ -105,7 +104,10 @@ jobs:
             docker compose up -d sqeez-postgres
             
             # 2. Wait a few seconds to ensure the healthcheck passes before migrating
-            sleep 5
+            until docker exec sqeez_db pg_isready -U "$POSTGRES_USER"; do
+              echo "Waiting for postgres..."
+              sleep 2
+            done
             
             # 3. Execute the migration script against the sqeez_db container
             cat ./migrate.sql | docker exec -i sqeez_db psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"

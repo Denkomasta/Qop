@@ -100,7 +100,7 @@ namespace Sqeez.Api.Controllers
             var role = GetUserRoleFromClaims();
             var claimedId = GetUserIdFromClaims();
 
-            if (role == "Admin" || role == "Teacher" || (long.TryParse(claimedId, out long userId) && dto.StudentIds.Count == 1 && userId == dto.StudentIds[0]))
+            if (role == "Admin" || (long.TryParse(claimedId, out long userId) && dto.StudentIds.Count == 1 && userId == dto.StudentIds[0]))
             {
                 var result = await _enrollmentService.EnrollStudentsInSubjectAsync(subjectId, dto);
                 return HandleServiceResult(result);

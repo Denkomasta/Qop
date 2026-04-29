@@ -22,6 +22,7 @@
 
         public long? TeacherId { get; set; }
         public long? SchoolClassId { get; set; }
+        public long? StudentId { get; set; }
 
         public bool? IsActive { get; set; }
         public DateTime? StartingAfter { get; set; }

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from '@tanstack/react-router'
-import { BookCopy, ArrowLeft, Search, UserPlus } from 'lucide-react'
+import { BookCopy, ArrowLeft, Search } from 'lucide-react'
 
 import {
   getGetApiSubjectsIdQueryKey,
@@ -13,7 +13,6 @@ import {
   useGetApiUsers,
 } from '@/api/generated/endpoints/user/user'
 
-import { Button } from '@/components/ui/Button'
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { Pagination } from '@/components/ui/Pagination'
 import { Badge } from '@/components/ui/Badge/Badge'

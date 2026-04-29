@@ -39,23 +39,43 @@ namespace Sqeez.Api.Tests.Services
             _service = new LocalFileStorageService(_mockEnv.Object, _mockLogger.Object, _mockConfigService.Object);
         }
 
-        private IFormFile CreateMockFormFile(string content, string fileName)
+        private IFormFile CreateMockFormFile(string fileName)
         {
-            var bytes = Encoding.UTF8.GetBytes(content);
-            var stream = new MemoryStream(bytes);
+            byte[] fileBytes;
+            var extension = Path.GetExtension(fileName).ToLowerInvariant();
+
+            if (extension == ".jpg" || extension == ".jpeg")
+            {
+                fileBytes = new byte[] { 0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, 0x00, 0x01 };
+            }
+            else if (extension == ".png")
+            {
+                fileBytes = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+            }
+            else if (extension == ".pdf")
+            {
+                fileBytes = Encoding.UTF8.GetBytes("%PDF-1.4\n");
+            }
+            else
+            {
+                fileBytes = Encoding.UTF8.GetBytes("Generic fallback content");
+            }
+
+            var stream = new MemoryStream(fileBytes);
 
             var file = new FormFile(stream, 0, stream.Length, "file", fileName)
             {
                 Headers = new HeaderDictionary(),
-                ContentType = "text/plain"
+                ContentType = "application/octet-stream"
             };
+
             return file;
         }
 
         [Fact]
         public async Task UploadFileAsync_WhenSecureFile_SavesToSecureStorageAndReturnsSecureUrl()
         {
-            var mockFile = CreateMockFormFile("This is a test file.", "test-image.jpg");
+            var mockFile = CreateMockFormFile("test-image.jpg");
 
             var response = await _service.UploadFileAsync(mockFile, "test-media", isPublic: false);
 
@@ -75,7 +95,7 @@ namespace Sqeez.Api.Tests.Services
         [Fact]
         public async Task UploadFileAsync_WhenPublicFile_SavesToWwwRootAndReturnsPublicUrl()
         {
-            var mockFile = CreateMockFormFile("This is an avatar.", "avatar.jpg");
+            var mockFile = CreateMockFormFile("avatar.jpg");
 
             var response = await _service.UploadFileAsync(mockFile, "avatars", isPublic: true);
 
@@ -108,7 +128,7 @@ namespace Sqeez.Api.Tests.Services
         [Fact]
         public async Task DeleteFileAsync_WhenSecureFileExists_DeletesFileAndReturnsTrue()
         {
-            var mockFile = CreateMockFormFile("To be deleted", "delete-me.jpg");
+            var mockFile = CreateMockFormFile("delete-me.jpg");
             var response = await _service.UploadFileAsync(mockFile, "temp", isPublic: false);
             var fileUrl = response.Data;
 
@@ -140,7 +160,7 @@ namespace Sqeez.Api.Tests.Services
         [Fact]
         public async Task GetPhysicalFilePathAsync_WhenValidUrl_ReturnsCorrectlyRoutedPath()
         {
-            var mockFile = CreateMockFormFile("Test Content", "test.jpg");
+            var mockFile = CreateMockFormFile("test.jpg");
             var uploadResponse = await _service.UploadFileAsync(mockFile, "test", isPublic: false);
             var fileUrl = uploadResponse.Data!;
 

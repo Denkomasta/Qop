@@ -170,14 +170,6 @@ export function SubjectDetailsPage({
             </span>
           </div>
         }
-        headerActions={
-          isAdmin && (
-            <Button variant="outline" className="mt-8 gap-2 shadow-sm">
-              <UserPlus className="h-4 w-4" />
-              {t('subject.enrollStudent')}
-            </Button>
-          )
-        }
         headerControls={ControlsNode}
       >
         <div

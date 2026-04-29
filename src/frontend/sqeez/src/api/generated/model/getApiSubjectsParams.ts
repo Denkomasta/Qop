@@ -16,6 +16,10 @@ export type GetApiSubjectsParams = {
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   SchoolClassId?: number | string
+  /**
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
+  StudentId?: number | string
   IsActive?: boolean
   StartingAfter?: string
   IsDescending?: boolean

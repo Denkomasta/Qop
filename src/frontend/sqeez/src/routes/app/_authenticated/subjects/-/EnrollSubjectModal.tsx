@@ -37,6 +37,7 @@ export function EnrollSubjectModal({
   } = useGetApiSubjectsInfinite(
     {
       IsActive: isActive ? isActive : undefined,
+      StudentId: currentUser?.id ? currentUser.id : undefined,
       ...(searchTerm ? { SearchTerm: searchTerm } : {}),
     },
     {

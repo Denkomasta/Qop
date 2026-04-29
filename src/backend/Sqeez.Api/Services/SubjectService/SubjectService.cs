@@ -45,22 +45,27 @@ namespace Sqeez.Api.Services.SubjectService
 
                 if (filter.IsActive.HasValue)
                 {
-                    var now = DateTime.UtcNow;
-
                     if (filter.IsActive.Value)
                     {
-                        // ACTIVE: Started, and hasn't ended.
                         query = query.WhereIsActive();
                     }
                     else
                     {
-                        // INACTIVE: Hasn't started yet, or already ended.
                         query = query.WhereIsInactive();
                     }
                 }
 
                 if (filter.TeacherId.HasValue)
                     query = query.Where(s => s.TeacherId == filter.TeacherId.Value);
+
+                if (filter.StudentId.HasValue)
+                {
+                    // Filter OUT subjects where the user is either the teacher OR has an active enrollment
+                    query = query.Where(s =>
+                        s.TeacherId != filter.StudentId.Value &&
+                        !s.Enrollments.Any(e => e.StudentId == filter.StudentId.Value && e.ArchivedAt == null)
+                    );
+                }
 
                 if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
                 {

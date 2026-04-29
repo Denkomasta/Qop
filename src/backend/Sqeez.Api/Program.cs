@@ -141,22 +141,18 @@ if (args.Length > 0 && args[0].ToLower() == "seed")
             var context = services.GetRequiredService<SqeezDbContext>();
             var config = services.GetRequiredService<IConfiguration>();
 
-            Console.WriteLine("Applying migrations...");
-            await context.Database.MigrateAsync();
-
-            Console.WriteLine("Seeding database...");
+            Console.WriteLine("Running explicitly requested DB Seed...");
             await DatabaseSeeder.SeedAsync(context, config);
-
-            Console.WriteLine("Database migration and seeding complete!");
+            Console.WriteLine("Database seeding complete!");
         }
         catch (Exception ex)
         {
             var logger = services.GetRequiredService<ILogger<Program>>();
-            logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+            logger.LogError(ex, "An error occurred while seeding the database.");
+            Environment.Exit(1);
         }
     }
-
-    return;
+    return; // Exit after seeding
 }
 // ---------------------------------
 

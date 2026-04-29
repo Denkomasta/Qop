@@ -8,7 +8,6 @@ using Sqeez.Api.Models.Academics;
 using Sqeez.Api.Models.QuizSystem;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services;
-using Xunit;
 
 namespace Sqeez.Api.Tests.Services
 {
@@ -31,12 +30,37 @@ namespace Sqeez.Api.Tests.Services
             return new EnrollmentService(context, mockLogger.Object);
         }
 
+        // --- Helpers for Domain State ---
+        private Subject CreateActiveSubject(long teacherId)
+        {
+            return new Subject
+            {
+                Name = "Active Subject",
+                TeacherId = teacherId,
+                StartDate = DateTime.UtcNow.AddDays(-1),
+                EndDate = DateTime.UtcNow.AddDays(30) // Future end date
+            };
+        }
+
+        private Subject CreateEndedSubject(long teacherId)
+        {
+            return new Subject
+            {
+                Name = "Ended Subject",
+                TeacherId = teacherId,
+                StartDate = DateTime.UtcNow.AddDays(-30),
+                EndDate = DateTime.UtcNow.AddDays(-1) // Past end date
+            };
+        }
+
+        // --- Read Tests ---
+
         [Fact]
         public async Task GetEnrollmentByIdAsync_WhenExists_ReturnsEnrollmentDto()
         {
             var context = await GetInMemoryDbContext();
             var student = new Student { Username = "TestStudent" };
-            var subject = new Subject { Name = "TestSubject" };
+            var subject = CreateActiveSubject(1);
             var enrollment = new Enrollment { Student = student, Subject = subject, EnrolledAt = DateTime.UtcNow, Mark = 5 };
 
             context.Enrollments.Add(enrollment);
@@ -46,7 +70,7 @@ namespace Sqeez.Api.Tests.Services
 
             var result = await service.GetEnrollmentByIdAsync(enrollment.Id);
 
-            Assert.Null(result.ErrorMessage);
+            Assert.True(result.Success);
             Assert.NotNull(result.Data);
             Assert.Equal(5, result.Data.Mark);
             Assert.Equal(student.Id, result.Data.StudentId);
@@ -57,7 +81,7 @@ namespace Sqeez.Api.Tests.Services
         {
             var context = await GetInMemoryDbContext();
             var student = new Student { Username = "TestStudent" };
-            var subject = new Subject { Name = "TestSubject" };
+            var subject = CreateActiveSubject(1);
 
             context.Enrollments.AddRange(
                 new Enrollment { Student = student, Subject = subject, EnrolledAt = DateTime.UtcNow, ArchivedAt = null }, // Active
@@ -68,34 +92,44 @@ namespace Sqeez.Api.Tests.Services
             var service = CreateService(context);
 
             // Test Active Only
-            var activeFilter = new EnrollmentFilterDto { IsActive = true };
+            var activeFilter = new EnrollmentFilterDto { IsActive = true, PageNumber = 1, PageSize = 10 };
             var activeResult = await service.GetAllEnrollmentsAsync(activeFilter);
 
+            Assert.True(activeResult.Success);
             Assert.Equal(1, activeResult.Data!.TotalCount);
             Assert.Null(activeResult.Data.Data.First().ArchivedAt);
 
             // Test Inactive Only
-            var inactiveFilter = new EnrollmentFilterDto { IsActive = false };
+            var inactiveFilter = new EnrollmentFilterDto { IsActive = false, PageNumber = 1, PageSize = 10 };
             var inactiveResult = await service.GetAllEnrollmentsAsync(inactiveFilter);
 
+            Assert.True(inactiveResult.Success);
             Assert.Equal(1, inactiveResult.Data!.TotalCount);
             Assert.NotNull(inactiveResult.Data.Data.First().ArchivedAt);
         }
+
+        // --- Patch (Grading) Tests ---
 
         [Fact]
         public async Task PatchEnrollmentAsync_WhenSettingValidMark_UpdatesMark()
         {
             var context = await GetInMemoryDbContext();
-            var enrollment = new Enrollment { Student = new Student(), Subject = new Subject(), EnrolledAt = DateTime.UtcNow };
+            long currentTeacherId = 1;
+
+            var student = new Student { Username = "Student" };
+            var subject = CreateActiveSubject(currentTeacherId);
+            var enrollment = new Enrollment { Student = student, Subject = subject, EnrolledAt = DateTime.UtcNow };
+
             context.Enrollments.Add(enrollment);
             await context.SaveChangesAsync();
 
             var service = CreateService(context);
             var patchDto = new PatchEnrollmentDto(Mark: 3);
 
-            var result = await service.PatchEnrollmentAsync(enrollment.Id, patchDto);
+            // Act - Need to pass the currentUserId!
+            var result = await service.PatchEnrollmentAsync(enrollment.Id, patchDto, currentTeacherId);
 
-            Assert.Null(result.ErrorMessage);
+            Assert.True(result.Success);
             Assert.Equal(3, result.Data!.Mark);
 
             var dbRecord = await context.Enrollments.FindAsync(enrollment.Id);
@@ -103,21 +137,48 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
-        public async Task PatchEnrollmentAsync_WhenRemovingMark_SetsMarkToNull()
+        public async Task PatchEnrollmentAsync_WhenUnauthorizedTeacher_ReturnsForbidden()
         {
             var context = await GetInMemoryDbContext();
-            var enrollment = new Enrollment { Student = new Student(), Subject = new Subject(), EnrolledAt = DateTime.UtcNow, Mark = 5 };
+            long currentTeacherId = 1;
+            long wrongTeacherId = 99; // Different teacher trying to grade
+
+            var student = new Student { Username = "Student" };
+            var subject = CreateActiveSubject(currentTeacherId); // Owned by teacher 1
+            var enrollment = new Enrollment { Student = student, Subject = subject };
+
             context.Enrollments.Add(enrollment);
             await context.SaveChangesAsync();
 
             var service = CreateService(context);
+            var patchDto = new PatchEnrollmentDto(Mark: 5);
 
-            // Simulate teacher clicking "Clear Grade"
+            // Act
+            var result = await service.PatchEnrollmentAsync(enrollment.Id, patchDto, wrongTeacherId);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task PatchEnrollmentAsync_WhenRemovingMark_SetsMarkToNull()
+        {
+            var context = await GetInMemoryDbContext();
+            long currentTeacherId = 1;
+
+            var subject = CreateActiveSubject(currentTeacherId);
+            var enrollment = new Enrollment { Student = new Student(), Subject = subject, Mark = 5 };
+
+            context.Enrollments.Add(enrollment);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
             var patchDto = new PatchEnrollmentDto(Mark: null, RemoveMark: true);
 
-            var result = await service.PatchEnrollmentAsync(enrollment.Id, patchDto);
+            // Act
+            var result = await service.PatchEnrollmentAsync(enrollment.Id, patchDto, currentTeacherId);
 
-            Assert.Null(result.ErrorMessage);
+            Assert.True(result.Success);
             Assert.Null(result.Data!.Mark);
         }
 
@@ -125,17 +186,25 @@ namespace Sqeez.Api.Tests.Services
         public async Task PatchEnrollmentAsync_WhenMarkIsInvalid_ReturnsValidationFailed()
         {
             var context = await GetInMemoryDbContext();
-            var enrollment = new Enrollment { Student = new Student(), Subject = new Subject() };
+            long currentTeacherId = 1;
+
+            var subject = CreateActiveSubject(currentTeacherId);
+            var enrollment = new Enrollment { Student = new Student(), Subject = subject };
+
             context.Enrollments.Add(enrollment);
             await context.SaveChangesAsync();
 
             var service = CreateService(context);
-            var patchDto = new PatchEnrollmentDto(Mark: 99); // Invalid mark
+            var patchDto = new PatchEnrollmentDto(Mark: 99); // Invalid mark, max is 5
 
-            var result = await service.PatchEnrollmentAsync(enrollment.Id, patchDto);
+            // Act
+            var result = await service.PatchEnrollmentAsync(enrollment.Id, patchDto, currentTeacherId);
 
+            Assert.False(result.Success);
             Assert.Equal(ServiceError.ValidationFailed, result.ErrorCode);
         }
+
+        // --- Delete Tests ---
 
         [Fact]
         public async Task DeleteEnrollmentAsync_WhenNoQuizAttempts_HardDeletes()
@@ -150,7 +219,6 @@ namespace Sqeez.Api.Tests.Services
             var result = await service.DeleteEnrollmentAsync(enrollment.Id);
 
             Assert.True(result.Success);
-
             var deletedRecord = await context.Enrollments.FindAsync(enrollment.Id);
             Assert.Null(deletedRecord); // Completely gone
         }
@@ -162,7 +230,7 @@ namespace Sqeez.Api.Tests.Services
             var enrollment = new Enrollment { Student = new Student(), Subject = new Subject() };
 
             // Add a mock quiz attempt so it triggers soft deletion
-            enrollment.QuizAttempts.Add(new QuizAttempt { TotalScore = 10 });
+            enrollment.QuizAttempts = new List<QuizAttempt> { new QuizAttempt { TotalScore = 10 } };
             context.Enrollments.Add(enrollment);
             await context.SaveChangesAsync();
 
@@ -171,17 +239,20 @@ namespace Sqeez.Api.Tests.Services
             var result = await service.DeleteEnrollmentAsync(enrollment.Id);
 
             Assert.True(result.Success);
-
             var archivedRecord = await context.Enrollments.FindAsync(enrollment.Id);
             Assert.NotNull(archivedRecord); // Still exists
             Assert.NotNull(archivedRecord.ArchivedAt); // But is archived
         }
 
+        // --- Bulk Enroll/Unenroll Tests ---
+
         [Fact]
         public async Task EnrollStudentsInSubjectAsync_WhenValid_EnrollsNewStudentsOnly()
         {
             var context = await GetInMemoryDbContext();
-            var subject = new Subject { Name = "Science" };
+            long teacherId = 99;
+
+            var subject = CreateActiveSubject(teacherId);
             var existingStudent = new Student { Username = "AlreadyHere" };
             var newStudent = new Student { Username = "NewGuy" };
 
@@ -198,6 +269,8 @@ namespace Sqeez.Api.Tests.Services
             var result = await service.EnrollStudentsInSubjectAsync(subject.Id, dto);
 
             Assert.True(result.Success);
+            Assert.Contains(newStudent.Id, result.Data!.NewlyEnrolledIds);
+            Assert.Contains(existingStudent.Id, result.Data.AlreadyEnrolledIds);
 
             // Should have 2 enrollments total now, didn't create a duplicate for existingStudent
             var totalEnrollments = await context.Enrollments.CountAsync(e => e.SubjectId == subject.Id);
@@ -205,15 +278,60 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
+        public async Task EnrollStudentsInSubjectAsync_WhenSubjectClosed_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            long teacherId = 1;
+
+            var subject = CreateEndedSubject(teacherId); // Subject is closed!
+            var newStudent = new Student { Username = "NewGuy" };
+
+            context.Subjects.Add(subject);
+            context.Students.Add(newStudent);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var dto = new AssignStudentsDto(new List<long> { newStudent.Id });
+
+            var result = await service.EnrollStudentsInSubjectAsync(subject.Id, dto);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task EnrollStudentsInSubjectAsync_WhenEnrollingTeacher_ReturnsValidationFailed()
+        {
+            var context = await GetInMemoryDbContext();
+            long teacherId = 1;
+
+            var subject = CreateActiveSubject(teacherId);
+            var teacherAsStudent = new Student { Id = teacherId, Username = "SneakyTeacher" };
+
+            context.Subjects.Add(subject);
+            context.Students.Add(teacherAsStudent);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var dto = new AssignStudentsDto(new List<long> { teacherId });
+
+            var result = await service.EnrollStudentsInSubjectAsync(subject.Id, dto);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.ValidationFailed, result.ErrorCode);
+            Assert.Contains("cannot be enrolled as a student", result.ErrorMessage);
+        }
+
+        [Fact]
         public async Task UnenrollStudentsFromSubjectAsync_WhenValid_ArchivesStudents()
         {
             var context = await GetInMemoryDbContext();
-            var subject = new Subject { Name = "History" };
+            var subject = CreateActiveSubject(1);
             var student = new Student { Username = "DropOut" };
             var enrollment = new Enrollment { Student = student, Subject = subject, EnrolledAt = DateTime.UtcNow };
 
-            // Give them a quiz attempt so they soft-delete
-            enrollment.QuizAttempts.Add(new QuizAttempt { TotalScore = 5 });
+            // Give them a quiz attempt so they soft-delete (archive)
+            enrollment.QuizAttempts = new List<QuizAttempt> { new QuizAttempt { TotalScore = 5 } };
 
             context.Subjects.Add(subject);
             context.Students.Add(student);

@@ -15,8 +15,7 @@ namespace Sqeez.Api.Controllers
             _schoolClassService = schoolClassService;
         }
 
-        // Maybe only authentication
-        [Authorize(Roles = "Teacher,Admin")]
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<PagedResponse<SchoolClassDto>>> GetAll([FromQuery] SchoolClassFilterDto filter)
         {

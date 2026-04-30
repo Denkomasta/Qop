@@ -15,7 +15,7 @@ interface ScrollableSelectListProps {
   loadingText?: string
   emptyText?: string
   maxHeight?: string
-  laodMoreText?: string
+  loadMoreText?: string
   hasMore?: boolean
   onLoadMore?: () => void
   isFetchingNextPage?: boolean
@@ -30,7 +30,7 @@ export function ScrollableSelectList({
   emptyText = 'No options found.',
   maxHeight = 'max-h-[240px]',
   hasMore = false,
-  laodMoreText,
+  loadMoreText,
   onLoadMore,
   isFetchingNextPage = false,
 }: ScrollableSelectListProps) {
@@ -91,7 +91,7 @@ export function ScrollableSelectList({
                 isLoading={isFetchingNextPage}
                 className="w-full text-xs"
               >
-                {laodMoreText ?? 'Load More'}
+                {loadMoreText ?? 'Load More'}
               </AsyncButton>
             </div>
           )}

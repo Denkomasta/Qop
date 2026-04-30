@@ -336,7 +336,8 @@
     "noDescription": "No description provided.",
     "enrolled": "enrolled",
     "active": "active",
-    "unknownUser": "Unknown User"
+    "unknownUser": "Unknown User",
+    "online": "Online"
   },
   "dashboard": {
     "administration": "Administration",
@@ -534,7 +535,11 @@
     "subtitle": "Top performing students by XP",
     "searchPlaceholder": "Search students...",
     "noStudentsFound": "No students found",
-    "tryDifferentSearch": "Try adjusting your search filters."
+    "tryDifferentSearch": "Try adjusting your search filters.",
+    "allRoles": "All roles",
+    "allClasses": "All classes",
+    "allSubjects": "All subjects",
+    "strict": "Strict"
   },
   "login": {
     "welcomeBack": "Welcome back!",

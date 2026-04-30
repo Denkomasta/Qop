@@ -538,8 +538,7 @@
     "tryDifferentSearch": "Try adjusting your search filters.",
     "allRoles": "All roles",
     "allClasses": "All classes",
-    "allSubjects": "All subjects",
-    "strict": "Strict"
+    "allSubjects": "All subjects"
   },
   "login": {
     "welcomeBack": "Welcome back!",

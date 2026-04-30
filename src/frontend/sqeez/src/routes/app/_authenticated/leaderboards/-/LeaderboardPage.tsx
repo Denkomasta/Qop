@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { Trophy, Medal, Wifi, Search, Shield, ChevronDown } from 'lucide-react'
+import { Trophy, Medal, Wifi, Search, ChevronDown } from 'lucide-react'
 import { SimpleAvatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge/Badge'
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
@@ -25,7 +25,6 @@ export function LeaderboardPage() {
   const pageSize = 10
 
   const [role, setRole] = useState<UserRole | ''>('Student')
-  const [strictRoleOnly, setStrictRoleOnly] = useState<boolean>(true)
   const [schoolClassId, setSchoolClassId] = useState<string | number>('')
   const [subjectId, setSubjectId] = useState<string | number>('')
   const [isOnlineOnly, setIsOnlineOnly] = useState<boolean>(false)
@@ -79,7 +78,7 @@ export function LeaderboardPage() {
       SortBy: 'XP',
       IsDescending: true,
       Role: role !== '' ? role : undefined,
-      StrictRoleOnly: strictRoleOnly,
+      StrictRoleOnly: role !== '',
       SchoolClassId: schoolClassId ? Number(schoolClassId) : undefined,
       SubjectId: subjectId ? Number(subjectId) : undefined,
       IsOnline: isOnlineOnly ? true : undefined,
@@ -219,32 +218,6 @@ export function LeaderboardPage() {
             </div>
           )}
         </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            setStrictRoleOnly(!strictRoleOnly)
-            setPageNumber(1)
-          }}
-          className={cn(
-            'inline-flex h-9 items-center justify-center gap-2 rounded-md border px-3 text-xs font-medium shadow-sm transition-colors focus-visible:outline-none',
-            strictRoleOnly
-              ? 'border-transparent bg-primary text-primary-foreground hover:bg-primary/90'
-              : 'border-input bg-background hover:bg-accent hover:text-accent-foreground',
-          )}
-        >
-          <Shield
-            className={cn(
-              'h-3.5 w-3.5',
-              strictRoleOnly
-                ? 'text-primary-foreground'
-                : 'text-muted-foreground',
-            )}
-          />
-          {t('leaderboard.strict')}
-        </button>
-
-        <div className="hidden h-5 w-px bg-border sm:block" />
 
         <div ref={classRef} className="relative">
           <button

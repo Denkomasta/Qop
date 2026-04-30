@@ -336,7 +336,8 @@
     "pageOf": "Strana {{current}} z {{total}}",
     "enrolled": "zapsáno",
     "active": "aktivní",
-    "unknownUser": "Neznámý uživatel"
+    "unknownUser": "Neznámý uživatel",
+    "online": "Online"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -534,7 +535,11 @@
     "subtitle": "Nejlepší studenti podle XP",
     "searchPlaceholder": "Hledat studenty...",
     "noStudentsFound": "Nebyli nalezeni žádní studenti",
-    "tryDifferentSearch": "Zkuste upravit filtry vyhledávání."
+    "tryDifferentSearch": "Zkuste upravit filtry vyhledávání.",
+    "allRoles": "Všechny role",
+    "allClasses": "Všechny třídy",
+    "allSubjects": "Všechny předměty",
+    "strict": "Striktní"
   },
   "login": {
     "welcomeBack": "Vítejte zpět!",

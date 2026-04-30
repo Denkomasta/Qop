@@ -68,11 +68,11 @@ export function PaginatedListView<T>({
           />
         )}
 
-        <div className="flex items-center gap-4">
-          {filtersNode && <div>{filtersNode}</div>}
+        <div className="flex w-full flex-1 items-center gap-4 sm:w-auto">
+          {filtersNode && <div className="flex-1">{filtersNode}</div>}
 
           {totalCount !== undefined && (
-            <div className="text-sm font-medium whitespace-nowrap text-muted-foreground">
+            <div className="shrink-0 text-sm font-medium whitespace-nowrap text-muted-foreground">
               {t('common.totalCount', {
                 count: totalCount,
                 defaultValue: `Total: ${totalCount}`,

@@ -1,4 +1,7 @@
-﻿namespace Sqeez.Api.DTOs
+using Sqeez.Api.Constants;
+using System.ComponentModel.DataAnnotations;
+
+namespace Sqeez.Api.DTOs
 {
     public record EnrollmentDto(
         long Id,
@@ -15,6 +18,7 @@
 
     public class EnrollmentFilterDto : PagedFilterDto
     {
+        [Range(ValidationConstants.MinMark, ValidationConstants.MaxMark)]
         public int? Mark { get; set; }
         public long? StudentId { get; set; }
         public long? SubjectId { get; set; }
@@ -24,10 +28,20 @@
 
     // Create handled by Task<ServiceResult<bool>> EnrollStudentsInSubjectAsync(long subjectId, AssignStudentsDto dto) in EnrollmentService
 
-    public record PatchEnrollmentDto(
-        int? Mark = null,
-        bool? RemoveMark = null
-    );
+    public record PatchEnrollmentDto
+    {
+        public PatchEnrollmentDto() { }
+
+        public PatchEnrollmentDto(int? Mark = null, bool? RemoveMark = null)
+        {
+            this.Mark = Mark;
+            this.RemoveMark = RemoveMark;
+        }
+
+        [Range(ValidationConstants.MinMark, ValidationConstants.MaxMark)]
+        public int? Mark { get; init; }
+        public bool? RemoveMark { get; init; }
+    }
 
     public record EnrollmentBasicDto
     {

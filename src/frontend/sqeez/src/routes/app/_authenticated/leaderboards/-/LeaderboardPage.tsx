@@ -102,7 +102,7 @@ export function LeaderboardPage() {
     fetchNextPage: fetchNextSubjects,
     hasNextPage: hasNextSubjects,
     isFetchingNextPage: isFetchingNextSubjects,
-  } = useGetApiSubjectsInfinite({ PageSize: 15 })
+  } = useGetApiSubjectsInfinite({ PageSize: pageSize })
 
   const subjectOptions = useMemo(() => {
     const defaultOption = {
@@ -129,7 +129,7 @@ export function LeaderboardPage() {
     fetchNextPage: fetchNextClasses,
     hasNextPage: hasNextClasses,
     isFetchingNextPage: isFetchingNextClasses,
-  } = useGetApiClassesInfinite({ PageSize: 15 })
+  } = useGetApiClassesInfinite({ PageSize: pageSize })
 
   const classOptions = useMemo(() => {
     const defaultOption = {

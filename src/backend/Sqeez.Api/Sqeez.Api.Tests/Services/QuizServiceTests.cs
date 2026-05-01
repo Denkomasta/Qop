@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Sqeez.Api.Data;
@@ -200,6 +200,57 @@ namespace Sqeez.Api.Tests.Services
 
             Assert.False(result.Success);
             Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task PatchQuizAsync_WhenValidRequest_UpdatesQuiz()
+        {
+            var context = await GetInMemoryDbContext();
+            long currentUserId = 1;
+
+            var subject = CreateActiveSubject(currentUserId);
+            var quiz = new Quiz { Title = "Old Title", Subject = subject, MaxRetries = 1 };
+            context.Subjects.Add(subject);
+            context.Quizzes.Add(quiz);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var dto = new PatchQuizDto(Title: "New Title", MaxRetries: 5);
+
+            var result = await service.PatchQuizAsync(quiz.Id, dto, currentUserId);
+
+            Assert.True(result.Success);
+            Assert.Equal("New Title", result.Data!.Title);
+            Assert.Equal(5, result.Data.MaxRetries);
+
+            var dbQuiz = await context.Quizzes.FindAsync(quiz.Id);
+            Assert.Equal("New Title", dbQuiz!.Title);
+            Assert.Equal(5, dbQuiz.MaxRetries);
+        }
+
+        [Fact]
+        public async Task GetAllQuizzesAsync_WithSubjectFilter_ReturnsFilteredQuizzes()
+        {
+            var context = await GetInMemoryDbContext();
+            var subject1 = new Subject { Id = 1, TeacherId = 1, Name = "Subject 1" };
+            var subject2 = new Subject { Id = 2, TeacherId = 1, Name = "Subject 2" };
+
+            context.Subjects.AddRange(subject1, subject2);
+            context.Quizzes.AddRange(
+                new Quiz { Title = "Quiz 1", SubjectId = 1 },
+                new Quiz { Title = "Quiz 2", SubjectId = 1 },
+                new Quiz { Title = "Quiz 3", SubjectId = 2 }
+            );
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var filter = new QuizFilterDto { SubjectId = 1, PageNumber = 1, PageSize = 10 };
+
+            var result = await service.GetAllQuizzesAsync(filter);
+
+            Assert.True(result.Success);
+            Assert.Equal(2, result.Data!.TotalCount);
+            Assert.All(result.Data.Data, q => Assert.Equal(1, q.SubjectId));
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Sqeez.Api.Data;
@@ -230,6 +230,30 @@ namespace Sqeez.Api.Tests.Services
 
             Assert.Equal(schoolClass.Id, dbStudentToKeep!.SchoolClassId); // Left alone
             Assert.Null(dbStudentToRemove!.SchoolClassId); // Successfully removed
+        }
+
+        [Fact]
+        public async Task EnsureClassesExistAsync_WhenMixedClasses_CreatesMissingAndReturnsExisting()
+        {
+            var context = await GetInMemoryDbContext();
+            var existingClass = new SchoolClass { Name = "ExistingClass", AcademicYear = "2024", Section = "A" };
+            context.SchoolClasses.Add(existingClass);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var classNames = new List<string> { "ExistingClass", "NewClass" };
+
+            var result = await service.EnsureClassesExistAsync(classNames);
+
+            Assert.True(result.Success);
+            Assert.Single(result.Data!.Existing);
+            Assert.Single(result.Data.Created);
+
+            Assert.Equal("ExistingClass", result.Data.Existing.First().Name);
+            Assert.Equal("NewClass", result.Data.Created.First().Name);
+
+            var dbNewClass = await context.SchoolClasses.FirstOrDefaultAsync(c => c.Name == "NewClass");
+            Assert.NotNull(dbNewClass);
         }
     }
 }

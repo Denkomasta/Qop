@@ -217,5 +217,59 @@ namespace Sqeez.Api.Tests.Services
             var dbAsset = await context.MediaAssets.FindAsync(asset.Id);
             Assert.Null(dbAsset);
         }
+
+        [Fact]
+        public async Task GetDownloadMetadataAsync_WhenPrivateAndAdmin_ReturnsDownloadDto()
+        {
+            var context = await GetInMemoryDbContext();
+            var owner = new Teacher { Username = "Owner", Role = UserRole.Teacher };
+            var admin = new Admin { Username = "Admin", Role = UserRole.Admin };
+            var asset = new MediaAsset { LocationUrl = "/uploads/lesson.pdf", Owner = owner, IsPrivate = true };
+
+            context.Students.AddRange(owner, admin);
+            context.MediaAssets.Add(asset);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.GetDownloadMetadataAsync(asset.Id, admin.Id, UserRole.Admin.ToString());
+
+            Assert.True(result.Success);
+            Assert.Equal("/uploads/lesson.pdf", result.Data!.LocationUrl);
+            Assert.Equal("application/pdf", result.Data.MimeType);
+        }
+
+        [Fact]
+        public async Task GetDownloadMetadataAsync_WhenUnknownExtension_ReturnsOctetStream()
+        {
+            var context = await GetInMemoryDbContext();
+            var teacher = new Teacher { Username = "Owner", Role = UserRole.Teacher };
+            var asset = new MediaAsset { LocationUrl = "/uploads/file.unknownext", Owner = teacher, IsPrivate = false };
+
+            context.Teachers.Add(teacher);
+            context.MediaAssets.Add(asset);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.GetDownloadMetadataAsync(asset.Id, 999, UserRole.Student.ToString());
+
+            Assert.True(result.Success);
+            Assert.Equal("application/octet-stream", result.Data!.MimeType);
+        }
+
+        [Fact]
+        public async Task DeleteMediaAssetAndFileAsync_WhenMissing_ReturnsSuccessWithoutStorageCall()
+        {
+            var context = await GetInMemoryDbContext();
+            var mockLogger = new Mock<ILogger<MediaAssetService>>();
+            var mockFileService = new Mock<IFileStorageService>();
+            var service = new MediaAssetService(context, mockLogger.Object, mockFileService.Object);
+
+            var result = await service.DeleteMediaAssetAndFileAsync(999);
+
+            Assert.True(result.Success);
+            mockFileService.Verify(fs => fs.DeleteFileAsync(It.IsAny<string>()), Times.Never);
+        }
     }
 }

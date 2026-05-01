@@ -226,5 +226,79 @@ namespace Sqeez.Api.Tests.Services
             Assert.Equal("p1", result.Data.Created.First().Code);
             Assert.Single(result.Data.SkippedMessages);
         }
+
+        [Fact]
+        public async Task PatchSubjectAsync_WhenTeacherIsEnrolledStudent_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var student = new Student { Username = "EnrolledStudent", Role = UserRole.Student };
+            var subject = new Subject { Name = "Math", Code = "MATH", StartDate = DateTime.UtcNow };
+            context.Students.Add(student);
+            context.Subjects.Add(subject);
+            await context.SaveChangesAsync();
+
+            context.Enrollments.Add(new Enrollment { StudentId = student.Id, SubjectId = subject.Id, EnrolledAt = DateTime.UtcNow });
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.PatchSubjectAsync(subject.Id, new PatchSubjectDto(TeacherId: student.Id));
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+
+            var dbSubject = await context.Subjects.FindAsync(subject.Id);
+            Assert.Null(dbSubject!.TeacherId);
+        }
+
+        [Fact]
+        public async Task GetAllSubjectsAsync_WithStudentFilter_ExcludesTaughtAndActiveEnrolledSubjects()
+        {
+            var context = await GetInMemoryDbContext();
+            long userId = 7;
+            var openSubject = new Subject { Name = "Open", Code = "OPEN", StartDate = DateTime.UtcNow };
+            var taughtSubject = new Subject { Name = "Taught", Code = "TEACH", TeacherId = userId, StartDate = DateTime.UtcNow };
+            var enrolledSubject = new Subject { Name = "Enrolled", Code = "ENR", StartDate = DateTime.UtcNow };
+            var archivedEnrollmentSubject = new Subject { Name = "Archived", Code = "ARCH", StartDate = DateTime.UtcNow };
+
+            context.Subjects.AddRange(openSubject, taughtSubject, enrolledSubject, archivedEnrollmentSubject);
+            context.Enrollments.AddRange(
+                new Enrollment { StudentId = userId, Subject = enrolledSubject, EnrolledAt = DateTime.UtcNow },
+                new Enrollment { StudentId = userId, Subject = archivedEnrollmentSubject, EnrolledAt = DateTime.UtcNow, ArchivedAt = DateTime.UtcNow }
+            );
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var filter = new SubjectFilterDto { StudentId = userId, PageNumber = 1, PageSize = 10 };
+
+            var result = await service.GetAllSubjectsAsync(filter);
+
+            Assert.True(result.Success);
+            Assert.Equal(2, result.Data!.TotalCount);
+            Assert.Contains(result.Data.Data, s => s.Name == "Open");
+            Assert.Contains(result.Data.Data, s => s.Name == "Archived");
+            Assert.DoesNotContain(result.Data.Data, s => s.Name == "Taught");
+            Assert.DoesNotContain(result.Data.Data, s => s.Name == "Enrolled");
+        }
+
+        [Fact]
+        public async Task CreateSubjectsBulkAsync_WhenIncomingCodesRepeat_CreatesFirstAndSkipsDuplicate()
+        {
+            var context = await GetInMemoryDbContext();
+            var service = CreateService(context);
+            var subjects = new List<Subject>
+            {
+                new Subject { Name = "Physics", Code = "PHY", StartDate = DateTime.UtcNow },
+                new Subject { Name = "Physics Duplicate", Code = "phy", StartDate = DateTime.UtcNow }
+            };
+
+            var result = await service.CreateSubjectsBulkAsync(subjects);
+
+            Assert.True(result.Success);
+            Assert.Single(result.Data!.Created);
+            Assert.Single(result.Data.SkippedMessages);
+            Assert.Equal(1, await context.Subjects.CountAsync());
+            Assert.Equal("Physics", result.Data.Created.First().Name);
+        }
     }
 }

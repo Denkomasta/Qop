@@ -1,4 +1,5 @@
 ﻿using Sqeez.Api.Enums;
+using Sqeez.Api.Constants;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -38,29 +39,37 @@ namespace Sqeez.Api.DTOs
     [JsonDerivedType(typeof(CreateAdminDto), typeDiscriminator: "admin")]
     public record CreateStudentDto
     {
+        [StringLength(ValidationConstants.NameMaxLength)]
         public string FirstName { get; init; } = string.Empty;
+
+        [StringLength(ValidationConstants.NameMaxLength)]
         public string LastName { get; init; } = string.Empty;
 
-        [RegularExpression(@"^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$")]
+        [StringLength(ValidationConstants.UsernameMaxLength, MinimumLength = ValidationConstants.UsernameMinLength)]
+        [RegularExpression(ValidationConstants.UsernameRegex)]
         public string Username { get; init; } = string.Empty;
 
-        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")]
+        [StringLength(ValidationConstants.EmailMaxLength)]
+        [RegularExpression(ValidationConstants.EmailRegex)]
         public string Email { get; init; } = string.Empty;
 
+        [StringLength(ValidationConstants.PasswordMaxLength, MinimumLength = 8)]
         public string Password { get; init; } = string.Empty;
         public long? SchoolClassId { get; init; }
     }
 
     public record CreateTeacherDto : CreateStudentDto
     {
-        [RegularExpression(@"^[a-zA-Z0-9_ \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ.,&]+$")]
+        [StringLength(ValidationConstants.DepartmentMaxLength)]
+        [RegularExpression(ValidationConstants.DepartmentRegex)]
         public string? Department { get; init; }
         public long? ManagedClassId { get; init; }
     }
 
     public record CreateAdminDto : CreateTeacherDto
     {
-        [RegularExpression(@"^00[1-9][0-9]{0,2}[0-9]{7,12}$",
+        [StringLength(ValidationConstants.PhoneNumberMaxLength)]
+        [RegularExpression(ValidationConstants.InternationalPhoneRegex,
             ErrorMessage = "Phone number must start with 00, followed by a country code and your number.")]
         public string? PhoneNumber { get; init; }
     }
@@ -71,26 +80,31 @@ namespace Sqeez.Api.DTOs
     [JsonDerivedType(typeof(PatchAdminDto), typeDiscriminator: "admin")]
     public record PatchStudentDto
     {
-        [RegularExpression(@"^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$")]
+        [StringLength(ValidationConstants.UsernameMaxLength, MinimumLength = ValidationConstants.UsernameMinLength)]
+        [RegularExpression(ValidationConstants.UsernameRegex)]
         public string? Username { get; init; }
 
-        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")]
+        [StringLength(ValidationConstants.EmailMaxLength)]
+        [RegularExpression(ValidationConstants.EmailRegex)]
         public string? Email { get; init; }
 
         public long? SchoolClassId { get; init; }
+        [StringLength(ValidationConstants.UrlMaxLength)]
         public string? AvatarUrl { get; init; }
     }
 
     public record PatchTeacherDto : PatchStudentDto
     {
-        [RegularExpression(@"^[a-zA-Z0-9_ \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ.,&]+$")]
+        [StringLength(ValidationConstants.DepartmentMaxLength)]
+        [RegularExpression(ValidationConstants.DepartmentRegex)]
         public string? Department { get; init; }
         public long? ManagedClassId { get; init; }
     }
 
     public record PatchAdminDto : PatchTeacherDto
     {
-        [RegularExpression(@"^00[1-9][0-9]{0,2}[0-9]{7,12}$",
+        [StringLength(ValidationConstants.PhoneNumberMaxLength)]
+        [RegularExpression(ValidationConstants.InternationalPhoneRegex,
             ErrorMessage = "Phone number must start with 00, followed by a country code and your number.")]
         public string? PhoneNumber { get; init; }
     }
@@ -104,6 +118,7 @@ namespace Sqeez.Api.DTOs
 
     public class UserFilterDto : PagedFilterDto
     {
+        [StringLength(ValidationConstants.SearchTermMaxLength)]
         public string? SearchTerm { get; init; }
         public bool? IsOnline { get; init; }
         public long? SchoolClassId { get; init; }
@@ -113,7 +128,9 @@ namespace Sqeez.Api.DTOs
         public UserRole? Role { get; init; }
         public bool StrictRoleOnly { get; init; } = false;
 
+        [StringLength(ValidationConstants.DepartmentMaxLength)]
         public string? Department { get; init; }
+        [StringLength(ValidationConstants.PhoneNumberMaxLength)]
         public string? PhoneNumber { get; init; }
         public UserSortField? SortBy { get; init; }
         public bool IsDescending { get; init; } = false;

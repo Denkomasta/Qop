@@ -1,4 +1,7 @@
-﻿namespace Sqeez.Api.DTOs
+using Sqeez.Api.Constants;
+using System.ComponentModel.DataAnnotations;
+
+namespace Sqeez.Api.DTOs
 {
     public record SchoolClassDto(
         long Id,
@@ -12,25 +15,85 @@
 
     public class SchoolClassFilterDto : PagedFilterDto
     {
+        [StringLength(ValidationConstants.SearchTermMaxLength)]
         public string? SearchTerm { get; set; }  // Search against Name or Section
+
+        [StringLength(ValidationConstants.AcademicYearMaxLength)]
         public string? AcademicYear { get; set; }
         public long? TeacherId { get; set; }
     }
 
-    public record CreateSchoolClassDto(
-        string Name,
-        string AcademicYear,
-        string Section,
-        long? TeacherId);
+    public record CreateSchoolClassDto
+    {
+        public CreateSchoolClassDto() { }
 
-    public record PatchSchoolClassDto(
-        string? Name = null,
-        string? AcademicYear = null,
-        string? Section = null,
-        long? TeacherId = null);
+        public CreateSchoolClassDto(string Name, string AcademicYear, string Section, long? TeacherId)
+        {
+            this.Name = Name;
+            this.AcademicYear = AcademicYear;
+            this.Section = Section;
+            this.TeacherId = TeacherId;
+        }
 
-    public record AssignStudentsDto(List<long> StudentIds);
-    public record RemoveStudentsDto(List<long> StudentIds);
+        [StringLength(ValidationConstants.TitleMaxLength)]
+        public string Name { get; init; } = string.Empty;
+
+        [StringLength(ValidationConstants.AcademicYearMaxLength)]
+        public string AcademicYear { get; init; } = string.Empty;
+
+        [StringLength(ValidationConstants.SectionMaxLength)]
+        public string Section { get; init; } = string.Empty;
+        public long? TeacherId { get; init; }
+    }
+
+    public record PatchSchoolClassDto
+    {
+        public PatchSchoolClassDto() { }
+
+        public PatchSchoolClassDto(string? Name = null, string? AcademicYear = null, string? Section = null, long? TeacherId = null)
+        {
+            this.Name = Name;
+            this.AcademicYear = AcademicYear;
+            this.Section = Section;
+            this.TeacherId = TeacherId;
+        }
+
+        [StringLength(ValidationConstants.TitleMaxLength)]
+        public string? Name { get; init; }
+
+        [StringLength(ValidationConstants.AcademicYearMaxLength)]
+        public string? AcademicYear { get; init; }
+
+        [StringLength(ValidationConstants.SectionMaxLength)]
+        public string? Section { get; init; }
+        public long? TeacherId { get; init; }
+    }
+
+    public record AssignStudentsDto
+    {
+        public AssignStudentsDto() { }
+
+        public AssignStudentsDto(List<long> StudentIds)
+        {
+            this.StudentIds = StudentIds;
+        }
+
+        [MaxLength(ValidationConstants.MaxBulkIds)]
+        public List<long> StudentIds { get; init; } = new();
+    }
+
+    public record RemoveStudentsDto
+    {
+        public RemoveStudentsDto() { }
+
+        public RemoveStudentsDto(List<long> StudentIds)
+        {
+            this.StudentIds = StudentIds;
+        }
+
+        [MaxLength(ValidationConstants.MaxBulkIds)]
+        public List<long> StudentIds { get; init; } = new();
+    }
 
     public record SchoolClassDetailDto
     {

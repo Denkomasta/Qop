@@ -1,16 +1,29 @@
+using Sqeez.Api.Constants;
 using Sqeez.Api.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace Sqeez.Api.DTOs
 {
-    public record LoginDTO(
-        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email format.")]
-        string Email,
+    public record LoginDTO
+    {
+        public LoginDTO() { }
 
-        string Password,
+        public LoginDTO(string Email, string Password, bool RememberMe = false)
+        {
+            this.Email = Email;
+            this.Password = Password;
+            this.RememberMe = RememberMe;
+        }
 
-        bool RememberMe = false
-    );
+        [StringLength(ValidationConstants.EmailMaxLength)]
+        [RegularExpression(ValidationConstants.EmailRegex, ErrorMessage = "Invalid email format.")]
+        public string Email { get; init; } = string.Empty;
+
+        [StringLength(ValidationConstants.PasswordMaxLength, MinimumLength = 8)]
+        public string Password { get; init; } = string.Empty;
+
+        public bool RememberMe { get; init; } = false;
+    }
 
     public record UserDTO(
         long Id,
@@ -21,65 +34,134 @@ namespace Sqeez.Api.DTOs
         string? AvatarUrl
     );
 
-    public record RegisterDTO(
-     [RegularExpression(@"^[a-zA-Z \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$", ErrorMessage = "First name can only contain letters, spaces, and dashes.")]
-    string FirstName,
+    public record RegisterDTO
+    {
+        public RegisterDTO() { }
 
-     [RegularExpression(@"^[a-zA-Z \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$", ErrorMessage = "Last name can only contain letters, spaces, and dashes.")]
-    string LastName,
+        public RegisterDTO(string FirstName, string LastName, string Username, string Email, string Password, bool RememberMe = false)
+        {
+            this.FirstName = FirstName;
+            this.LastName = LastName;
+            this.Username = Username;
+            this.Email = Email;
+            this.Password = Password;
+            this.RememberMe = RememberMe;
+        }
 
-     [RegularExpression(@"^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$", ErrorMessage = "Username can only contain letters, numbers, dashes, and underscores.")]
-    [StringLength(20, MinimumLength = 3, ErrorMessage = "Username must be between 3 and 20 characters.")]
-    string Username,
+        [RegularExpression(ValidationConstants.PersonNameRegex, ErrorMessage = "First name can only contain letters, spaces, and dashes.")]
+        [StringLength(ValidationConstants.NameMaxLength)]
+        public string FirstName { get; init; } = string.Empty;
 
-     [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email format.")]
-    string Email,
+        [RegularExpression(ValidationConstants.PersonNameRegex, ErrorMessage = "Last name can only contain letters, spaces, and dashes.")]
+        [StringLength(ValidationConstants.NameMaxLength)]
+        public string LastName { get; init; } = string.Empty;
 
-     // It enforces: 1 lower, 1 upper, 1 digit, 1 special char, and min 8 characters.
-     [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$", ErrorMessage = "Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character.")]
-     string Password,
+        [RegularExpression(ValidationConstants.UsernameRegex, ErrorMessage = "Username can only contain letters, numbers, dashes, and underscores.")]
+        [StringLength(ValidationConstants.UsernameMaxLength, MinimumLength = ValidationConstants.UsernameMinLength, ErrorMessage = "Username must be between 3 and 20 characters.")]
+        public string Username { get; init; } = string.Empty;
 
-        bool RememberMe = false
-     );
+        [RegularExpression(ValidationConstants.EmailRegex, ErrorMessage = "Invalid email format.")]
+        [StringLength(ValidationConstants.EmailMaxLength)]
+        public string Email { get; init; } = string.Empty;
 
-    public record UpdateRoleDTO(
-    [Required]
-    long Id,
+        [RegularExpression(ValidationConstants.PasswordComplexityRegex, ErrorMessage = "Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character.")]
+        [StringLength(ValidationConstants.PasswordMaxLength, MinimumLength = 8)]
+        public string Password { get; init; } = string.Empty;
 
-    [Required]
-    UserRole Role,
+        public bool RememberMe { get; init; } = false;
+    }
 
-    [RegularExpression(@"^[a-zA-Z0-9_ \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ.,&]+$", ErrorMessage = "Department contains invalid characters. No HTML tags allowed.")]
-    string? Department = null,
+    public record UpdateRoleDTO
+    {
+        public UpdateRoleDTO() { }
 
-    [RegularExpression(@"^\+?[0-9\s\-()]{7,15}$", ErrorMessage = "Phone number must be between 7 and 15 characters and contain only valid phone symbols.")]
-    string? PhoneNumber = null
-    );
+        public UpdateRoleDTO(long Id, UserRole Role, string? Department = null, string? PhoneNumber = null)
+        {
+            this.Id = Id;
+            this.Role = Role;
+            this.Department = Department;
+            this.PhoneNumber = PhoneNumber;
+        }
+
+        [Required]
+        public long Id { get; init; }
+
+        [Required]
+        public UserRole Role { get; init; }
+
+        [RegularExpression(ValidationConstants.DepartmentRegex, ErrorMessage = "Department contains invalid characters. No HTML tags allowed.")]
+        [StringLength(ValidationConstants.DepartmentMaxLength)]
+        public string? Department { get; init; }
+
+        [RegularExpression(ValidationConstants.FlexiblePhoneRegex, ErrorMessage = "Phone number must be between 7 and 15 characters and contain only valid phone symbols.")]
+        [StringLength(ValidationConstants.PhoneNumberMaxLength)]
+        public string? PhoneNumber { get; init; }
+    }
 
     public record AuthResponseDto(
         string AccessToken,
         string RefreshToken
     );
 
-    public record RefreshTokenDto(
-        string RefreshToken
-    );
+    public record RefreshTokenDto
+    {
+        public RefreshTokenDto() { }
 
-    public record ResendVerificationDto(
-        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email format.")]
-        string Email,
-        bool RememberMe = false
-    );
+        public RefreshTokenDto(string RefreshToken)
+        {
+            this.RefreshToken = RefreshToken;
+        }
 
-    public record ForgotPasswordDto(
-        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email format.")]
-        string Email
-    );
+        [StringLength(ValidationConstants.TokenMaxLength)]
+        public string RefreshToken { get; init; } = string.Empty;
+    }
 
-    public record ResetPasswordDto(
-        string Token,
+    public record ResendVerificationDto
+    {
+        public ResendVerificationDto() { }
 
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$", ErrorMessage = "Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character.")]
-        string NewPassword
-    );
+        public ResendVerificationDto(string Email, bool RememberMe = false)
+        {
+            this.Email = Email;
+            this.RememberMe = RememberMe;
+        }
+
+        [RegularExpression(ValidationConstants.EmailRegex, ErrorMessage = "Invalid email format.")]
+        [StringLength(ValidationConstants.EmailMaxLength)]
+        public string Email { get; init; } = string.Empty;
+
+        public bool RememberMe { get; init; } = false;
+    }
+
+    public record ForgotPasswordDto
+    {
+        public ForgotPasswordDto() { }
+
+        public ForgotPasswordDto(string Email)
+        {
+            this.Email = Email;
+        }
+
+        [RegularExpression(ValidationConstants.EmailRegex, ErrorMessage = "Invalid email format.")]
+        [StringLength(ValidationConstants.EmailMaxLength)]
+        public string Email { get; init; } = string.Empty;
+    }
+
+    public record ResetPasswordDto
+    {
+        public ResetPasswordDto() { }
+
+        public ResetPasswordDto(string Token, string NewPassword)
+        {
+            this.Token = Token;
+            this.NewPassword = NewPassword;
+        }
+
+        [StringLength(ValidationConstants.TokenMaxLength)]
+        public string Token { get; init; } = string.Empty;
+
+        [RegularExpression(ValidationConstants.PasswordComplexityRegex, ErrorMessage = "Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character.")]
+        [StringLength(ValidationConstants.PasswordMaxLength, MinimumLength = 8)]
+        public string NewPassword { get; init; } = string.Empty;
+    }
 }

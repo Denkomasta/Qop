@@ -1,4 +1,7 @@
-﻿namespace Sqeez.Api.DTOs
+using Sqeez.Api.Constants;
+using System.ComponentModel.DataAnnotations;
+
+namespace Sqeez.Api.DTOs
 {
     public record QuizDto(
         long Id,
@@ -14,6 +17,7 @@
 
     public class QuizFilterDto : PagedFilterDto
     {
+        [StringLength(ValidationConstants.SearchTermMaxLength)]
         public string? SearchTerm { get; set; }  // Search against Title or Description
         public bool? IsActive { get; set; }
         public DateTime? PublishDate { get; set; }
@@ -23,26 +27,61 @@
         public long? TeacherId { get; set; }
     }
 
-    public record GetQuizDto(
-        long? studentId
-        );
+    public record GetQuizDto(long? studentId);
 
-    public record CreateQuizDto(
-        string Title,
-        string Description,
-        long SubjectId,
-        int MaxRetries = 0,
-        DateTime? PublishDate = null,
-        DateTime? ClosingDate = null);
+    public record CreateQuizDto
+    {
+        public CreateQuizDto() { }
 
-    public record PatchQuizDto(
-        string? Title = null,
-        string? Description = null,
-        int? MaxRetries = null,
-        long? SubjectId = null,
-        DateTime? PublishDate = null,
-        DateTime? ClosingDate = null
-        );
+        public CreateQuizDto(string Title, string Description, long SubjectId, int MaxRetries = 0, DateTime? PublishDate = null, DateTime? ClosingDate = null)
+        {
+            this.Title = Title;
+            this.Description = Description;
+            this.SubjectId = SubjectId;
+            this.MaxRetries = MaxRetries;
+            this.PublishDate = PublishDate;
+            this.ClosingDate = ClosingDate;
+        }
+
+        [StringLength(ValidationConstants.TitleMaxLength)]
+        public string Title { get; init; } = string.Empty;
+
+        [StringLength(ValidationConstants.DescriptionMaxLength)]
+        public string Description { get; init; } = string.Empty;
+        public long SubjectId { get; init; }
+
+        [Range(0, ValidationConstants.MaxQuizRetries)]
+        public int MaxRetries { get; init; } = 0;
+        public DateTime? PublishDate { get; init; }
+        public DateTime? ClosingDate { get; init; }
+    }
+
+    public record PatchQuizDto
+    {
+        public PatchQuizDto() { }
+
+        public PatchQuizDto(string? Title = null, string? Description = null, int? MaxRetries = null, long? SubjectId = null, DateTime? PublishDate = null, DateTime? ClosingDate = null)
+        {
+            this.Title = Title;
+            this.Description = Description;
+            this.MaxRetries = MaxRetries;
+            this.SubjectId = SubjectId;
+            this.PublishDate = PublishDate;
+            this.ClosingDate = ClosingDate;
+        }
+
+        [StringLength(ValidationConstants.TitleMaxLength)]
+        public string? Title { get; init; }
+
+        [StringLength(ValidationConstants.DescriptionMaxLength)]
+        public string? Description { get; init; }
+
+        [Range(0, ValidationConstants.MaxQuizRetries)]
+        public int? MaxRetries { get; init; }
+        public long? SubjectId { get; init; }
+        public DateTime? PublishDate { get; init; }
+        public DateTime? ClosingDate { get; init; }
+    }
 
     public record QuizQuestionDto(
         long Id,
@@ -58,29 +97,70 @@
 
     public class QuizQuestionFilterDto : PagedFilterDto
     {
+        [StringLength(ValidationConstants.SearchTermMaxLength)]
         public string? SearchTerm { get; set; }  // Search against Title
+
+        [Range(0, ValidationConstants.MaxQuestionDifficulty)]
         public int? Difficulty { get; set; }
         public long? QuizId { get; set; }
         public long? MediaAssetId { get; set; }
     }
 
-    public record CreateQuizQuestionDto(
-        string Title,
-        int Difficulty,
-        int TimeLimit,
-        long QuizId,
-        bool HasPenalty = false,
-        long? MediaAssetId = null,
-        bool IsStrictMultipleChoice = false);
+    public record CreateQuizQuestionDto
+    {
+        public CreateQuizQuestionDto() { }
 
-    public record PatchQuizQuestionDto(
-        string? Title = null,
-        int? Difficulty = null,
-        bool? HasPenalty = null,
-        int? TimeLimit = null,
-        long? MediaAssetId = null,
-        bool? IsStrictMultipleChoice = null
-        );
+        public CreateQuizQuestionDto(string Title, int Difficulty, int TimeLimit, long QuizId, bool HasPenalty = false, long? MediaAssetId = null, bool IsStrictMultipleChoice = false)
+        {
+            this.Title = Title;
+            this.Difficulty = Difficulty;
+            this.TimeLimit = TimeLimit;
+            this.QuizId = QuizId;
+            this.HasPenalty = HasPenalty;
+            this.MediaAssetId = MediaAssetId;
+            this.IsStrictMultipleChoice = IsStrictMultipleChoice;
+        }
+
+        [StringLength(ValidationConstants.TitleMaxLength)]
+        public string Title { get; init; } = string.Empty;
+
+        [Range(0, ValidationConstants.MaxQuestionDifficulty)]
+        public int Difficulty { get; init; }
+
+        [Range(0, ValidationConstants.MaxQuestionTimeLimitSeconds)]
+        public int TimeLimit { get; init; }
+        public long QuizId { get; init; }
+        public bool HasPenalty { get; init; } = false;
+        public long? MediaAssetId { get; init; }
+        public bool IsStrictMultipleChoice { get; init; } = false;
+    }
+
+    public record PatchQuizQuestionDto
+    {
+        public PatchQuizQuestionDto() { }
+
+        public PatchQuizQuestionDto(string? Title = null, int? Difficulty = null, bool? HasPenalty = null, int? TimeLimit = null, long? MediaAssetId = null, bool? IsStrictMultipleChoice = null)
+        {
+            this.Title = Title;
+            this.Difficulty = Difficulty;
+            this.HasPenalty = HasPenalty;
+            this.TimeLimit = TimeLimit;
+            this.MediaAssetId = MediaAssetId;
+            this.IsStrictMultipleChoice = IsStrictMultipleChoice;
+        }
+
+        [StringLength(ValidationConstants.TitleMaxLength)]
+        public string? Title { get; init; }
+
+        [Range(0, ValidationConstants.MaxQuestionDifficulty)]
+        public int? Difficulty { get; init; }
+        public bool? HasPenalty { get; init; }
+
+        [Range(0, ValidationConstants.MaxQuestionTimeLimitSeconds)]
+        public int? TimeLimit { get; init; }
+        public long? MediaAssetId { get; init; }
+        public bool? IsStrictMultipleChoice { get; init; }
+    }
 
     public record DetailedQuizQuestionDto(
         long Id,
@@ -106,6 +186,7 @@
 
     public class QuizOptionFilterDto : PagedFilterDto
     {
+        [StringLength(ValidationConstants.SearchTermMaxLength)]
         public string? SearchTerm { get; set; }  // Search against Text
         public bool? IsFreeText { get; set; }
         public bool? IsCorrect { get; set; }
@@ -113,19 +194,46 @@
         public long? MediaAssetId { get; set; }
     }
 
-    public record CreateQuizOptionDto(
-        bool IsCorrect,
-        long QuizQuestionID,
-        string? Text = null,
-        bool IsFreeText = false,
-        long? MediaAssetId = null);
+    public record CreateQuizOptionDto
+    {
+        public CreateQuizOptionDto() { }
 
-    public record PatchQuizOptionDto(
-        string? Text = null,
-        bool? IsFreeText = null,
-        bool? IsCorrect = null,
-        long? MediaAssetId = null
-    );
+        public CreateQuizOptionDto(bool IsCorrect, long QuizQuestionID, string? Text = null, bool IsFreeText = false, long? MediaAssetId = null)
+        {
+            this.IsCorrect = IsCorrect;
+            this.QuizQuestionID = QuizQuestionID;
+            this.Text = Text;
+            this.IsFreeText = IsFreeText;
+            this.MediaAssetId = MediaAssetId;
+        }
+
+        public bool IsCorrect { get; init; }
+        public long QuizQuestionID { get; init; }
+
+        [StringLength(ValidationConstants.LongTextMaxLength)]
+        public string? Text { get; init; }
+        public bool IsFreeText { get; init; } = false;
+        public long? MediaAssetId { get; init; }
+    }
+
+    public record PatchQuizOptionDto
+    {
+        public PatchQuizOptionDto() { }
+
+        public PatchQuizOptionDto(string? Text = null, bool? IsFreeText = null, bool? IsCorrect = null, long? MediaAssetId = null)
+        {
+            this.Text = Text;
+            this.IsFreeText = IsFreeText;
+            this.IsCorrect = IsCorrect;
+            this.MediaAssetId = MediaAssetId;
+        }
+
+        [StringLength(ValidationConstants.LongTextMaxLength)]
+        public string? Text { get; init; }
+        public bool? IsFreeText { get; init; }
+        public bool? IsCorrect { get; init; }
+        public long? MediaAssetId { get; init; }
+    }
 
     public record StudentQuizOptionDto(
         long Id,

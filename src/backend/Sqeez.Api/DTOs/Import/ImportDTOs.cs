@@ -1,22 +1,33 @@
 ﻿using CsvHelper.Configuration;
+using Sqeez.Api.Constants;
 using System.ComponentModel.DataAnnotations;
 
 namespace Sqeez.Api.Models.Import
 {
     public class MasterImportDto
     {
+        [StringLength(ValidationConstants.TitleMaxLength)]
         public string ClassName { get; set; } = string.Empty;
+
+        [StringLength(ValidationConstants.AcademicYearMaxLength)]
         public string AcademicYear { get; set; } = string.Empty;
 
+        [StringLength(ValidationConstants.TitleMaxLength)]
         public string SubjectName { get; set; } = string.Empty;
+
+        [StringLength(ValidationConstants.SubjectCodeMaxLength)]
         public string SubjectCode { get; set; } = string.Empty;
-        [RegularExpression(@"^[a-zA-Z \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$", ErrorMessage = "First name can only contain letters, spaces, and dashes.")]
+        [StringLength(ValidationConstants.NameMaxLength)]
+        [RegularExpression(ValidationConstants.PersonNameRegex, ErrorMessage = "First name can only contain letters, spaces, and dashes.")]
         public string StudentFirstName { get; set; } = string.Empty;
-        [RegularExpression(@"^[a-zA-Z \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$", ErrorMessage = "Last name can only contain letters, spaces, and dashes.")]
+        [StringLength(ValidationConstants.NameMaxLength)]
+        [RegularExpression(ValidationConstants.PersonNameRegex, ErrorMessage = "Last name can only contain letters, spaces, and dashes.")]
         public string StudentLastName { get; set; } = string.Empty;
-        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email format.")]
+        [StringLength(ValidationConstants.EmailMaxLength)]
+        [RegularExpression(ValidationConstants.EmailRegex, ErrorMessage = "Invalid email format.")]
         public string StudentEmail { get; set; } = string.Empty;
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$", ErrorMessage = "Password does not meet complexity requirements.")]
+        [StringLength(ValidationConstants.PasswordMaxLength, MinimumLength = 8)]
+        [RegularExpression(ValidationConstants.PasswordComplexityRegex, ErrorMessage = "Password does not meet complexity requirements.")]
         public string StudentPassword { get; set; } = string.Empty;
     }
 

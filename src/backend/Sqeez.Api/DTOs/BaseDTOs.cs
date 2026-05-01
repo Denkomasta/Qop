@@ -1,5 +1,8 @@
 ﻿using Sqeez.Api.Enums;
 
+using Sqeez.Api.Constants;
+using System.ComponentModel.DataAnnotations;
+
 namespace Sqeez.Api.DTOs
 {
     public record ServiceResult<T>(
@@ -27,7 +30,10 @@ namespace Sqeez.Api.DTOs
 
     public class PagedFilterDto
     {
+        [Range(1, int.MaxValue)]
         public int PageNumber { get; init; } = 1;
+
+        [Range(1, ValidationConstants.MaxPageSize)]
         public int PageSize { get; init; } = 10;
     }
 }

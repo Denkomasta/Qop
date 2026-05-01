@@ -1,4 +1,6 @@
-﻿using Sqeez.Api.Enums;
+using Sqeez.Api.Constants;
+using Sqeez.Api.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sqeez.Api.DTOs
 {
@@ -57,15 +59,42 @@ namespace Sqeez.Api.DTOs
         long EnrollmentId
     );
 
-    public record SubmitQuestionResponseDto(
-        long QuizQuestionId,
-        long ResponseTimeMs,
-        string? FreeTextAnswer,
-        List<long> SelectedOptionIds
-    );
+    public record SubmitQuestionResponseDto
+    {
+        public SubmitQuestionResponseDto() { }
 
-    public record GradeQuestionResponseDto(
-        int Score,
-        bool IsLiked
-    );
+        public SubmitQuestionResponseDto(long QuizQuestionId, long ResponseTimeMs, string? FreeTextAnswer, List<long> SelectedOptionIds)
+        {
+            this.QuizQuestionId = QuizQuestionId;
+            this.ResponseTimeMs = ResponseTimeMs;
+            this.FreeTextAnswer = FreeTextAnswer;
+            this.SelectedOptionIds = SelectedOptionIds;
+        }
+
+        public long QuizQuestionId { get; init; }
+
+        [Range(0, ValidationConstants.MaxResponseTimeMs)]
+        public long ResponseTimeMs { get; init; }
+
+        [StringLength(ValidationConstants.LongTextMaxLength)]
+        public string? FreeTextAnswer { get; init; }
+
+        [MaxLength(ValidationConstants.MaxBulkIds)]
+        public List<long> SelectedOptionIds { get; init; } = new();
+    }
+
+    public record GradeQuestionResponseDto
+    {
+        public GradeQuestionResponseDto() { }
+
+        public GradeQuestionResponseDto(int Score, bool IsLiked)
+        {
+            this.Score = Score;
+            this.IsLiked = IsLiked;
+        }
+
+        [Range(-ValidationConstants.MaxQuestionDifficulty, ValidationConstants.MaxQuestionDifficulty)]
+        public int Score { get; init; }
+        public bool IsLiked { get; init; }
+    }
 }

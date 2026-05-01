@@ -7,6 +7,8 @@
 
 export interface PatchEnrollmentDto {
   /**
+   * @minimum 1
+   * @maximum 5
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

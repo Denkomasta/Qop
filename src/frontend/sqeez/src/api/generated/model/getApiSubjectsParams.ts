@@ -6,7 +6,15 @@
  */
 
 export type GetApiSubjectsParams = {
+  /**
+   * @minLength 0
+   * @maxLength 100
+   */
   SearchTerm?: string
+  /**
+   * @minLength 0
+   * @maxLength 30
+   */
   Code?: string
   /**
    * @pattern ^-?(?:0|[1-9]\d*)$
@@ -24,10 +32,14 @@ export type GetApiSubjectsParams = {
   StartingAfter?: string
   IsDescending?: boolean
   /**
+   * @minimum 1
+   * @maximum 2147483647
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   PageNumber?: number | string
   /**
+   * @minimum 1
+   * @maximum 100
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   PageSize?: number | string

@@ -6,9 +6,15 @@
  */
 
 export interface PatchQuizQuestionDto {
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 150
+   * @nullable
+   */
   title?: string | null
   /**
+   * @minimum 0
+   * @maximum 1000
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
@@ -16,6 +22,8 @@ export interface PatchQuizQuestionDto {
   /** @nullable */
   hasPenalty?: boolean | null
   /**
+   * @minimum 0
+   * @maximum 86400
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

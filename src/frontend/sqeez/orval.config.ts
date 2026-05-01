@@ -22,4 +22,17 @@ export default defineConfig({
       afterAllFilesWrite: 'prettier --write src/api/generated',
     },
   },
+
+  // petstoreZod: {
+  //   input: './src/api/api.yaml',
+  //   output: {
+  //     mode: 'tags-split',
+  //     target: './src/api/generated/zod',
+  //     schemas: './src/api/generated/zod/model',
+  //     client: 'zod',
+  //   },
+  //   hooks: {
+  //     afterAllFilesWrite: 'prettier --write --no-error-on-unmatched-pattern',
+  //   },
+  // },
 })

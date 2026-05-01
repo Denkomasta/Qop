@@ -6,11 +6,23 @@
  */
 
 export interface CreateQuizDto {
-  title: string
-  description: string
+  /**
+   * @minLength 0
+   * @maxLength 150
+   */
+  title?: string
+  /**
+   * @minLength 0
+   * @maxLength 1000
+   */
+  description?: string
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  subjectId: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  subjectId?: number | string
+  /**
+   * @minimum 0
+   * @maximum 100
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   maxRetries?: number | string
   /** @nullable */
   publishDate?: string | null

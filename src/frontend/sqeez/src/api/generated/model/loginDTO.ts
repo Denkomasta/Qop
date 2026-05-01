@@ -6,7 +6,16 @@
  */
 
 export interface LoginDTO {
-  email: string
-  password: string
+  /**
+   * @minLength 0
+   * @maxLength 254
+   * @pattern ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+   */
+  email?: string
+  /**
+   * @minLength 8
+   * @maxLength 128
+   */
+  password?: string
   rememberMe?: boolean
 }

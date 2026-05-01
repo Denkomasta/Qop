@@ -178,10 +178,16 @@ paths:
               type: object
               properties:
                 Name:
+                  maxLength: 150
+                  minLength: 0
                   type: string
                 Description:
+                  maxLength: 1000
+                  minLength: 0
                   type: string
                 XpBonus:
+                  maximum: 100000
+                  minimum: 0
                   pattern: ^-?(?:0|[1-9]\d*)$
                   type:
                     - integer
@@ -190,6 +196,7 @@ paths:
                 IconFile:
                   $ref: "#/components/schemas/IFormFile"
                 Rules:
+                  maxItems: 1000
                   type: array
                   items:
                     $ref: "#/components/schemas/CreateBadgeRuleDto"
@@ -214,6 +221,8 @@ paths:
         - name: SearchTerm
           in: query
           schema:
+            maxLength: 100
+            minLength: 0
             type: string
         - name: isEarned
           in: query
@@ -230,6 +239,8 @@ paths:
         - name: PageNumber
           in: query
           schema:
+            maximum: 2147483647
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -238,6 +249,8 @@ paths:
         - name: PageSize
           in: query
           schema:
+            maximum: 100
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -277,10 +290,16 @@ paths:
               type: object
               properties:
                 Name:
+                  maxLength: 150
+                  minLength: 0
                   type: string
                 Description:
+                  maxLength: 1000
+                  minLength: 0
                   type: string
                 XpBonus:
+                  maximum: 100000
+                  minimum: 0
                   pattern: ^-?(?:0|[1-9]\d*)$
                   type:
                     - integer
@@ -289,6 +308,7 @@ paths:
                 NewIconFile:
                   $ref: "#/components/schemas/IFormFile"
                 Rules:
+                  maxItems: 1000
                   type: array
                   items:
                     $ref: "#/components/schemas/UpdateBadgeRuleDto"
@@ -409,6 +429,8 @@ paths:
         - name: Mark
           in: query
           schema:
+            maximum: 5
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -441,6 +463,8 @@ paths:
         - name: PageNumber
           in: query
           schema:
+            maximum: 2147483647
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -449,6 +473,8 @@ paths:
         - name: PageSize
           in: query
           schema:
+            maximum: 100
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -592,6 +618,8 @@ paths:
         - name: SearchTerm
           in: query
           schema:
+            maxLength: 100
+            minLength: 0
             type: string
         - name: MimeType
           in: query
@@ -612,6 +640,8 @@ paths:
         - name: PageNumber
           in: query
           schema:
+            maximum: 2147483647
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -620,6 +650,8 @@ paths:
         - name: PageSize
           in: query
           schema:
+            maximum: 100
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -778,6 +810,8 @@ paths:
                 IsPrivate:
                   type: boolean
                 Description:
+                  maxLength: 1000
+                  minLength: 0
                   type: string
         required: true
       responses:
@@ -1195,6 +1229,8 @@ paths:
         - name: SearchTerm
           in: query
           schema:
+            maxLength: 100
+            minLength: 0
             type: string
         - name: IsActive
           in: query
@@ -1237,6 +1273,8 @@ paths:
         - name: PageNumber
           in: query
           schema:
+            maximum: 2147483647
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -1245,6 +1283,8 @@ paths:
         - name: PageSize
           in: query
           schema:
+            maximum: 100
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -1379,10 +1419,14 @@ paths:
         - name: SearchTerm
           in: query
           schema:
+            maxLength: 100
+            minLength: 0
             type: string
         - name: Difficulty
           in: query
           schema:
+            maximum: 1000
+            minimum: 0
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -1407,6 +1451,8 @@ paths:
         - name: PageNumber
           in: query
           schema:
+            maximum: 2147483647
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -1415,6 +1461,8 @@ paths:
         - name: PageSize
           in: query
           schema:
+            maximum: 100
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -1651,6 +1699,8 @@ paths:
         - name: SearchTerm
           in: query
           schema:
+            maxLength: 100
+            minLength: 0
             type: string
         - name: IsFreeText
           in: query
@@ -1679,6 +1729,8 @@ paths:
         - name: PageNumber
           in: query
           schema:
+            maximum: 2147483647
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -1687,6 +1739,8 @@ paths:
         - name: PageSize
           in: query
           schema:
+            maximum: 100
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -1905,10 +1959,14 @@ paths:
         - name: SearchTerm
           in: query
           schema:
+            maxLength: 100
+            minLength: 0
             type: string
         - name: AcademicYear
           in: query
           schema:
+            maxLength: 20
+            minLength: 0
             type: string
         - name: TeacherId
           in: query
@@ -1921,6 +1979,8 @@ paths:
         - name: PageNumber
           in: query
           schema:
+            maximum: 2147483647
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -1929,6 +1989,8 @@ paths:
         - name: PageSize
           in: query
           schema:
+            maximum: 100
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -2152,10 +2214,14 @@ paths:
         - name: SearchTerm
           in: query
           schema:
+            maxLength: 100
+            minLength: 0
             type: string
         - name: Code
           in: query
           schema:
+            maxLength: 30
+            minLength: 0
             type: string
         - name: TeacherId
           in: query
@@ -2197,6 +2263,8 @@ paths:
         - name: PageNumber
           in: query
           schema:
+            maximum: 2147483647
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -2205,6 +2273,8 @@ paths:
         - name: PageSize
           in: query
           schema:
+            maximum: 100
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -2359,6 +2429,8 @@ paths:
         - name: Mark
           in: query
           schema:
+            maximum: 5
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -2391,6 +2463,8 @@ paths:
         - name: PageNumber
           in: query
           schema:
+            maximum: 2147483647
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -2399,6 +2473,8 @@ paths:
         - name: PageSize
           in: query
           schema:
+            maximum: 100
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -2510,6 +2586,8 @@ paths:
         - name: SearchTerm
           in: query
           schema:
+            maxLength: 100
+            minLength: 0
             type: string
         - name: IsActive
           in: query
@@ -2552,6 +2630,8 @@ paths:
         - name: PageNumber
           in: query
           schema:
+            maximum: 2147483647
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -2560,6 +2640,8 @@ paths:
         - name: PageSize
           in: query
           schema:
+            maximum: 100
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -2669,6 +2751,8 @@ paths:
         - name: SearchTerm
           in: query
           schema:
+            maxLength: 100
+            minLength: 0
             type: string
         - name: IsOnline
           in: query
@@ -2705,10 +2789,14 @@ paths:
         - name: Department
           in: query
           schema:
+            maxLength: 100
+            minLength: 0
             type: string
         - name: PhoneNumber
           in: query
           schema:
+            maxLength: 20
+            minLength: 0
             type: string
         - name: SortBy
           in: query
@@ -2725,6 +2813,8 @@ paths:
         - name: PageNumber
           in: query
           schema:
+            maximum: 2147483647
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -2733,6 +2823,8 @@ paths:
         - name: PageSize
           in: query
           schema:
+            maximum: 100
+            minimum: 1
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
               - integer
@@ -2916,11 +3008,10 @@ paths:
 components:
   schemas:
     AssignStudentsDto:
-      required:
-        - studentIds
       type: object
       properties:
         studentIds:
+          maxItems: 1000
           type: array
           items:
             pattern: ^-?(?:0|[1-9]\d*)$
@@ -3062,10 +3153,6 @@ components:
             - "null"
             - string
     CreateBadgeRuleDto:
-      required:
-        - metric
-        - operator
-        - targetValue
       type: object
       properties:
         metric:
@@ -3073,20 +3160,19 @@ components:
         operator:
           $ref: "#/components/schemas/BadgeOperator"
         targetValue:
+          maximum: 1000000
+          minimum: 0
           pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
           type:
             - number
             - string
           format: double
     CreateMediaAssetDto:
-      required:
-        - locationUrl
-        - mimeType
-        - isPrivate
-        - ownerId
       type: object
       properties:
         locationUrl:
+          maxLength: 2048
+          minLength: 0
           type: string
         mimeType:
           $ref: "#/components/schemas/MediaType"
@@ -3099,19 +3185,21 @@ components:
             - string
           format: int64
         description:
+          maxLength: 1000
+          minLength: 0
           type:
             - "null"
             - string
     CreateQuizDto:
-      required:
-        - title
-        - description
-        - subjectId
       type: object
       properties:
         title:
+          maxLength: 150
+          minLength: 0
           type: string
         description:
+          maxLength: 1000
+          minLength: 0
           type: string
         subjectId:
           pattern: ^-?(?:0|[1-9]\d*)$
@@ -3120,12 +3208,13 @@ components:
             - string
           format: int64
         maxRetries:
+          maximum: 100
+          minimum: 0
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
           format: int32
-          default: 0
         publishDate:
           type:
             - "null"
@@ -3137,9 +3226,6 @@ components:
             - string
           format: date-time
     CreateQuizOptionDto:
-      required:
-        - isCorrect
-        - quizQuestionID
       type: object
       properties:
         isCorrect:
@@ -3151,12 +3237,13 @@ components:
             - string
           format: int64
         text:
+          maxLength: 4000
+          minLength: 0
           type:
             - "null"
             - string
         isFreeText:
           type: boolean
-          default: false
         mediaAssetId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
@@ -3165,22 +3252,23 @@ components:
             - string
           format: int64
     CreateQuizQuestionDto:
-      required:
-        - title
-        - difficulty
-        - timeLimit
-        - quizId
       type: object
       properties:
         title:
+          maxLength: 150
+          minLength: 0
           type: string
         difficulty:
+          maximum: 1000
+          minimum: 0
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
           format: int32
         timeLimit:
+          maximum: 86400
+          minimum: 0
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
@@ -3194,7 +3282,6 @@ components:
           format: int64
         hasPenalty:
           type: boolean
-          default: false
         mediaAssetId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
@@ -3204,20 +3291,20 @@ components:
           format: int64
         isStrictMultipleChoice:
           type: boolean
-          default: false
     CreateSchoolClassDto:
-      required:
-        - name
-        - academicYear
-        - section
-        - teacherId
       type: object
       properties:
         name:
+          maxLength: 150
+          minLength: 0
           type: string
         academicYear:
+          maxLength: 20
+          minLength: 0
           type: string
         section:
+          maxLength: 20
+          minLength: 0
           type: string
         teacherId:
           pattern: ^-?(?:0|[1-9]\d*)$
@@ -3247,12 +3334,17 @@ components:
             - admin
           type: string
         phoneNumber:
+          maxLength: 20
+          minLength: 0
           pattern: ^00[1-9][0-9]{0,2}[0-9]{7,12}$
           type:
             - "null"
             - string
         department:
-          pattern: ^[a-zA-Z0-9_ \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ.,&]+$
+          maxLength: 100
+          minLength: 0
+          pattern: ^[a-zA-Z0-9_
+            \-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D.,&]+$
           type:
             - "null"
             - string
@@ -3264,16 +3356,26 @@ components:
             - string
           format: int64
         firstName:
+          maxLength: 50
+          minLength: 0
           type: string
         lastName:
+          maxLength: 50
+          minLength: 0
           type: string
         username:
-          pattern: ^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$
+          maxLength: 20
+          minLength: 3
+          pattern: ^[a-zA-Z0-9_\-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D]+$
           type: string
         email:
+          maxLength: 254
+          minLength: 0
           pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
           type: string
         password:
+          maxLength: 128
+          minLength: 8
           type: string
         schoolClassId:
           pattern: ^-?(?:0|[1-9]\d*)$
@@ -3289,16 +3391,26 @@ components:
             - student
           type: string
         firstName:
+          maxLength: 50
+          minLength: 0
           type: string
         lastName:
+          maxLength: 50
+          minLength: 0
           type: string
         username:
-          pattern: ^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$
+          maxLength: 20
+          minLength: 3
+          pattern: ^[a-zA-Z0-9_\-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D]+$
           type: string
         email:
+          maxLength: 254
+          minLength: 0
           pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
           type: string
         password:
+          maxLength: 128
+          minLength: 8
           type: string
         schoolClassId:
           pattern: ^-?(?:0|[1-9]\d*)$
@@ -3314,7 +3426,10 @@ components:
             - teacher
           type: string
         department:
-          pattern: ^[a-zA-Z0-9_ \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ.,&]+$
+          maxLength: 100
+          minLength: 0
+          pattern: ^[a-zA-Z0-9_
+            \-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D.,&]+$
           type:
             - "null"
             - string
@@ -3326,16 +3441,26 @@ components:
             - string
           format: int64
         firstName:
+          maxLength: 50
+          minLength: 0
           type: string
         lastName:
+          maxLength: 50
+          minLength: 0
           type: string
         username:
-          pattern: ^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$
+          maxLength: 20
+          minLength: 3
+          pattern: ^[a-zA-Z0-9_\-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D]+$
           type: string
         email:
+          maxLength: 254
+          minLength: 0
           pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
           type: string
         password:
+          maxLength: 128
+          minLength: 8
           type: string
         schoolClassId:
           pattern: ^-?(?:0|[1-9]\d*)$
@@ -3345,16 +3470,19 @@ components:
             - string
           format: int64
     CreateSubjectDto:
-      required:
-        - name
-        - code
       type: object
       properties:
         name:
+          maxLength: 150
+          minLength: 0
           type: string
         code:
+          maxLength: 30
+          minLength: 0
           type: string
         description:
+          maxLength: 1000
+          minLength: 0
           type:
             - "null"
             - string
@@ -3628,19 +3756,19 @@ components:
         enableRangeProcessing:
           type: boolean
     ForgotPasswordDto:
-      required:
-        - email
       type: object
       properties:
         email:
+          maxLength: 254
+          minLength: 0
+          pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
           type: string
     GradeQuestionResponseDto:
-      required:
-        - score
-        - isLiked
       type: object
       properties:
         score:
+          maximum: 1000
+          minimum: -1000
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
@@ -3667,18 +3795,19 @@ components:
         hasRowErrors:
           type: boolean
     LoginDTO:
-      required:
-        - email
-        - password
       type: object
       properties:
         email:
+          maxLength: 254
+          minLength: 0
+          pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
           type: string
         password:
+          maxLength: 128
+          minLength: 8
           type: string
         rememberMe:
           type: boolean
-          default: false
     MediaAssetDto:
       required:
         - id
@@ -4057,6 +4186,8 @@ components:
       type: object
       properties:
         mark:
+          maximum: 5
+          minimum: 1
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - "null"
@@ -4071,6 +4202,8 @@ components:
       type: object
       properties:
         locationUrl:
+          maxLength: 2048
+          minLength: 0
           type:
             - "null"
             - string
@@ -4083,6 +4216,8 @@ components:
             - "null"
             - boolean
         description:
+          maxLength: 1000
+          minLength: 0
           type:
             - "null"
             - string
@@ -4090,14 +4225,20 @@ components:
       type: object
       properties:
         title:
+          maxLength: 150
+          minLength: 0
           type:
             - "null"
             - string
         description:
+          maxLength: 1000
+          minLength: 0
           type:
             - "null"
             - string
         maxRetries:
+          maximum: 100
+          minimum: 0
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - "null"
@@ -4125,6 +4266,8 @@ components:
       type: object
       properties:
         text:
+          maxLength: 4000
+          minLength: 0
           type:
             - "null"
             - string
@@ -4147,10 +4290,14 @@ components:
       type: object
       properties:
         title:
+          maxLength: 150
+          minLength: 0
           type:
             - "null"
             - string
         difficulty:
+          maximum: 1000
+          minimum: 0
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - "null"
@@ -4162,6 +4309,8 @@ components:
             - "null"
             - boolean
         timeLimit:
+          maximum: 86400
+          minimum: 0
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - "null"
@@ -4183,14 +4332,20 @@ components:
       type: object
       properties:
         name:
+          maxLength: 150
+          minLength: 0
           type:
             - "null"
             - string
         academicYear:
+          maxLength: 20
+          minLength: 0
           type:
             - "null"
             - string
         section:
+          maxLength: 20
+          minLength: 0
           type:
             - "null"
             - string
@@ -4222,12 +4377,17 @@ components:
             - admin
           type: string
         phoneNumber:
+          maxLength: 20
+          minLength: 0
           pattern: ^00[1-9][0-9]{0,2}[0-9]{7,12}$
           type:
             - "null"
             - string
         department:
-          pattern: ^[a-zA-Z0-9_ \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ.,&]+$
+          maxLength: 100
+          minLength: 0
+          pattern: ^[a-zA-Z0-9_
+            \-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D.,&]+$
           type:
             - "null"
             - string
@@ -4239,11 +4399,15 @@ components:
             - string
           format: int64
         username:
-          pattern: ^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$
+          maxLength: 20
+          minLength: 3
+          pattern: ^[a-zA-Z0-9_\-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D]+$
           type:
             - "null"
             - string
         email:
+          maxLength: 254
+          minLength: 0
           pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
           type:
             - "null"
@@ -4256,6 +4420,8 @@ components:
             - string
           format: int64
         avatarUrl:
+          maxLength: 2048
+          minLength: 0
           type:
             - "null"
             - string
@@ -4266,11 +4432,15 @@ components:
             - student
           type: string
         username:
-          pattern: ^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$
+          maxLength: 20
+          minLength: 3
+          pattern: ^[a-zA-Z0-9_\-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D]+$
           type:
             - "null"
             - string
         email:
+          maxLength: 254
+          minLength: 0
           pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
           type:
             - "null"
@@ -4283,6 +4453,8 @@ components:
             - string
           format: int64
         avatarUrl:
+          maxLength: 2048
+          minLength: 0
           type:
             - "null"
             - string
@@ -4293,7 +4465,10 @@ components:
             - teacher
           type: string
         department:
-          pattern: ^[a-zA-Z0-9_ \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ.,&]+$
+          maxLength: 100
+          minLength: 0
+          pattern: ^[a-zA-Z0-9_
+            \-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D.,&]+$
           type:
             - "null"
             - string
@@ -4305,11 +4480,15 @@ components:
             - string
           format: int64
         username:
-          pattern: ^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$
+          maxLength: 20
+          minLength: 3
+          pattern: ^[a-zA-Z0-9_\-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D]+$
           type:
             - "null"
             - string
         email:
+          maxLength: 254
+          minLength: 0
           pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
           type:
             - "null"
@@ -4322,6 +4501,8 @@ components:
             - string
           format: int64
         avatarUrl:
+          maxLength: 2048
+          minLength: 0
           type:
             - "null"
             - string
@@ -4329,14 +4510,20 @@ components:
       type: object
       properties:
         name:
+          maxLength: 150
+          minLength: 0
           type:
             - "null"
             - string
         code:
+          maxLength: 30
+          minLength: 0
           type:
             - "null"
             - string
         description:
+          maxLength: 1000
+          minLength: 0
           type:
             - "null"
             - string
@@ -4905,33 +5092,42 @@ components:
             - string
           format: double
     RegisterDTO:
-      required:
-        - firstName
-        - lastName
-        - username
-        - email
-        - password
       type: object
       properties:
         firstName:
+          maxLength: 50
+          minLength: 0
+          pattern: ^[a-zA-Z
+            \-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D]+$
           type: string
         lastName:
+          maxLength: 50
+          minLength: 0
+          pattern: ^[a-zA-Z
+            \-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D]+$
           type: string
         username:
+          maxLength: 20
+          minLength: 3
+          pattern: ^[a-zA-Z0-9_\-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D]+$
           type: string
         email:
+          maxLength: 254
+          minLength: 0
+          pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
           type: string
         password:
+          maxLength: 128
+          minLength: 8
+          pattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$
           type: string
         rememberMe:
           type: boolean
-          default: false
     RemoveStudentsDto:
-      required:
-        - studentIds
       type: object
       properties:
         studentIds:
+          maxItems: 1000
           type: array
           items:
             pattern: ^-?(?:0|[1-9]\d*)$
@@ -4940,24 +5136,26 @@ components:
               - string
             format: int64
     ResendVerificationDto:
-      required:
-        - email
       type: object
       properties:
         email:
+          maxLength: 254
+          minLength: 0
+          pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
           type: string
         rememberMe:
           type: boolean
-          default: false
     ResetPasswordDto:
-      required:
-        - token
-        - newPassword
       type: object
       properties:
         token:
+          maxLength: 512
+          minLength: 0
           type: string
         newPassword:
+          maxLength: 128
+          minLength: 8
+          pattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$
           type: string
     SchoolClassBasicDto:
       type: object
@@ -5426,11 +5624,6 @@ components:
             - string
           format: int32
     SubmitQuestionResponseDto:
-      required:
-        - quizQuestionId
-        - responseTimeMs
-        - freeTextAnswer
-        - selectedOptionIds
       type: object
       properties:
         quizQuestionId:
@@ -5440,16 +5633,21 @@ components:
             - string
           format: int64
         responseTimeMs:
+          maximum: 3600000
+          minimum: 0
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
           format: int64
         freeTextAnswer:
+          maxLength: 4000
+          minLength: 0
           type:
             - "null"
             - string
         selectedOptionIds:
+          maxItems: 1000
           type: array
           items:
             pattern: ^-?(?:0|[1-9]\d*)$
@@ -5523,11 +5721,6 @@ components:
             - "null"
             - string
     UpdateBadgeRuleDto:
-      required:
-        - id
-        - metric
-        - operator
-        - targetValue
       type: object
       properties:
         id:
@@ -5542,6 +5735,8 @@ components:
         operator:
           $ref: "#/components/schemas/BadgeOperator"
         targetValue:
+          maximum: 1000000
+          minimum: 0
           pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
           type:
             - number
@@ -5562,44 +5757,51 @@ components:
         role:
           $ref: "#/components/schemas/UserRole"
         department:
+          maxLength: 100
+          minLength: 0
+          pattern: ^[a-zA-Z0-9_
+            \-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D.,&]+$
           type:
             - "null"
             - string
         phoneNumber:
+          maxLength: 20
+          minLength: 0
+          pattern: ^\+?[0-9\s\-()]{7,15}$
           type:
             - "null"
             - string
     UpdateSystemConfigDto:
-      required:
-        - schoolName
-        - logoUrl
-        - supportEmail
-        - defaultLanguage
-        - currentAcademicYear
-        - allowPublicRegistration
-        - requireEmailVerification
-        - maxAvatarAndBadgeUploadSizeMB
-        - maxQuizMediaUploadSizeMB
-        - maxActiveSessionsPerUser
       type: object
       properties:
         schoolName:
+          maxLength: 150
+          minLength: 0
           type:
             - "null"
             - string
         logoUrl:
+          maxLength: 2048
+          minLength: 0
           type:
             - "null"
             - string
         supportEmail:
+          maxLength: 254
+          minLength: 0
+          pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
           type:
             - "null"
             - string
         defaultLanguage:
+          maxLength: 10
+          minLength: 0
           type:
             - "null"
             - string
         currentAcademicYear:
+          maxLength: 20
+          minLength: 0
           type:
             - "null"
             - string
@@ -5612,6 +5814,8 @@ components:
             - "null"
             - boolean
         maxAvatarAndBadgeUploadSizeMB:
+          maximum: 100
+          minimum: 1
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - "null"
@@ -5619,6 +5823,8 @@ components:
             - string
           format: int32
         maxQuizMediaUploadSizeMB:
+          maximum: 100
+          minimum: 1
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - "null"
@@ -5626,6 +5832,8 @@ components:
             - string
           format: int32
         maxActiveSessionsPerUser:
+          maximum: 20
+          minimum: 1
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - "null"

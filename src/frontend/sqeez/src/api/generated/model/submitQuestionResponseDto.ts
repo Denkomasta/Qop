@@ -7,10 +7,19 @@
 
 export interface SubmitQuestionResponseDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  quizQuestionId: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  responseTimeMs: number | string
-  /** @nullable */
-  freeTextAnswer: string | null
-  selectedOptionIds: (number | string)[]
+  quizQuestionId?: number | string
+  /**
+   * @minimum 0
+   * @maximum 3600000
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
+  responseTimeMs?: number | string
+  /**
+   * @minLength 0
+   * @maxLength 4000
+   * @nullable
+   */
+  freeTextAnswer?: string | null
+  /** @maxItems 1000 */
+  selectedOptionIds?: (number | string)[]
 }

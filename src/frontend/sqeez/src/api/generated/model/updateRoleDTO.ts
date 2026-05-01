@@ -10,8 +10,18 @@ export interface UpdateRoleDTO {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id: number | string
   role: UserRole
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 100
+   * @nullable
+   * @pattern ^[a-zA-Z0-9_ \-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D.,&]+$
+   */
   department?: string | null
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 20
+   * @nullable
+   * @pattern ^\+?[0-9\s\-()]{7,15}$
+   */
   phoneNumber?: string | null
 }

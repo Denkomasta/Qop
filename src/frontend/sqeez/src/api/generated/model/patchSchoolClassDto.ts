@@ -6,11 +6,23 @@
  */
 
 export interface PatchSchoolClassDto {
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 150
+   * @nullable
+   */
   name?: string | null
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 20
+   * @nullable
+   */
   academicYear?: string | null
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 20
+   * @nullable
+   */
   section?: string | null
   /**
    * @nullable

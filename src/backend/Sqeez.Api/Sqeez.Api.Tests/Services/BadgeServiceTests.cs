@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -229,6 +229,55 @@ namespace Sqeez.Api.Tests.Services
             // Still only has 1 badge, didn't award a duplicate
             var earnedBadges = await context.StudentBadges.Where(sb => sb.StudentId == 1).ToListAsync();
             Assert.Single(earnedBadges);
+        }
+
+        [Fact]
+        public async Task DeleteBadgeAsync_WhenBadgeExists_DeletesBadgeAndRules()
+        {
+            await using var context = await GetSeededContextAsync();
+            var service = new BadgeService(context, _mockLogger.Object, _mockFileStorage.Object);
+
+            var result = await service.DeleteBadgeAsync(1);
+
+            Assert.True(result.Success);
+            
+            var badgeExists = await context.Badges.AnyAsync(b => b.Id == 1);
+            var rulesExist = await context.BadgeRules.AnyAsync(r => r.BadgeId == 1);
+
+            Assert.False(badgeExists);
+            Assert.False(rulesExist);
+        }
+
+        [Fact]
+        public async Task GetAllBadgesAsync_WithPagination_ReturnsPagedResult()
+        {
+            await using var context = await GetSeededContextAsync();
+            var service = new BadgeService(context, _mockLogger.Object, _mockFileStorage.Object);
+
+            var filter = new BadgeFilterDto { PageNumber = 1, PageSize = 1 };
+
+            var result = await service.GetAllBadgesAsync(filter);
+
+            Assert.True(result.Success);
+            Assert.Single(result.Data!.Data);
+            Assert.Equal(2, result.Data.TotalCount);
+            Assert.Equal(2, result.Data.TotalPages);
+        }
+
+        [Fact]
+        public async Task GetStudentBadgesAsync_WhenStudentHasBadges_ReturnsStudentBadgeDtos()
+        {
+            await using var context = await GetSeededContextAsync();
+            context.StudentBadges.Add(new StudentBadge { StudentId = 1, BadgeId = 1, EarnedAt = DateTime.UtcNow });
+            context.StudentBadges.Add(new StudentBadge { StudentId = 1, BadgeId = 2, EarnedAt = DateTime.UtcNow });
+            await context.SaveChangesAsync();
+
+            var service = new BadgeService(context, _mockLogger.Object, _mockFileStorage.Object);
+
+            var result = await service.GetStudentBadgesAsync(1);
+
+            Assert.True(result.Success);
+            Assert.Equal(2, result.Data!.Count());
         }
     }
 }

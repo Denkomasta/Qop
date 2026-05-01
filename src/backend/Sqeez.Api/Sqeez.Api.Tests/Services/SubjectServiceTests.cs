@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Sqeez.Api.Data;
@@ -201,6 +201,30 @@ namespace Sqeez.Api.Tests.Services
             Assert.Equal(2, result.Data!.TotalCount);
             Assert.Contains(result.Data.Data, s => s.Name == "Active1");
             Assert.Contains(result.Data.Data, s => s.Name == "Active2");
+        }
+
+        [Fact]
+        public async Task CreateSubjectsBulkAsync_WhenSubjectsProvided_SkipsExistingAndCreatesNew()
+        {
+            var context = await GetInMemoryDbContext();
+            var existingSubject = new Subject { Name = "Math", Code = "m1", StartDate = DateTime.UtcNow };
+            context.Subjects.Add(existingSubject);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var newSubjects = new List<Subject>
+            {
+                new Subject { Name = "Math", Code = "m1", StartDate = DateTime.UtcNow }, // duplicate by code
+                new Subject { Name = "Physics", Code = "p1", StartDate = DateTime.UtcNow } // new
+            };
+
+            var result = await service.CreateSubjectsBulkAsync(newSubjects);
+
+            Assert.True(result.Success);
+            Assert.Single(result.Data!.Created);
+            Assert.Equal("Physics", result.Data.Created.First().Name);
+            Assert.Equal("p1", result.Data.Created.First().Code);
+            Assert.Single(result.Data.SkippedMessages);
         }
     }
 }

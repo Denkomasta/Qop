@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -527,6 +527,34 @@ namespace Sqeez.Api.Tests.Services
 
             Assert.False(result.Success);
             Assert.Equal(ServiceError.NotFound, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task CreateStudentsBulkAsync_WhenStudentsProvided_SkipsExistingAndCreatesNew()
+        {
+            var context = await GetInMemoryDbContext();
+            var existingStudent = new Student { Username = "existing", Email = "exist@sqeez.org", Role = UserRole.Student, FirstName = "E", LastName = "S" };
+            context.Students.Add(existingStudent);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var newStudents = new List<Student>
+            {
+                new Student { Username = "dupe", Email = "exist@sqeez.org", PasswordHash = "hash", FirstName = "D", LastName = "U" }, // Duplicate by Email
+                new Student { Username = "newstudent", Email = "new@sqeez.org", PasswordHash = "hash", FirstName = "N", LastName = "W" } // New
+            };
+
+            var result = await service.CreateStudentsBulkAsync(newStudents);
+
+            Assert.True(result.Success);
+            Assert.Single(result.Data!.Created);
+            Assert.Equal("newstudent", result.Data.Created.First().Username);
+            Assert.Single(result.Data.SkippedMessages);
+            
+            var dbStudent = await context.Students.FirstOrDefaultAsync(s => s.Email == "new@sqeez.org");
+            Assert.NotNull(dbStudent);
+            Assert.Equal(UserRole.Student, dbStudent.Role);
+            Assert.NotNull(dbStudent.PasswordHash);
         }
     }
 }

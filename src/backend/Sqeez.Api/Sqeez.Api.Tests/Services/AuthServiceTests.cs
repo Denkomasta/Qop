@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -28,7 +28,7 @@ namespace Sqeez.Api.Tests.Services
             return context;
         }
 
-        private AuthService CreateService(SqeezDbContext context, Mock<ITokenService>? mockTokenService = null, Mock<ISystemConfigService>? mockConfigService = null)
+        private AuthService CreateService(SqeezDbContext context, Mock<ITokenService>? mockTokenService = null, Mock<ISystemConfigService>? mockConfigService = null, Mock<IEmailService>? mockEmailService = null)
         {
             var mockConfig = new Mock<IConfiguration>();
             mockConfig.Setup(c => c["SUPER_USER_EMAIL"]).Returns(SuperUserEmail);
@@ -51,11 +51,12 @@ namespace Sqeez.Api.Tests.Services
                         new SystemConfigDto("Sqeez", "", "", "en", "24/25", true, true, 10, 10, 3)
                     ));
             }
+            
+            mockEmailService ??= new Mock<IEmailService>();
 
             var mockLogger = new Mock<ILogger<AuthService>>();
-            var mockMail = new Mock<IEmailService>();
 
-            return new AuthService(context, mockConfig.Object, mockTokenService.Object, mockMail.Object, mockConfigService.Object, mockLogger.Object);
+            return new AuthService(context, mockConfig.Object, mockTokenService.Object, mockEmailService.Object, mockConfigService.Object, mockLogger.Object);
         }
 
         [Fact]
@@ -321,6 +322,87 @@ namespace Sqeez.Api.Tests.Services
             // Check if expiration is roughly 24 hours from now
             var expectedExpiration = DateTime.UtcNow.AddHours(24);
             Assert.True(session!.ExpiresAt > expectedExpiration.AddMinutes(-1) && session.ExpiresAt <= expectedExpiration);
+        }
+
+        [Fact]
+        public async Task VerifyEmailAsync_WhenValidToken_VerifiesUser()
+        {
+            var context = await GetInMemoryDbContext();
+            var user = new Student { Username = "Unverified", Email = "verify@sqeez.org", IsEmailVerified = false, EmailVerificationToken = "valid-token", EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(1) };
+            context.Students.Add(user);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.VerifyEmailAsync("valid-token", false);
+
+            Assert.True(result.Success);
+            var dbUser = await context.Students.FindAsync(user.Id);
+            Assert.True(dbUser!.IsEmailVerified);
+            Assert.Null(dbUser.EmailVerificationToken);
+        }
+
+        [Fact]
+        public async Task VerifyEmailAsync_WhenTokenExpired_ReturnsBadRequest()
+        {
+            var context = await GetInMemoryDbContext();
+            var user = new Student { Username = "Unverified", Email = "verify@sqeez.org", IsEmailVerified = false, EmailVerificationToken = "expired-token", EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(-1) };
+            context.Students.Add(user);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.VerifyEmailAsync("expired-token", false);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Unauthorized, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task ForgotPasswordAsync_WhenUserExists_GeneratesTokenAndSendsEmail()
+        {
+            var context = await GetInMemoryDbContext();
+            var user = new Student { Username = "Forgetful", Email = "forgot@sqeez.org" };
+            context.Students.Add(user);
+            await context.SaveChangesAsync();
+
+            var mockEmailService = new Mock<IEmailService>();
+            var service = CreateService(context, null, null, mockEmailService);
+
+            var result = await service.ForgotPasswordAsync("forgot@sqeez.org");
+
+            Assert.True(result.Success);
+            
+            var dbUser = await context.Students.FindAsync(user.Id);
+            Assert.NotNull(dbUser!.PasswordResetToken);
+            Assert.True(dbUser.PasswordResetTokenExpiry > DateTime.UtcNow);
+
+            // Wait a bit for the background Task.Run to execute
+            await Task.Delay(200);
+
+            mockEmailService.Verify(e => e.SendPasswordResetEmailAsync(
+                It.Is<string>(s => s.Equals("forgot@sqeez.org", StringComparison.OrdinalIgnoreCase)),
+                It.IsAny<string>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task ResetPasswordAsync_WhenValidToken_ResetsPassword()
+        {
+            var context = await GetInMemoryDbContext();
+            var oldHash = BC.HashPassword("OldPassword");
+            var user = new Student { Username = "Resetter", Email = "reset@sqeez.org", PasswordHash = oldHash, PasswordResetToken = "valid-reset-token", PasswordResetTokenExpiry = DateTime.UtcNow.AddHours(1) };
+            context.Students.Add(user);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.ResetPasswordAsync(new ResetPasswordDto("valid-reset-token", "NewPassword123!"));
+
+            Assert.True(result.Success);
+            
+            var dbUser = await context.Students.FindAsync(user.Id);
+            Assert.True(BC.Verify("NewPassword123!", dbUser!.PasswordHash));
+            Assert.Null(dbUser.PasswordResetToken);
         }
     }
 }

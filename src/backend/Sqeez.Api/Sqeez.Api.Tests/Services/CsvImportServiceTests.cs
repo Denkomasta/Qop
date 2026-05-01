@@ -20,6 +20,7 @@ namespace Sqeez.Api.Tests.Services
         {
             var options = new DbContextOptionsBuilder<SqeezDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .ConfigureWarnings(x => x.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
 
             var context = new SqeezDbContext(options);

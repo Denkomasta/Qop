@@ -8,6 +8,10 @@ import type { UserRole } from './userRole'
 import type { UserSortField } from './userSortField'
 
 export type GetApiUsersParams = {
+  /**
+   * @minLength 0
+   * @maxLength 100
+   */
   SearchTerm?: string
   IsOnline?: boolean
   /**
@@ -21,16 +25,28 @@ export type GetApiUsersParams = {
   IsArchived?: boolean
   Role?: UserRole
   StrictRoleOnly?: boolean
+  /**
+   * @minLength 0
+   * @maxLength 100
+   */
   Department?: string
+  /**
+   * @minLength 0
+   * @maxLength 20
+   */
   PhoneNumber?: string
   SortBy?: UserSortField
   IsDescending?: boolean
   HasAssignedClass?: boolean
   /**
+   * @minimum 1
+   * @maximum 2147483647
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   PageNumber?: number | string
   /**
+   * @minimum 1
+   * @maximum 100
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   PageSize?: number | string

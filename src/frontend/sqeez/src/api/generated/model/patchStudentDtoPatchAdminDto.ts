@@ -9,13 +9,17 @@ import type { PatchStudentDtoPatchAdminDtoRole } from './patchStudentDtoPatchAdm
 export interface PatchStudentDtoPatchAdminDto {
   role: PatchStudentDtoPatchAdminDtoRole
   /**
+   * @minLength 0
+   * @maxLength 20
    * @nullable
    * @pattern ^00[1-9][0-9]{0,2}[0-9]{7,12}$
    */
   phoneNumber?: string | null
   /**
+   * @minLength 0
+   * @maxLength 100
    * @nullable
-   * @pattern ^[a-zA-Z0-9_ \-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ.,&]+$
+   * @pattern ^[a-zA-Z0-9_ \-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D.,&]+$
    */
   department?: string | null
   /**
@@ -24,11 +28,15 @@ export interface PatchStudentDtoPatchAdminDto {
    */
   managedClassId?: number | string | null
   /**
+   * @minLength 3
+   * @maxLength 20
    * @nullable
-   * @pattern ^[a-zA-Z0-9_\-áéíóúýčďěňřšťžÁÉÍÓÚÝČĎĚŇŘŠŤŽ]+$
+   * @pattern ^[a-zA-Z0-9_\-\u00E1\u00E9\u00ED\u00F3\u00FA\u00FD\u010D\u010F\u011B\u0148\u0159\u0161\u0165\u017E\u00C1\u00C9\u00CD\u00D3\u00DA\u00DD\u010C\u010E\u011A\u0147\u0158\u0160\u0164\u017D]+$
    */
   username?: string | null
   /**
+   * @minLength 0
+   * @maxLength 254
    * @nullable
    * @pattern ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
    */
@@ -38,6 +46,10 @@ export interface PatchStudentDtoPatchAdminDto {
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   schoolClassId?: number | string | null
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 2048
+   * @nullable
+   */
   avatarUrl?: string | null
 }

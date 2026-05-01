@@ -12,9 +12,13 @@ export interface UpdateBadgeRuleDto {
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
-  id: number | string | null
-  metric: BadgeMetric
-  operator: BadgeOperator
-  /** @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?$ */
-  targetValue: number | string
+  id?: number | string | null
+  metric?: BadgeMetric
+  operator?: BadgeOperator
+  /**
+   * @minimum 0
+   * @maximum 1000000
+   * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
+   */
+  targetValue?: number | string
 }

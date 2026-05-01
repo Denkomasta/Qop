@@ -7,11 +7,19 @@
 import type { MediaType } from './mediaType'
 
 export interface PatchMediaAssetDto {
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 2048
+   * @nullable
+   */
   locationUrl?: string | null
   mimeType?: null | MediaType
   /** @nullable */
   isPrivate?: boolean | null
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 1000
+   * @nullable
+   */
   description?: string | null
 }

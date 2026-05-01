@@ -6,17 +6,29 @@
  */
 
 export type GetApiClassesParams = {
+  /**
+   * @minLength 0
+   * @maxLength 100
+   */
   SearchTerm?: string
+  /**
+   * @minLength 0
+   * @maxLength 20
+   */
   AcademicYear?: string
   /**
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   TeacherId?: number | string
   /**
+   * @minimum 1
+   * @maximum 2147483647
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   PageNumber?: number | string
   /**
+   * @minimum 1
+   * @maximum 100
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   PageSize?: number | string

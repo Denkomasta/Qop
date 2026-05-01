@@ -7,6 +7,8 @@
 
 export type GetApiEnrollmentsParams = {
   /**
+   * @minimum 1
+   * @maximum 5
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   Mark?: number | string
@@ -21,10 +23,14 @@ export type GetApiEnrollmentsParams = {
   IsActive?: boolean
   IsDescending?: boolean
   /**
+   * @minimum 1
+   * @maximum 2147483647
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   PageNumber?: number | string
   /**
+   * @minimum 1
+   * @maximum 100
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   PageSize?: number | string

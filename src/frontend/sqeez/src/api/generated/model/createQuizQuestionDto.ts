@@ -6,13 +6,25 @@
  */
 
 export interface CreateQuizQuestionDto {
-  title: string
+  /**
+   * @minLength 0
+   * @maxLength 150
+   */
+  title?: string
+  /**
+   * @minimum 0
+   * @maximum 1000
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
+  difficulty?: number | string
+  /**
+   * @minimum 0
+   * @maximum 86400
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
+  timeLimit?: number | string
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  difficulty: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  timeLimit: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  quizId: number | string
+  quizId?: number | string
   hasPenalty?: boolean
   /**
    * @nullable

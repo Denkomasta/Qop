@@ -6,11 +6,23 @@
  */
 
 export interface PatchSubjectDto {
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 150
+   * @nullable
+   */
   name?: string | null
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 30
+   * @nullable
+   */
   code?: string | null
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 1000
+   * @nullable
+   */
   description?: string | null
   /** @nullable */
   startDate?: string | null

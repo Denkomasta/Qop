@@ -6,5 +6,6 @@
  */
 
 export interface AssignStudentsDto {
-  studentIds: (number | string)[]
+  /** @maxItems 1000 */
+  studentIds?: (number | string)[]
 }

@@ -6,7 +6,11 @@
  */
 
 export interface GradeQuestionResponseDto {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  score: number | string
-  isLiked: boolean
+  /**
+   * @minimum -1000
+   * @maximum 1000
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
+  score?: number | string
+  isLiked?: boolean
 }

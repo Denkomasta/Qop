@@ -8,10 +8,23 @@ import type { IFormFile } from './iFormFile'
 import type { UpdateBadgeRuleDto } from './updateBadgeRuleDto'
 
 export type PatchApiBadgesIdBody = {
+  /**
+   * @minLength 0
+   * @maxLength 150
+   */
   Name?: string
+  /**
+   * @minLength 0
+   * @maxLength 1000
+   */
   Description?: string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * @minimum 0
+   * @maximum 100000
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   XpBonus?: number | string
   NewIconFile?: IFormFile
+  /** @maxItems 1000 */
   Rules?: UpdateBadgeRuleDto[]
 }

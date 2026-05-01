@@ -404,5 +404,53 @@ namespace Sqeez.Api.Tests.Services
             Assert.True(BC.Verify("NewPassword123!", dbUser!.PasswordHash));
             Assert.Null(dbUser.PasswordResetToken);
         }
+
+        [Fact]
+        public async Task LoginAsync_WhenMaxSessionsReached_RemovesOldestActiveSession()
+        {
+            var context = await GetInMemoryDbContext();
+            string password = "Password123!";
+            var user = new Student { Username = "SessionCap", Email = "cap@sqeez.org", PasswordHash = BC.HashPassword(password), IsEmailVerified = true };
+            context.Students.Add(user);
+            await context.SaveChangesAsync();
+
+            context.UserSessions.AddRange(
+                new UserSession { UserId = user.Id, RefreshToken = "oldest", CreatedAt = DateTime.UtcNow.AddHours(-3), ExpiresAt = DateTime.UtcNow.AddDays(1) },
+                new UserSession { UserId = user.Id, RefreshToken = "middle", CreatedAt = DateTime.UtcNow.AddHours(-2), ExpiresAt = DateTime.UtcNow.AddDays(1) },
+                new UserSession { UserId = user.Id, RefreshToken = "newest", CreatedAt = DateTime.UtcNow.AddHours(-1), ExpiresAt = DateTime.UtcNow.AddDays(1) }
+            );
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.LoginAsync(new LoginDTO("cap@sqeez.org", password));
+
+            Assert.True(result.Success);
+            var sessions = await context.UserSessions.Where(s => s.UserId == user.Id).ToListAsync();
+            Assert.Equal(3, sessions.Count);
+            Assert.DoesNotContain(sessions, s => s.RefreshToken == "oldest");
+            Assert.Contains(sessions, s => s.RefreshToken == "middle");
+            Assert.Contains(sessions, s => s.RefreshToken == "newest");
+            Assert.Contains(sessions, s => s.RefreshToken == "fake-refresh-token");
+        }
+
+        [Fact]
+        public async Task RegisterAsync_WhenPublicRegistrationClosed_ReturnsForbiddenAndDoesNotCreateUser()
+        {
+            var context = await GetInMemoryDbContext();
+            var mockConfigService = new Mock<ISystemConfigService>();
+            mockConfigService.Setup(c => c.GetConfigAsync())
+                .ReturnsAsync(ServiceResult<SystemConfigDto>.Ok(
+                    new SystemConfigDto("Sqeez", "", "", "en", "24/25", false, true, 10, 10, 3)
+                ));
+
+            var service = CreateService(context, mockConfigService: mockConfigService);
+
+            var result = await service.RegisterAsync(new RegisterDTO("Closed", "User", "ClosedUser", "closed@sqeez.org", "pwd"));
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+            Assert.False(await context.Students.AnyAsync(u => u.Email == "closed@sqeez.org"));
+        }
     }
 }

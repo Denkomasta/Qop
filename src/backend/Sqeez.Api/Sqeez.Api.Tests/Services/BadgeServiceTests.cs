@@ -279,5 +279,65 @@ namespace Sqeez.Api.Tests.Services
             Assert.True(result.Success);
             Assert.Equal(2, result.Data!.Count());
         }
+
+        [Fact]
+        public async Task GetAllBadgesAsync_WhenFilteringEarned_ReturnsOnlyStudentBadges()
+        {
+            await using var context = await GetSeededContextAsync();
+            context.StudentBadges.Add(new StudentBadge { StudentId = 1, BadgeId = 1, EarnedAt = DateTime.UtcNow });
+            await context.SaveChangesAsync();
+
+            var service = new BadgeService(context, _mockLogger.Object, _mockFileStorage.Object);
+            var filter = new BadgeFilterDto { StudentId = 1, isEarned = true, PageNumber = 1, PageSize = 10 };
+
+            var result = await service.GetAllBadgesAsync(filter);
+
+            Assert.True(result.Success);
+            Assert.Single(result.Data!.Data);
+            Assert.Equal("Perfect Score", result.Data.Data.First().Name);
+        }
+
+        [Fact]
+        public async Task GetAllBadgesAsync_WhenFilteringUnearned_ExcludesStudentBadges()
+        {
+            await using var context = await GetSeededContextAsync();
+            context.StudentBadges.Add(new StudentBadge { StudentId = 1, BadgeId = 1, EarnedAt = DateTime.UtcNow });
+            await context.SaveChangesAsync();
+
+            var service = new BadgeService(context, _mockLogger.Object, _mockFileStorage.Object);
+            var filter = new BadgeFilterDto { StudentId = 1, isEarned = false, PageNumber = 1, PageSize = 10 };
+
+            var result = await service.GetAllBadgesAsync(filter);
+
+            Assert.True(result.Success);
+            Assert.Single(result.Data!.Data);
+            Assert.Equal("High Scorer", result.Data.Data.First().Name);
+        }
+
+        [Fact]
+        public async Task UpdateBadgeAsync_WhenIconUploadFails_ReturnsFailureAndKeepsExistingIcon()
+        {
+            await using var context = await GetSeededContextAsync();
+            var badge = await context.Badges.FindAsync(1L);
+            badge!.IconUrl = "/badges/original.png";
+            await context.SaveChangesAsync();
+
+            var mockFile = new Mock<IFormFile>();
+            mockFile.Setup(f => f.FileName).Returns("new.png");
+            mockFile.Setup(f => f.Length).Returns(128);
+            _mockFileStorage.Setup(fs => fs.UploadFileAsync(It.IsAny<IFormFile>(), "badges", true))
+                .ReturnsAsync(ServiceResult<string>.Failure("Upload failed.", ServiceError.InternalError));
+
+            var service = new BadgeService(context, _mockLogger.Object, _mockFileStorage.Object);
+            var dto = new UpdateBadgeDto { NewIconFile = mockFile.Object };
+
+            var result = await service.UpdateBadgeAsync(1, dto);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.InternalError, result.ErrorCode);
+
+            var dbBadge = await context.Badges.FindAsync(1L);
+            Assert.Equal("/badges/original.png", dbBadge!.IconUrl);
+        }
     }
 }

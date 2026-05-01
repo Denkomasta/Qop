@@ -252,5 +252,79 @@ namespace Sqeez.Api.Tests.Services
             Assert.Equal(2, result.Data!.TotalCount);
             Assert.All(result.Data.Data, q => Assert.Equal(1, q.SubjectId));
         }
+
+        [Fact]
+        public async Task CreateQuizAsync_WhenUserDoesNotOwnSubject_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var subject = CreateActiveSubject(teacherId: 10);
+            context.Subjects.Add(subject);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var dto = new CreateQuizDto("Forbidden Quiz", "Desc", subject.Id, 1, null, null);
+
+            var result = await service.CreateQuizAsync(dto, currentUserId: 99);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+            Assert.False(await context.Quizzes.AnyAsync());
+        }
+
+        [Fact]
+        public async Task PatchQuizAsync_WhenMovingToEndedSubject_ReturnsForbiddenAndKeepsOriginalSubject()
+        {
+            var context = await GetInMemoryDbContext();
+            long currentUserId = 1;
+            var activeSubject = CreateActiveSubject(currentUserId);
+            var endedSubject = CreateEndedSubject(currentUserId);
+            var quiz = new Quiz { Title = "Movable", Subject = activeSubject };
+
+            context.Subjects.AddRange(activeSubject, endedSubject);
+            context.Quizzes.Add(quiz);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var dto = new PatchQuizDto(SubjectId: endedSubject.Id);
+
+            var result = await service.PatchQuizAsync(quiz.Id, dto, currentUserId);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+
+            var dbQuiz = await context.Quizzes.FindAsync(quiz.Id);
+            Assert.Equal(activeSubject.Id, dbQuiz!.SubjectId);
+        }
+
+        [Fact]
+        public async Task GetAllQuizzesAsync_WithStudentFilter_ReturnsOnlyQuizzesFromActiveEnrollments()
+        {
+            var context = await GetInMemoryDbContext();
+            long studentId = 42;
+            var activeSubject = new Subject { Name = "Active Enrollment", TeacherId = 1 };
+            var archivedSubject = new Subject { Name = "Archived Enrollment", TeacherId = 1 };
+            var otherSubject = new Subject { Name = "No Enrollment", TeacherId = 1 };
+
+            context.Subjects.AddRange(activeSubject, archivedSubject, otherSubject);
+            context.Quizzes.AddRange(
+                new Quiz { Title = "Available", Description = "A", Subject = activeSubject },
+                new Quiz { Title = "Archived", Description = "B", Subject = archivedSubject },
+                new Quiz { Title = "Hidden", Description = "C", Subject = otherSubject }
+            );
+            context.Enrollments.AddRange(
+                new Enrollment { StudentId = studentId, Subject = activeSubject, EnrolledAt = DateTime.UtcNow },
+                new Enrollment { StudentId = studentId, Subject = archivedSubject, EnrolledAt = DateTime.UtcNow, ArchivedAt = DateTime.UtcNow }
+            );
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var filter = new QuizFilterDto { StudentId = studentId, PageNumber = 1, PageSize = 10 };
+
+            var result = await service.GetAllQuizzesAsync(filter);
+
+            Assert.True(result.Success);
+            Assert.Single(result.Data!.Data);
+            Assert.Equal("Available", result.Data.Data.First().Title);
+        }
     }
 }

@@ -556,5 +556,95 @@ namespace Sqeez.Api.Tests.Services
             Assert.Equal(UserRole.Student, dbStudent.Role);
             Assert.NotNull(dbStudent.PasswordHash);
         }
+
+        [Fact]
+        public async Task GetAllUsersAsync_WithPhoneNumber_ReturnsOnlyMatchingAdmins()
+        {
+            var context = await GetInMemoryDbContext();
+            context.Students.AddRange(
+                new Admin { Username = "MatchingAdmin", Role = UserRole.Admin, PhoneNumber = "001234567890" },
+                new Admin { Username = "OtherAdmin", Role = UserRole.Admin, PhoneNumber = "009876543210" },
+                new Teacher { Username = "Teacher", Role = UserRole.Teacher, Department = "001234567890" }
+            );
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var filter = new UserFilterDto { PhoneNumber = "001234567890", PageNumber = 1, PageSize = 10 };
+
+            var result = await service.GetAllUsersAsync(filter);
+
+            Assert.True(result.Success);
+            Assert.Single(result.Data!.Data);
+            Assert.Equal("MatchingAdmin", result.Data.Data.First().Username);
+            Assert.IsType<AdminDto>(result.Data.Data.First());
+        }
+
+        [Fact]
+        public async Task PatchUserAsync_WhenTeacherManagedClassIdIsZero_RemovesManagedClass()
+        {
+            var context = await GetInMemoryDbContext();
+            var schoolClass = new SchoolClass { Name = "Managed" };
+            var teacher = new Teacher { Username = "Teacher", Role = UserRole.Teacher, ManagedClass = schoolClass };
+            context.Teachers.Add(teacher);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var patchDto = new PatchTeacherDto { ManagedClassId = 0 };
+
+            var result = await service.PatchUserAsync(teacher.Id, patchDto);
+
+            Assert.True(result.Success);
+            var teacherDto = Assert.IsType<TeacherDto>(result.Data);
+            Assert.Null(teacherDto.ManagedClassId);
+
+            var dbTeacher = await context.Teachers.FindAsync(teacher.Id);
+            Assert.Null(dbTeacher!.ManagedClassId);
+        }
+
+        [Fact]
+        public async Task UploadAvatarAsync_WhenStorageUploadFails_DoesNotChangeAvatar()
+        {
+            var context = await GetInMemoryDbContext();
+            var student = new Student { Username = "TestUser", Role = UserRole.Student, AvatarUrl = "/avatars/current.png" };
+            context.Students.Add(student);
+            await context.SaveChangesAsync();
+
+            var mockFileService = new Mock<IFileStorageService>();
+            mockFileService.Setup(s => s.DeleteFileAsync("/avatars/current.png"))
+                .ReturnsAsync(ServiceResult<bool>.Ok(true));
+            mockFileService.Setup(s => s.UploadFileAsync(It.IsAny<IFormFile>(), "avatars", true))
+                .ReturnsAsync(ServiceResult<string>.Failure("Upload failed.", ServiceError.InternalError));
+
+            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object);
+            var mockFile = CreateMockFile("profile.png");
+
+            var result = await service.UploadAvatarAsync(student.Id, mockFile.Object);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.InternalError, result.ErrorCode);
+
+            var dbStudent = await context.Students.FindAsync(student.Id);
+            Assert.Equal("/avatars/current.png", dbStudent!.AvatarUrl);
+        }
+
+        [Fact]
+        public async Task CreateStudentsBulkAsync_WhenIncomingUsernameRepeats_SkipsSecondStudent()
+        {
+            var context = await GetInMemoryDbContext();
+            var service = CreateService(context);
+            var students = new List<Student>
+            {
+                new Student { Username = "duplicate", Email = "first@sqeez.org", PasswordHash = "hash", FirstName = "First", LastName = "Student" },
+                new Student { Username = "Duplicate", Email = "second@sqeez.org", PasswordHash = "hash", FirstName = "Second", LastName = "Student" }
+            };
+
+            var result = await service.CreateStudentsBulkAsync(students);
+
+            Assert.True(result.Success);
+            Assert.Single(result.Data!.Created);
+            Assert.Single(result.Data.SkippedMessages);
+            Assert.Equal(1, await context.Students.CountAsync());
+            Assert.Equal("duplicate", result.Data.Created.First().Username);
+        }
     }
 }

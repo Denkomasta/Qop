@@ -20,33 +20,34 @@ export function Pagination({
   if (totalPages <= 1) return null
 
   return (
-    <div className={`flex items-center justify-between px-2 py-4 ${className}`}>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage <= 1}
-        className="min-w-25"
-      >
-        <ChevronLeft className="mr-2 size-4" />
-        {t('common.previous', 'Previous')}
-      </Button>
+    <div className={`flex w-full justify-center py-6 ${className}`}>
+      <div className="inline-flex items-center gap-1 rounded-lg border border-border bg-background p-1 shadow-sm">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage <= 1}
+          className="rounded-md"
+        >
+          <ChevronLeft className="mr-1.5 size-4" />
+          {t('common.previous')}
+        </Button>
 
-      <div className="text-sm font-medium text-muted-foreground">
-        {t('common.page', 'Page')} {currentPage} {t('common.of', 'of')}{' '}
-        {totalPages}
+        <div className="flex h-8 items-center justify-center border-x border-border/50 px-4 text-sm font-medium text-muted-foreground">
+          {t('common.page')} {currentPage} {t('common.of')} {totalPages}
+        </div>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage >= totalPages}
+          className="rounded-md"
+        >
+          {t('common.next')}
+          <ChevronRight className="ml-1.5 size-4" />
+        </Button>
       </div>
-
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage >= totalPages}
-        className="min-w-25"
-      >
-        {t('common.next', 'Next')}
-        <ChevronRight className="ml-2 size-4" />
-      </Button>
     </div>
   )
 }

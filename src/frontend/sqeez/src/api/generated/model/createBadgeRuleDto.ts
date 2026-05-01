@@ -8,8 +8,12 @@ import type { BadgeMetric } from './badgeMetric'
 import type { BadgeOperator } from './badgeOperator'
 
 export interface CreateBadgeRuleDto {
-  metric: BadgeMetric
-  operator: BadgeOperator
-  /** @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?$ */
-  targetValue: number | string
+  metric?: BadgeMetric
+  operator?: BadgeOperator
+  /**
+   * @minimum 0
+   * @maximum 1000000
+   * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
+   */
+  targetValue?: number | string
 }

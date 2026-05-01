@@ -6,5 +6,10 @@
  */
 
 export interface ForgotPasswordDto {
-  email: string
+  /**
+   * @minLength 0
+   * @maxLength 254
+   * @pattern ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+   */
+  email?: string
 }

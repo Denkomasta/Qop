@@ -6,8 +6,14 @@
  */
 
 export type GetApiQuizzesQuizIdQuestionsParams = {
+  /**
+   * @minLength 0
+   * @maxLength 100
+   */
   SearchTerm?: string
   /**
+   * @minimum 0
+   * @maximum 1000
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   Difficulty?: number | string
@@ -20,10 +26,14 @@ export type GetApiQuizzesQuizIdQuestionsParams = {
    */
   MediaAssetId?: number | string
   /**
+   * @minimum 1
+   * @maximum 2147483647
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   PageNumber?: number | string
   /**
+   * @minimum 1
+   * @maximum 100
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   PageSize?: number | string

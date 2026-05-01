@@ -7,11 +7,19 @@
 import type { MediaType } from './mediaType'
 
 export interface CreateMediaAssetDto {
-  locationUrl: string
-  mimeType: MediaType
-  isPrivate: boolean
+  /**
+   * @minLength 0
+   * @maxLength 2048
+   */
+  locationUrl?: string
+  mimeType?: MediaType
+  isPrivate?: boolean
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  ownerId: number | string
-  /** @nullable */
+  ownerId?: number | string
+  /**
+   * @minLength 0
+   * @maxLength 1000
+   * @nullable
+   */
   description?: string | null
 }

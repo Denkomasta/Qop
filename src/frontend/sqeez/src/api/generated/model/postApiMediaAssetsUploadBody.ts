@@ -11,5 +11,9 @@ export type PostApiMediaAssetsUploadBody = {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   OwnerId?: number | string
   IsPrivate?: boolean
+  /**
+   * @minLength 0
+   * @maxLength 1000
+   */
   Description?: string
 }

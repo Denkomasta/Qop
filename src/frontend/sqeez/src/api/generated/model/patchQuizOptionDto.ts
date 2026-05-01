@@ -6,7 +6,11 @@
  */
 
 export interface PatchQuizOptionDto {
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 4000
+   * @nullable
+   */
   text?: string | null
   /** @nullable */
   isFreeText?: boolean | null

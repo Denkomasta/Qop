@@ -6,33 +6,60 @@
  */
 
 export interface UpdateSystemConfigDto {
-  /** @nullable */
-  schoolName: string | null
-  /** @nullable */
-  logoUrl: string | null
-  /** @nullable */
-  supportEmail: string | null
-  /** @nullable */
-  defaultLanguage: string | null
-  /** @nullable */
-  currentAcademicYear: string | null
-  /** @nullable */
-  allowPublicRegistration: boolean | null
-  /** @nullable */
-  requireEmailVerification: boolean | null
   /**
+   * @minLength 0
+   * @maxLength 150
+   * @nullable
+   */
+  schoolName?: string | null
+  /**
+   * @minLength 0
+   * @maxLength 2048
+   * @nullable
+   */
+  logoUrl?: string | null
+  /**
+   * @minLength 0
+   * @maxLength 254
+   * @nullable
+   * @pattern ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+   */
+  supportEmail?: string | null
+  /**
+   * @minLength 0
+   * @maxLength 10
+   * @nullable
+   */
+  defaultLanguage?: string | null
+  /**
+   * @minLength 0
+   * @maxLength 20
+   * @nullable
+   */
+  currentAcademicYear?: string | null
+  /** @nullable */
+  allowPublicRegistration?: boolean | null
+  /** @nullable */
+  requireEmailVerification?: boolean | null
+  /**
+   * @minimum 1
+   * @maximum 100
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
-  maxAvatarAndBadgeUploadSizeMB: number | string | null
+  maxAvatarAndBadgeUploadSizeMB?: number | string | null
   /**
+   * @minimum 1
+   * @maximum 100
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
-  maxQuizMediaUploadSizeMB: number | string | null
+  maxQuizMediaUploadSizeMB?: number | string | null
   /**
+   * @minimum 1
+   * @maximum 20
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
-  maxActiveSessionsPerUser: number | string | null
+  maxActiveSessionsPerUser?: number | string | null
 }

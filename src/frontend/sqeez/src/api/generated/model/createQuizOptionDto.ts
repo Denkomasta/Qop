@@ -6,10 +6,14 @@
  */
 
 export interface CreateQuizOptionDto {
-  isCorrect: boolean
+  isCorrect?: boolean
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
-  quizQuestionID: number | string
-  /** @nullable */
+  quizQuestionID?: number | string
+  /**
+   * @minLength 0
+   * @maxLength 4000
+   * @nullable
+   */
   text?: string | null
   isFreeText?: boolean
   /**

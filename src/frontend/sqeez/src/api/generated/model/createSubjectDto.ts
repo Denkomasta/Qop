@@ -6,9 +6,21 @@
  */
 
 export interface CreateSubjectDto {
-  name: string
-  code: string
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 150
+   */
+  name?: string
+  /**
+   * @minLength 0
+   * @maxLength 30
+   */
+  code?: string
+  /**
+   * @minLength 0
+   * @maxLength 1000
+   * @nullable
+   */
   description?: string | null
   /** @nullable */
   startDate?: string | null

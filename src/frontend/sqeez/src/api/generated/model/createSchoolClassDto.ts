@@ -6,12 +6,24 @@
  */
 
 export interface CreateSchoolClassDto {
-  name: string
-  academicYear: string
-  section: string
+  /**
+   * @minLength 0
+   * @maxLength 150
+   */
+  name?: string
+  /**
+   * @minLength 0
+   * @maxLength 20
+   */
+  academicYear?: string
+  /**
+   * @minLength 0
+   * @maxLength 20
+   */
+  section?: string
   /**
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
-  teacherId: number | string | null
+  teacherId?: number | string | null
 }

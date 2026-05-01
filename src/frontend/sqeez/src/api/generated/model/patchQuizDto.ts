@@ -6,11 +6,21 @@
  */
 
 export interface PatchQuizDto {
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 150
+   * @nullable
+   */
   title?: string | null
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 1000
+   * @nullable
+   */
   description?: string | null
   /**
+   * @minimum 0
+   * @maximum 100
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

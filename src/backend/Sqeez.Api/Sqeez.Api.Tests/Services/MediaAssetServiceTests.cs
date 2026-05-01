@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Sqeez.Api.Data;
@@ -147,6 +147,73 @@ namespace Sqeez.Api.Tests.Services
             var result = await service.DeleteMediaAssetAsync(asset.Id);
 
             Assert.True(result.Success);
+            var dbAsset = await context.MediaAssets.FindAsync(asset.Id);
+            Assert.Null(dbAsset);
+        }
+
+        [Fact]
+        public async Task GetDownloadMetadataAsync_WhenValid_ReturnsDownloadDto()
+        {
+            var context = await GetInMemoryDbContext();
+            var teacher = new Teacher { Username = "Owner", Role = UserRole.Teacher };
+            var asset = new MediaAsset { LocationUrl = "url", Owner = teacher, IsPrivate = true };
+
+            context.Teachers.Add(teacher);
+            context.MediaAssets.Add(asset);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            // Accessing own private asset
+            var result = await service.GetDownloadMetadataAsync(asset.Id, teacher.Id, UserRole.Teacher.ToString());
+
+            Assert.True(result.Success);
+            Assert.Equal("url", result.Data!.LocationUrl);
+        }
+
+        [Fact]
+        public async Task GetDownloadMetadataAsync_WhenForbidden_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var teacher1 = new Teacher { Username = "Owner", Role = UserRole.Teacher };
+            var teacher2 = new Teacher { Username = "Intruder", Role = UserRole.Teacher };
+            var asset = new MediaAsset { LocationUrl = "url", Owner = teacher1, IsPrivate = true };
+
+            context.Teachers.AddRange(teacher1, teacher2);
+            context.MediaAssets.Add(asset);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            // Intruder trying to access teacher1's private asset
+            var result = await service.GetDownloadMetadataAsync(asset.Id, teacher2.Id, UserRole.Teacher.ToString());
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task DeleteMediaAssetAndFileAsync_WhenExists_CallsStorageAndDeletesFromDb()
+        {
+            var context = await GetInMemoryDbContext();
+            var teacher = new Teacher { Username = "Owner", Role = UserRole.Teacher };
+            var asset = new MediaAsset { LocationUrl = "/uploads/test.png", Owner = teacher };
+
+            context.Teachers.Add(teacher);
+            context.MediaAssets.Add(asset);
+            await context.SaveChangesAsync();
+
+            var mockLogger = new Mock<ILogger<MediaAssetService>>();
+            var mockFileService = new Mock<IFileStorageService>();
+            mockFileService.Setup(fs => fs.DeleteFileAsync(It.IsAny<string>())).ReturnsAsync(ServiceResult<bool>.Ok(true));
+
+            var service = new MediaAssetService(context, mockLogger.Object, mockFileService.Object);
+
+            var result = await service.DeleteMediaAssetAndFileAsync(asset.Id);
+
+            Assert.True(result.Success);
+            mockFileService.Verify(fs => fs.DeleteFileAsync("/uploads/test.png"), Times.Once);
+
             var dbAsset = await context.MediaAssets.FindAsync(asset.Id);
             Assert.Null(dbAsset);
         }

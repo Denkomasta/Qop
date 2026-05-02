@@ -40,7 +40,6 @@ import { StudentBadge } from '@/components/ui/StudentBadge'
 import { useSystemConfig } from '@/hooks/useSystemConfig'
 import { formatPhoneForDb, formatPhoneForDisplay } from '@/lib/phoneHelpers'
 import { getLastSeenStatus } from '@/lib/dateHelpers'
-import { is } from 'zod/v4/locales'
 
 type EditFieldState = {
   key: string

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using Sqeez.Api.Data;
+using Sqeez.Api.Middlewares;
 using Sqeez.Api.Models.Config;
 using Sqeez.Api.Services;
 using Sqeez.Api.Services.AuthService;
@@ -180,6 +181,8 @@ app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseLastSeenTracking();
 
 app.MapControllers();
 

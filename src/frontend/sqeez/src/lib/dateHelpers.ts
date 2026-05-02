@@ -1,3 +1,5 @@
+import type { TFunction } from 'i18next'
+
 export const formatDate = (dateString?: string | null) => {
   if (!dateString) return null
   return new Date(dateString).toLocaleDateString()
@@ -66,4 +68,51 @@ export const formatTimer = (totalSeconds: number): string => {
   const s = totalSeconds % 60
 
   return `${m}:${s.toString().padStart(2, '0')}`
+}
+
+export const getLastSeenStatus = (
+  lastSeen: string | undefined,
+  t: TFunction,
+) => {
+  // If lastSeen is null/undefined or invalid, fallback to offline
+  if (!lastSeen) return { isOnline: false, text: t('profile.offline') }
+
+  const lastSeenDate = new Date(lastSeen)
+  const now = new Date()
+
+  const diffMs = now.getTime() - lastSeenDate.getTime()
+  const diffMinutes = Math.floor(diffMs / (1000 * 60))
+
+  // Less than 5 minutes = Online
+  if (diffMinutes < 5) {
+    return { isOnline: true, text: t('profile.online') }
+  }
+
+  // Format relative time for offline status
+  if (diffMinutes < 60) {
+    return {
+      isOnline: false,
+      text: t('profile.lastSeen.minutes', {
+        count: diffMinutes,
+      }),
+    }
+  }
+
+  const diffHours = Math.floor(diffMinutes / 60)
+  if (diffHours < 24) {
+    return {
+      isOnline: false,
+      text: t('profile.lastSeen.hours', {
+        count: diffHours,
+      }),
+    }
+  }
+
+  const diffDays = Math.floor(diffHours / 24)
+  return {
+    isOnline: false,
+    text: t('profile.lastSeen.days', {
+      count: diffDays,
+    }),
+  }
 }

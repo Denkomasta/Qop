@@ -40,10 +40,10 @@ export function TeacherSubjectsView() {
   return (
     <PaginatedListView<SubjectDto>
       titleNode={
-        <h1 className="flex items-center gap-3 text-3xl font-bold tracking-tight text-foreground">
+        <>
           <Library className="h-8 w-8 text-primary" />
           {t('teacherSubjects.title')}
-        </h1>
+        </>
       }
       isLoading={isLoading && !subjectsResponse}
       isFetching={isFetching}

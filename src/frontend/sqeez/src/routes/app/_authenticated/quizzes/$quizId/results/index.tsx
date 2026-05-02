@@ -18,9 +18,9 @@ import {
   CardTitle,
 } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Spinner } from '@/components/ui/Spinner'
 import { Badge } from '@/components/ui/Badge'
 import { Pagination } from '@/components/ui/Pagination'
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 
 import { useGetApiQuizAttemptsQuizQuizId } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
 import { formatDateTime, formatDuration } from '@/lib/dateHelpers'
@@ -73,17 +73,12 @@ function QuizResultsSummaryPage() {
     }
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center">
-        <Spinner size="lg" />
-      </div>
-    )
-  }
-
   if (attempts.length === 0 && pageNumber === 1) {
     return (
-      <div className="container mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center space-y-4 p-6 text-center">
+      <PageLayout
+        isLoading={isLoading}
+        containerClassName="flex min-h-[60vh] max-w-2xl flex-col items-center justify-center text-center"
+      >
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
           <History className="h-10 w-10 text-muted-foreground" />
         </div>
@@ -104,13 +99,17 @@ function QuizResultsSummaryPage() {
             {t('quiz.takeQuiz')}
           </Link>
         </Button>
-      </div>
+      </PageLayout>
     )
   }
 
   return (
-    <div className="container mx-auto max-w-4xl animate-in space-y-8 p-4 duration-500 fade-in md:p-6 lg:p-8">
-      <div>
+    <PageLayout
+      containerClassName="max-w-4xl animate-in duration-500 fade-in"
+      isLoading={isLoading}
+      title={t('quiz.attemptsHistory')}
+      subtitle={t('quiz.reviewPastPerformance')}
+      headerControls={
         <Button
           variant="ghost"
           size="sm"
@@ -122,14 +121,8 @@ function QuizResultsSummaryPage() {
             {t('common.back')}
           </Link>
         </Button>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          {t('quiz.attemptsHistory')}
-        </h1>
-        <p className="text-muted-foreground">
-          {t('quiz.reviewPastPerformance')}
-        </p>
-      </div>
-
+      }
+    >
       <div className="grid gap-6">
         {attempts.map((attempt, index) => {
           const isLatest = pageNumber === 1 && index === 0
@@ -228,6 +221,6 @@ function QuizResultsSummaryPage() {
           />
         </div>
       )}
-    </div>
+    </PageLayout>
   )
 }

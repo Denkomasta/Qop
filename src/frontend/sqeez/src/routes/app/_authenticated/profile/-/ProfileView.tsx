@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next'
 import { EditableInfoItem } from '@/components/ui/InfoItem'
 import { AsyncButton, Button } from '@/components/ui/Button'
 import { BaseModal } from '@/components/ui/Modal'
-import { Spinner } from '@/components/ui/Spinner'
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import { toast } from 'sonner'
 import { calculateLevel, formatName } from '@/lib/userHelpers'
 import {
@@ -83,22 +83,14 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
     })
     .slice(0, 3)
 
-  if (isLoading || isSystemConfigLoading) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <Spinner size={'lg'} />
-        <p className="animate-pulse font-medium text-muted-foreground">
-          {t('common.loading')}...
-        </p>
-      </div>
-    )
-  }
-
   if (!profileData) {
     return (
-      <div className="container mx-auto p-6 text-center text-muted-foreground">
+      <PageLayout
+        isLoading={isLoading || isSystemConfigLoading}
+        containerClassName="max-w-7xl text-center text-muted-foreground"
+      >
         {t('errors.userNotFound')}
-      </div>
+      </PageLayout>
     )
   }
 
@@ -219,15 +211,17 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
   const status = getLastSeenStatus(profileData.lastSeen, t)
 
   return (
-    <div className="container mx-auto max-w-7xl p-6">
-      <h1 className="mb-8 flex items-center gap-3 text-3xl font-bold tracking-tight text-foreground">
-        {isOwnProfile
+    <PageLayout
+      containerClassName="max-w-7xl"
+      isLoading={isLoading || isSystemConfigLoading}
+      title={
+        isOwnProfile
           ? t('profile.title')
           : t('profile.userTitle', {
               name: formatName(profileData.firstName, profileData.lastName),
-            })}
-      </h1>
-
+            })
+      }
+    >
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="self-start shadow-sm md:col-span-1">
           <CardContent className="flex flex-col items-center pt-8 pb-8">
@@ -454,6 +448,6 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
           onUpload={onAvatarSave}
         />
       )}
-    </div>
+    </PageLayout>
   )
 }

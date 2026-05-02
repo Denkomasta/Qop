@@ -4,9 +4,9 @@ import { Link } from '@tanstack/react-router'
 
 import { useGetApiQuizAttemptsId } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
 import { useAuthStore } from '@/store/useAuthStore'
-import { Spinner } from '@/components/ui/Spinner'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import { QuestionResultCard } from './QuestionResultCard'
 import { useGetApiQuizzesQuizId } from '@/api/generated/endpoints/quizzes/quizzes'
 import { useGetApiSubjectsId } from '@/api/generated/endpoints/subjects/subjects'
@@ -35,19 +35,14 @@ export function AttemptViewerPage({
     { query: { enabled: !!quiz?.subjectId } },
   )
 
-  if (isAttemptLoading || isQuizLoading || isSubjectLoading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Spinner size="lg" />
-      </div>
-    )
-  }
-
   if (!attempt || !quiz || !subject) {
     return (
-      <div className="p-8 text-center text-destructive">
+      <PageLayout
+        isLoading={isAttemptLoading || isQuizLoading || isSubjectLoading}
+        containerClassName="max-w-4xl text-center text-destructive"
+      >
         {t('common.error')}
-      </div>
+      </PageLayout>
     )
   }
 
@@ -59,19 +54,19 @@ export function AttemptViewerPage({
   )
 
   return (
-    <div className="container mx-auto max-w-4xl space-y-8 p-6">
-      <div className="flex items-center gap-4">
+    <PageLayout
+      containerClassName="max-w-4xl"
+      isLoading={isAttemptLoading || isQuizLoading || isSubjectLoading}
+      title={quiz.title}
+      subtitle={t('attempts.review')}
+      headerActions={
         <Link to="..">
           <Button variant="ghost" size="icon">
             <ArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{quiz.title}</h1>
-          <p className="text-muted-foreground">{t('attempts.review')}</p>
-        </div>
-      </div>
-
+      }
+    >
       <Card className="border-primary/20 bg-primary/5 shadow-sm">
         <CardContent className="flex flex-wrap items-center justify-between gap-6 p-6">
           <div className="flex items-center gap-3">
@@ -134,6 +129,6 @@ export function AttemptViewerPage({
           />
         ))}
       </div>
-    </div>
+    </PageLayout>
   )
 }

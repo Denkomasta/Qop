@@ -21,8 +21,8 @@ import {
   CardFooter,
 } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge/Badge'
-import { Spinner } from '@/components/ui/Spinner'
 import { Button } from '@/components/ui/Button'
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import { useGetApiQuizzesQuizId } from '@/api/generated/endpoints/quizzes/quizzes'
 import { useGetApiSubjectsId } from '@/api/generated/endpoints/subjects/subjects'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -57,20 +57,12 @@ function QuizDetailsPage() {
     },
   )
 
-  if (isLoading || isLoadingSubject) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <Spinner size="lg" />
-        <p className="animate-pulse font-medium text-muted-foreground">
-          {t('common.loading')}...
-        </p>
-      </div>
-    )
-  }
-
   if (!quiz) {
     return (
-      <div className="container mx-auto flex min-h-[60vh] items-center justify-center p-6">
+      <PageLayout
+        isLoading={isLoading || isLoadingSubject}
+        containerClassName="flex min-h-[60vh] max-w-5xl items-center justify-center"
+      >
         <Card className="w-full max-w-md border-2 border-dashed text-center shadow-sm">
           <CardHeader>
             <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-secondary">
@@ -90,7 +82,7 @@ function QuizDetailsPage() {
             </div>
           </CardHeader>
         </Card>
-      </div>
+      </PageLayout>
     )
   }
 
@@ -102,49 +94,43 @@ function QuizDetailsPage() {
     quiz.publishDate && new Date(quiz.publishDate) <= new Date()
 
   return (
-    <div className="container mx-auto max-w-5xl space-y-8 p-6">
-      <div className="flex flex-col gap-6 border-b pb-8">
-        <div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => history.back()}
-            className="-ml-3 text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="mr-2 size-4" />
-            {t('common.back')}
-          </Button>
-        </div>
-
-        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <FileText className="size-6" />
-              </div>
-              <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">
-                {quiz.title}
-              </h1>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3 text-sm">
-              <Badge
-                variant={hasAttempts ? 'default' : 'secondary'}
-                className="px-3 py-1 text-xs tracking-wider uppercase"
-              >
-                {hasAttempts ? t('quiz.attempted') : t('quiz.notStarted')}
-              </Badge>
-              {quiz.closingDate && (
-                <span className="flex items-center gap-1.5 font-medium text-destructive">
-                  <Clock className="size-4" />
-                  {t('quiz.due')}: {formatDateTime(quiz.closingDate)}
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <PageLayout
+      containerClassName="max-w-5xl"
+      isLoading={isLoading || isLoadingSubject}
+      title={
+        <>
+          <FileText className="size-8 text-primary" />
+          {quiz.title}
+        </>
+      }
+      titleBadge={
+        <Badge
+          variant={hasAttempts ? 'default' : 'secondary'}
+          className="px-3 py-1 text-xs tracking-wider uppercase"
+        >
+          {hasAttempts ? t('quiz.attempted') : t('quiz.notStarted')}
+        </Badge>
+      }
+      subtitle={
+        quiz.closingDate ? (
+          <span className="flex items-center gap-1.5 font-medium text-destructive">
+            <Clock className="size-4" />
+            {t('quiz.due')}: {formatDateTime(quiz.closingDate)}
+          </span>
+        ) : undefined
+      }
+      headerControls={
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => history.back()}
+          className="-ml-3 w-fit text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="mr-2 size-4" />
+          {t('common.back')}
+        </Button>
+      }
+    >
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="space-y-8 lg:col-span-2">
           <Card className="border-none shadow-md">
@@ -288,6 +274,6 @@ function QuizDetailsPage() {
           </div>
         </div>
       </div>
-    </div>
+    </PageLayout>
   )
 }

@@ -1,15 +1,10 @@
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import {
-  Building2,
-  Globe2,
-  HardDrive,
-  Loader2,
-  Mail,
-  ShieldCheck,
-} from 'lucide-react'
+import { Building2, Globe2, HardDrive, Mail, ShieldCheck } from 'lucide-react'
 
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { Input } from '@/components/ui/Input'
 import { Switch } from '@/components/ui/Switch'
@@ -71,33 +66,24 @@ export function SystemSettingsPage() {
     })
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex h-full flex-1 items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary/30" />
-      </div>
-    )
-  }
-
   return (
-    <div className="flex-1 overflow-y-auto bg-background p-8 lg:p-12">
-      <div className="mx-auto max-w-4xl space-y-10">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {t('settings.systemConfig')}
-          </h1>
-          <p className="mt-2 text-muted-foreground">
-            {t('settings.systemConfigDesc')}
-          </p>
-        </div>
+    <PageLayout
+      variant="app"
+      containerClassName="max-w-4xl"
+      isLoading={isLoading}
+      title={t('settings.systemConfig')}
+      subtitle={t('settings.systemConfigDesc')}
+    >
+      <div className="space-y-10">
+        <Card>
+          <CardHeader className="border-b">
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <Building2 className="h-5 w-5 text-primary" />
+              {t('settings.general')}
+            </CardTitle>
+          </CardHeader>
 
-        <section className="space-y-6 rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8">
-          <div className="flex items-center gap-2 border-b border-border pb-4">
-            <Building2 className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-semibold">{t('settings.general')}</h2>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <DebouncedInput
               label={t('settings.schoolName')}
               value={config?.schoolName ?? ''}
@@ -138,16 +124,18 @@ export function SystemSettingsPage() {
                 helpText={t('settings.logoUrlHelp')}
               />
             </div>
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
-        <section className="space-y-6 rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8">
-          <div className="flex items-center gap-2 border-b border-border pb-4">
-            <ShieldCheck className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-semibold">{t('settings.security')}</h2>
-          </div>
+        <Card>
+          <CardHeader className="border-b">
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <ShieldCheck className="h-5 w-5 text-primary" />
+              {t('settings.security')}
+            </CardTitle>
+          </CardHeader>
 
-          <div className="flex flex-col gap-6">
+          <CardContent className="flex flex-col gap-6">
             <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 p-4">
               <div className="space-y-0.5">
                 <label className="text-base font-medium text-foreground">
@@ -183,16 +171,18 @@ export function SystemSettingsPage() {
                 disabled={patchMutation.isPending}
               />
             </div>
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
-        <section className="space-y-6 rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8">
-          <div className="flex items-center gap-2 border-b border-border pb-4">
-            <HardDrive className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-semibold">{t('settings.limits')}</h2>
-          </div>
+        <Card>
+          <CardHeader className="border-b">
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <HardDrive className="h-5 w-5 text-primary" />
+              {t('settings.limits')}
+            </CardTitle>
+          </CardHeader>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <Input
               type="number"
               min="1"
@@ -231,9 +221,9 @@ export function SystemSettingsPage() {
               disabled={patchMutation.isPending}
               helpText={t('settings.maxActiveSessionsHelp')}
             />
-          </div>
-        </section>
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </PageLayout>
   )
 }

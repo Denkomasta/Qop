@@ -5,6 +5,7 @@ import { BookCopy, Search, Plus } from 'lucide-react'
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { Pagination } from '@/components/ui/Pagination'
 import { Button } from '@/components/ui/Button'
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import { useGetApiSubjects } from '@/api/generated/endpoints/subjects/subjects'
 import type { SubjectDto } from '@/api/generated/model'
 
@@ -39,34 +40,31 @@ export function AdminSubjectsPage() {
   const totalCount = subjectsResponse?.totalCount || 0
 
   return (
-    <div className="flex h-full flex-col bg-background">
-      <div className="border-b border-border bg-card p-6">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-500">
-                <BookCopy className="h-6 w-6" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">
-                  {t('admin.subjects.subjectManagement')}
-                </h1>
-                <p className="text-muted-foreground">
-                  {t('admin.subjects.totalSubjects')}:{' '}
-                  <span className="font-bold">{totalCount}</span>
-                </p>
-              </div>
-            </div>
-
-            <Button
-              onClick={() => setIsCreateModalOpen(true)}
-              className="gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              {t('admin.subjects.createSubject')}
-            </Button>
-          </div>
-
+    <>
+      <PageLayout
+        variant="app"
+        containerClassName="max-w-7xl"
+        title={
+          <span className="flex items-center gap-3">
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-500">
+              <BookCopy className="h-6 w-6" />
+            </span>
+            {t('admin.subjects.subjectManagement')}
+          </span>
+        }
+        subtitle={
+          <>
+            {t('admin.subjects.totalSubjects')}:{' '}
+            <span className="font-bold">{totalCount}</span>
+          </>
+        }
+        headerActions={
+          <Button onClick={() => setIsCreateModalOpen(true)} className="gap-2">
+            <Plus className="h-4 w-4" />
+            {t('admin.subjects.createSubject')}
+          </Button>
+        }
+        headerControls={
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <DebouncedInput
               id="admin-subject-search"
@@ -93,29 +91,25 @@ export function AdminSubjectsPage() {
               hideErrors
             />
           </div>
-        </div>
-      </div>
+        }
+      >
+        <AdminSubjectsTable
+          subjects={subjects}
+          isLoading={isLoading}
+          onEditSubject={setSubjectToEdit}
+          onDeleteSubject={setSubjectToDelete}
+        />
 
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="mx-auto max-w-7xl">
-          <AdminSubjectsTable
-            subjects={subjects}
-            isLoading={isLoading}
-            onEditSubject={setSubjectToEdit}
-            onDeleteSubject={setSubjectToDelete}
-          />
-
-          {!isLoading && totalPages > 1 && (
-            <div className="mt-6 flex justify-center">
-              <Pagination
-                currentPage={pageNumber}
-                totalPages={totalPages}
-                onPageChange={setPageNumber}
-              />
-            </div>
-          )}
-        </div>
-      </div>
+        {!isLoading && totalPages > 1 && (
+          <div className="mt-6 flex justify-center">
+            <Pagination
+              currentPage={pageNumber}
+              totalPages={totalPages}
+              onPageChange={setPageNumber}
+            />
+          </div>
+        )}
+      </PageLayout>
 
       <CreateSubjectModal
         isOpen={isCreateModalOpen}
@@ -131,6 +125,6 @@ export function AdminSubjectsPage() {
         subject={subjectToDelete}
         onClose={() => setSubjectToDelete(null)}
       />
-    </div>
+    </>
   )
 }

@@ -363,6 +363,43 @@ describe('useQuizEngine', () => {
     })
   })
 
+  it('stores expected free-text answers without auto-scoring them as correct', async () => {
+    vi.spyOn(Date, 'now').mockReturnValue(5_500)
+    prepareAnsweringState({
+      selectedOptionIds: [],
+      freeTextValue: 'Written answer',
+    })
+    mocks.answerMutation.mutateAsync.mockResolvedValue(
+      answerResponse({
+        selectedOptionIds: [],
+        correctOptionIds: [],
+        correctFreeTextAnswer: 'Expected teacher-facing answer',
+      }),
+    )
+
+    const { result } = renderHook(() => useQuizEngine('10'))
+
+    await act(async () => {
+      await result.current.actions.handleAnswerSubmit()
+    })
+
+    expect(mocks.answerMutation.mutateAsync).toHaveBeenCalledWith({
+      id: 123,
+      data: {
+        quizQuestionId: 99,
+        responseTimeMs: 4_500,
+        freeTextAnswer: 'Written answer',
+        selectedOptionIds: [],
+      },
+    })
+    expect(useQuizStore.getState()).toMatchObject({
+      phase: 'recap',
+      correctFreeTextAnswer: 'Expected teacher-facing answer',
+      correctAnswersCount: 0,
+      questionsAnswered: 1,
+    })
+  })
+
   it('blocks answer submission without selection unless it is a timeout', async () => {
     prepareAnsweringState({ selectedOptionIds: [], freeTextValue: '' })
 

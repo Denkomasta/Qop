@@ -587,7 +587,20 @@
     "viewOnlyDescription": "Osobní a organizační informace tvého kamaráda.",
     "recentBadges": "Nedávné odznaky",
     "badgesDescription": "Vaše naposledy získané úspěchy.",
-    "noBadges": "Zatím žádné získané odznaky."
+    "noBadges": "Zatím žádné získané odznaky.",
+    "online": "Online",
+    "offline": "Offline",
+    "lastSeen": {
+      "minutes_one": "Naposledy viděn před 1 minutou",
+      "minutes_few": "Naposledy viděn před {{count}} minutami",
+      "minutes_other": "Naposledy viděn před {{count}} minutami",
+      "hours_one": "Naposledy viděn před 1 hodinou",
+      "hours_few": "Naposledy viděn před {{count}} hodinami",
+      "hours_other": "Naposledy viděn před {{count}} hodinami",
+      "days_one": "Naposledy viděn před 1 dnem",
+      "days_few": "Naposledy viděn před {{count}} dny",
+      "days_other": "Naposledy viděn před {{count}} dny"
+    }
   },
   "register": {
     "title": "Vytvořte si účet",

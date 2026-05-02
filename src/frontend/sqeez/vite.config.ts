@@ -29,6 +29,9 @@ export default defineConfig(({ mode }) => {
       environment: 'jsdom',
       globals: true,
       setupFiles: './src/setupTests.ts',
+      coverage: {
+        exclude: ['src/**/index.ts', 'src/**/index.tsx', 'src/types/**'],
+      },
     },
   }
 })

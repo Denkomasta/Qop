@@ -296,8 +296,8 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
                   label={t('common.email')}
                   value={profileData.email ?? 'john_doe@sqeez.org'}
                   fieldKey="email"
-                  canEdit={isOwnProfile}
-                  onEdit={handleEditClick}
+                  canEdit={false} // Email is not editable for now
+                  onEdit={() => {}}
                 />
                 <EditableInfoItem
                   icon={<Shield className="size-4" />}

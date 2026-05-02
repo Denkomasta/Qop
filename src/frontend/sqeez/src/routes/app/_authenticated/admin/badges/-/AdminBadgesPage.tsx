@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button'
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { DataTable, type ColumnDef } from '@/components/ui/Table/DataTable'
 import { Pagination } from '@/components/ui/Pagination'
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import { getImageUrl } from '@/lib/imageHelpers'
 
 import { BadgeDetailsModal } from '../../../badges/-/BadgeDetailsModal'
@@ -125,26 +126,19 @@ export function AdminBadgesPage() {
   }
 
   return (
-    <div className="flex h-full flex-col bg-background">
-      <div className="border-b border-border bg-card p-6">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              {t('admin.badges.title')}
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {t('admin.badges.subtitle')}
-            </p>
-          </div>
+    <>
+      <PageLayout
+        variant="app"
+        containerClassName="max-w-7xl"
+        title={t('admin.badges.title')}
+        subtitle={t('admin.badges.subtitle')}
+        headerActions={
           <Button onClick={() => setIsCreateModalOpen(true)} className="gap-2">
             <Plus className="h-4 w-4" />
             {t('admin.badges.createBadge')}
           </Button>
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="mx-auto max-w-7xl space-y-4">
+        }
+        headerControls={
           <div className="flex items-center justify-between gap-4">
             <DebouncedInput
               id="admin-badge-search"
@@ -155,14 +149,16 @@ export function AdminBadgesPage() {
               }}
               placeholder={t('admin.badges.search')}
               icon={<Search className="h-4 w-4" />}
-              className="max-w-md bg-card"
+              className="max-w-md bg-background"
               hideErrors
             />
             <span className="text-sm font-medium text-nowrap text-muted-foreground">
               {t('common.total')}: {totalCount}
             </span>
           </div>
-
+        }
+      >
+        <div className="space-y-4">
           <div className="rounded-md border border-border bg-card">
             <DataTable
               data={badges}
@@ -183,7 +179,7 @@ export function AdminBadgesPage() {
             </div>
           )}
         </div>
-      </div>
+      </PageLayout>
 
       <BadgeDetailsModal
         isOpen={!!badgeToView}
@@ -213,6 +209,6 @@ export function AdminBadgesPage() {
         badge={badgeToEdit}
         onClose={() => setBadgeToEdit(null)}
       />
-    </div>
+    </>
   )
 }

@@ -75,10 +75,10 @@ export function EnrollmentsView() {
     <>
       <PaginatedListView<EnrollmentDto>
         titleNode={
-          <h1 className="flex items-center gap-3 text-3xl font-bold tracking-tight text-foreground">
+          <>
             <GraduationCap className="h-8 w-8 text-primary" />
             {t('enrollments.title')}
-          </h1>
+          </>
         }
         headerActions={
           <Button

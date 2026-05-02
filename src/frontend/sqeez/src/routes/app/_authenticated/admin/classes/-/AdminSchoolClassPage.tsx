@@ -5,6 +5,7 @@ import { School, Search, Plus } from 'lucide-react'
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { Pagination } from '@/components/ui/Pagination'
 import { Button } from '@/components/ui/Button'
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import { useGetApiClasses } from '@/api/generated/endpoints/school-classes/school-classes'
 import type { SchoolClassDto } from '@/api/generated/model'
 
@@ -39,34 +40,31 @@ export function AdminSchoolClassPage() {
   const totalCount = classesResponse?.totalCount || 0
 
   return (
-    <div className="flex h-full flex-col bg-background">
-      <header className="border-b border-border bg-card p-6">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <School className="h-6 w-6" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">
-                  {t('admin.classes.classManagement')}
-                </h1>
-                <p className="text-muted-foreground">
-                  {t('admin.classes.totalClasses')}:{' '}
-                  <span className="font-bold">{totalCount}</span>
-                </p>
-              </div>
-            </div>
-
-            <Button
-              onClick={() => setIsCreateModalOpen(true)}
-              className="gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              {t('admin.classes.createClass')}
-            </Button>
-          </div>
-
+    <>
+      <PageLayout
+        variant="app"
+        containerClassName="max-w-7xl"
+        title={
+          <span className="flex items-center gap-3">
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <School className="h-6 w-6" />
+            </span>
+            {t('admin.classes.classManagement')}
+          </span>
+        }
+        subtitle={
+          <>
+            {t('admin.classes.totalClasses')}:{' '}
+            <span className="font-bold">{totalCount}</span>
+          </>
+        }
+        headerActions={
+          <Button onClick={() => setIsCreateModalOpen(true)} className="gap-2">
+            <Plus className="h-4 w-4" />
+            {t('admin.classes.createClass')}
+          </Button>
+        }
+        headerControls={
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <DebouncedInput
               id="admin-class-search"
@@ -93,29 +91,25 @@ export function AdminSchoolClassPage() {
               hideErrors
             />
           </div>
-        </div>
-      </header>
+        }
+      >
+        <AdminSchoolClassTable
+          classes={classes}
+          isLoading={isLoading}
+          onEditTeacher={setSelectedClassForTeacher}
+          onDeleteClass={setSelectedClassForDeletion}
+        />
 
-      <main className="flex-1 overflow-y-auto p-6">
-        <div className="mx-auto max-w-7xl">
-          <AdminSchoolClassTable
-            classes={classes}
-            isLoading={isLoading}
-            onEditTeacher={setSelectedClassForTeacher}
-            onDeleteClass={setSelectedClassForDeletion}
-          />
-
-          {!isLoading && totalPages > 1 && (
-            <div className="mt-6 flex justify-center">
-              <Pagination
-                currentPage={pageNumber}
-                totalPages={totalPages}
-                onPageChange={setPageNumber}
-              />
-            </div>
-          )}
-        </div>
-      </main>
+        {!isLoading && totalPages > 1 && (
+          <div className="mt-6 flex justify-center">
+            <Pagination
+              currentPage={pageNumber}
+              totalPages={totalPages}
+              onPageChange={setPageNumber}
+            />
+          </div>
+        )}
+      </PageLayout>
 
       <TeacherModificationModal
         key={selectedClassForTeacher?.id ?? 'teacher-modal'}
@@ -135,6 +129,6 @@ export function AdminSchoolClassPage() {
         onClose={() => setSelectedClassForDeletion(null)}
         schoolClass={selectedClassForDeletion}
       />
-    </div>
+    </>
   )
 }

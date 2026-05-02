@@ -65,34 +65,28 @@ export function TeacherQuizzesPage() {
 
   const isAllSubjects = selectedSubjectId === 'all'
 
-  const titleNode = (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-      <h1 className="text-3xl font-bold tracking-tight">
-        {t('dashboard.myQuizzes')}
-      </h1>
-
-      {isAllSubjects ? (
-        <div
-          title={t('dashboard.selectSubjectToCreate')}
-          className="cursor-not-allowed"
-        >
-          <Button disabled size="sm" className="w-fit gap-1 shadow-md">
-            <Plus className="h-4 w-4" />
-            {t('dashboard.createNewQuiz')}
-          </Button>
-        </div>
-      ) : (
-        <Button
-          size="sm"
-          className="w-fit gap-1 shadow-md"
-          onClick={() => setIsCreateModalOpen(true)}
-        >
-          <Plus className="h-4 w-4" />
-          {t('dashboard.createNewQuiz')}
-        </Button>
-      )}
+  const createQuizAction = isAllSubjects ? (
+    <div
+      title={t('dashboard.selectSubjectToCreate')}
+      className="cursor-not-allowed"
+    >
+      <Button disabled size="sm" className="w-fit gap-1 shadow-md">
+        <Plus className="h-4 w-4" />
+        {t('dashboard.createNewQuiz')}
+      </Button>
     </div>
+  ) : (
+    <Button
+      size="sm"
+      className="w-fit gap-1 shadow-md"
+      onClick={() => setIsCreateModalOpen(true)}
+    >
+      <Plus className="h-4 w-4" />
+      {t('dashboard.createNewQuiz')}
+    </Button>
   )
+
+  const titleNode = t('dashboard.myQuizzes')
 
   return (
     <div className="flex h-full w-full flex-1 flex-col overflow-hidden bg-background lg:flex-row">
@@ -126,6 +120,7 @@ export function TeacherQuizzesPage() {
         <QuizListView
           role="Teacher"
           titleNode={titleNode}
+          headerActions={createQuizAction}
           quizzes={quizzesResponse?.data || []}
           totalQuizzes={Number(quizzesResponse?.totalCount || 0)}
           totalPages={Number(quizzesResponse?.totalPages || 1)}

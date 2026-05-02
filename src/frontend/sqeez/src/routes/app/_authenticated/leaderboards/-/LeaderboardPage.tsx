@@ -318,20 +318,14 @@ export function LeaderboardPage() {
       filtersNode={unifiedToolbarNode}
       searchQuery={searchQuery}
       titleNode={
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+        <>
+          <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <Trophy className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              {t('leaderboard.title')}
-            </h1>
-            <p className="mt-1 text-sm font-normal text-muted-foreground">
-              {t('leaderboard.subtitle')}
-            </p>
-          </div>
-        </div>
+          </span>
+          {t('leaderboard.title')}
+        </>
       }
+      subtitleNode={t('leaderboard.subtitle')}
       pageNumber={pageNumber}
       totalPages={totalPages}
       setPageNumber={setPageNumber}

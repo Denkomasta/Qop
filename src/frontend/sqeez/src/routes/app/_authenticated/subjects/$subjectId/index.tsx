@@ -16,8 +16,9 @@ import {
   CardTitle,
 } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge/Badge'
-import { Spinner } from '@/components/ui/Spinner'
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import { useGetApiSubjectsId } from '@/api/generated/endpoints/subjects/subjects'
+import { formatDate } from '@/lib/dateHelpers'
 
 export const Route = createFileRoute(
   '/app/_authenticated/subjects/$subjectId/',
@@ -36,20 +37,12 @@ function SubjectPage() {
     },
   )
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <Spinner size={'lg'} />
-        <p className="animate-pulse font-medium text-muted-foreground">
-          {t('common.loading')}...
-        </p>
-      </div>
-    )
-  }
-
   if (!subjectData) {
     return (
-      <div className="container mx-auto flex min-h-[60vh] items-center justify-center p-6">
+      <PageLayout
+        isLoading={isLoading}
+        containerClassName="flex min-h-[60vh] max-w-7xl items-center justify-center"
+      >
         <Card className="w-full max-w-md border-2 border-dashed text-center shadow-sm">
           <CardHeader>
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-secondary">
@@ -61,37 +54,35 @@ function SubjectPage() {
             </CardDescription>
           </CardHeader>
         </Card>
-      </div>
+      </PageLayout>
     )
   }
 
-  // Helper to format dates nicely
-  const formatDate = (dateString?: string | null) => {
-    if (!dateString) return null
-    return new Date(dateString).toLocaleDateString()
-  }
-
   return (
-    <div className="container mx-auto space-y-6 p-6">
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="flex items-center gap-3 text-3xl font-bold tracking-tight">
-            <BookOpen className="h-8 w-8 text-primary" />
-            {subjectData.name}
-            <Badge variant="secondary" className="ml-2 text-sm">
-              {subjectData.code}
-            </Badge>
-          </h1>
-          <p className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="h-4 w-4" />
-            {formatDate(subjectData.startDate)}
-            {subjectData.endDate
-              ? ` - ${formatDate(subjectData.endDate)}`
-              : ` - ${t('subject.ongoing')}`}
-          </p>
-        </div>
-      </div>
-
+    <PageLayout
+      containerClassName="max-w-7xl"
+      isLoading={isLoading}
+      title={
+        <>
+          <BookOpen className="h-8 w-8 text-primary" />
+          {subjectData.name}
+        </>
+      }
+      titleBadge={
+        <Badge variant="secondary" className="text-sm">
+          {subjectData.code}
+        </Badge>
+      }
+      subtitle={
+        <span className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Calendar className="h-4 w-4" />
+          {formatDate(subjectData.startDate)}
+          {subjectData.endDate
+            ? ` - ${formatDate(subjectData.endDate)}`
+            : ` - ${t('subject.ongoing')}`}
+        </span>
+      }
+    >
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <div className="space-y-6 md:col-span-1">
           <Card>
@@ -200,6 +191,6 @@ function SubjectPage() {
           </div>
         </div>
       </div>
-    </div>
+    </PageLayout>
   )
 }

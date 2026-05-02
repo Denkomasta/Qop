@@ -4,6 +4,7 @@ import { Users, Search } from 'lucide-react'
 
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { Pagination } from '@/components/ui/Pagination'
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import type { UserRole } from '@/api/generated/model'
 import { useGetApiUsers } from '@/api/generated/endpoints/user/user'
 
@@ -34,24 +35,25 @@ export function AdminUsersPage() {
   const totalCount = usersResponse?.totalCount || 0
 
   return (
-    <div className="flex h-full flex-col bg-background">
-      <header className="border-b border-border bg-card p-6">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+    <>
+      <PageLayout
+        variant="app"
+        containerClassName="max-w-7xl"
+        title={
+          <span className="flex items-center gap-3">
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <Users className="h-6 w-6" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">
-                {t('admin.userManagement')}
-              </h1>
-              <p className="text-muted-foreground">
-                {t('admin.totalUsers')}:{' '}
-                <span className="font-bold">{totalCount}</span>
-              </p>
-            </div>
-          </div>
-
+            </span>
+            {t('admin.userManagement')}
+          </span>
+        }
+        subtitle={
+          <>
+            {t('admin.totalUsers')}:{' '}
+            <span className="font-bold">{totalCount}</span>
+          </>
+        }
+        headerControls={
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <DebouncedInput
               id="admin-user-search"
@@ -80,28 +82,24 @@ export function AdminUsersPage() {
               <option value="Admin">{t('common.admins')}</option>
             </select>
           </div>
-        </div>
-      </header>
+        }
+      >
+        <AdminUsersTable
+          users={users}
+          isLoading={isLoading}
+          onEditRole={setSelectedUserForRole}
+        />
 
-      <main className="flex-1 overflow-y-auto p-6">
-        <div className="mx-auto max-w-7xl">
-          <AdminUsersTable
-            users={users}
-            isLoading={isLoading}
-            onEditRole={setSelectedUserForRole}
-          />
-
-          {!isLoading && totalPages > 1 && (
-            <div className="mt-6 flex justify-center">
-              <Pagination
-                currentPage={pageNumber}
-                totalPages={totalPages}
-                onPageChange={setPageNumber}
-              />
-            </div>
-          )}
-        </div>
-      </main>
+        {!isLoading && totalPages > 1 && (
+          <div className="mt-6 flex justify-center">
+            <Pagination
+              currentPage={pageNumber}
+              totalPages={totalPages}
+              onPageChange={setPageNumber}
+            />
+          </div>
+        )}
+      </PageLayout>
 
       <RoleModificationModal
         key={selectedUserForRole?.id ?? 'empty-modal'}
@@ -109,6 +107,6 @@ export function AdminUsersPage() {
         onClose={() => setSelectedUserForRole(null)}
         user={selectedUserForRole}
       />
-    </div>
+    </>
   )
 }

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { ArrowLeft, History, FileText } from 'lucide-react'
 
 import { Button } from '@/components/ui/Button'
-import { Spinner } from '@/components/ui/Spinner'
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 
 import { useAuthStore } from '@/store/useAuthStore'
 import { useGetApiQuizzesQuizId } from '@/api/generated/endpoints/quizzes/quizzes'
@@ -41,14 +41,6 @@ export function QuizAttemptsPage({ quizId }: { quizId: string }) {
 
   const isLoading = isQuizLoading || isAttemptsLoading || isSubjectLoading
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <Spinner size="lg" />
-      </div>
-    )
-  }
-
   const tableData: AttemptRowDto[] = (pastAttempts?.data || []).map(
     (attempt) => ({
       id: attempt.id,
@@ -69,42 +61,35 @@ export function QuizAttemptsPage({ quizId }: { quizId: string }) {
   const isTeacherView = isTeacher && subject?.teacherId === user?.id
 
   return (
-    <div className="container mx-auto max-w-5xl space-y-8 p-6">
-      <div className="flex flex-col gap-6 border-b pb-8">
-        <div>
-          <Button
-            variant="ghost"
-            size="sm"
-            asChild
-            className="-ml-3 text-muted-foreground hover:text-foreground"
-          >
-            <Link to="/app/quizzes/$quizId" params={{ quizId }}>
-              <ArrowLeft className="mr-2 size-4" />
-              {t('common.backToQuiz', 'Back to Quiz')}
-            </Link>
-          </Button>
-        </div>
-
-        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <History className="size-6" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">
-                  {t('attempts.myResults', 'My Results')}
-                </h1>
-                <p className="mt-1 flex items-center gap-2 text-muted-foreground">
-                  <FileText className="size-4" />
-                  {quiz?.title}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <PageLayout
+      containerClassName="max-w-5xl"
+      isLoading={isLoading}
+      title={
+        <>
+          <History className="size-8 text-primary" />
+          {t('attempts.myResults', 'My Results')}
+        </>
+      }
+      subtitle={
+        <span className="flex items-center gap-2">
+          <FileText className="size-4" />
+          {quiz?.title}
+        </span>
+      }
+      headerControls={
+        <Button
+          variant="ghost"
+          size="sm"
+          asChild
+          className="-ml-3 w-fit text-muted-foreground hover:text-foreground"
+        >
+          <Link to="/app/quizzes/$quizId" params={{ quizId }}>
+            <ArrowLeft className="mr-2 size-4" />
+            {t('common.backToQuiz', 'Back to Quiz')}
+          </Link>
+        </Button>
+      }
+    >
       <div className="space-y-4">
         <AttemptsTable
           attempts={tableData}
@@ -123,6 +108,6 @@ export function QuizAttemptsPage({ quizId }: { quizId: string }) {
           />
         </div>
       )}
-    </div>
+    </PageLayout>
   )
 }

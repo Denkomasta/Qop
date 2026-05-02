@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge/Badge'
 import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import { useAuthStore } from '@/store/useAuthStore'
+import { formatDate } from '@/lib/dateHelpers'
 
 export function SubjectOverviewPage({
   subjectId,
@@ -33,11 +34,6 @@ export function SubjectOverviewPage({
   const canManage =
     isAdmin || subjectData?.teacherId === useAuthStore.getState().user?.id
   const backPath = canManage ? '/app/teacher/subjects' : '/app/subjects'
-
-  const formatDate = (dateString?: string | null) => {
-    if (!dateString) return null
-    return new Date(dateString).toLocaleDateString()
-  }
 
   return (
     <PageLayout

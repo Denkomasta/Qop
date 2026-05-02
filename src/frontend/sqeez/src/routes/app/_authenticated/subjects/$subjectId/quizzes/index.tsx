@@ -59,38 +59,32 @@ function SubjectQuizzesPage() {
   const totalPages = Number(
     pagedResponse?.totalPages || Math.ceil(totalQuizzes / PAGE_SIZE),
   )
-  const titleNode = (
-    <div className="mb-8 flex flex-col gap-4">
-      <div>
-        <Button variant="ghost" size="sm" asChild className="mb-4 -ml-3">
+  return (
+    <QuizListView
+      backButtonNode={
+        <Button variant="ghost" size="sm" asChild className="-ml-3">
           <Link to="/app/subjects/$subjectId" params={{ subjectId }}>
             <ArrowLeft className="mr-2 size-4" />
             {t('subject.backToSubject')}
           </Link>
         </Button>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <h1 className="flex items-center gap-3 text-3xl font-bold tracking-tight text-foreground">
-            <FileText className="size-8 text-primary" />
-            <span>
-              {subjectData?.name}
-              <span className="ml-2 font-normal text-muted-foreground">
-                | {t('quiz.subjectQuizzes')}
-              </span>
+      }
+      titleNode={
+        <>
+          <FileText className="size-8 text-primary" />
+          <span>
+            {subjectData?.name}
+            <span className="ml-2 font-normal text-muted-foreground">
+              | {t('quiz.subjectQuizzes')}
             </span>
-            {subjectData?.code && (
-              <Badge variant="secondary" className="mb-1 ml-2 text-sm">
-                {subjectData.code}
-              </Badge>
-            )}
-          </h1>
-        </div>
-      </div>
-    </div>
-  )
-
-  return (
-    <QuizListView
-      titleNode={titleNode}
+          </span>
+          {subjectData?.code && (
+            <Badge variant="secondary" className="mb-1 ml-2 text-sm">
+              {subjectData.code}
+            </Badge>
+          )}
+        </>
+      }
       quizzes={quizzes}
       totalQuizzes={totalQuizzes}
       totalPages={totalPages}

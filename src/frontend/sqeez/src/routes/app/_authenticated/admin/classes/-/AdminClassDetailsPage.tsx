@@ -17,6 +17,7 @@ import {
 import { Button } from '@/components/ui/Button'
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { Pagination } from '@/components/ui/Pagination'
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import { AdminClassStudentsTable } from './AdminClassStudentsTable'
 import { AddStudentToClassModal } from './AddStudentToClassModal'
 import type { StudentDto } from '@/api/generated/model'
@@ -88,59 +89,56 @@ export function AdminClassDetailsPage({
   }
 
   return (
-    <div className="flex h-full flex-col bg-background">
-      <div className="border-b border-border bg-card p-6">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6">
-          <Link
-            to="/app/admin/classes"
-            className="flex w-fit items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            {t('admin.class.backToClasses')}
-          </Link>
-
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <School className="h-8 w-8" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">
-                  {classData?.name}
-                </h1>
-                <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
-                  <span>
-                    {t('admin.academicYear')}:{' '}
-                    <strong className="text-foreground">
-                      {classData?.academicYear}
-                    </strong>
-                  </span>
-                  <span>
-                    {t('admin.section')}:{' '}
-                    <strong className="text-foreground">
-                      {classData?.section}
-                    </strong>
-                  </span>
-                  <span>
-                    {t('common.teacher')}:{' '}
-                    <strong className="text-foreground">
-                      {formatName(
-                        classData?.teacher?.firstName,
-                        classData?.teacher?.lastName,
-                      ) || t('admin.unassigned')}
-                    </strong>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <Button onClick={() => setIsAddModalOpen(true)} className="gap-2">
-              <UserPlus className="h-4 w-4" />
-              {t('admin.class.addStudent')}
-            </Button>
+    <>
+      <PageLayout
+        variant="app"
+        containerClassName="max-w-7xl"
+        title={
+          <>
+            <span className="flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <School className="h-8 w-8" />
+            </span>
+            {classData?.name}
+          </>
+        }
+        subtitle={
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+            <span>
+              {t('admin.academicYear')}:{' '}
+              <strong className="text-foreground">
+                {classData?.academicYear}
+              </strong>
+            </span>
+            <span>
+              {t('admin.section')}:{' '}
+              <strong className="text-foreground">{classData?.section}</strong>
+            </span>
+            <span>
+              {t('common.teacher')}:{' '}
+              <strong className="text-foreground">
+                {formatName(
+                  classData?.teacher?.firstName,
+                  classData?.teacher?.lastName,
+                ) || t('admin.unassigned')}
+              </strong>
+            </span>
           </div>
-
-          <div className="flex items-center">
+        }
+        headerActions={
+          <Button onClick={() => setIsAddModalOpen(true)} className="gap-2">
+            <UserPlus className="h-4 w-4" />
+            {t('admin.class.addStudent')}
+          </Button>
+        }
+        headerControls={
+          <div className="flex flex-col gap-4">
+            <Link
+              to="/app/admin/classes"
+              className="flex w-fit items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              {t('admin.class.backToClasses')}
+            </Link>
             <DebouncedInput
               id="class-student-search"
               value={searchQuery}
@@ -154,37 +152,33 @@ export function AdminClassDetailsPage({
               hideErrors
             />
           </div>
+        }
+      >
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-semibold">
+            {t('admin.class.enrolledStudents')}
+          </h2>
+          <span className="text-sm text-muted-foreground">
+            {totalCount} {t('common.students')}
+          </span>
         </div>
-      </div>
 
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">
-              {t('admin.class.enrolledStudents')}
-            </h2>
-            <span className="text-sm text-muted-foreground">
-              {totalCount} {t('common.students')}
-            </span>
+        <AdminClassStudentsTable
+          students={students}
+          isLoading={isLoadingStudents || isLoadingClass}
+          onRemoveStudent={setStudentToRemove}
+        />
+
+        {!isLoadingStudents && !isLoadingClass && totalPages > 1 && (
+          <div className="mt-6 flex justify-center">
+            <Pagination
+              currentPage={pageNumber}
+              totalPages={totalPages}
+              onPageChange={setPageNumber}
+            />
           </div>
-
-          <AdminClassStudentsTable
-            students={students}
-            isLoading={isLoadingStudents || isLoadingClass}
-            onRemoveStudent={setStudentToRemove}
-          />
-
-          {!isLoadingStudents && !isLoadingClass && totalPages > 1 && (
-            <div className="mt-6 flex justify-center">
-              <Pagination
-                currentPage={pageNumber}
-                totalPages={totalPages}
-                onPageChange={setPageNumber}
-              />
-            </div>
-          )}
-        </div>
-      </div>
+        )}
+      </PageLayout>
 
       <AddStudentToClassModal
         isOpen={isAddModalOpen}
@@ -206,6 +200,6 @@ export function AdminClassDetailsPage({
         isDestructive={true}
         isLoading={removeStudentMutation.isPending}
       />
-    </div>
+    </>
   )
 }

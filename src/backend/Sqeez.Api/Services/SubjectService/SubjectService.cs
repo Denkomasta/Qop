@@ -46,13 +46,9 @@ namespace Sqeez.Api.Services.SubjectService
                 if (filter.IsActive.HasValue)
                 {
                     if (filter.IsActive.Value)
-                    {
                         query = query.WhereIsActive();
-                    }
                     else
-                    {
                         query = query.WhereIsInactive();
-                    }
                 }
 
                 if (filter.TeacherId.HasValue)
@@ -60,11 +56,22 @@ namespace Sqeez.Api.Services.SubjectService
 
                 if (filter.StudentId.HasValue)
                 {
-                    // Filter OUT subjects where the user is either the teacher OR has an active enrollment
                     query = query.Where(s =>
                         s.TeacherId != filter.StudentId.Value &&
                         !s.Enrollments.Any(e => e.StudentId == filter.StudentId.Value && e.ArchivedAt == null)
                     );
+                }
+
+                if (filter.SchoolClassId.HasValue)
+                    query = query.Where(s => s.SchoolClassId == filter.SchoolClassId.Value);
+
+                if (filter.StartingAfter.HasValue)
+                    query = query.Where(s => s.StartDate >= filter.StartingAfter.Value);
+
+                if (!string.IsNullOrWhiteSpace(filter.Code))
+                {
+                    var codeSearch = filter.Code.ToLower();
+                    query = query.Where(s => s.Code.ToLower().Contains(codeSearch));
                 }
 
                 if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
@@ -74,14 +81,15 @@ namespace Sqeez.Api.Services.SubjectService
                                              s.Code.ToLower().Contains(search));
                 }
 
-                query = filter.IsDescending ? query.OrderByDescending(s => s.Code) : query.OrderBy(s => s.Code);
+                query = filter.IsDescending
+                    ? query.OrderByDescending(s => s.Name)
+                    : query.OrderBy(s => s.Name);
 
                 int totalCount = await query.CountAsync();
 
                 var subjects = await query
                     .Include(s => s.Teacher)
                     .Include(s => s.SchoolClass)
-                    .OrderBy(s => s.Name)
                     .Skip((filter.PageNumber - 1) * filter.PageSize)
                     .Take(filter.PageSize)
                     .Select(s => new SubjectDto(
@@ -114,6 +122,7 @@ namespace Sqeez.Api.Services.SubjectService
                 return ServiceResult<PagedResponse<SubjectDto>>.Failure("Internal error.", ServiceError.InternalError);
             }
         }
+
         public async Task<ServiceResult<SubjectDto>> GetSubjectByIdAsync(long id)
         {
             var subject = await _context.Subjects

@@ -151,43 +151,49 @@ function SubjectPage() {
           </Card>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {t('subject.enrolledStudents')}
-                </CardTitle>
-                <Link
-                  to="/app/subjects/$subjectId/students"
-                  params={{ subjectId }}
-                >
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                </Link>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {subjectData.enrollmentCount}
-                </div>
-              </CardContent>
-            </Card>
+            <Link
+              to="/app/subjects/$subjectId/students"
+              params={{ subjectId }}
+              className="block rounded-xl ring-primary outline-none focus-visible:ring-2"
+            >
+              <Card className="group h-full cursor-pointer transition-all hover:border-primary hover:shadow-md">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    {t('subject.enrolledStudents')}
+                  </CardTitle>
+                  <div className="transition-transform duration-200 group-hover:scale-110">
+                    <Users className="size-4 text-muted-foreground transition-colors group-hover:text-primary" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {subjectData.enrollmentCount}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {t('subject.totalQuizzes')}
-                </CardTitle>
-                <Link
-                  to="/app/subjects/$subjectId/quizzes"
-                  params={{ subjectId }}
-                >
-                  <FileText className="size-4 text-muted-foreground" />
-                </Link>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {subjectData.quizCount}
-                </div>
-              </CardContent>
-            </Card>
+            <Link
+              to="/app/subjects/$subjectId/quizzes"
+              params={{ subjectId }}
+              className="block rounded-xl ring-primary outline-none focus-visible:ring-2"
+            >
+              <Card className="group h-full cursor-pointer transition-all hover:border-primary hover:shadow-md">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    {t('subject.totalQuizzes')}
+                  </CardTitle>
+                  <div className="transition-transform duration-200 group-hover:scale-110">
+                    <FileText className="size-4 text-muted-foreground transition-colors group-hover:text-primary" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {subjectData.quizCount}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </div>

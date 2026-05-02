@@ -20,7 +20,7 @@ import { ScrollArea } from '@/components/ui/ScrollArea'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useGetApiClassesId } from '@/api/generated/endpoints/school-classes/school-classes'
-import { Spinner } from '@/components/ui/Spinner'
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import { calculateLevel, formatName } from '@/lib/userHelpers'
 import { useGetApiUsersId } from '@/api/generated/endpoints/user/user'
 import { getImageUrl } from '@/lib/imageHelpers'
@@ -43,20 +43,14 @@ export function ClassView({ targetClassId }: { targetClassId?: number }) {
     },
   )
 
-  if ((!targetClassId && userLoading) || (resolvedClassId && classLoading)) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <Spinner size={'lg'} />
-        <p className="animate-pulse font-medium text-muted-foreground">
-          {t('common.loading')}...
-        </p>
-      </div>
-    )
-  }
-
   if (!resolvedClassId || !classData) {
     return (
-      <div className="container mx-auto flex min-h-[60vh] items-center justify-center p-6">
+      <PageLayout
+        isLoading={
+          (!targetClassId && userLoading) || (!!resolvedClassId && classLoading)
+        }
+        containerClassName="flex min-h-[60vh] max-w-7xl items-center justify-center"
+      >
         <Card className="w-full max-w-md border-2 border-dashed text-center shadow-sm">
           <CardHeader>
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-secondary">
@@ -75,32 +69,30 @@ export function ClassView({ targetClassId }: { targetClassId?: number }) {
             </p>
           </CardContent>
         </Card>
-      </div>
+      </PageLayout>
     )
   }
 
   return (
-    <div className="container mx-auto space-y-6 p-6">
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="flex items-center gap-3 text-3xl font-bold tracking-tight">
-            <GraduationCap className="h-8 w-8 text-primary" />
-            {classData.name}
-            {userData?.schoolClassId === classData.id && (
-              <Badge
-                variant="outline"
-                className="ml-2 border-primary/20 bg-primary/10 align-middle text-primary"
-              >
-                {t('class.myClass', 'My Class')}
-              </Badge>
-            )}
-          </h1>
-          <p className="mt-1 text-muted-foreground">
-            {classData.academicYear} • {classData.section}
-          </p>
-        </div>
-      </div>
-
+    <PageLayout
+      containerClassName="max-w-7xl"
+      isLoading={(!targetClassId && userLoading) || classLoading}
+      title={
+        <>
+          <GraduationCap className="h-8 w-8 text-primary" />
+          {classData.name}
+          {userData?.schoolClassId === classData.id && (
+            <Badge
+              variant="outline"
+              className="ml-2 border-primary/20 bg-primary/10 align-middle text-primary"
+            >
+              {t('class.myClass', 'My Class')}
+            </Badge>
+          )}
+        </>
+      }
+      subtitle={`${classData.academicYear} - ${classData.section}`}
+    >
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <div className="space-y-6 md:col-span-1">
           <Card>
@@ -269,6 +261,6 @@ export function ClassView({ targetClassId }: { targetClassId?: number }) {
           </Card>
         </div>
       </div>
-    </div>
+    </PageLayout>
   )
 }

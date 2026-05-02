@@ -22,7 +22,7 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useGetApiUsersId } from '@/api/generated/endpoints/user/user'
-import { Spinner } from '@/components/ui/Spinner'
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import type { StudentDtoTeacherDto } from '@/api/generated/model'
 
 export const Route = createFileRoute('/app/_authenticated/')({
@@ -78,14 +78,6 @@ function DashboardLaunchpad() {
   })
 
   if (!user) return null
-
-  if (isLoading) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <Spinner size="lg" />
-      </div>
-    )
-  }
 
   const teacherData = data as StudentDtoTeacherDto | undefined
 
@@ -195,40 +187,38 @@ function DashboardLaunchpad() {
   ]
 
   return (
-    <div className="container mx-auto max-w-7xl space-y-10 p-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          {t('common.welcome')}, {user.username}!
-        </h1>
-        <p className="mt-1 text-muted-foreground">
-          {t('dashboard.navigationDecription')}
-        </p>
+    <PageLayout
+      containerClassName="max-w-7xl"
+      isLoading={isLoading}
+      title={`${t('common.welcome')}, ${user.username}!`}
+      subtitle={t('dashboard.navigationDecription')}
+    >
+      <div className="space-y-10">
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold tracking-tight">
+            {t('dashboard.yourLearning')}
+          </h2>
+          <NavCardGrid items={studentLinks} />
+        </section>
+
+        {isTeacher && (
+          <section className="space-y-4">
+            <h2 className="text-xl font-semibold tracking-tight">
+              {t('dashboard.teachingTools')}
+            </h2>
+            <NavCardGrid items={teacherLinks} />
+          </section>
+        )}
+
+        {isAdmin && (
+          <section className="space-y-4">
+            <h2 className="text-xl font-semibold tracking-tight">
+              {t('dashboard.administration')}
+            </h2>
+            <NavCardGrid items={adminLinks} />
+          </section>
+        )}
       </div>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-semibold tracking-tight">
-          {t('dashboard.yourLearning')}
-        </h2>
-        <NavCardGrid items={studentLinks} />
-      </section>
-
-      {isTeacher && (
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold tracking-tight">
-            {t('dashboard.teachingTools')}
-          </h2>
-          <NavCardGrid items={teacherLinks} />
-        </section>
-      )}
-
-      {isAdmin && (
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold tracking-tight">
-            {t('dashboard.administration')}
-          </h2>
-          <NavCardGrid items={adminLinks} />
-        </section>
-      )}
-    </div>
+    </PageLayout>
   )
 }

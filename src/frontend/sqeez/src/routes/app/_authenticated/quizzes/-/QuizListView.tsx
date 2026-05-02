@@ -20,14 +20,16 @@ import {
   CardFooter,
 } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge/Badge'
-import { Spinner } from '@/components/ui/Spinner'
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { Pagination } from '@/components/ui/Pagination'
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import type { QuizDto, SubjectDto, UserRole } from '@/api/generated/model'
+import { formatDate } from '@/lib/dateHelpers'
 
 interface QuizListViewProps {
   titleNode: React.ReactNode
   backButtonNode?: React.ReactNode
+  headerActions?: React.ReactNode
   quizzes: QuizDto[]
   totalQuizzes: number
   totalPages: number
@@ -48,6 +50,7 @@ interface QuizListViewProps {
 export function QuizListView({
   titleNode,
   backButtonNode,
+  headerActions,
   quizzes,
   totalQuizzes,
   totalPages,
@@ -66,82 +69,68 @@ export function QuizListView({
 }: QuizListViewProps) {
   const { t } = useTranslation()
 
-  const formatDate = (dateString?: string | null) => {
-    if (!dateString) return null
-    return new Date(dateString).toLocaleDateString()
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <Spinner size="lg" />
-        <p className="animate-pulse font-medium text-muted-foreground">
-          {t('common.loading')}...
-        </p>
-      </div>
-    )
-  }
-
   return (
-    <div className="container mx-auto max-w-7xl p-6">
-      <div className="mb-8 flex flex-col gap-4">
-        <div>
+    <PageLayout
+      containerClassName="max-w-7xl"
+      isLoading={isLoading}
+      title={titleNode}
+      headerActions={headerActions}
+      titleBadge={
+        <span className="font-medium text-muted-foreground">
+          {t('quiz.totalCount', { count: totalQuizzes })}
+        </span>
+      }
+      headerControls={
+        <div className="flex flex-col gap-4">
           {backButtonNode}
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            {titleNode}
-            <p className="font-medium text-muted-foreground">
-              {t('quiz.totalCount', { count: totalQuizzes })}
-            </p>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <DebouncedInput
+              id="quiz-search"
+              value={searchQuery}
+              onChange={(newQuery) => {
+                setSearchQuery(newQuery)
+                setPageNumber(1)
+              }}
+              placeholder={t('quiz.search')}
+              icon={<Search className="h-4 w-4" />}
+              className="sm:max-w-xs"
+              hideErrors
+            />
+
+            {showActiveToggle && setShowActiveOnly && (
+              <div className="flex rounded-lg bg-muted p-1">
+                <button
+                  onClick={() => {
+                    setShowActiveOnly(true)
+                    setPageNumber(1)
+                  }}
+                  className={`flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium transition-all ${
+                    showActiveOnly
+                      ? 'bg-background text-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {t('quiz.active')}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowActiveOnly(false)
+                    setPageNumber(1)
+                  }}
+                  className={`flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium transition-all ${
+                    !showActiveOnly
+                      ? 'bg-background text-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {t('quiz.pastInactive')}
+                </button>
+              </div>
+            )}
           </div>
         </div>
-      </div>
-
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <DebouncedInput
-          id="quiz-search"
-          value={searchQuery}
-          onChange={(newQuery) => {
-            setSearchQuery(newQuery)
-            setPageNumber(1)
-          }}
-          placeholder={t('quiz.search')}
-          icon={<Search className="h-4 w-4" />}
-          className="sm:max-w-xs"
-          hideErrors
-        />
-
-        {showActiveToggle && setShowActiveOnly && (
-          <div className="flex rounded-lg bg-muted p-1">
-            <button
-              onClick={() => {
-                setShowActiveOnly(true)
-                setPageNumber(1)
-              }}
-              className={`flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium transition-all ${
-                showActiveOnly
-                  ? 'bg-background text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {t('quiz.active')}
-            </button>
-            <button
-              onClick={() => {
-                setShowActiveOnly(false)
-                setPageNumber(1)
-              }}
-              className={`flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium transition-all ${
-                !showActiveOnly
-                  ? 'bg-background text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {t('quiz.pastInactive')}
-            </button>
-          </div>
-        )}
-      </div>
-
+      }
+    >
       <div
         className={`transition-opacity duration-200 ${
           isFetching && !isLoading ? 'opacity-50' : 'opacity-100'
@@ -292,6 +281,6 @@ export function QuizListView({
           </div>
         )}
       </div>
-    </div>
+    </PageLayout>
   )
 }

@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/Card'
+import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import { ImportCsvModal } from './ImportCsvModal'
 import { toast } from 'sonner'
 
@@ -31,26 +32,20 @@ export function AdminImportPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
-    <div className="flex h-full flex-col bg-background">
-      <div className="border-b border-border bg-card p-6">
-        <div className="mx-auto flex max-w-5xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              {t('admin.import.title')}
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {t('admin.import.subtitle')}
-            </p>
-          </div>
+    <>
+      <PageLayout
+        variant="app"
+        containerClassName="max-w-5xl"
+        title={t('admin.import.title')}
+        subtitle={t('admin.import.subtitle')}
+        headerActions={
           <Button onClick={() => setIsModalOpen(true)} className="gap-2">
             <FileUp className="h-4 w-4" />
             {t('admin.import.startBtn')}
           </Button>
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="mx-auto max-w-5xl space-y-6">
+        }
+      >
+        <div className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -162,12 +157,12 @@ export function AdminImportPage() {
             </CardContent>
           </Card>
         </div>
-      </div>
+      </PageLayout>
 
       <ImportCsvModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-    </div>
+    </>
   )
 }

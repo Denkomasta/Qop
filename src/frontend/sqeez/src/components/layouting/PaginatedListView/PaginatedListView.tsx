@@ -7,6 +7,7 @@ import { PageLayout } from '../PageLayout/PageLayout'
 
 interface PaginatedListViewProps<T> {
   titleNode: ReactNode
+  subtitleNode?: ReactNode
   backButtonNode?: ReactNode
   headerActions?: ReactNode
   items: T[]
@@ -29,6 +30,7 @@ interface PaginatedListViewProps<T> {
 
 export function PaginatedListView<T>({
   titleNode,
+  subtitleNode,
   backButtonNode,
   headerActions,
   items,
@@ -88,14 +90,17 @@ export function PaginatedListView<T>({
       containerClassName={containerClassName}
       variant={layoutVariant}
       isLoading={isLoading}
-      title={
-        <>
-          {backButtonNode}
-          {titleNode}
-        </>
-      }
+      title={titleNode}
+      subtitle={subtitleNode}
       headerActions={headerActions}
-      headerControls={ControlsNode}
+      headerControls={
+        backButtonNode || ControlsNode ? (
+          <div className="flex flex-col gap-4">
+            {backButtonNode}
+            {ControlsNode}
+          </div>
+        ) : undefined
+      }
     >
       <div
         className={`transition-opacity duration-200 ${isFetching && !isLoading ? 'opacity-50' : 'opacity-100'}`}

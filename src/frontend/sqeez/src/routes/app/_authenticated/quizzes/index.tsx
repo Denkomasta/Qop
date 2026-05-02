@@ -46,10 +46,10 @@ function AllQuizzesPage() {
   )
 
   const titleNode = (
-    <h1 className="flex items-center gap-3 text-3xl font-bold tracking-tight text-foreground">
+    <>
       <FileText className="h-8 w-8 text-primary" />
       {t('quiz.allQuizzes')}
-    </h1>
+    </>
   )
 
   return (

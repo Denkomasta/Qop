@@ -28,13 +28,6 @@ export interface PatchStudentDtoPatchTeacherDto {
    */
   username?: string | null
   /**
-   * @minLength 0
-   * @maxLength 254
-   * @nullable
-   * @pattern ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
-   */
-  email?: string | null
-  /**
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

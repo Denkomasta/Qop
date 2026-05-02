@@ -1,5 +1,5 @@
-﻿using Sqeez.Api.Enums;
-using Sqeez.Api.Constants;
+﻿using Sqeez.Api.Constants;
+using Sqeez.Api.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -83,10 +83,6 @@ namespace Sqeez.Api.DTOs
         [StringLength(ValidationConstants.UsernameMaxLength, MinimumLength = ValidationConstants.UsernameMinLength)]
         [RegularExpression(ValidationConstants.UsernameRegex)]
         public string? Username { get; init; }
-
-        [StringLength(ValidationConstants.EmailMaxLength)]
-        [RegularExpression(ValidationConstants.EmailRegex)]
-        public string? Email { get; init; }
 
         public long? SchoolClassId { get; init; }
         [StringLength(ValidationConstants.UrlMaxLength)]

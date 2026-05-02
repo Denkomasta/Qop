@@ -381,8 +381,15 @@ namespace Sqeez.Api.Services.UserService
             if (user == null)
                 return ServiceResult<StudentDto>.Failure("User not found.", ServiceError.NotFound);
 
-            if (!string.IsNullOrWhiteSpace(dto.Username)) user.Username = dto.Username;
-            if (!string.IsNullOrWhiteSpace(dto.Email)) user.Email = dto.Email.Trim().ToLower();
+            if (!string.IsNullOrWhiteSpace(dto.Username) && dto.Username != user.Username)
+            {
+                var usernameTaken = await _context.Students.AnyAsync(u => u.Username == dto.Username && u.Id != id);
+                if (usernameTaken)
+                    return ServiceResult<StudentDto>.Failure("Username is already taken.", ServiceError.Conflict);
+
+                user.Username = dto.Username;
+            }
+
             if (dto.AvatarUrl != null) user.AvatarUrl = dto.AvatarUrl;
 
             if (dto.SchoolClassId.HasValue)

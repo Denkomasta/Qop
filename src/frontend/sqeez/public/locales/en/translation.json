@@ -587,7 +587,17 @@
     "viewOnlyDescription": "Personal and organizational information of your friend.",
     "recentBadges": "Recent Badges",
     "badgesDescription": "Your most recently earned achievements.",
-    "noBadges": "No badges earned yet."
+    "noBadges": "No badges earned yet.",
+    "online": "Online",
+    "offline": "Offline",
+    "lastSeen": {
+      "minutes_one": "Last seen 1 minute ago",
+      "minutes_other": "Last seen {{count}} minutes ago",
+      "hours_one": "Last seen 1 hour ago",
+      "hours_other": "Last seen {{count}} hours ago",
+      "days_one": "Last seen 1 day ago",
+      "days_other": "Last seen {{count}} days ago"
+    }
   },
   "register": {
     "title": "Create your account",

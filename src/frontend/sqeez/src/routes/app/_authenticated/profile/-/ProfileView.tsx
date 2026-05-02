@@ -39,6 +39,8 @@ import { Link } from '@tanstack/react-router'
 import { StudentBadge } from '@/components/ui/StudentBadge'
 import { useSystemConfig } from '@/hooks/useSystemConfig'
 import { formatPhoneForDb, formatPhoneForDisplay } from '@/lib/phoneHelpers'
+import { getLastSeenStatus } from '@/lib/dateHelpers'
+import { is } from 'zod/v4/locales'
 
 type EditFieldState = {
   key: string
@@ -215,6 +217,8 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
     refetch()
   }
 
+  const status = getLastSeenStatus(profileData.lastSeen, t)
+
   return (
     <div className="container mx-auto max-w-7xl p-6">
       <h1 className="mb-8 flex items-center gap-3 text-3xl font-bold tracking-tight text-foreground">
@@ -254,6 +258,20 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
             <p className="mt-1 text-center text-sm text-muted-foreground">
               @{profileData.username}
             </p>
+
+            <div className="mt-2 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <span className="relative flex h-3 w-3">
+                {status.isOnline && (
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                )}
+                <span
+                  className={`relative inline-flex h-3 w-3 rounded-full ${
+                    status.isOnline ? 'bg-green-500' : 'bg-muted-foreground/40'
+                  }`}
+                ></span>
+              </span>
+              <span className="font-medium">{status.text}</span>
+            </div>
 
             <div className="mt-6 flex w-full flex-col gap-3">
               <div className="flex items-center justify-center gap-2 rounded-full bg-secondary/80 px-4 py-2 text-sm font-semibold text-secondary-foreground shadow-sm">

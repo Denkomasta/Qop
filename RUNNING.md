@@ -236,7 +236,7 @@ For a production server, the repository does not need to be cloned. The runtime 
 
 The current CD workflow uses `/root/Sqeez` as that runtime directory. It copies the latest `docker-compose.yml` from the repository during deployment, while `.env` remains a server-local secret file.
 
-For manual setup, copy `src/docker-compose.yml` to the server runtime directory and create `.env` next to it. Example:
+For manual setup, copy `src/docker-compose.yml` to the server runtime directory and create `.env` next to it. The repository includes `src/.env.example` as a starting point. Example:
 
 ```dotenv
 GHCR_OWNER=your-github-owner
@@ -248,6 +248,13 @@ POSTGRES_DB=SqeezDb
 ConnectionStrings__DefaultConnection=Host=sqeez-postgres;Port=5432;Database=SqeezDb;Username=postgres;Password=TodoSecurePassword
 TokenKey=This_Is_My_Super_Secret_Key_That_Must_Be_At_Least_64_Characters_Long_123456789!
 FrontendUrl=https://your-domain.example
+
+NGINX_SERVER_NAME=your-domain.example
+NGINX_SSL_CERTIFICATE=/etc/letsencrypt/live/your-domain.example/fullchain.pem
+NGINX_SSL_CERTIFICATE_KEY=/etc/letsencrypt/live/your-domain.example/privkey.pem
+NGINX_CERTIFICATE_HOST_PATH=/etc/letsencrypt
+NGINX_BACKEND_URL=http://backend:8080
+NGINX_CLIENT_MAX_BODY_SIZE=100m
 
 SUPER_USER_EMAIL=admin@example.com
 SUPER_USER_DEFAULT_PASSWORD=ChangeThisPassword123!
@@ -267,7 +274,18 @@ cd /root/Sqeez
 docker compose up -d
 ```
 
-The included frontend Nginx config is currently domain-oriented and references `sqeez.org` and Let's Encrypt certificate paths. Adjust `src/frontend/sqeez/nginx.conf` or provide matching certificates before using it for another domain.
+The frontend Nginx config is generated from `src/frontend/sqeez/nginx.conf.template` when the container starts. The Docker image stays generic; domain and certificate values come from `.env`.
+
+Default compose values still target `sqeez.org`:
+
+```dotenv
+NGINX_SERVER_NAME=sqeez.org
+NGINX_SSL_CERTIFICATE=/etc/letsencrypt/live/sqeez.org/fullchain.pem
+NGINX_SSL_CERTIFICATE_KEY=/etc/letsencrypt/live/sqeez.org/privkey.pem
+NGINX_CERTIFICATE_HOST_PATH=/etc/letsencrypt
+```
+
+For another domain, change those values in the VPS `.env` and make sure the referenced certificate files exist on the host. `NGINX_CERTIFICATE_HOST_PATH` is mounted into the frontend container at `/etc/letsencrypt`.
 
 ## Deployment Workflow
 

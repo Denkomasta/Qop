@@ -51,7 +51,7 @@ The current codebase contains a working ASP.NET Core backend, React frontend, Po
 
 - Docker
 - Docker Compose
-- Nginx frontend/reverse proxy container
+- Nginx frontend/reverse proxy container with runtime templating
 - GitHub Container Registry
 - GitHub Actions CI/CD
 

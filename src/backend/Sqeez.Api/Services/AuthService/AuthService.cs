@@ -27,11 +27,22 @@ namespace Sqeez.Api.Services.AuthService
             _frontendUrl = config["FrontendUrl"]?.Trim().TrimEnd('/') ?? "http://localhost:3000";
         }
 
-        private async Task<AuthResponseDto> GenerateAuthResponseAndSessionAsync(Student user, bool rememberMe = false)
+        private async Task<ServiceResult<AuthResponseDto>> GenerateAuthResponseAndSessionAsync(Student user, bool rememberMe = false)
         {
             var tokenResult = _tokenService.CreateToken(user);
-            string accessToken = tokenResult.Data!;
+            if (!tokenResult.Success || string.IsNullOrWhiteSpace(tokenResult.Data))
+            {
+                _logger.LogError("Failed to create access token for user {UserId}: {Error}", user.Id, tokenResult.ErrorMessage);
+                return ServiceResult<AuthResponseDto>.Failure("Failed to create authentication token.", ServiceError.InternalError);
+            }
+
+            string accessToken = tokenResult.Data;
             string refreshToken = _tokenService.GenerateRefreshToken();
+            if (string.IsNullOrWhiteSpace(refreshToken))
+            {
+                _logger.LogError("Failed to create refresh token for user {UserId}.", user.Id);
+                return ServiceResult<AuthResponseDto>.Failure("Failed to create authentication token.", ServiceError.InternalError);
+            }
 
             // TODO move the deletion to background service
             var deadSessions = await _context.UserSessions
@@ -44,6 +55,12 @@ namespace Sqeez.Api.Services.AuthService
             }
 
             var configResult = await _configService.GetConfigAsync();
+            if (!configResult.Success || configResult.Data == null)
+            {
+                _logger.LogError("Failed to load system config while creating session for user {UserId}: {Error}", user.Id, configResult.ErrorMessage);
+                return ServiceResult<AuthResponseDto>.Failure("Failed to load authentication settings.", ServiceError.InternalError);
+            }
+
             int maxSessions = configResult.Data!.MaxActiveSessionsPerUser;
 
             var activeSessions = await _context.UserSessions
@@ -75,7 +92,7 @@ namespace Sqeez.Api.Services.AuthService
             _context.UserSessions.Add(newSession);
             await _context.SaveChangesAsync();
 
-            return new AuthResponseDto(accessToken, refreshToken);
+            return ServiceResult<AuthResponseDto>.Ok(new AuthResponseDto(accessToken, refreshToken));
         }
 
         public async Task<ServiceResult<AuthResponseDto>> LoginAsync(LoginDTO dto)
@@ -95,8 +112,7 @@ namespace Sqeez.Api.Services.AuthService
 
             user.LastSeen = DateTime.UtcNow;
 
-            var response = await GenerateAuthResponseAndSessionAsync(user, dto.RememberMe);
-            return ServiceResult<AuthResponseDto>.Ok(response);
+            return await GenerateAuthResponseAndSessionAsync(user, dto.RememberMe);
         }
 
         public async Task<ServiceResult<bool>> RegisterAsync(RegisterDTO dto)
@@ -182,9 +198,7 @@ namespace Sqeez.Api.Services.AuthService
 
             await _context.SaveChangesAsync();
 
-            var response = await GenerateAuthResponseAndSessionAsync(user, rememberMe);
-
-            return ServiceResult<AuthResponseDto>.Ok(response);
+            return await GenerateAuthResponseAndSessionAsync(user, rememberMe);
         }
 
         public async Task<ServiceResult<bool>> ResendVerificationEmailAsync(ResendVerificationDto dto)
@@ -313,8 +327,7 @@ namespace Sqeez.Api.Services.AuthService
 
             session.IsRevoked = true;
 
-            var response = await GenerateAuthResponseAndSessionAsync(user, true);
-            return ServiceResult<AuthResponseDto>.Ok(response);
+            return await GenerateAuthResponseAndSessionAsync(user, true);
         }
 
         public async Task<ServiceResult<bool>> LogoutAsync(long userId, string? refreshToken = null)

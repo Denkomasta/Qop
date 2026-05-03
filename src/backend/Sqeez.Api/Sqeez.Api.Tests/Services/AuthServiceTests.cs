@@ -93,6 +93,34 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
+        public async Task LoginAsync_WhenTokenCreationFails_ReturnsInternalError()
+        {
+            var context = await GetInMemoryDbContext();
+            string password = "MySecretPassword123!";
+            var user = new Student
+            {
+                Username = "LoginUser",
+                Email = "login@sqeez.org",
+                PasswordHash = BC.HashPassword(password),
+                IsEmailVerified = true
+            };
+            context.Students.Add(user);
+            await context.SaveChangesAsync();
+
+            var tokenService = new Mock<ITokenService>();
+            tokenService.Setup(t => t.CreateToken(It.IsAny<Student>()))
+                .Returns(ServiceResult<string>.Failure("Token key is invalid.", ServiceError.InternalError));
+
+            var service = CreateService(context, tokenService);
+
+            var result = await service.LoginAsync(new LoginDTO("login@sqeez.org", password));
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.InternalError, result.ErrorCode);
+            Assert.Equal(0, await context.UserSessions.CountAsync());
+        }
+
+        [Fact]
         public async Task LoginAsync_WithInvalidPassword_ReturnsUnauthorized()
         {
             var context = await GetInMemoryDbContext();

@@ -227,7 +227,16 @@ It runs:
 - Backend API.
 - Frontend Nginx container.
 
-Create `src/.env` for Docker Compose. Example:
+For a production server, the repository does not need to be cloned. The runtime directory only needs:
+
+```text
++-- docker-compose.yml
++-- .env
+```
+
+The current CD workflow uses `/root/Sqeez` as that runtime directory. It copies the latest `docker-compose.yml` from the repository during deployment, while `.env` remains a server-local secret file.
+
+For manual setup, copy `src/docker-compose.yml` to the server runtime directory and create `.env` next to it. The repository includes `src/.env.example` as a starting point. Example:
 
 ```dotenv
 GHCR_OWNER=your-github-owner
@@ -239,6 +248,13 @@ POSTGRES_DB=SqeezDb
 ConnectionStrings__DefaultConnection=Host=sqeez-postgres;Port=5432;Database=SqeezDb;Username=postgres;Password=TodoSecurePassword
 TokenKey=This_Is_My_Super_Secret_Key_That_Must_Be_At_Least_64_Characters_Long_123456789!
 FrontendUrl=https://your-domain.example
+
+NGINX_SERVER_NAME=your-domain.example
+NGINX_SSL_CERTIFICATE=/etc/letsencrypt/live/your-domain.example/fullchain.pem
+NGINX_SSL_CERTIFICATE_KEY=/etc/letsencrypt/live/your-domain.example/privkey.pem
+NGINX_CERTIFICATE_HOST_PATH=/etc/letsencrypt
+NGINX_BACKEND_URL=http://backend:8080
+NGINX_CLIENT_MAX_BODY_SIZE=100m
 
 SUPER_USER_EMAIL=admin@example.com
 SUPER_USER_DEFAULT_PASSWORD=ChangeThisPassword123!
@@ -254,11 +270,22 @@ SmtpSettings__Password=your_smtp_password
 Then run:
 
 ```powershell
-cd src
+cd /root/Sqeez
 docker compose up -d
 ```
 
-The included frontend Nginx config is currently domain-oriented and references `sqeez.org` and Let's Encrypt certificate paths. Adjust `src/frontend/sqeez/nginx.conf` or provide matching certificates before using it for another domain.
+The frontend Nginx config is generated from `src/frontend/sqeez/nginx.conf.template` when the container starts. The Docker image stays generic; domain and certificate values come from `.env`.
+
+Default compose values still target `sqeez.org`:
+
+```dotenv
+NGINX_SERVER_NAME=sqeez.org
+NGINX_SSL_CERTIFICATE=/etc/letsencrypt/live/sqeez.org/fullchain.pem
+NGINX_SSL_CERTIFICATE_KEY=/etc/letsencrypt/live/sqeez.org/privkey.pem
+NGINX_CERTIFICATE_HOST_PATH=/etc/letsencrypt
+```
+
+For another domain, change those values in the VPS `.env` and make sure the referenced certificate files exist on the host. `NGINX_CERTIFICATE_HOST_PATH` is mounted into the frontend container at `/etc/letsencrypt`.
 
 ## Deployment Workflow
 
@@ -267,11 +294,14 @@ The GitHub Actions deployment workflow:
 1. Runs after successful CI on `main`.
 2. Builds backend and frontend Docker images.
 3. Pushes images to GitHub Container Registry.
-4. Downloads the generated EF migration script.
-5. Copies the migration script to the server.
-6. Pulls the latest compose file on the server.
-7. Starts PostgreSQL.
-8. Applies migrations with `psql`.
-9. Starts the full stack with Docker Compose.
+4. Downloads the generated EF migration script from CI.
+5. Ensures `/root/Sqeez` exists on the server.
+6. Copies `docker-compose.yml` and the temporary migration script to `/root/Sqeez`.
+7. Reads database credentials from the server's `.env`.
+8. Pulls the latest container images.
+9. Starts PostgreSQL.
+10. Applies migrations with `psql`.
+11. Removes the temporary migration script.
+12. Starts the full stack with Docker Compose.
 
 Manual database seeding is available through the `Manual Database Seed` workflow.

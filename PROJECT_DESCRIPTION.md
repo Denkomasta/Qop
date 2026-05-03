@@ -305,7 +305,7 @@ Continuous integration runs backend restore/build/tests, frontend install/lint/t
 Deployment is designed around Docker and GitHub Actions. The production server is intended to be a small runtime host, not a repository checkout.
 
 The backend Docker image is built from `src/backend/Sqeez.Api/Dockerfile`.
-The frontend Docker image is built from `src/frontend/sqeez/Dockerfile` and served by Nginx.
+The frontend Docker image is built from `src/frontend/sqeez/Dockerfile` and served by Nginx. Its Nginx configuration is generated from `nginx.conf.template` at container startup, so the domain, certificate paths, backend URL, and upload size can be supplied through Docker Compose environment variables.
 
 The compose file in `src/docker-compose.yml` runs:
 

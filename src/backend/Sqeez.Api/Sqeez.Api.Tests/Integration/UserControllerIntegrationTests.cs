@@ -1,0 +1,129 @@
+using System.Net;
+using System.Net.Http.Json;
+using Moq;
+using Sqeez.Api.DTOs;
+using Sqeez.Api.Enums;
+
+namespace Sqeez.Api.Tests.Integration
+{
+    public class UserControllerIntegrationTests : IClassFixture<CustomWebApplicationFactory>
+    {
+        private readonly CustomWebApplicationFactory _factory;
+
+        public UserControllerIntegrationTests(CustomWebApplicationFactory factory)
+        {
+            _factory = factory;
+            _factory.ResetMocks();
+        }
+
+        [Fact]
+        public async Task GetUsers_WithAuthenticatedUser_CallsUserService()
+        {
+            _factory.UserServiceMock
+                .Setup(service => service.GetAllUsersAsync(It.Is<UserFilterDto>(filter =>
+                    filter.SearchTerm == "anna" &&
+                    filter.PageSize == 5)))
+                .ReturnsAsync(ServiceResult<PagedResponse<StudentDto>>.Ok(
+                    new PagedResponse<StudentDto>
+                    {
+                        Data = new[]
+                        {
+                            new StudentDto
+                            {
+                                Id = 7,
+                                Username = "anna",
+                                Email = "anna@sqeez.test",
+                                Role = UserRole.Student,
+                                LastSeen = DateTime.UtcNow
+                            }
+                        },
+                        PageNumber = 1,
+                        PageSize = 5,
+                        TotalCount = 1
+                    }));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "1");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Admin");
+
+            var response = await client.GetAsync("/api/users?SearchTerm=anna&PageSize=5");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            _factory.UserServiceMock.Verify(
+                service => service.GetAllUsersAsync(It.IsAny<UserFilterDto>()),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task PatchUser_ForAnotherUserAsStudent_ReturnsForbiddenBeforeCallingService()
+        {
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "7");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Student");
+
+            var response = await client.PatchAsJsonAsync("/api/users/8", new
+            {
+                username = "changed"
+            });
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            _factory.UserServiceMock.Verify(
+                service => service.PatchUserAsync(It.IsAny<long>(), It.IsAny<PatchStudentDto>()),
+                Times.Never);
+        }
+
+        [Fact]
+        public async Task CreateUser_WithTeacherDiscriminator_CallsUserServiceWithTeacherDto()
+        {
+            _factory.UserServiceMock
+                .Setup(service => service.CreateUserAsync(It.Is<CreateTeacherDto>(dto =>
+                    dto.Username == "teacher" &&
+                    dto.Department == "Math")))
+                .ReturnsAsync(ServiceResult<StudentDto>.Ok(
+                    new TeacherDto
+                    {
+                        Id = 12,
+                        Username = "teacher",
+                        Email = "teacher@sqeez.test",
+                        Role = UserRole.Teacher,
+                        Department = "Math",
+                        LastSeen = DateTime.UtcNow
+                    }));
+
+            var client = _factory.CreateClient();
+
+            var response = await client.PostAsJsonAsync("/api/users", new
+            {
+                role = "teacher",
+                firstName = "Tereza",
+                lastName = "Novakova",
+                username = "teacher",
+                email = "teacher@sqeez.test",
+                password = "StrongPassword123!",
+                department = "Math"
+            });
+
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            _factory.UserServiceMock.Verify(
+                service => service.CreateUserAsync(It.IsAny<CreateTeacherDto>()),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task ArchiveUser_AsOwner_ReturnsNoContentWhenServiceSucceeds()
+        {
+            _factory.UserServiceMock
+                .Setup(service => service.ArchiveUserAsync(7))
+                .ReturnsAsync(ServiceResult<bool>.Ok(true));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "7");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Student");
+
+            var response = await client.DeleteAsync("/api/users/7");
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            _factory.UserServiceMock.Verify(service => service.ArchiveUserAsync(7), Times.Once);
+        }
+    }
+}

@@ -59,9 +59,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+<<<<<<< HEAD
+=======
+
+      - name: Download Migration Artifact
+        uses: actions/download-artifact@v4
+>>>>>>> main
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
 
+<<<<<<< HEAD
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v5
         with:
@@ -81,6 +88,8 @@ jobs:
             --output db-artifacts/migrate.sql \
             --project src/backend/Sqeez.Api/Sqeez.Api.csproj
 
+=======
+>>>>>>> main
       - name: Ensure Deployment Directory Exists
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -114,7 +123,6 @@ jobs:
           envs: GITHUB_TOKEN,GITHUB_ACTOR,REPO_OWNER,DEPLOY_DIR
           script: |
             cd "$DEPLOY_DIR"
-
             export GHCR_OWNER=$(echo "$REPO_OWNER" | tr '[:upper:]' '[:lower:]')
 
             if [ ! -f .env ]; then

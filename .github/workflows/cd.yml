@@ -15,10 +15,12 @@ permissions:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }} 
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -57,14 +59,27 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Download Migration Artifact
-        uses: actions/download-artifact@v4
         with:
-          name: database-migration-script
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path: ./db-artifacts
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore Backend
+        run: dotnet restore src/backend/Sqeez.Api/Sqeez.Api.csproj
+
+      - name: Install EF Core CLI
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Generate Idempotent Migration Script
+        run: |
+          mkdir -p db-artifacts
+          dotnet ef migrations script \
+            --idempotent \
+            --output db-artifacts/migrate.sql \
+            --project src/backend/Sqeez.Api/Sqeez.Api.csproj
 
       - name: Ensure Deployment Directory Exists
         uses: appleboy/ssh-action@v1.0.3
@@ -99,8 +114,7 @@ jobs:
           envs: GITHUB_TOKEN,GITHUB_ACTOR,REPO_OWNER,DEPLOY_DIR
           script: |
             cd "$DEPLOY_DIR"
-            
-            # Convert owner to lowercase for the compose file
+
             export GHCR_OWNER=$(echo "$REPO_OWNER" | tr '[:upper:]' '[:lower:]')
 
             if [ ! -f .env ]; then
@@ -112,30 +126,19 @@ jobs:
             POSTGRES_DB=$(grep -E '^POSTGRES_DB=' .env | cut -d '=' -f2-)
             POSTGRES_USER=${POSTGRES_USER:-postgres}
             POSTGRES_DB=${POSTGRES_DB:-postgres}
-            
-            # Log in securely
+
             echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
-            
-            # Pull pre-built images
+
             docker compose --env-file .env pull
-            
-            # 1. Start the Postgres service specifically
             docker compose --env-file .env up -d sqeez-postgres
-            
-            # 2. Wait a few seconds to ensure the healthcheck passes before migrating
+
             until docker exec sqeez_db pg_isready -U "$POSTGRES_USER"; do
               echo "Waiting for postgres..."
               sleep 2
             done
-            
-            # 3. Execute the migration script against the sqeez_db container
+
             cat ./migrate.sql | docker exec -i sqeez_db psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"
-            
-            # 4. Clean up the script so it doesn't linger on the server
             rm ./migrate.sql
-            
-            # Now bring up the rest of the application (backend & frontend)
+
             docker compose --env-file .env up -d
-            
-            # Log out
             docker logout ghcr.io

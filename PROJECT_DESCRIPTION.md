@@ -298,7 +298,7 @@ The backend test project is located at `src/backend/Sqeez.Api/Sqeez.Api.Tests`. 
 
 The frontend uses Vitest and Testing Library. Tests cover reusable UI components, quiz components, stores, hooks, and helper functions.
 
-Continuous integration runs backend restore/build/tests, frontend install/lint/tests/build, PostgreSQL integration tests, and EF migration script generation.
+Continuous integration runs backend restore/build/tests, frontend install/lint/tests/build, and PostgreSQL integration tests.
 
 ## Deployment
 
@@ -313,7 +313,7 @@ The compose file in `src/docker-compose.yml` runs:
 - Backend API.
 - Frontend/Nginx reverse proxy.
 
-On the server, the runtime directory only needs `docker-compose.yml` and `.env`. The CD workflow builds and publishes images to GitHub Container Registry, copies the latest compose file and a temporary EF migration script to the server, applies migrations against the PostgreSQL container, removes the temporary script, and restarts the stack.
+On the server, the runtime directory only needs `docker-compose.yml` and `.env`. The CD workflow builds and publishes images to GitHub Container Registry, generates a temporary idempotent EF migration script from the deployed commit, copies the latest compose file and migration script to the server, applies migrations against the PostgreSQL container, removes the temporary script, and restarts the stack.
 
 ## Current Limitations And Notes
 

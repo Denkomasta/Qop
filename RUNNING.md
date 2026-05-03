@@ -294,7 +294,7 @@ The GitHub Actions deployment workflow:
 1. Runs after successful CI on `main`.
 2. Builds backend and frontend Docker images.
 3. Pushes images to GitHub Container Registry.
-4. Downloads the generated EF migration script from CI.
+4. Generates an idempotent EF migration script from the same commit being deployed.
 5. Ensures `/root/Sqeez` exists on the server.
 6. Copies `docker-compose.yml` and the temporary migration script to `/root/Sqeez`.
 7. Reads database credentials from the server's `.env`.

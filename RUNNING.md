@@ -58,6 +58,8 @@ FrontendUrl=http://localhost:3000
 
 SUPER_USER_EMAIL=test@example.com
 SUPER_USER_DEFAULT_PASSWORD=YourSuperSecretPassword123!
+SUPER_USER_FIRST_NAME=System
+SUPER_USER_LAST_NAME=Administrator
 ```
 
 Email verification and password reset use SMTP settings from the same file. For development, use a sandbox SMTP service or set system config so email verification is not required.
@@ -70,16 +72,25 @@ dotnet restore
 dotnet ef database update
 ```
 
-### 4. Optional Seed Data
+### 4. Required Bootstrap Seed
 
-The backend includes a seed mode. It only inserts data when no users exist yet.
+The backend includes a seed mode for required bootstrap data. It is idempotent and can be run after every deployment. It ensures:
+
+- the singleton system configuration row exists
+- the configured super admin account exists
 
 ```powershell
 cd src/backend/Sqeez.Api
 dotnet run -- seed
 ```
 
-Seed data includes an admin, teachers, students, classes, subjects, enrollments, sample quizzes, sample media, and badges.
+For local demo data on an empty database, use:
+
+```powershell
+dotnet run -- seed-demo
+```
+
+Demo seed data includes an admin, teachers, students, classes, subjects, enrollments, sample quizzes, sample media, and badges.
 
 ### 5. Run Backend
 
@@ -135,16 +146,20 @@ http://localhost:3000
 
 ## Login Notes
 
-Public registration is controlled by system configuration. If public registration is disabled, create users through seed data, CSV import, or the admin interface.
+Public registration is controlled by system configuration. If public registration is disabled, create users through CSV import or the admin interface after logging in with the seeded super admin.
 
 The seeded super admin email and password come from:
 
 ```dotenv
 SUPER_USER_EMAIL
 SUPER_USER_DEFAULT_PASSWORD
+SUPER_USER_FIRST_NAME
+SUPER_USER_LAST_NAME
+SUPER_USER_DEPARTMENT
+SUPER_USER_PHONE_NUMBER
 ```
 
-The default seed password for other seeded users is currently defined in the backend seeder.
+Only the email and password are required. The other super admin profile fields are optional.
 
 ## Frontend API Client Generation
 
@@ -258,6 +273,10 @@ NGINX_CLIENT_MAX_BODY_SIZE=100m
 
 SUPER_USER_EMAIL=admin@example.com
 SUPER_USER_DEFAULT_PASSWORD=ChangeThisPassword123!
+SUPER_USER_FIRST_NAME=System
+SUPER_USER_LAST_NAME=Administrator
+SUPER_USER_DEPARTMENT=Administration
+SUPER_USER_PHONE_NUMBER=
 
 SmtpSettings__Server=smtp.example.com
 SmtpSettings__Port=587
@@ -287,6 +306,34 @@ NGINX_CERTIFICATE_HOST_PATH=/etc/letsencrypt
 
 For another domain, change those values in the VPS `.env` and make sure the referenced certificate files exist on the host. `NGINX_CERTIFICATE_HOST_PATH` is mounted into the frontend container at `/etc/letsencrypt`.
 
+## Fresh VPS Bootstrap Script
+
+For a brand-new Ubuntu/Debian VPS, use `scripts/setup-vps.sh` as a one-time bootstrap helper. It installs required packages, creates the Let's Encrypt certificate, prepares `/root/Sqeez`, downloads the compose file, writes `.env`, starts PostgreSQL, waits until it is ready, generates and applies migrations, runs the required bootstrap seed, and starts the full stack.
+
+Before running it, edit the configuration block at the top of the script:
+
+```bash
+DOMAIN="sqeez.yourdomain.com"
+LETSENCRYPT_EMAIL="your-email@example.com"
+GHCR_OWNER="Denkomasta"
+GITHUB_REPO="https://github.com/Denkomasta/Sqeez.git"
+DB_PASS="TodoSecurePassword"
+JWT_SECRET="..."
+SUPER_USER_EMAIL="admin@example.com"
+SUPER_USER_DEFAULT_PASSWORD="ChangeThisPassword123!"
+SUPER_USER_FIRST_NAME="System"
+SUPER_USER_LAST_NAME="Administrator"
+```
+
+Then copy it to the VPS and run:
+
+```bash
+chmod +x setup-vps.sh
+sudo ./setup-vps.sh
+```
+
+The script uses `pg_isready` instead of a fixed sleep when waiting for PostgreSQL. If GHCR packages are private, fill `GHCR_USERNAME` and `GHCR_TOKEN` in the script before running it.
+
 ## Deployment Workflow
 
 The GitHub Actions deployment workflow:
@@ -302,6 +349,7 @@ The GitHub Actions deployment workflow:
 9. Starts PostgreSQL.
 10. Applies migrations with `psql`.
 11. Removes the temporary migration script.
-12. Starts the full stack with Docker Compose.
+12. Runs the required bootstrap seed to ensure system config and the super admin exist.
+13. Starts the full stack with Docker Compose.
 
-Manual database seeding is available through the `Manual Database Seed` workflow.
+Manual bootstrap seeding is also available through the `Manual Database Seed` workflow.

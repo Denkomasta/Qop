@@ -132,7 +132,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // --- SEED SCRIPT ---
-if (args.Length > 0 && args[0].ToLower() == "seed")
+if (args.Length > 0 && (args[0].Equals("seed", StringComparison.OrdinalIgnoreCase) || args[0].Equals("seed-demo", StringComparison.OrdinalIgnoreCase)))
 {
     using (var scope = app.Services.CreateScope())
     {
@@ -143,7 +143,14 @@ if (args.Length > 0 && args[0].ToLower() == "seed")
             var config = services.GetRequiredService<IConfiguration>();
 
             Console.WriteLine("Running explicitly requested DB Seed...");
-            await DatabaseSeeder.SeedAsync(context, config);
+            if (args[0].Equals("seed-demo", StringComparison.OrdinalIgnoreCase))
+            {
+                await DatabaseSeeder.SeedDemoAsync(context, config);
+            }
+            else
+            {
+                await DatabaseSeeder.SeedAsync(context, config);
+            }
             Console.WriteLine("Database seeding complete!");
         }
         catch (Exception ex)

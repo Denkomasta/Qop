@@ -4,6 +4,7 @@ using Sqeez.Api.Models.Academics;
 using Sqeez.Api.Models.Gamification; // <-- Added the Gamification namespace!
 using Sqeez.Api.Models.Media;
 using Sqeez.Api.Models.QuizSystem;
+using Sqeez.Api.Models.System;
 using Sqeez.Api.Models.Users;
 using BC = BCrypt.Net.BCrypt;
 
@@ -13,9 +14,20 @@ namespace Sqeez.Api.Data
     {
         public static async Task SeedAsync(SqeezDbContext context, IConfiguration config)
         {
+            await EnsureSystemConfigAsync(context);
+            await EnsureSuperAdminAsync(context, config);
+
+            await context.SaveChangesAsync();
+        }
+
+        public static async Task SeedDemoAsync(SqeezDbContext context, IConfiguration config)
+        {
+            await EnsureSystemConfigAsync(context);
+
             // Check if we already have data. If yes, exit.
             if (await context.Students.AnyAsync())
             {
+                await context.SaveChangesAsync();
                 return;
             }
 
@@ -348,6 +360,81 @@ namespace Sqeez.Api.Data
             context.Badges.AddRange(perfectScoreBadge, highScorerBadge, participantBadge);
 
             await context.SaveChangesAsync();
+        }
+
+        private static async Task EnsureSystemConfigAsync(SqeezDbContext context)
+        {
+            if (!await context.SystemConfigs.AnyAsync(systemConfig => systemConfig.Id == 1))
+            {
+                context.SystemConfigs.Add(new SystemConfig { Id = 1 });
+            }
+        }
+
+        private static async Task EnsureSuperAdminAsync(SqeezDbContext context, IConfiguration config)
+        {
+            string superEmail = GetRequiredConfig(config, "SUPER_USER_EMAIL").Trim().ToLowerInvariant();
+            string superPassword = GetRequiredConfig(config, "SUPER_USER_DEFAULT_PASSWORD");
+
+            var existingUser = await context.Students.FirstOrDefaultAsync(user => user.Email.ToLower() == superEmail);
+
+            if (existingUser is Admin)
+            {
+                return;
+            }
+
+            if (existingUser != null)
+            {
+                throw new InvalidOperationException("SUPER_USER_EMAIL already belongs to a non-admin user.");
+            }
+
+            var username = await BuildUniqueUsernameAsync(context, superEmail);
+
+            context.Admins.Add(new Admin
+            {
+                FirstName = config["SUPER_USER_FIRST_NAME"] ?? "System",
+                LastName = config["SUPER_USER_LAST_NAME"] ?? "Administrator",
+                Username = username,
+                Email = superEmail,
+                PasswordHash = BC.HashPassword(superPassword, BC.GenerateSalt(12)),
+                Role = UserRole.Admin,
+                LastSeen = DateTime.UtcNow,
+                Department = config["SUPER_USER_DEPARTMENT"] ?? "Administration",
+                PhoneNumber = config["SUPER_USER_PHONE_NUMBER"] ?? string.Empty,
+                IsEmailVerified = true
+            });
+        }
+
+        private static string GetRequiredConfig(IConfiguration config, string key)
+        {
+            var value = config[key];
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new InvalidOperationException($"{key} must be configured before seeding the database.");
+            }
+
+            return value;
+        }
+
+        private static async Task<string> BuildUniqueUsernameAsync(SqeezDbContext context, string email)
+        {
+            var baseUsername = email.Split('@')[0].Trim().ToLowerInvariant();
+
+            if (string.IsNullOrWhiteSpace(baseUsername))
+            {
+                baseUsername = "admin";
+            }
+
+            var username = baseUsername;
+            var suffix = 1;
+
+            while (await context.Students.AnyAsync(user => user.Username == username))
+            {
+                username = $"{baseUsername}{suffix}";
+                suffix++;
+            }
+
+            return username;
         }
     }
 }

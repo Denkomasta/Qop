@@ -66,6 +66,8 @@ The current codebase contains a working ASP.NET Core backend, React frontend, Po
 |   +-- frontend/
 |   |   +-- sqeez/                    React/Vite frontend
 |   +-- docker-compose.yml            Production-oriented compose file
++-- scripts/
+|   +-- setup-vps.sh                  Fresh VPS bootstrap helper
 +-- PROJECT_DESCRIPTION.md            Detailed implementation description
 +-- RUNNING.md                        Local and Docker running guide
 +-- LICENSE.md                        MIT license

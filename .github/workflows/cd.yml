@@ -139,6 +139,6 @@ jobs:
             cat ./migrate.sql | docker exec -i sqeez_db psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"
             rm ./migrate.sql
 
-            docker compose --env-file .env run --rm backend dotnet Sqeez.Api.dll seed
+            docker compose --env-file .env run --rm backend seed
             docker compose --env-file .env up -d
             docker logout ghcr.io

@@ -308,7 +308,7 @@ For another domain, change those values in the VPS `.env` and make sure the refe
 
 ## Fresh VPS Bootstrap Script
 
-For a brand-new Ubuntu/Debian VPS, use `scripts/setup-vps.sh` as a one-time bootstrap helper. It installs required packages, creates the Let's Encrypt certificate, prepares `/root/Sqeez`, downloads the compose file, writes `.env`, starts PostgreSQL, waits until it is ready, generates and applies migrations, runs the required bootstrap seed, and starts the full stack.
+For a brand-new Ubuntu/Debian VPS, use `scripts/setup-vps.sh` as a one-time bootstrap helper. It installs required packages, installs or reuses Docker Engine with the Docker Compose plugin, creates the Let's Encrypt certificate, prepares `/root/Sqeez`, downloads the compose file, writes `.env`, starts PostgreSQL, waits until it is ready, generates and applies migrations, runs the required bootstrap seed, and starts the full stack.
 
 Before running it, edit the configuration block at the top of the script:
 

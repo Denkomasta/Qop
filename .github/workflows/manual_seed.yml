@@ -14,7 +14,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd /root/Sqeez/src
+            cd /root/Sqeez
             
             # Start the backend container just to run the seed command, then delete it
             docker compose run --rm backend dotnet Sqeez.Api.dll seed

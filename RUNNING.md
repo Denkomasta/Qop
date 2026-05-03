@@ -227,7 +227,16 @@ It runs:
 - Backend API.
 - Frontend Nginx container.
 
-Create `src/.env` for Docker Compose. Example:
+For a production server, the repository does not need to be cloned. The runtime directory only needs:
+
+```text
++-- docker-compose.yml
++-- .env
+```
+
+The current CD workflow uses `/root/Sqeez` as that runtime directory. It copies the latest `docker-compose.yml` from the repository during deployment, while `.env` remains a server-local secret file.
+
+For manual setup, copy `src/docker-compose.yml` to the server runtime directory and create `.env` next to it. Example:
 
 ```dotenv
 GHCR_OWNER=your-github-owner
@@ -254,7 +263,7 @@ SmtpSettings__Password=your_smtp_password
 Then run:
 
 ```powershell
-cd src
+cd /root/Sqeez
 docker compose up -d
 ```
 
@@ -267,11 +276,14 @@ The GitHub Actions deployment workflow:
 1. Runs after successful CI on `main`.
 2. Builds backend and frontend Docker images.
 3. Pushes images to GitHub Container Registry.
-4. Downloads the generated EF migration script.
-5. Copies the migration script to the server.
-6. Pulls the latest compose file on the server.
-7. Starts PostgreSQL.
-8. Applies migrations with `psql`.
-9. Starts the full stack with Docker Compose.
+4. Downloads the generated EF migration script from CI.
+5. Ensures `/root/Sqeez` exists on the server.
+6. Copies `docker-compose.yml` and the temporary migration script to `/root/Sqeez`.
+7. Reads database credentials from the server's `.env`.
+8. Pulls the latest container images.
+9. Starts PostgreSQL.
+10. Applies migrations with `psql`.
+11. Removes the temporary migration script.
+12. Starts the full stack with Docker Compose.
 
 Manual database seeding is available through the `Manual Database Seed` workflow.

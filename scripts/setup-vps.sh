@@ -65,6 +65,17 @@ require_config() {
   fi
 }
 
+require_min_length() {
+  local name="$1"
+  local value="$2"
+  local min_length="$3"
+
+  if [ "${#value}" -lt "$min_length" ]; then
+    echo "$name must be at least ${min_length} characters long."
+    exit 1
+  fi
+}
+
 install_packages() {
   log "Installing required packages..."
   apt-get update
@@ -244,8 +255,10 @@ require_config "DOMAIN" "$DOMAIN"
 require_config "LETSENCRYPT_EMAIL" "$LETSENCRYPT_EMAIL"
 require_config "GHCR_OWNER" "$GHCR_OWNER"
 require_config "GITHUB_REPO" "$GITHUB_REPO"
+require_config "JWT_SECRET" "$JWT_SECRET"
 require_config "SUPER_USER_EMAIL" "$SUPER_USER_EMAIL"
 require_config "SUPER_USER_DEFAULT_PASSWORD" "$SUPER_USER_DEFAULT_PASSWORD"
+require_min_length "JWT_SECRET" "$JWT_SECRET" 64
 
 install_packages
 ensure_certificate

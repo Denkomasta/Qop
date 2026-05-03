@@ -1,83 +1,146 @@
 # Sqeez
 
-> **An open source, self-hosted platform for educational quizzes.**
+Sqeez is an open-source, self-hosted educational quiz platform for schools and learning institutions. It provides role-based administration, subject and class management, quiz authoring, student quiz attempts, local media storage, XP rewards, and badge achievements.
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg) ![Self Hosted](https://img.shields.io/badge/deployment-self--hosted-success) ![Status](https://img.shields.io/badge/status-development-orange)
+The current codebase contains a working ASP.NET Core backend, React frontend, PostgreSQL persistence, generated TypeScript API client, tests, Docker images, and GitHub Actions CI/CD.
 
-## About Sqeez
+## Features
 
-**Sqeez** is a robust web application designed for educational institutions that require full data ownership and a distraction-free environment. Unlike commercial cloud-based alternatives, Sqeez is built to be easily self-hosted, ensuring that student data, quiz content, and media assets remain within the school's local infrastructure.
+- Role-based users: Student, Teacher, and Admin.
+- User authentication with JWT access tokens, refresh-token sessions, and HTTP-only cookies.
+- Email verification and password reset support.
+- School classes, subjects, and enrollments.
+- Admin tools for users, classes, subjects, badges, imports, and system settings.
+- Teacher tools for assigned subjects, quiz management, quiz builder, attempts, and manual grading.
+- Student quiz player with question transitions, answer recap, media display, and results.
+- Quiz questions with text, media, choice answers, strict multiple choice, free-text answers, time limits, difficulty, and optional penalties.
+- XP rewards based on improved quiz performance.
+- Rule-based badge awarding.
+- Local public and private file storage for avatars, badges, and quiz media.
+- CSV master import for classes, subjects, and students.
+- Frontend localization with English and Czech locale files.
 
-The platform combines the structural hierarchy of a Learning Management System (LMS) with the immediate engagement of a modern gamified quiz application.
+## Tech Stack
 
-## Key Features
+### Backend
 
-### Institutional Management
+- .NET 10
+- ASP.NET Core Web API
+- Entity Framework Core
+- PostgreSQL with Npgsql
+- BCrypt password hashing
+- MailKit email integration
+- CsvHelper import processing
+- Scalar/OpenAPI API reference
 
-- **Granular Hierarchy:** A role-based system supporting Admins, Class Leaders, Subject Leaders, and Students.
-- **Class Grouping:** Students are organized into Classes (e.g., "Grade 5B"), each with a dedicated leader.
-- **Subject Integration:** Subjects (e.g., "Biology") are mapped to classes, allowing specific teachers to manage specific curricula.
+### Frontend
 
-### The Assessment Engine
+- React 19
+- TypeScript
+- Vite
+- TanStack Router
+- TanStack Query
+- Orval-generated API hooks
+- Axios
+- Zustand
+- Tailwind CSS
+- i18next
+- Vitest and Testing Library
 
-- **Rich Media Support:** Questions and answers can be defined using Text or Images.
-- **Flexible Logic:** Support for 2-6 answer options with single or multi-choice validation.
-- **Asset Management:** Localized handling of heavy media files via self-hosted storage.
+### Infrastructure
 
-### Gamification & Progression
+- Docker
+- Docker Compose
+- Nginx frontend/reverse proxy container
+- GitHub Container Registry
+- GitHub Actions CI/CD
 
-- **Badges:** Achievement system for levels, streaks, perfect scores, and speed.
-- **Leaderboards:** Two-tier ranking system: Global (School), Subject-level and Class-level.
+## Repository Structure
 
-### Analytics Dashboards
+```text
+.
++-- analysis/                         Historical analysis and UML artifacts
++-- src/
+|   +-- backend/
+|   |   +-- Sqeez.Api/                ASP.NET Core API, EF model, services, tests
+|   +-- frontend/
+|   |   +-- sqeez/                    React/Vite frontend
+|   +-- docker-compose.yml            Production-oriented compose file
++-- PROJECT_DESCRIPTION.md            Detailed implementation description
++-- RUNNING.md                        Local and Docker running guide
++-- LICENSE.md                        MIT license
++-- README.md
+```
 
-- **Principal View:** Global school performance and user management.
-- **Class Leader View:** Holistic view of a class group's attendance and overall engagement.
-- **Subject Leader View:** detailed breakdown of quiz pass rates and question difficulty per subject.
+## Documentation
 
----
+- [Project description](PROJECT_DESCRIPTION.md) explains the implemented system, roles, architecture, core workflows, and limitations.
+- [Running guide](RUNNING.md) explains how to configure and run the project locally and with Docker.
+- `analysis/` contains earlier analysis artifacts. Some of those files are older than the implementation and should be treated as historical context.
 
-## User Roles & Workflow
+## Quick Start
 
-Sqeez utilizes an user inheritance model (`Student` ⊂ `Teacher` ⊂ `Admin`).
+For full setup details, see [RUNNING.md](RUNNING.md).
 
-### 1. Admin (Principal / Tech Admin)
+Backend:
 
-The system manager.
+```powershell
+cd src/backend/Sqeez.Api
+dotnet restore
+dotnet ef database update
+dotnet run --launch-profile https
+```
 
-- Creates Students, Teachers, and Subjects.
-- Assigns **Class Leaders** to groups.
-- Assigns **Subject Leaders** to specific subjects within a group.
+Frontend:
 
-### 2. Teacher (Leader)
+```powershell
+cd src/frontend/sqeez
+yarn install
+yarn dev
+```
 
-A dual-context role:
+Default local URLs:
 
-- **As Class Leader:** Monitors the overall well-being and statistics of their specific class group (e.g., "Homeroom 101").
-- **As Subject Leader:** Manages quizzes, content, and specific academic statistics for a subject (e.g., "Math for Homeroom 101").
+- Frontend: `http://localhost:3000`
+- Backend HTTP: `http://localhost:5000`
+- Backend HTTPS: `https://localhost:5001`
+- OpenAPI document: `https://localhost:5001/openapi/v1.json`
+- Scalar API reference: `https://localhost:5001/scalar/v1`
 
-### 3. Student
+Use the HTTPS backend profile for normal browser authentication testing because auth cookies are configured as `Secure`.
 
-The end-user.
+## Testing
 
-- Participates in quizzes.
-- Tracks personal progress through the subject curriculum.
-- Competes on leaderboards and earns badges.
+Backend:
 
----
+```powershell
+cd src/backend/Sqeez.Api
+dotnet test Sqeez.Api.Tests/Sqeez.Api.Tests.csproj
+```
 
-## 🛠 Technology Stack
+Frontend:
 
-Sqeez is designed for performance and easy containerization.
+```powershell
+cd src/frontend/sqeez
+yarn test --run
+```
 
-- **Backend:** C# / ASP.NET Core
-- **Frontend:** React.js
-- **Database:** PostgreSQL
-- **Caching/Realtime:** Redis
-- **Infrastructure:** Docker & Docker Compose
+Frontend coverage:
 
----
+```powershell
+cd src/frontend/sqeez
+yarn test:coverage
+```
 
-## Deployment (Self-Hosting)
+## API Client Generation
 
-- **TODO**
+The frontend API client is generated from `src/frontend/sqeez/src/api/api.yaml` using Orval.
+
+```powershell
+cd src/frontend/sqeez
+yarn api:gen
+```
+
+## License
+
+Sqeez is released under the MIT License. See [LICENSE.md](LICENSE.md).

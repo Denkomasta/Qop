@@ -17,4 +17,4 @@ jobs:
             cd /root/Sqeez
             
             # Start the backend container just to ensure required bootstrap data, then delete it
-            docker compose run --rm backend dotnet Sqeez.Api.dll seed
+            docker compose run --rm backend seed

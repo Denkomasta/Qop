@@ -68,9 +68,42 @@ require_config() {
 install_packages() {
   log "Installing required packages..."
   apt-get update
-  apt-get install -y ca-certificates curl git wget certbot docker.io docker-compose-plugin
+  apt-get install -y ca-certificates curl git wget certbot gnupg
+
+  install_docker
+}
+
+install_docker() {
+  if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+    log "Docker and Docker Compose are already installed."
+    systemctl enable --now docker
+    return
+  fi
+
+  log "Installing Docker Engine from the official Docker repository..."
+
+  for package in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do
+    apt-get remove -y "$package" >/dev/null 2>&1 || true
+  done
+
+  install -m 0755 -d /etc/apt/keyrings
+
+  if [ ! -f /etc/apt/keyrings/docker.asc ]; then
+    curl -fsSL "https://download.docker.com/linux/ubuntu/gpg" -o /etc/apt/keyrings/docker.asc
+    chmod a+r /etc/apt/keyrings/docker.asc
+  fi
+
+  . /etc/os-release
+
+  cat > /etc/apt/sources.list.d/docker.list <<EOF
+deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu ${VERSION_CODENAME} stable
+EOF
+
+  apt-get update
+  apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
   systemctl enable --now docker
+  docker compose version >/dev/null
 }
 
 ensure_certificate() {
@@ -200,7 +233,7 @@ run_seed_if_enabled() {
   fi
 
   log "Running database seeder..."
-  docker compose --env-file .env run --rm backend dotnet Sqeez.Api.dll seed
+  docker compose --env-file .env run --rm backend seed
 }
 
 # ==========================================

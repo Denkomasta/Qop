@@ -52,7 +52,12 @@ jobs:
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
+    env:
+      DEPLOY_DIR: /root/Sqeez
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Download Migration Artifact
         uses: actions/download-artifact@v4
         with:
@@ -61,14 +66,24 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: ./db-artifacts
 
-      - name: Copy Migration Script to Server
+      - name: Ensure Deployment Directory Exists
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          envs: DEPLOY_DIR
+          script: |
+            mkdir -p "$DEPLOY_DIR"
+
+      - name: Copy Runtime Files to Server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          source: "db-artifacts/migrate.sql"
-          target: "/root/Sqeez/src"
+          source: "src/docker-compose.yml,db-artifacts/migrate.sql"
+          target: "${{ env.DEPLOY_DIR }}"
           strip_components: 1
 
       - name: Deploy via SSH
@@ -81,27 +96,31 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          envs: GITHUB_TOKEN,GITHUB_ACTOR,REPO_OWNER
+          envs: GITHUB_TOKEN,GITHUB_ACTOR,REPO_OWNER,DEPLOY_DIR
           script: |
-            cd /root/Sqeez/src
-            
-            # Pull the updated docker-compose.yml
-            git pull origin main
-            
-            # Extract database credentials dynamically from your .env file ---
-            export $(grep -v '^#' .env | xargs -d '\n')
+            cd "$DEPLOY_DIR"
             
             # Convert owner to lowercase for the compose file
             export GHCR_OWNER=$(echo "$REPO_OWNER" | tr '[:upper:]' '[:lower:]')
+
+            if [ ! -f .env ]; then
+              echo "Missing .env in $DEPLOY_DIR. Create it on the server before deploying."
+              exit 1
+            fi
+
+            POSTGRES_USER=$(grep -E '^POSTGRES_USER=' .env | cut -d '=' -f2-)
+            POSTGRES_DB=$(grep -E '^POSTGRES_DB=' .env | cut -d '=' -f2-)
+            POSTGRES_USER=${POSTGRES_USER:-postgres}
+            POSTGRES_DB=${POSTGRES_DB:-postgres}
             
             # Log in securely
             echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
             
             # Pull pre-built images
-            docker compose pull
+            docker compose --env-file .env pull
             
             # 1. Start the Postgres service specifically
-            docker compose up -d sqeez-postgres
+            docker compose --env-file .env up -d sqeez-postgres
             
             # 2. Wait a few seconds to ensure the healthcheck passes before migrating
             until docker exec sqeez_db pg_isready -U "$POSTGRES_USER"; do
@@ -116,7 +135,7 @@ jobs:
             rm ./migrate.sql
             
             # Now bring up the rest of the application (backend & frontend)
-            docker compose up -d
+            docker compose --env-file .env up -d
             
             # Log out
             docker logout ghcr.io

@@ -302,10 +302,10 @@ Continuous integration runs backend restore/build/tests, frontend install/lint/t
 
 ## Deployment
 
-Deployment is designed around Docker and GitHub Actions.
+Deployment is designed around Docker and GitHub Actions. The production server is intended to be a small runtime host, not a repository checkout.
 
 The backend Docker image is built from `src/backend/Sqeez.Api/Dockerfile`.
-The frontend Docker image is built from `src/frontend/sqeez/Dockerfile` and served by Nginx.
+The frontend Docker image is built from `src/frontend/sqeez/Dockerfile` and served by Nginx. Its Nginx configuration is generated from `nginx.conf.template` at container startup, so the domain, certificate paths, backend URL, and upload size can be supplied through Docker Compose environment variables.
 
 The compose file in `src/docker-compose.yml` runs:
 
@@ -313,7 +313,7 @@ The compose file in `src/docker-compose.yml` runs:
 - Backend API.
 - Frontend/Nginx reverse proxy.
 
-The GitHub Actions CD workflow builds and publishes images to GitHub Container Registry, copies an EF migration script to the server, applies migrations against the PostgreSQL container, and restarts the stack on the target server.
+On the server, the runtime directory only needs `docker-compose.yml` and `.env`. The CD workflow builds and publishes images to GitHub Container Registry, copies the latest compose file and a temporary EF migration script to the server, applies migrations against the PostgreSQL container, removes the temporary script, and restarts the stack.
 
 ## Current Limitations And Notes
 

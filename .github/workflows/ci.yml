@@ -50,6 +50,11 @@ jobs:
       - name: Test
         run: dotnet test src/backend/Sqeez.Api/Sqeez.Api.Tests/Sqeez.Api.Tests.csproj -c Release --verbosity normal
       
+      - name: PostgreSQL Integration Tests
+        run: dotnet test src/backend/Sqeez.Api/Sqeez.Api.Tests/Sqeez.Api.Tests.csproj -c Release --no-build --filter FullyQualifiedName~Postgres --verbosity normal
+        env:
+          SQEEZ_RUN_POSTGRES_TESTS: true
+      
       - name: Install EF Core CLI
         run: dotnet tool install --global dotnet-ef
 

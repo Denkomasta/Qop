@@ -86,7 +86,7 @@ export function ClassView({ targetClassId }: { targetClassId?: number }) {
               variant="outline"
               className="ml-2 border-primary/20 bg-primary/10 align-middle text-primary"
             >
-              {t('class.myClass', 'My Class')}
+              {t('class.myClass')}
             </Badge>
           )}
         </>

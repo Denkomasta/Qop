@@ -138,7 +138,7 @@ export function QuizStatisticsPage({
               setSearchQuery(val)
               setPageNumber(1)
             }}
-            placeholder={t('quiz.searchStudents', 'Search students...')}
+            placeholder={t('quiz.searchStudents')}
             icon={<Search className="h-4 w-4" />}
             className="w-full bg-background sm:max-w-xs"
             hideErrors

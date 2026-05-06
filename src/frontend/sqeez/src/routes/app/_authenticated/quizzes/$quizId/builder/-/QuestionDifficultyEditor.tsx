@@ -111,10 +111,7 @@ export function QuestionDifficultyEditor({
         <button
           onClick={handleTogglePenalty}
           disabled={isPending || isLocked}
-          title={t(
-            'editor.togglePenaltyDesc',
-            'Toggle whether incorrect answers deduct points',
-          )}
+          title={t('editor.togglePenaltyDesc')}
           className={cn(
             'flex items-center gap-1.5 rounded px-2 py-0.5 text-[10px] font-semibold transition-all hover:scale-105 active:scale-95',
             hasPenalty

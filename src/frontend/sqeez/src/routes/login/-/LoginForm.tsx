@@ -98,7 +98,7 @@ export function LoginForm() {
         if (isUnverified) {
           setError('root', {
             type: 'unverified',
-            message: t('error.unverifiedEmail', 'Your email is not verified.'),
+            message: t('error.unverifiedEmail'),
           })
         } else {
           setError('root', {

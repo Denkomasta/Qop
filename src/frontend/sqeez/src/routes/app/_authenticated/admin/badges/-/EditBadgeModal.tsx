@@ -176,7 +176,7 @@ export function EditBadgeModal({
             loadingText={t('common.saving') + '...'}
             className="min-w-32"
           >
-            {t('common.save', 'Save')}
+            {t('common.save')}
           </AsyncButton>
         </div>
       }

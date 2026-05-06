@@ -43,16 +43,16 @@ export function ConfirmModal({
             disabled={isLoading}
             className="min-w-32"
           >
-            {cancelText || t('common.cancel', 'Cancel')}
+            {cancelText || t('common.cancel')}
           </Button>
           <AsyncButton
             size="lg"
             onClick={onConfirm}
-            loadingText={t('common.saving', 'Saving...') + '...'}
+            loadingText={t('common.saving') + '...'}
             variant={isDestructive ? 'destructive' : 'default'}
             className="min-w-32"
           >
-            {confirmText || t('common.confirm', 'Confirm')}
+            {confirmText || t('common.confirm')}
           </AsyncButton>
         </div>
       }

@@ -120,7 +120,7 @@ export function RegisterForm() {
             {...register('firstName')}
             id="firstName"
             type="text"
-            label={t('register.firstName', 'First Name')}
+            label={t('register.firstName')}
             placeholder="John"
             error={errors.firstName?.message}
             disabled={isPending}
@@ -129,7 +129,7 @@ export function RegisterForm() {
             {...register('lastName')}
             id="lastName"
             type="text"
-            label={t('register.lastName', 'Last Name')}
+            label={t('register.lastName')}
             placeholder="Doe"
             error={errors.lastName?.message}
             disabled={isPending}
@@ -173,7 +173,7 @@ export function RegisterForm() {
           {...register('confirmPassword')}
           id="confirmPassword"
           type="password"
-          label={t('register.confirmPassword', 'Confirm Password')}
+          label={t('register.confirmPassword')}
           placeholder="••••••••"
           error={errors.confirmPassword?.message}
           disabled={isPending}

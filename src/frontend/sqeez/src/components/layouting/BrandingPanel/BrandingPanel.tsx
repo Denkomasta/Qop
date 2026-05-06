@@ -42,6 +42,25 @@ function BadgeItem({ label }: { label: string }) {
   )
 }
 
+function LearningStep({
+  icon,
+  label,
+}: {
+  icon: React.ReactNode
+  label: string
+}) {
+  return (
+    <div className="flex flex-1 flex-col items-center gap-2 rounded-xl border border-primary-foreground/10 bg-primary-foreground/10 px-3 py-3 text-center backdrop-blur-sm">
+      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-foreground/15 text-primary-foreground">
+        {icon}
+      </div>
+      <span className="text-xs font-medium text-primary-foreground/70">
+        {label}
+      </span>
+    </div>
+  )
+}
+
 export function BrandingPanel() {
   const { t } = useTranslation()
 
@@ -113,7 +132,7 @@ export function BrandingPanel() {
         {/* Recent badges */}
         <div className="flex flex-col items-center gap-3">
           <p className="text-xs font-semibold tracking-wider text-primary-foreground/50 uppercase">
-            Recent achievements
+            {t('brandingPanel.recentBadges', 'Recently unlocked badges')}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-2">
             <BadgeItem label="Speed Demon" />
@@ -123,25 +142,25 @@ export function BrandingPanel() {
           </div>
         </div>
 
-        {/* Social proof */}
-        <div className="flex items-center gap-4">
-          {/* Stacked avatars */}
-          <div className="flex -space-x-2">
-            {['SM', 'JK', 'AL', 'RP'].map((initials) => (
-              <div
-                key={initials}
-                className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-primary bg-primary-foreground/20 text-[10px] font-bold text-primary-foreground backdrop-blur-sm"
-              >
-                {initials}
-              </div>
-            ))}
-          </div>
-          <p className="text-sm text-primary-foreground/60">
-            <span className="font-semibold text-primary-foreground">
-              24,000+
-            </span>{' '}
-            learners this week
+        {/* Learning loop */}
+        <div className="flex w-full flex-col items-center gap-3">
+          <p className="text-xs font-semibold tracking-wider text-primary-foreground/50 uppercase">
+            {t('brandingPanel.learningLoop.title')}
           </p>
+          <div className="flex w-full gap-3">
+            <LearningStep
+              icon={<BookOpen className="h-4 w-4" aria-hidden="true" />}
+              label={t('brandingPanel.learningLoop.quiz')}
+            />
+            <LearningStep
+              icon={<Zap className="h-4 w-4" aria-hidden="true" />}
+              label={t('brandingPanel.learningLoop.xp')}
+            />
+            <LearningStep
+              icon={<Trophy className="h-4 w-4" aria-hidden="true" />}
+              label={t('brandingPanel.learningLoop.badge')}
+            />
+          </div>
         </div>
       </div>
     </div>

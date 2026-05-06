@@ -19,6 +19,7 @@ import { TextArea } from '@/components/ui/TextArea'
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { ScrollableSelectList } from '@/components/ui/ScrollableSelectList/ScrollableSelectList'
 import { formatName } from '@/lib/userHelpers'
+import { toUtcIsoString } from '@/lib/dateHelpers'
 import type { SubjectDto } from '@/api/generated/model'
 
 interface EditSubjectModalProps {
@@ -142,8 +143,8 @@ export function EditSubjectModal({
           name: data.name,
           code: data.code,
           description: data.description || null,
-          startDate: data.startDate || null,
-          endDate: data.endDate || null,
+          startDate: toUtcIsoString(data.startDate),
+          endDate: toUtcIsoString(data.endDate),
           teacherId: data.teacherId === '' ? null : data.teacherId,
           schoolClassId: data.schoolClassId === '' ? null : data.schoolClassId,
         },

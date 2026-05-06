@@ -8,8 +8,13 @@ describe('BrandingPanel', () => {
 
     expect(screen.getByText('system.name')).toBeInTheDocument()
     expect(screen.getByText('brandingPanel.title')).toBeInTheDocument()
+    expect(
+      screen.getByText('brandingPanel.learningLoop.title'),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText('brandingPanel.learningLoop.quiz'),
+    ).toBeInTheDocument()
     expect(screen.getByText('12-day')).toBeInTheDocument()
     expect(screen.getByText('Speed Demon')).toBeInTheDocument()
-    expect(screen.getByText(/24,000\+/)).toBeInTheDocument()
   })
 })

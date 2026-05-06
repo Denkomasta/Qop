@@ -22,7 +22,9 @@ export const formatName = (
   firstName: string | undefined,
   lastName: string | undefined,
 ) => {
-  return `${firstName} ${lastName}`
+  const name = [firstName, lastName].filter(Boolean).join(' ')
+
+  return name || undefined
 }
 
 export const getNameInitials = (

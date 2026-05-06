@@ -66,7 +66,9 @@ namespace Sqeez.Api.Services.SubjectService
                     query = query.Where(s => s.SchoolClassId == filter.SchoolClassId.Value);
 
                 if (filter.StartingAfter.HasValue)
+                {
                     query = query.Where(s => s.StartDate >= filter.StartingAfter.Value);
+                }
 
                 if (!string.IsNullOrWhiteSpace(filter.Code))
                 {

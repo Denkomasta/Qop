@@ -309,6 +309,45 @@ namespace Sqeez.Api.Tests.Integration
         }
 
         [Fact]
+        public async Task AddQuizToSubject_WithPublishDateWithoutOffset_ReturnsBadRequestBeforeCallingService()
+        {
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
+
+            var response = await client.PostAsJsonAsync("/api/subjects/5/quizzes", new
+            {
+                title = "Intro quiz",
+                description = "Basics",
+                maxRetries = 2,
+                publishDate = "2026-01-15T08:30:00"
+            });
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            _factory.QuizServiceMock.Verify(
+                service => service.CreateQuizAsync(It.IsAny<CreateQuizDto>(), It.IsAny<long>()),
+                Times.Never);
+        }
+
+        [Fact]
+        public async Task PatchQuiz_WithClosingDateWithoutOffset_ReturnsBadRequestBeforeCallingService()
+        {
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
+
+            var response = await client.PatchAsJsonAsync("/api/quizzes/10", new
+            {
+                closingDate = "2026-01-15T08:30:00"
+            });
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            _factory.QuizServiceMock.Verify(
+                service => service.PatchQuizAsync(It.IsAny<long>(), It.IsAny<PatchQuizDto>(), It.IsAny<long>()),
+                Times.Never);
+        }
+
+        [Fact]
         public async Task GetQuizzesForSubject_ForcesSubjectIdFilter()
         {
             _factory.QuizServiceMock
@@ -334,6 +373,21 @@ namespace Sqeez.Api.Tests.Integration
             _factory.QuizServiceMock.Verify(
                 service => service.GetAllQuizzesAsync(It.IsAny<QuizFilterDto>()),
                 Times.Once);
+        }
+
+        [Fact]
+        public async Task GetQuizzes_WithPublishDateWithoutOffset_ReturnsBadRequestBeforeCallingService()
+        {
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
+
+            var response = await client.GetAsync("/api/quizzes?PublishDate=2026-01-15T08:30:00");
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            _factory.QuizServiceMock.Verify(
+                service => service.GetAllQuizzesAsync(It.IsAny<QuizFilterDto>()),
+                Times.Never);
         }
     }
 }

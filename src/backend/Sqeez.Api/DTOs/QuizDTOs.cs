@@ -1,4 +1,5 @@
 using Sqeez.Api.Constants;
+using Sqeez.Api.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace Sqeez.Api.DTOs
@@ -20,7 +21,9 @@ namespace Sqeez.Api.DTOs
         [StringLength(ValidationConstants.SearchTermMaxLength)]
         public string? SearchTerm { get; set; }  // Search against Title or Description
         public bool? IsActive { get; set; }
+        [UtcDateTime]
         public DateTime? PublishDate { get; set; }
+        [UtcDateTime]
         public DateTime? ClosingDate { get; set; }
         public long? SubjectId { get; set; }
         public long? StudentId { get; set; }
@@ -52,7 +55,9 @@ namespace Sqeez.Api.DTOs
 
         [Range(0, ValidationConstants.MaxQuizRetries)]
         public int MaxRetries { get; init; } = 0;
+        [UtcDateTime]
         public DateTime? PublishDate { get; init; }
+        [UtcDateTime]
         public DateTime? ClosingDate { get; init; }
     }
 
@@ -79,7 +84,9 @@ namespace Sqeez.Api.DTOs
         [Range(0, ValidationConstants.MaxQuizRetries)]
         public int? MaxRetries { get; init; }
         public long? SubjectId { get; init; }
+        [UtcDateTime]
         public DateTime? PublishDate { get; init; }
+        [UtcDateTime]
         public DateTime? ClosingDate { get; init; }
     }
 

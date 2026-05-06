@@ -1,0 +1,79 @@
+@startuml
+title Průběh kvízu
+
+skinparam defaultFontSize 16
+skinparam titleFontSize 20
+skinparam sequenceMessageFontSize 16
+skinparam sequenceParticipantFontSize 16
+skinparam sequenceActorFontSize 16
+skinparam sequenceGroupFontSize 16
+
+actor "Student" as User
+participant "Frontend" as FE
+participant "Quiz Service" as QuizService
+participant "Quiz Attempt Service" as AttemptService
+participant "Badge Service" as BadgeService
+database "Databáze" as DB
+
+User -> FE: Otevře publikovaný kvíz
+FE -> QuizService: GET /api/quizzes/{quizId}
+QuizService -> DB: Načte data kvízu
+DB --> QuizService: Quiz
+QuizService --> FE: QuizDto
+
+User -> FE: Spustí kvíz
+FE -> AttemptService: POST /api/quiz-attempts/start
+AttemptService -> DB: Ověří zapsání do předmětu,\nstav kvízu a limit pokusů
+AttemptService -> DB: Vytvoří QuizAttempt\nStatus = Created
+AttemptService -> DB: Najde první otázku
+AttemptService --> FE: QuizAttemptDto s nextQuestionId
+
+loop Dokud existuje nextQuestionId
+    FE -> QuizService: GET /api/quizzes/{quizId}/questions/{questionId}/detailed
+    QuizService -> DB: Načte otázku, možnosti odpovědi\na metadata médií
+    QuizService --> FE: DetailedQuizQuestionDto
+    FE --> User: Zobrazí otázku a možnosti odpovědi
+
+    User -> FE: Odešle odpověď
+    FE -> AttemptService: POST /api/quiz-attempts/{attemptId}/answer
+    AttemptService -> DB: Ověří vlastnictví pokusu a stav
+
+    alt První odeslaná odpověď
+        AttemptService -> DB: Status Created -> Started
+    end
+
+    AttemptService -> DB: Uloží QuizQuestionResponse
+
+    alt Automaticky vyhodnotitelná otázka
+        AttemptService -> AttemptService: Vyhodnotí vybrané možnosti
+        AttemptService -> DB: Uloží skóre do Score
+    else Volná textová odpověď
+        AttemptService -> DB: Uloží odpověď se Score = null
+    end
+
+    AttemptService -> DB: Najde další otázku
+    AttemptService --> FE: QuestionAnsweredDto s nextQuestionId
+end
+
+User -> FE: Dokončí kvíz
+FE -> AttemptService: POST /api/quiz-attempts/{attemptId}/complete
+AttemptService -> DB: Načte pokus a odpovědi
+AttemptService -> AttemptService: Vypočítá celkové skóre
+
+alt Obsahuje volné odpovědi vyžadující ruční opravu
+    AttemptService -> DB: Status = PendingCorrection\nEndTime set\nTotalScore saved
+    AttemptService --> FE: QuizAttemptDto bez odznaků
+    FE --> User: Zobrazí stav čekání na opravu
+else Plně automaticky vyhodnocený kvíz
+    AttemptService -> DB: Status = Completed\nEndTime set\nTotalScore saved
+    AttemptService -> AttemptService: Vypočítá rozdíl XP
+    AttemptService -> DB: Přičte XP studentovi
+    AttemptService -> BadgeService: EvaluateAndAwardBadges(studentId, quizMetrics)
+    BadgeService -> DB: Načte nezískané odznaky a pravidla
+    BadgeService -> DB: Uloží získané odznaky\nPřičte bonusové XP za odznaky
+    BadgeService --> AttemptService: Nově získané odznaky
+    AttemptService --> FE: QuizAttemptDto s odznaky
+    FE --> User: Zobrazí výsledek, skóre, XP a odznaky
+end
+
+@enduml

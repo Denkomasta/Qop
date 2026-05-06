@@ -1,5 +1,41 @@
 import type { TFunction } from 'i18next'
 
+const dateOnlyPattern = /^\d{4}-\d{2}-\d{2}$/
+
+const parseDateInputValue = (dateString: string) => {
+  const trimmedDateString = dateString.trim()
+
+  if (dateOnlyPattern.test(trimmedDateString)) {
+    return new Date(`${trimmedDateString}T00:00`)
+  }
+
+  return new Date(trimmedDateString)
+}
+
+export const toUtcIsoString = (dateString?: string | null): string | null => {
+  if (!dateString) return null
+
+  const date = parseDateInputValue(dateString)
+
+  if (isNaN(date.getTime())) return null
+
+  return date.toISOString()
+}
+
+export const toLocalDateTimeInputValue = (
+  dateString?: string | null,
+): string => {
+  if (!dateString) return ''
+
+  const date = new Date(dateString)
+
+  if (isNaN(date.getTime())) return ''
+
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 16)
+}
+
 export const formatDate = (dateString?: string | null) => {
   if (!dateString) return null
   return new Date(dateString).toLocaleDateString()

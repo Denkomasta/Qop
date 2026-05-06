@@ -13,12 +13,13 @@ import { useGetApiUsersInfinite } from '@/hooks/useGetApiUsersInfinite'
 
 import { BaseModal } from '@/components/ui/Modal'
 import { Button, AsyncButton } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
+import { DateTimePicker, Input } from '@/components/ui/Input'
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { ScrollableSelectList } from '@/components/ui/ScrollableSelectList/ScrollableSelectList'
 import { formatName } from '@/lib/userHelpers'
 import { useGetApiClassesInfinite } from '@/hooks/useGetApiClassesInfinite'
 import { TextArea } from '@/components/ui/TextArea'
+import { toUtcIsoString } from '@/lib/dateHelpers'
 
 interface CreateSubjectModalProps {
   isOpen: boolean
@@ -36,8 +37,8 @@ export function CreateSubjectModal({
     name: z.string().min(1, t('common.required')),
     code: z.string().min(1, t('common.required')),
     description: z.string().optional(),
-    startDate: z.string().optional(),
-    endDate: z.string().optional(),
+    startDate: z.string().nullable().optional(),
+    endDate: z.string().nullable().optional(),
     teacherId: z.union([z.number(), z.literal('')]).optional(),
     schoolClassId: z.union([z.number(), z.literal('')]).optional(),
   })
@@ -57,8 +58,8 @@ export function CreateSubjectModal({
       name: '',
       code: '',
       description: '',
-      startDate: '',
-      endDate: '',
+      startDate: null,
+      endDate: null,
       teacherId: '',
       schoolClassId: '',
     },
@@ -118,8 +119,8 @@ export function CreateSubjectModal({
           name: data.name,
           code: data.code,
           description: data.description || null,
-          startDate: data.startDate || null,
-          endDate: data.endDate || null,
+          startDate: toUtcIsoString(data.startDate),
+          endDate: toUtcIsoString(data.endDate),
           teacherId: data.teacherId === '' ? null : data.teacherId,
           schoolClassId: data.schoolClassId === '' ? null : data.schoolClassId,
         },
@@ -225,19 +226,31 @@ export function CreateSubjectModal({
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <Input
-              type="date"
-              label={t('admin.subjects.startDateLabel')}
-              error={errors.startDate?.message}
-              {...register('startDate')}
+            <Controller
+              name="startDate"
+              control={control}
+              render={({ field }) => (
+                <DateTimePicker
+                  label={t('admin.subjects.startDateLabel')}
+                  error={errors.startDate?.message}
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              )}
             />
           </div>
           <div>
-            <Input
-              type="date"
-              label={t('admin.subjects.endDateLabel')}
-              error={errors.endDate?.message}
-              {...register('endDate')}
+            <Controller
+              name="endDate"
+              control={control}
+              render={({ field }) => (
+                <DateTimePicker
+                  label={t('admin.subjects.endDateLabel')}
+                  error={errors.endDate?.message}
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              )}
             />
           </div>
         </div>

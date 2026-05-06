@@ -25,6 +25,7 @@ import { DateTimePicker, Input } from '@/components/ui/Input'
 import { ConfirmModal } from '@/components/ui/Modal/ConfirmModal'
 import { useDeleteApiQuizAttemptsQuizIdAttempts } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
 import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
+import { toUtcIsoString } from '@/lib/dateHelpers'
 
 interface QuizSettingsEditorProps {
   quizId: string
@@ -182,7 +183,9 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
             helpText={t('editor.closingDateHelp')}
             value={quiz?.closingDate}
             min={new Date().toISOString()}
-            onChange={(isoString) => handleUpdate('closingDate', isoString)}
+            onChange={(isoString) =>
+              handleUpdate('closingDate', toUtcIsoString(isoString))
+            }
           />
         </div>
 

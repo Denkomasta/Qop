@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Input } from '@/components/ui/Input'
+import { toLocalDateTimeInputValue, toUtcIsoString } from '@/lib/dateHelpers'
 
 interface DateTimePickerProps extends Omit<
   React.ComponentProps<typeof Input>,
@@ -19,25 +20,12 @@ export function DateTimePicker({
   icon,
   ...props
 }: DateTimePickerProps) {
-  const toLocalDatetimeString = (isoString?: string | null) => {
-    if (!isoString) return ''
-    try {
-      const date = new Date(isoString)
-      if (isNaN(date.getTime())) return ''
-      return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-        .toISOString()
-        .slice(0, 16)
-    } catch {
-      return ''
-    }
-  }
-
   const [prevValueProp, setPrevValueProp] = useState(value)
-  const [localValue, setLocalValue] = useState(toLocalDatetimeString(value))
+  const [localValue, setLocalValue] = useState(toLocalDateTimeInputValue(value))
 
   if (value !== prevValueProp) {
     setPrevValueProp(value)
-    setLocalValue(toLocalDatetimeString(value))
+    setLocalValue(toLocalDateTimeInputValue(value))
   }
 
   const handleBlur = () => {
@@ -46,14 +34,10 @@ export function DateTimePicker({
       return
     }
 
-    try {
-      const utcDate = new Date(localValue).toISOString()
+    const utcDate = toUtcIsoString(localValue)
 
-      if (utcDate !== value) {
-        onChange(utcDate)
-      }
-    } catch {
-      // Ignore gracefully if they clicked away while the date was invalid
+    if (utcDate && utcDate !== value) {
+      onChange(utcDate)
     }
   }
 
@@ -64,8 +48,8 @@ export function DateTimePicker({
       value={localValue}
       onChange={(e) => setLocalValue(e.target.value)}
       onBlur={handleBlur}
-      min={min ? toLocalDatetimeString(min) : undefined}
-      max={max ? toLocalDatetimeString(max) : undefined}
+      min={min ? toLocalDateTimeInputValue(min) : undefined}
+      max={max ? toLocalDateTimeInputValue(max) : undefined}
       {...props}
     />
   )

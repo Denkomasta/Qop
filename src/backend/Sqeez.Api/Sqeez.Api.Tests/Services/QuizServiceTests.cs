@@ -130,6 +130,28 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
+        public async Task CreateQuizAsync_WithUtcDates_CreatesQuiz()
+        {
+            var context = await GetInMemoryDbContext();
+            long currentUserId = 1;
+
+            var subject = CreateActiveSubject(currentUserId);
+            context.Subjects.Add(subject);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var publishDate = new DateTime(2026, 1, 15, 8, 30, 0, DateTimeKind.Utc);
+            var closingDate = new DateTime(2026, 2, 15, 8, 30, 0, DateTimeKind.Utc);
+            var dto = new CreateQuizDto("New Quiz", "Desc", subject.Id, 3, publishDate, closingDate);
+
+            var result = await service.CreateQuizAsync(dto, currentUserId);
+
+            Assert.True(result.Success);
+            Assert.Equal(publishDate, result.Data!.PublishDate);
+            Assert.Equal(closingDate, result.Data.ClosingDate);
+        }
+
+        [Fact]
         public async Task DeleteQuizAsync_WhenNoAttempts_HardDeletesQuiz()
         {
             var context = await GetInMemoryDbContext();

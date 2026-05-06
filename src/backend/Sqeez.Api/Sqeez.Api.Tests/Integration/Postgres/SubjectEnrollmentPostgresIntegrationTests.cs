@@ -51,6 +51,63 @@ namespace Sqeez.Api.Tests.Integration.Postgres
         }
 
         [DockerAvailableFact]
+        public async Task CreateSubject_WithDescriptionAndDatesWithoutOffset_ReturnsBadRequest()
+        {
+            await _fixture.ResetDatabaseAsync();
+            var seed = await SeedUsersAndSubjectAsync(createSubject: false);
+            var client = PostgresTestHelpers.CreateAuthenticatedClient(_fixture, seed.Admin);
+
+            var response = await client.PostAsJsonAsync("/api/subjects", new
+            {
+                name = "Live dated subject",
+                code = PostgresTestHelpers.UniqueValue("dated", 30),
+                description = "Description together with date-only frontend values.",
+                teacherId = seed.Teacher.Id,
+                startDate = "2026-01-15T08:30:00",
+                endDate = "2026-06-15T16:00:00"
+            });
+
+            await PostgresTestHelpers.AssertStatusCodeAsync(HttpStatusCode.BadRequest, response);
+
+            using var scope = _fixture.Factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<SqeezDbContext>();
+
+            Assert.False(await dbContext.Subjects.AnyAsync());
+        }
+
+        [DockerAvailableFact]
+        public async Task CreateSubject_WithDescriptionAndUtcDates_PersistsSubject()
+        {
+            await _fixture.ResetDatabaseAsync();
+            var seed = await SeedUsersAndSubjectAsync(createSubject: false);
+            var client = PostgresTestHelpers.CreateAuthenticatedClient(_fixture, seed.Admin);
+
+            var response = await client.PostAsJsonAsync("/api/subjects", new
+            {
+                name = "Live UTC subject",
+                code = PostgresTestHelpers.UniqueValue("utc", 30),
+                description = "Description together with UTC date-time values.",
+                teacherId = seed.Teacher.Id,
+                startDate = "2026-01-15T08:30:00Z",
+                endDate = "2026-06-15T16:00:00Z"
+            });
+
+            await PostgresTestHelpers.AssertStatusCodeAsync(HttpStatusCode.OK, response);
+            using var json = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync());
+            var subjectId = json.RootElement.GetProperty("id").GetInt64();
+
+            using var scope = _fixture.Factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<SqeezDbContext>();
+            var subject = await dbContext.Subjects.SingleAsync(subject => subject.Id == subjectId);
+
+            Assert.Equal("Description together with UTC date-time values.", subject.Description);
+            Assert.Equal(DateTimeKind.Utc, subject.StartDate.Kind);
+            Assert.Equal(DateTimeKind.Utc, subject.EndDate!.Value.Kind);
+            Assert.Equal(new DateTime(2026, 1, 15, 8, 30, 0, DateTimeKind.Utc), subject.StartDate);
+            Assert.Equal(new DateTime(2026, 6, 15, 16, 0, 0, DateTimeKind.Utc), subject.EndDate.Value);
+        }
+
+        [DockerAvailableFact]
         public async Task GetSubjects_WithSearchTerm_ReturnsPersistedSubject()
         {
             await _fixture.ResetDatabaseAsync();

@@ -86,6 +86,27 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
+        public async Task CreateSubjectAsync_WithUtcDates_CreatesSubject()
+        {
+            var context = await GetInMemoryDbContext();
+            var service = CreateService(context);
+            var startDate = new DateTime(2026, 1, 15, 8, 30, 0, DateTimeKind.Utc);
+            var endDate = new DateTime(2026, 6, 15, 16, 0, 0, DateTimeKind.Utc);
+            var createDto = new CreateSubjectDto(
+                "History",
+                "HIST203",
+                "Subject with UTC dates",
+                startDate,
+                endDate);
+
+            var result = await service.CreateSubjectAsync(createDto);
+
+            Assert.True(result.Success);
+            Assert.Equal(startDate, result.Data!.StartDate);
+            Assert.Equal(endDate, result.Data.EndDate);
+        }
+
+        [Fact]
         public async Task PatchSubjectAsync_WhenSubjectExists_UpdatesPropertiesAndValidatesTeacher()
         {
             var context = await GetInMemoryDbContext();

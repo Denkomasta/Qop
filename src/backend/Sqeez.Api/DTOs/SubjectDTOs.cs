@@ -1,4 +1,5 @@
 using Sqeez.Api.Constants;
+using Sqeez.Api.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace Sqeez.Api.DTOs
@@ -31,6 +32,7 @@ namespace Sqeez.Api.DTOs
         public long? StudentId { get; set; }
 
         public bool? IsActive { get; set; }
+        [UtcDateTime]
         public DateTime? StartingAfter { get; set; }
 
         public bool IsDescending { get; set; } = false;
@@ -59,7 +61,9 @@ namespace Sqeez.Api.DTOs
 
         [StringLength(ValidationConstants.DescriptionMaxLength)]
         public string? Description { get; init; }
+        [UtcDateTime]
         public DateTime? StartDate { get; init; }
+        [UtcDateTime]
         public DateTime? EndDate { get; init; }
         public long? TeacherId { get; init; }
         public long? SchoolClassId { get; init; }
@@ -88,7 +92,9 @@ namespace Sqeez.Api.DTOs
 
         [StringLength(ValidationConstants.DescriptionMaxLength)]
         public string? Description { get; init; }
+        [UtcDateTime]
         public DateTime? StartDate { get; init; }
+        [UtcDateTime]
         public DateTime? EndDate { get; init; }
         public long? TeacherId { get; init; }     // Pass 0 to remove the teacher
         public long? SchoolClassId { get; init; } // Pass 0 to remove the class

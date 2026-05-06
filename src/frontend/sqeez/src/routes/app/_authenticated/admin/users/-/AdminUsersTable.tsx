@@ -69,6 +69,7 @@ export function AdminUsersTable({
               to="/app/profile/$userId"
               params={{ userId: (user.id ?? 0).toString() }}
               className="font-semibold text-foreground hover:underline"
+              disabled={!user.id}
             >
               {formatName(user.firstName, user.lastName)}
             </Link>
@@ -92,7 +93,9 @@ export function AdminUsersTable({
           onClick={() =>
             onEditRole({
               id: user.id!,
-              name: formatName(user.firstName, user.lastName),
+              name:
+                formatName(user.firstName, user.lastName) ||
+                t('admin.unassigned'),
               currentRole: user.role!,
             })
           }

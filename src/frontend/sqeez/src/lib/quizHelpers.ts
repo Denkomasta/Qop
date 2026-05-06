@@ -2,20 +2,11 @@ import { isAxiosError } from 'axios'
 import { toast } from 'sonner'
 import { type TFunction } from 'i18next'
 import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
+import { parseUtcTime } from '@/lib/dateHelpers'
 
 export interface QuizDateInfo {
   publishDate?: string | null
   closingDate?: string | null
-}
-
-/**
- * Ensures a date string is parsed as UTC.
- * If your .NET API strips the trailing 'Z', this adds it back
- * so the browser doesn't mistakenly parse it as local time.
- */
-const parseUtcTime = (dateString: string): number => {
-  const safeString = dateString.endsWith('Z') ? dateString : `${dateString}Z`
-  return new Date(safeString).getTime()
 }
 
 /**

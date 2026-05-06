@@ -139,6 +139,37 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
+        public async Task PatchClassAsync_WhenTeacherIsAlreadyStudentOfClass_ReturnsValidationFailed()
+        {
+            var context = await GetInMemoryDbContext();
+            var schoolClass = new SchoolClass { Name = "Class A", AcademicYear = "2025/2026", Section = "A" };
+            var teacher = new Teacher
+            {
+                Username = "TeacherStudent",
+                Role = UserRole.Teacher,
+                SchoolClass = schoolClass
+            };
+
+            context.SchoolClasses.Add(schoolClass);
+            context.Teachers.Add(teacher);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var patchDto = new PatchSchoolClassDto(TeacherId: teacher.Id);
+
+            var result = await service.PatchClassAsync(schoolClass.Id, patchDto);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.ValidationFailed, result.ErrorCode);
+            Assert.Contains("already assigned", result.ErrorMessage);
+
+            var dbClass = await context.SchoolClasses
+                .Include(c => c.Teacher)
+                .SingleAsync(c => c.Id == schoolClass.Id);
+            Assert.Null(dbClass.Teacher);
+        }
+
+        [Fact]
         public async Task DeleteClassAsync_WhenExists_HardDeletesClass()
         {
             var context = await GetInMemoryDbContext();
@@ -204,6 +235,30 @@ namespace Sqeez.Api.Tests.Services
             // Prove that the database wasn't modified because the transaction failed fast
             var dbStudent = await context.Students.FindAsync(validStudent.Id);
             Assert.Null(dbStudent!.SchoolClassId);
+        }
+
+        [Fact]
+        public async Task AssignStudentsToClassAsync_WhenStudentIdIsClassTeacher_ReturnsValidationFailed()
+        {
+            var context = await GetInMemoryDbContext();
+            var teacher = new Teacher { Username = "ClassTeacher", Role = UserRole.Teacher };
+            var schoolClass = new SchoolClass { Name = "Homeroom", Teacher = teacher };
+
+            context.SchoolClasses.Add(schoolClass);
+            context.Teachers.Add(teacher);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var dto = new AssignStudentsDto(new List<long> { teacher.Id });
+
+            var result = await service.AssignStudentsToClassAsync(schoolClass.Id, dto);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.ValidationFailed, result.ErrorCode);
+            Assert.Contains("teacher cannot also be assigned as a student", result.ErrorMessage);
+
+            var dbTeacher = await context.Teachers.FindAsync(teacher.Id);
+            Assert.Null(dbTeacher!.SchoolClassId);
         }
 
         [Fact]

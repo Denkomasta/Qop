@@ -397,6 +397,15 @@ namespace Sqeez.Api.Services.UserService
                 if (dto.SchoolClassId.Value != 0 && !await _context.SchoolClasses.AnyAsync(c => c.Id == dto.SchoolClassId.Value))
                     return ServiceResult<StudentDto>.Failure("School Class not found.", ServiceError.NotFound);
 
+                if (user is Teacher teacherUser &&
+                    dto.SchoolClassId.Value != 0 &&
+                    teacherUser.ManagedClassId == dto.SchoolClassId.Value)
+                {
+                    return ServiceResult<StudentDto>.Failure(
+                        "A teacher cannot be assigned as a student of the class they manage.",
+                        ServiceError.ValidationFailed);
+                }
+
                 user.SchoolClassId = dto.SchoolClassId.Value == 0 ? null : dto.SchoolClassId.Value;
             }
 
@@ -408,6 +417,14 @@ namespace Sqeez.Api.Services.UserService
                 {
                     if (teacherDto.ManagedClassId.Value != 0 && !await _context.SchoolClasses.AnyAsync(c => c.Id == teacherDto.ManagedClassId.Value))
                         return ServiceResult<StudentDto>.Failure("Managed Class not found.", ServiceError.NotFound);
+
+                    if (teacherDto.ManagedClassId.Value != 0 &&
+                        teacher.SchoolClassId == teacherDto.ManagedClassId.Value)
+                    {
+                        return ServiceResult<StudentDto>.Failure(
+                            "A teacher cannot manage a class where they are already assigned as a student.",
+                            ServiceError.ValidationFailed);
+                    }
 
                     teacher.ManagedClassId = teacherDto.ManagedClassId.Value == 0 ? null : teacherDto.ManagedClassId.Value;
                 }

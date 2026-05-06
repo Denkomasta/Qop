@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { toLocalDateTimeInputValue, toUtcIsoString } from './dateHelpers'
+import {
+  parseUtcDate,
+  parseUtcTime,
+  toLocalDateTimeInputValue,
+  toUtcIsoString,
+} from './dateHelpers'
 
 describe('dateHelpers', () => {
   it('converts datetime-local values to UTC ISO strings', () => {
@@ -30,6 +35,15 @@ describe('dateHelpers', () => {
       )
         .toISOString()
         .slice(0, 16),
+    )
+  })
+
+  it('parses API datetime values without a timezone as UTC', () => {
+    expect(parseUtcDate('2026-05-02T10:30:00')?.toISOString()).toBe(
+      '2026-05-02T10:30:00.000Z',
+    )
+    expect(parseUtcTime('2026-05-02T10:30:00')).toBe(
+      new Date('2026-05-02T10:30:00Z').getTime(),
     )
   })
 })

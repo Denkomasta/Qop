@@ -1,6 +1,7 @@
 import type { TFunction } from 'i18next'
 
 const dateOnlyPattern = /^\d{4}-\d{2}-\d{2}$/
+const timeZonePattern = /(Z|[+-]\d{2}:?\d{2})$/i
 
 const parseDateInputValue = (dateString: string) => {
   const trimmedDateString = dateString.trim()
@@ -22,14 +23,32 @@ export const toUtcIsoString = (dateString?: string | null): string | null => {
   return date.toISOString()
 }
 
+export const parseUtcDate = (dateString?: string | null): Date | null => {
+  if (!dateString) return null
+
+  const trimmedDateString = dateString.trim()
+  const safeDateString =
+    dateOnlyPattern.test(trimmedDateString) ||
+    timeZonePattern.test(trimmedDateString)
+      ? trimmedDateString
+      : `${trimmedDateString}Z`
+  const date = new Date(safeDateString)
+
+  if (isNaN(date.getTime())) return null
+
+  return date
+}
+
+export const parseUtcTime = (dateString: string): number => {
+  return parseUtcDate(dateString)?.getTime() ?? NaN
+}
+
 export const toLocalDateTimeInputValue = (
   dateString?: string | null,
 ): string => {
-  if (!dateString) return ''
+  const date = parseUtcDate(dateString)
 
-  const date = new Date(dateString)
-
-  if (isNaN(date.getTime())) return ''
+  if (!date) return ''
 
   return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
     .toISOString()
@@ -37,8 +56,11 @@ export const toLocalDateTimeInputValue = (
 }
 
 export const formatDate = (dateString?: string | null) => {
-  if (!dateString) return null
-  return new Date(dateString).toLocaleDateString()
+  const date = parseUtcDate(dateString)
+
+  if (!date) return null
+
+  return date.toLocaleDateString()
 }
 
 /**
@@ -48,11 +70,9 @@ export const formatDate = (dateString?: string | null) => {
  * @returns The formatted string, or null if the input is empty or invalid.
  */
 export const formatDateTime = (dateString?: string | null): string | null => {
-  if (!dateString) return null
+  const date = parseUtcDate(dateString)
 
-  const date = new Date(dateString)
-
-  if (isNaN(date.getTime())) return null
+  if (!date) return null
 
   return date.toLocaleString([], {
     dateStyle: 'medium',
@@ -64,11 +84,9 @@ export const formatDateTime = (dateString?: string | null): string | null => {
  * Formats an ISO date string into a localized medium date format (no time).
  */
 export const formatDateOnly = (dateString?: string | null): string | null => {
-  if (!dateString) return null
+  const date = parseUtcDate(dateString)
 
-  const date = new Date(dateString)
-
-  if (isNaN(date.getTime())) return null
+  if (!date) return null
 
   return date.toLocaleDateString([], {
     dateStyle: 'medium',

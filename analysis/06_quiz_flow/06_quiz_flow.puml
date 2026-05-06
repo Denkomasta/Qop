@@ -1,0 +1,82 @@
+@startuml
+title Quiz Flow
+
+actor "Student" as User
+participant "Frontend" as FE
+participant "Quiz Service" as QuizService
+participant "Quiz Attempt Service" as AttemptService
+participant "Media Service" as MediaService
+participant "FileStorage Service" as FileStorage
+participant "Badge Service" as BadgeService
+database "Database" as DB
+
+User -> FE: Opens a published quiz
+FE -> QuizService: GET /api/quizzes/{quizId}
+QuizService -> DB: Loads quiz data
+DB --> QuizService: Quiz
+QuizService --> FE: QuizDto
+
+User -> FE: Starts the quiz
+FE -> AttemptService: POST /api/quiz-attempts/start
+AttemptService -> DB: Validates enrollment,\nquiz state and attempt limit
+AttemptService -> DB: Creates QuizAttempt\nStatus = Created
+AttemptService -> DB: Finds the first question
+AttemptService --> FE: QuizAttemptDto with nextQuestionId
+
+loop While nextQuestionId exists
+    FE -> QuizService: GET /api/quizzes/{quizId}/questions/{questionId}/detailed
+    QuizService -> DB: Loads question, answer options\nand media id
+    QuizService --> FE: DetailedQuizQuestionDto
+
+    opt Question or option contains a media file reference
+        FE -> MediaService: GET /api/media-assets/{id}/file
+        MediaService -> DB: Loads MediaAsset metadata\nand validates access
+        DB --> MediaService: MediaAsset
+        MediaService -> FileStorage: Loads file by url
+        FileStorage --> MediaService: File stream
+        MediaService --> FE: File stream
+    end
+
+    User -> FE: Submits answer
+    FE -> AttemptService: POST /api/quiz-attempts/{attemptId}/answer
+    AttemptService -> DB: Validates attempt ownership and state
+
+    alt First submitted answer
+        AttemptService -> DB: Status Created -> Started
+    end
+
+    AttemptService -> DB: Stores QuizQuestionResponse
+
+    alt Automatically gradable question
+        AttemptService -> AttemptService: Evaluates selected options
+        AttemptService -> DB: Stores score in Score
+    else Free-text answer
+        AttemptService -> DB: Stores answer with Score = null
+    end
+
+    AttemptService -> DB: Finds next question
+    AttemptService --> FE: QuestionAnsweredDto with nextQuestionId
+end
+
+User -> FE: Completes quiz
+FE -> AttemptService: POST /api/quiz-attempts/{attemptId}/complete
+AttemptService -> DB: Loads attempt and responses
+AttemptService -> AttemptService: Calculates total score
+
+alt Contains free-text answers requiring manual grading
+    AttemptService -> DB: Status = PendingCorrection\nEndTime set\nTotalScore saved
+    AttemptService --> FE: QuizAttemptDto without badges
+    FE --> User: Shows pending grading state
+else Fully automatically graded quiz
+    AttemptService -> DB: Status = Completed\nEndTime set\nTotalScore saved
+    AttemptService -> AttemptService: Calculates XP difference
+    AttemptService -> DB: Adds XP to student
+    AttemptService -> BadgeService: EvaluateAndAwardBadges(studentId, quizMetrics)
+    BadgeService -> DB: Loads unearned badges and rules
+    BadgeService -> DB: Stores earned badges\nAdds badge XP bonus
+    BadgeService --> AttemptService: Newly earned badges
+    AttemptService --> FE: QuizAttemptDto with badges
+    FE --> User: Shows result, score, XP and badges
+end
+
+@enduml

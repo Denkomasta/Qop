@@ -602,6 +602,64 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
+        public async Task PatchUserAsync_WhenTeacherAlreadyStudentOfManagedClass_ReturnsValidationFailed()
+        {
+            var context = await GetInMemoryDbContext();
+            var schoolClass = new SchoolClass { Name = "Student class" };
+            var teacher = new Teacher
+            {
+                Username = "TeacherStudent",
+                Role = UserRole.Teacher,
+                SchoolClass = schoolClass
+            };
+
+            context.SchoolClasses.Add(schoolClass);
+            context.Teachers.Add(teacher);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var patchDto = new PatchTeacherDto { ManagedClassId = schoolClass.Id };
+
+            var result = await service.PatchUserAsync(teacher.Id, patchDto);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.ValidationFailed, result.ErrorCode);
+            Assert.Contains("already assigned as a student", result.ErrorMessage);
+
+            var dbTeacher = await context.Teachers.FindAsync(teacher.Id);
+            Assert.Null(dbTeacher!.ManagedClassId);
+        }
+
+        [Fact]
+        public async Task PatchUserAsync_WhenAssigningTeacherAsStudentToManagedClass_ReturnsValidationFailed()
+        {
+            var context = await GetInMemoryDbContext();
+            var schoolClass = new SchoolClass { Name = "Managed class" };
+            var teacher = new Teacher
+            {
+                Username = "TeacherManager",
+                Role = UserRole.Teacher,
+                ManagedClass = schoolClass
+            };
+
+            context.SchoolClasses.Add(schoolClass);
+            context.Teachers.Add(teacher);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var patchDto = new PatchTeacherDto { SchoolClassId = schoolClass.Id };
+
+            var result = await service.PatchUserAsync(teacher.Id, patchDto);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.ValidationFailed, result.ErrorCode);
+            Assert.Contains("class they manage", result.ErrorMessage);
+
+            var dbTeacher = await context.Teachers.FindAsync(teacher.Id);
+            Assert.Null(dbTeacher!.SchoolClassId);
+        }
+
+        [Fact]
         public async Task UploadAvatarAsync_WhenStorageUploadFails_DoesNotChangeAvatar()
         {
             var context = await GetInMemoryDbContext();

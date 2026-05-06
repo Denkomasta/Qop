@@ -129,7 +129,7 @@ export function CreateSchoolClassModal({
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      title={t('admin.classes.createClassTitle', 'Create School Class')}
+      title={t('admin.classes.createClassTitle')}
       description={t('admin.classes.createClassDesc')}
       footer={
         <div className="flex w-full justify-center gap-4 sm:space-x-0">

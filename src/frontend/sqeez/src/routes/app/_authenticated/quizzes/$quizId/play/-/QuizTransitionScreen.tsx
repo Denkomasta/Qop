@@ -43,7 +43,7 @@ export function QuestionTransitionScreen({
         </div>
 
         <h2 className="mb-10 text-4xl font-black tracking-widest text-foreground md:text-5xl">
-          {t('quiz.getReady', 'Get Ready!')}
+          {t('quiz.getReady')}
         </h2>
 
         <div className="relative mx-auto flex h-40 w-40 items-center justify-center md:h-48 md:w-48">

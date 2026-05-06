@@ -59,7 +59,7 @@ export function QuizOptionItem({
         )}
 
         <TextArea
-          placeholder={t('quiz.typeAnswerHere', 'Type your answer here...')}
+          placeholder={t('quiz.typeAnswerHere')}
           value={freeTextValue}
           onChange={(e) => onFreeTextChange?.(e.target.value)}
           onFocus={onSelect}

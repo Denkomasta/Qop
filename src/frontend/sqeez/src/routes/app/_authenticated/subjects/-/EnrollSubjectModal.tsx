@@ -124,7 +124,7 @@ export function EnrollSubjectModal({
               onChange={setSearchTerm}
               placeholder={t('enrollments.searchPlaceholder')}
               icon={<Search className="size-4" />}
-              label={t('common.search', 'Search')}
+              label={t('common.search')}
             />
           </div>
 

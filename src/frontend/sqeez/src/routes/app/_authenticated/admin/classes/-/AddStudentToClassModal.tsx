@@ -104,12 +104,10 @@ export function AddStudentToClassModal({
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      title={t('admin.classes.addStudentTitle', 'Add Student to Class')}
-      description={t(
-        'admin.classes.addStudentDesc',
-        'Search and select a student to enroll them in {{className}}.',
-        { className: schoolClass?.name },
-      )}
+      title={t('admin.classes.addStudentTitle')}
+      description={t('admin.classes.addStudentDesc', {
+        className: schoolClass?.name,
+      })}
       footer={
         <div className="flex w-full justify-center gap-4 sm:space-x-0">
           <Button
@@ -128,7 +126,7 @@ export function AddStudentToClassModal({
             loadingText={t('common.saving') + '...'}
             className="min-w-32"
           >
-            {t('common.add', 'Add')}
+            {t('common.add')}
           </AsyncButton>
         </div>
       }
@@ -138,17 +136,14 @@ export function AddStudentToClassModal({
           id="student-search"
           value={searchTerm}
           onChange={setSearchTerm}
-          placeholder={t(
-            'admin.classes.searchStudentsPlaceholder',
-            'Search by name or username...',
-          )}
+          placeholder={t('admin.classes.searchStudentsPlaceholder')}
           icon={<Search className="size-4" />}
           hideErrors
         />
 
         <div className="flex flex-col">
           <label className="mb-2 block text-sm font-medium">
-            {t('admin.classes.selectStudent', 'Select Student')}
+            {t('admin.classes.selectStudent')}
           </label>
           <div className="h-62.5 overflow-hidden rounded-md border border-border">
             <ScrollableSelectList

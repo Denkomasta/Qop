@@ -75,7 +75,7 @@ function VerifyEmailPage() {
         <CardFooter className="mt-6 flex justify-center p-0">
           {isAuthenticated ? (
             <Button variant="outline" onClick={() => navigate({ to: '/app' })}>
-              {t('verifyEmail.goToApp', 'Go to Dashboard')}
+              {t('verifyEmail.goToApp')}
             </Button>
           ) : (
             <Button

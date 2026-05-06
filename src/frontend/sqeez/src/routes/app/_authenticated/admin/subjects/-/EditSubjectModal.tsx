@@ -37,8 +37,8 @@ export function EditSubjectModal({
   const queryClient = useQueryClient()
 
   const editSubjectSchema = z.object({
-    name: z.string().min(1, t('common.required', 'This field is required')),
-    code: z.string().min(1, t('common.required', 'This field is required')),
+    name: z.string().min(1, t('common.required')),
+    code: z.string().min(1, t('common.required')),
     description: z.string().optional(),
     startDate: z.string().nullable().optional(),
     endDate: z.string().nullable().optional(),

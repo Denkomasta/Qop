@@ -132,7 +132,7 @@ export function QuestionMediaEditor({
               >
                 <X className="size-4" />
                 <span className="text-sm font-medium">
-                  {t('common.remove', 'Remove')}
+                  {t('common.remove')}
                 </span>
               </AsyncButton>
             </div>

@@ -48,7 +48,7 @@ export function AdminClassStudentsTable({
       ),
     },
     {
-      header: t('admin.email', 'Email'),
+      header: t('common.email'),
       cell: (student) => (
         <span className="text-muted-foreground">{student.email}</span>
       ),

@@ -103,7 +103,13 @@ export function RoleModificationModal({
     >
       <div className="flex flex-col gap-4 py-4">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {(['Student', 'Teacher', 'Admin'] as UserRole[]).map((role) => {
+          {(
+            [
+              t('common.student'),
+              t('common.teacher'),
+              t('common.admin'),
+            ] as UserRole[]
+          ).map((role) => {
             const isSelected = selectedRole === role
             return (
               <button

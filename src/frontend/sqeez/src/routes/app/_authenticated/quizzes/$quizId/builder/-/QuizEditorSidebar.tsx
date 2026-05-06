@@ -212,11 +212,8 @@ export function QuizEditorSidebar({ quizId }: QuizEditorSidebarProps) {
           setQuestionToDelete(null)
         }}
         onConfirm={handleConfirmDelete}
-        title={t('editor.deleteQuestionTitle', 'Delete Question')}
-        description={t(
-          'editor.deleteQuestionDesc',
-          'Are you sure you want to delete this question? This action cannot be undone.',
-        )}
+        title={t('editor.deleteQuestionTitle')}
+        description={t('editor.deleteQuestionDesc')}
         isDestructive={true}
         confirmText={t('common.delete')}
       />

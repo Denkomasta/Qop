@@ -59,7 +59,7 @@ export function StudentGradingModal({
   const patchMarkMutation = usePatchApiEnrollmentsId({
     mutation: {
       onSuccess: () => {
-        toast.success(t('subject.markUpdated', 'Mark successfully updated'))
+        toast.success(t('subject.markUpdated'))
         queryClient.invalidateQueries({
           queryKey: getGetApiEnrollmentsQueryKey(),
         })
@@ -105,7 +105,7 @@ export function StudentGradingModal({
           <>
             <div>
               <p className="text-sm text-muted-foreground">
-                {t('subject.settingMarkFor', 'Setting mark for')}{' '}
+                {t('subject.settingMarkFor')}{' '}
                 <strong className="text-foreground">{studentName}</strong>
               </p>
             </div>

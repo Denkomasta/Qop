@@ -46,7 +46,7 @@ const RootLayout = () => {
     }
 
     return [
-      { to: '/app', label: t('dashboard.title', 'Dashboard') },
+      { to: '/app', label: t('dashboard.title') },
       { to: '/app/subjects', label: t('dashboard.subjects') },
       { to: '/app/quizzes', label: t('dashboard.quizzes') },
       { to: '/app/leaderboards', label: t('dashboard.leaderboards') },

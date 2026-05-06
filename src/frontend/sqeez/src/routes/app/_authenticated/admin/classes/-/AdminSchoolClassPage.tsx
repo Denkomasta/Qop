@@ -86,7 +86,7 @@ export function AdminSchoolClassPage() {
                 setAcademicYearFilter(val)
                 setPageNumber(1)
               }}
-              placeholder={t('admin.filterYear', 'e.g. 2024/2025')}
+              placeholder={t('admin.classes.filterYear')}
               className="max-w-50 bg-background"
               hideErrors
             />

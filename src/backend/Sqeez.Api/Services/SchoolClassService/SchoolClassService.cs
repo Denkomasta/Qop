@@ -280,6 +280,15 @@ namespace Sqeez.Api.Services
                     {
                         return ServiceResult<SchoolClassDto>.Failure("Provided Teacher ID is invalid.", ServiceError.ValidationFailed);
                     }
+
+                    if (newTeacher.SchoolClassId == schoolClass.Id ||
+                        schoolClass.Students.Any(student => student.Id == newTeacher.Id))
+                    {
+                        return ServiceResult<SchoolClassDto>.Failure(
+                            "This teacher is already assigned to this class as a student and cannot manage the same class.",
+                            ServiceError.ValidationFailed);
+                    }
+
                     schoolClass.Teacher = newTeacher;
                 }
             }
@@ -339,8 +348,11 @@ namespace Sqeez.Api.Services
         {
             _logger.LogInformation("Assigning {Count} students to class {ClassId}", dto.StudentIds.Count, classId);
 
-            var classExists = await _context.SchoolClasses.AnyAsync(c => c.Id == classId);
-            if (!classExists)
+            var schoolClass = await _context.SchoolClasses
+                .Include(c => c.Teacher)
+                .FirstOrDefaultAsync(c => c.Id == classId);
+
+            if (schoolClass == null)
             {
                 return ServiceResult<bool>.Failure("School class not found.", ServiceError.NotFound);
             }
@@ -352,6 +364,13 @@ namespace Sqeez.Api.Services
 
             try
             {
+                if (schoolClass.Teacher != null && dto.StudentIds.Contains(schoolClass.Teacher.Id))
+                {
+                    return ServiceResult<bool>.Failure(
+                        "The class teacher cannot also be assigned as a student of the same class.",
+                        ServiceError.ValidationFailed);
+                }
+
                 var students = await _context.Students
                     .Where(s => dto.StudentIds.Contains(s.Id))
                     .ToListAsync();

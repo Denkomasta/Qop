@@ -68,7 +68,7 @@ describe('QuestionCard', () => {
       />,
     )
 
-    fireEvent.change(screen.getByPlaceholderText('Type your answer here...'), {
+    fireEvent.change(screen.getByPlaceholderText('quiz.typeAnswerHere'), {
       target: { value: 'Four' },
     })
 

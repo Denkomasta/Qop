@@ -55,7 +55,7 @@ describe('QuizOptionItem', () => {
       />,
     )
 
-    const textArea = screen.getByPlaceholderText('Type your answer here...')
+    const textArea = screen.getByPlaceholderText('quiz.typeAnswerHere')
     fireEvent.focus(textArea)
     fireEvent.change(textArea, { target: { value: 'Because...' } })
 

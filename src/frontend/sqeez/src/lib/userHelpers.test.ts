@@ -18,7 +18,7 @@ describe('userHelpers', () => {
 
   it('formats first and last name values', () => {
     expect(formatName('Dana', 'User')).toBe('Dana User')
-    expect(formatName(undefined, 'User')).toBe('undefined User')
+    expect(formatName(undefined, 'User')).toBe('User')
   })
 
   it('creates initials with sensible fallbacks', () => {

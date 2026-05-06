@@ -11,6 +11,8 @@
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "api:gen": "orval --config orval.config.ts",
+    "sortLang": "node ./scripts/sort-locales.js",
+    "sortLang:check": "node ./scripts/sort-locales.js --check",
     "syncLang": "node ./scripts/sync-locales.js"
   },
   "dependencies": {

@@ -116,7 +116,7 @@
       "createClassTitle": "Create School Class",
       "createClassDesc": "Add a new class to the system and optionally assign a primary teacher.",
       "nameLabel": "Class Name",
-      "namePlaceholder": "e.g. Mathematics 101",
+      "namePlaceholder": "e.g. Grade 8A",
       "yearLabel": "Academic Year",
       "yearPlaceholder": "e.g. 2024/2025",
       "sectionLabel": "Section",
@@ -128,7 +128,11 @@
       "deleteClassDesc": "Are you sure you want to delete the class \"{{className}}\"? This action cannot be undone and may affect enrolled students and subjects.",
       "classDeleted": "School class deleted successfully",
       "cannotDelete": "Cannot delete class with enrolled students or assigned teacher.",
-      "removeTeacher": "Remove current teacher"
+      "removeTeacher": "Remove current teacher",
+      "addStudentTitle": "Add Student to Class",
+      "addStudentDesc": "Search and select a student to enroll them in {{className}}.",
+      "selectStudent": "Select Student",
+      "searchStudentsPlaceholder": "Search by name or username..."
     },
     "import": {
       "title": "Data Import",
@@ -210,7 +214,8 @@
     "responses": "Student Responses",
     "noAttemptsTeacher": "No students have taken this quiz yet.",
     "noAttemptsStudent": "You have not taken any quizzes yet.",
-    "completed": "Completed"
+    "completed": "Completed",
+    "myResults": "My Results"
   },
   "badges": {
     "earned": "Earned",
@@ -248,7 +253,8 @@
     "classmatesTitle": "Classmates",
     "studentsCount": "{{count}} students enrolled in this class.",
     "me": "Me",
-    "level": "Level {{level}}"
+    "level": "Level {{level}}",
+    "myClass": "My Class"
   },
   "common": {
     "signIn": "Sign In",
@@ -337,7 +343,8 @@
     "enrolled": "enrolled",
     "active": "active",
     "unknownUser": "Unknown User",
-    "online": "Online"
+    "online": "Online",
+    "backToQuiz": "Back to Quiz"
   },
   "dashboard": {
     "administration": "Administration",
@@ -612,6 +619,8 @@
     "confirmPassword": "Confirm Password",
     "checkEmailTitle": "Check your email",
     "checkEmailDesc": "We sent a verification link to",
+    "firstName": "First Name",
+    "lastName": "Last Name",
     "validation": {
       "firstNameRequired": "First name is required",
       "lastNameRequired": "Last name is required",
@@ -651,7 +660,9 @@
     "clearMark": "Clear mark",
     "enrollmentNotFound": "Enrollment not found",
     "viewSubject": "View Subject",
-    "relatedSubject": "Related Subject"
+    "relatedSubject": "Related Subject",
+    "settingMarkFor": "Setting mark for",
+    "markUpdated": "Mark successfully updated"
   },
   "system": {
     "name": "Sqeez"
@@ -774,7 +785,8 @@
     "pendingCorrection": "Pending Correction",
     "partialScoreTitle": "Partial Score",
     "pendingReviewMessage": "Your final score is pending. Some free-text answers require manual correction by the teacher.",
-    "currentScore": "Current Score"
+    "currentScore": "Current Score",
+    "typeAnswerHere": "Type your answer here..."
   },
   "editor": {
     "questionsTitle": "Questions",
@@ -850,7 +862,10 @@
     "difficultyHard": "Hard - Advanced mastery",
     "viewOptionMedia": "View Option Media",
     "strictMultipleChoiceTitle": "Multiple Correct Answers",
-    "strictMultipleChoiceDesc": "Students must select exactly all of the correct options to earn points."
+    "strictMultipleChoiceDesc": "Students must select exactly all of the correct options to earn points.",
+    "deleteQuestionTitle": "Delete Question",
+    "deleteQuestionDesc": "Are you sure you want to delete this question? This action cannot be undone.",
+    "togglePenaltyDesc": "Toggle whether incorrect answers deduct points"
   },
   "grading": {
     "needsGrading": "Needs Grading",

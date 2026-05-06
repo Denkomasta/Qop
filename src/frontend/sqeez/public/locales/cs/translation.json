@@ -116,7 +116,7 @@
       "createClassTitle": "Vytvořit školní třídu",
       "createClassDesc": "Přidejte do systému novou třídu a volitelně přiřaďte třídního učitele.",
       "nameLabel": "Název třídy",
-      "namePlaceholder": "např. Matematika 101",
+      "namePlaceholder": "např. Septima A nebo 9.A",
       "yearLabel": "Školní rok",
       "yearPlaceholder": "např. 2024/2025",
       "sectionLabel": "Sekce",
@@ -128,7 +128,11 @@
       "deleteClassDesc": "Opravdu chcete smazat třídu \"{{className}}\"? Tuto akci nelze vrátit zpět a může ovlivnit zapsané studenty a předměty.",
       "classDeleted": "Školní třída byla úspěšně smazána",
       "cannotDelete": "Nelze smazat třídu se zapsanými studenty nebo přiřazeným učitelem.",
-      "removeTeacher": "Odebrat stávajícího učitele"
+      "removeTeacher": "Odebrat stávajícího učitele",
+      "addStudentTitle": "Přidat studenta do třídy",
+      "addStudentDesc": "Vyhledejte a vyberte studenta, kterého chcete zapsat do třídy {{className}}.",
+      "selectStudent": "Vybrat studenta",
+      "searchStudentsPlaceholder": "Hledat podle jména nebo uživatelského jména..."
     },
     "import": {
       "title": "Import dat",
@@ -210,7 +214,8 @@
     "responses": "Odpovědi studenta",
     "noAttemptsTeacher": "Tento kvíz zatím nevyplnil žádný student.",
     "noAttemptsStudent": "Zatím jste nevyplnili žádný kvíz.",
-    "completed": "Dokončeno"
+    "completed": "Dokončeno",
+    "myResults": "Moje výsledky"
   },
   "badges": {
     "earned": "Získáno",
@@ -248,7 +253,8 @@
     "classmatesTitle": "Spolužáci",
     "studentsCount": "V této třídě je zapsáno {{count}} studentů.",
     "me": "Já",
-    "level": "Úroveň {{level}}"
+    "level": "Úroveň {{level}}",
+    "myClass": "Moje třída"
   },
   "common": {
     "signIn": "Přihlásit se",
@@ -337,7 +343,8 @@
     "enrolled": "zapsáno",
     "active": "aktivní",
     "unknownUser": "Neznámý uživatel",
-    "online": "Online"
+    "online": "Online",
+    "backToQuiz": "Zpět na kvíz"
   },
   "dashboard": {
     "administration": "Administrativa",
@@ -615,6 +622,8 @@
     "confirmPassword": "Potvrďte heslo",
     "checkEmailTitle": "Zkontrolujte si e-mail",
     "checkEmailDesc": "Odeslali jsme ověřovací odkaz na",
+    "firstName": "Jméno",
+    "lastName": "Příjmení",
     "validation": {
       "firstNameRequired": "Jméno je povinné",
       "lastNameRequired": "Příjmení je povinné",
@@ -654,7 +663,9 @@
     "clearMark": "Vymazat známku",
     "enrollmentNotFound": "Zápis nenalezen",
     "viewSubject": "Zobrazit předmět",
-    "relatedSubject": "Související předmět"
+    "relatedSubject": "Související předmět",
+    "settingMarkFor": "Zadávání známky pro",
+    "markUpdated": "Známka úspěšně aktualizována"
   },
   "system": {
     "name": "Sqeez"
@@ -777,7 +788,8 @@
     "pendingCorrection": "Čeká na opravu",
     "partialScoreTitle": "Průběžné skóre",
     "pendingReviewMessage": "Vaše konečné skóre zatím není k dispozici. Některé volné odpovědi vyžadují manuální opravu učitelem.",
-    "currentScore": "Průběžné skóre"
+    "currentScore": "Průběžné skóre",
+    "typeAnswerHere": "Sem zadejte svou odpověď..."
   },
   "editor": {
     "questionsTitle": "Otázky",
@@ -853,7 +865,10 @@
     "difficultyHard": "Těžké - Pokročilé znalosti",
     "viewOptionMedia": "Zobrazit média možnosti",
     "strictMultipleChoiceTitle": "Více správných odpovědí",
-    "strictMultipleChoiceDesc": "Studenti musí vybrat přesně všechny správné možnosti, aby získali body."
+    "strictMultipleChoiceDesc": "Studenti musí vybrat přesně všechny správné možnosti, aby získali body.",
+    "deleteQuestionTitle": "Smazat otázku",
+    "deleteQuestionDesc": "Opravdu chcete smazat tuto otázku? Tuto akci nelze vrátit zpět.",
+    "togglePenaltyDesc": "Určuje, zda se za nesprávné odpovědi odečítají body."
   },
   "grading": {
     "needsGrading": "Vyžaduje hodnocení",

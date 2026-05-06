@@ -145,7 +145,7 @@ export function TeacherModificationModal({
             onChange={setSearchTerm}
             placeholder={t('admin.classes.searchTeachersPlaceholder')}
             icon={<Search className="size-4" />}
-            label={t('common.search', 'Search')}
+            label={t('common.search')}
             hideErrors
           />
         </div>

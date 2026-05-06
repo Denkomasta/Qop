@@ -67,7 +67,7 @@ export function QuizAttemptsPage({ quizId }: { quizId: string }) {
       title={
         <>
           <History className="size-8 text-primary" />
-          {t('attempts.myResults', 'My Results')}
+          {t('attempts.myResults')}
         </>
       }
       subtitle={
@@ -85,7 +85,7 @@ export function QuizAttemptsPage({ quizId }: { quizId: string }) {
         >
           <Link to="/app/quizzes/$quizId" params={{ quizId }}>
             <ArrowLeft className="mr-2 size-4" />
-            {t('common.backToQuiz', 'Back to Quiz')}
+            {t('common.backToQuiz')}
           </Link>
         </Button>
       }

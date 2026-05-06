@@ -59,7 +59,7 @@ export function DataTable<T>({
                   colSpan={colSpan}
                   className="p-12 text-center text-muted-foreground"
                 >
-                  {emptyMessage || t('common.noDataFound', 'No data found.')}
+                  {emptyMessage || t('common.noDataFound')}
                 </td>
               </tr>
             ) : (
